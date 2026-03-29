@@ -106,3 +106,30 @@ coverage/
 .yarn-integrity 
 .vercel
 .worktrees/
+
+# Dev tools
+.claude/
+.playwright-mcp/
+.superpowers/
+.serena/
+.cursor/
+
+# Backup app files
+App-*.tsx
+!App.tsx
+
+# Internal docs / session notes
+CLAUDE.md
+AUDITORIA_*.md
+BACKUP_*.md
+DIAGNOSTICO_*.md
+ENVIRONMENT_*.md
+FIX_*.md
+PBR_SYSTEM_*.md
+REAL_MODELS_*.md
+RESUMEN_*.md
+SISTEMA_*.md
+README_OLD.md
+docs/
+scripts/
+"UI EXAMPLES/"
