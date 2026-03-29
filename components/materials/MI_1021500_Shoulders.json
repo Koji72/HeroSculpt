@@ -1,0 +1,53 @@
+{
+  "BaseTint": {
+    "type": "color",
+    "value": [0.4, 0.4, 0.4, 1.0]
+  },
+  "RoughnessPower": {
+    "type": "scalar",
+    "value": 0.3
+  },
+  "SpecularMultiplier": {
+    "type": "scalar",
+    "value": 0.4
+  },
+  "Metallic": {
+    "type": "scalar",
+    "value": 0.4
+  },
+  "Clearcoat": {
+    "type": "scalar",
+    "value": 0.5
+  },
+  "ClearcoatRoughness": {
+    "type": "scalar",
+    "value": 0.15
+  },
+  "Sheen": {
+    "type": "scalar",
+    "value": 0.2
+  },
+  "SheenColor": {
+    "type": "color",
+    "value": [0.8, 0.8, 0.8, 1.0]
+  },
+  "SheenRoughness": {
+    "type": "scalar",
+    "value": 0.4
+  },
+  "Transmission": {
+    "type": "scalar",
+    "value": 0.0
+  },
+  "IOR": {
+    "type": "scalar",
+    "value": 1.6
+  },
+  "Reflectivity": {
+    "type": "scalar",
+    "value": 0.4
+  },
+  "description": "PBR material for shoulder parts - protective armor with metallic properties",
+  "category": "body",
+  "tags": ["shoulders", "armor", "protective", "metallic", "durable"]
+} 

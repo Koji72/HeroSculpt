@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Hover Piernas</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .test-area { border: 1px solid #ccc; padding: 20px; margin: 10px 0; }
+        .log { background: #f5f5f5; padding: 10px; margin: 5px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Hover Piernas</h1>
+    
+    <div class="test-area">
+        <h3>1. Simular hover sobre piernas</h3>
+        <button onclick="testLegsHover()">Simular Hover Piernas</button>
+        <div id="hover-result" class="log">Resultado aparecerá aquí...</div>
+    </div>
+    
+    <div class="test-area">
+        <h3>2. Verificar tipos</h3>
+        <button onclick="checkTypes()">Verificar PartCategory.LOWER_BODY</button>
+        <div id="types-result" class="log">Resultado aparecerá aquí...</div>
+    </div>
+    
+    <script>
+        function testLegsHover() {
+            const result = document.getElementById('hover-result');
+            
+            // Simular la lógica de hover
+            const selectedParts = {
+                HEAD: { id: 'strong_head_01_t01' },
+                HAND_LEFT: { id: 'strong_hands_fist_01_t01_l_ng' },
+                HAND_RIGHT: { id: 'strong_hands_fist_01_t01_r_ng' },
+                LOWER_BODY: { id: 'strong_legs_01' },
+                BOOTS: { id: 'strong_boots_01_l0' }
+            };
+            
+            const newLeg = { id: 'strong_legs_02', category: 'LOWER_BODY' };
+            
+            // Simular hover
+            const hoverPreviewParts = { ...selectedParts };
+            hoverPreviewParts['LOWER_BODY'] = newLeg;
+            
+            result.innerHTML = `
+                ✅ Hover simulado exitosamente:
+                - Pierna original: ${selectedParts.LOWER_BODY.id}
+                - Pierna hover: ${hoverPreviewParts.LOWER_BODY.id}
+                - Cambió: ${selectedParts.LOWER_BODY.id !== hoverPreviewParts.LOWER_BODY.id ? 'SÍ' : 'NO'}
+            `;
+        }
+        
+        function checkTypes() {
+            const result = document.getElementById('types-result');
+            
+            // Verificar que los tipos están definidos
+            const hasLowerBody = typeof PartCategory !== 'undefined' && PartCategory.LOWER_BODY;
+            
+            result.innerHTML = `
+                PartCategory disponible: ${typeof PartCategory !== 'undefined' ? 'SÍ' : 'NO'}
+                LOWER_BODY definido: ${hasLowerBody ? 'SÍ' : 'NO'}
+                ${hasLowerBody ? 'Valor: ' + PartCategory.LOWER_BODY : ''}
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "BaseTint": {
+    "type": "color",
+    "value": [0.4, 0.4, 0.4, 1.0]
+  },
+  "RoughnessPower": {
+    "type": "scalar",
+    "value": 0.18
+  },
+  "SpecularMultiplier": {
+    "type": "scalar",
+    "value": 0.8
+  },
+  "Metallic": {
+    "type": "scalar",
+    "value": 1.0
+  },
+  "Clearcoat": {
+    "type": "scalar",
+    "value": 0.4
+  },
+  "ClearcoatRoughness": {
+    "type": "scalar",
+    "value": 0.1
+  },
+  "Sheen": {
+    "type": "scalar",
+    "value": 0.0
+  },
+  "SheenColor": {
+    "type": "color",
+    "value": [1.0, 1.0, 1.0, 1.0]
+  },
+  "SheenRoughness": {
+    "type": "scalar",
+    "value": 0.1
+  },
+  "Transmission": {
+    "type": "scalar",
+    "value": 0.0
+  },
+  "IOR": {
+    "type": "scalar",
+    "value": 1.8
+  },
+  "Reflectivity": {
+    "type": "scalar",
+    "value": 0.8
+  },
+  "description": "PBR material for symbol/emblem parts - highly reflective metallic surface",
+  "category": "symbol",
+  "tags": ["symbol", "emblem", "metallic", "reflective", "hero"]
+} 

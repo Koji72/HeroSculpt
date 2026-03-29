@@ -1,0 +1,21 @@
+# Displacement Map for STRONG
+# Generated from: pbr-textures-sample/BootsParts/strong_boots_01/STRONGVariant/albedo.png
+# Pattern: muscular
+# Intensity: 0.8
+# Smoothing: 0.3
+
+# Este archivo contiene el mapa de desplazamiento que deforma la geometría
+# Los valores van de 0 (negro, sin deformación) a 1 (blanco, deformación máxima)
+
+# Patrón específico para STRONG:
+# - Pliegues musculares y definición anatómica
+
+# Para usar en Three.js:
+# material.displacementMap = textureLoader.load('displacement-maps\strong_boots_01_STRONG_displacement.png');
+# material.displacementScale = 0.8;
+# material.displacementBias = 0.0;
+
+# En una implementación real, este sería un archivo PNG con:
+# - Líneas del traje convertidas en elevaciones
+# - Pliegues y costuras como depresiones
+# - Bordes y detalles como variaciones de altura

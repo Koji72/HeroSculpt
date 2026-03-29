@@ -1,0 +1,21 @@
+# Displacement Map for MYSTIC
+# Generated from: pbr-textures-sample/TorsoParts/strong_torso_01/MYSTICVariant/albedo.png
+# Pattern: flowing
+# Intensity: 0.7
+# Smoothing: 0.4
+
+# Este archivo contiene el mapa de desplazamiento que deforma la geometría
+# Los valores van de 0 (negro, sin deformación) a 1 (blanco, deformación máxima)
+
+# Patrón específico para MYSTIC:
+# - Ondas fluidas y telas que se mueven
+
+# Para usar en Three.js:
+# material.displacementMap = textureLoader.load('displacement-maps\strong_torso_01_MYSTIC_displacement.png');
+# material.displacementScale = 0.7;
+# material.displacementBias = 0.0;
+
+# En una implementación real, este sería un archivo PNG con:
+# - Líneas del traje convertidas en elevaciones
+# - Pliegues y costuras como depresiones
+# - Bordes y detalles como variaciones de altura

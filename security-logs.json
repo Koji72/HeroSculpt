@@ -1,0 +1,1 @@
+{"ip":"::1","level":"info","message":"HTTP Request","method":"GET","service":"security-service","timestamp":"2025-07-30T20:46:33.748Z","url":"/health","userAgent":"Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4061"}

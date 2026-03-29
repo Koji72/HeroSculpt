@@ -1,0 +1,125 @@
+{
+  "materials": {
+    "head": {
+      "file": "MI_1021500_Head.json",
+      "category": "head",
+      "description": "Skin material for head parts",
+      "tags": ["head", "skin", "natural"]
+    },
+    "torso": {
+      "file": "MI_1021500_Torso.json",
+      "category": "body",
+      "description": "Flexible fabric material for torso parts",
+      "tags": ["torso", "body", "fabric", "flexible"]
+    },
+    "legs": {
+      "file": "MI_1021500_Legs.json",
+      "category": "body",
+      "description": "Flexible fabric material for legs/lower body",
+      "tags": ["legs", "lower_body", "fabric", "flexible", "movement"]
+    },
+    "hands": {
+      "file": "MI_1021500_Hands.json",
+      "category": "body",
+      "description": "Flexible fabric material for hands/gloves",
+      "tags": ["hands", "gloves", "fabric", "flexible", "grip"]
+    },
+    "shoulders": {
+      "file": "MI_1021500_Shoulders.json",
+      "category": "body",
+      "description": "Protective armor material for shoulders",
+      "tags": ["shoulders", "armor", "protective", "metallic", "durable"]
+    },
+    "forearms": {
+      "file": "MI_1021500_Forearms.json",
+      "category": "body",
+      "description": "Protective armor material for forearms",
+      "tags": ["forearms", "armor", "protective", "flexible", "durable"]
+    },
+    "boots": {
+      "file": "MI_1021500_Boots.json",
+      "category": "boots",
+      "description": "Durable leather/rubber material for boots",
+      "tags": ["boots", "leather", "rubber", "durable", "traction"]
+    },
+    "cape": {
+      "file": "MI_1021500_Cape.json",
+      "category": "cape",
+      "description": "Flowing fabric material for capes",
+      "tags": ["cape", "fabric", "flowing", "dramatic", "hero"]
+    },
+    "belt": {
+      "file": "MI_1021500_Belt.json",
+      "category": "belt",
+      "description": "Durable leather material for belts",
+      "tags": ["belt", "leather", "durable", "textured", "natural"]
+    },
+    "symbol": {
+      "file": "MI_1021500_Symbol.json",
+      "category": "symbol",
+      "description": "Highly reflective metallic material for symbols",
+      "tags": ["symbol", "emblem", "metallic", "reflective", "hero"]
+    },
+    "pouch": {
+      "file": "MI_1021500_Pouch.json",
+      "category": "pouch",
+      "description": "Durable fabric material for pouches/bags",
+      "tags": ["pouch", "bag", "fabric", "brown", "durable", "natural"]
+    },
+    "equip_01": {
+      "file": "MI_1021500_Equip_01.json",
+      "category": "equipment",
+      "description": "Metallic equipment material variant 1",
+      "tags": ["equipment", "metallic", "durable"]
+    },
+    "equip_02": {
+      "file": "MI_1021500_Equip_02.json",
+      "category": "equipment",
+      "description": "Metallic equipment material variant 2",
+      "tags": ["equipment", "metallic", "durable"]
+    },
+    "equip_03": {
+      "file": "MI_1021500_Equip_03.json",
+      "category": "equipment",
+      "description": "Metallic equipment material variant 3",
+      "tags": ["equipment", "metallic", "durable"]
+    },
+    "equip_04": {
+      "file": "MI_1021500_Equip_04.json",
+      "category": "equipment",
+      "description": "Metallic equipment material variant 4",
+      "tags": ["equipment", "metallic", "durable"]
+    },
+    "rim_hero_details": {
+      "file": "MI_1021500_Rim_HeroDetails.json",
+      "category": "lighting",
+      "description": "Rim lighting material for hero details",
+      "tags": ["lighting", "rim", "hero", "details"]
+    }
+  },
+  "category_mapping": {
+    "TORSO": ["torso"],
+    "SUIT_TORSO": ["torso"],
+    "LOWER_BODY": ["legs"],
+    "HEAD": ["head"],
+    "HAND_LEFT": ["hands"],
+    "HAND_RIGHT": ["hands"],
+    "CAPE": ["cape"],
+    "BACKPACK": ["equip_01", "equip_02"],
+    "CHEST_BELT": ["belt"],
+    "BELT": ["belt"],
+    "BUCKLE": ["equip_03", "equip_04"],
+    "POUCH": ["pouch"],
+    "SHOULDERS": ["shoulders"],
+    "FOREARMS": ["forearms"],
+    "BOOTS": ["boots"],
+    "SYMBOL": ["symbol"]
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-01-27",
+    "description": "Complete PBR materials index for 3D Customizer",
+    "total_materials": 15,
+    "categories_covered": 16
+  }
+} 

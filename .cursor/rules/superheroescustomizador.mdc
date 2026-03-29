@@ -1,0 +1,119 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Propósito: Alinear a todo el equipo en un flujo prompt‑⇢code‑⇢review coherente usando Cursor.ai. Las normas se dividen en reglas de proyecto (definen tech & quality gates) y reglas de usuario (cómo dialogar con la IA).
+
+Rule
+
+Detalle concreto
+
+P‑1
+
+Monorepo pnpm + Turborepo
+
+apps/ (frontend, backend) & packages/ (shared, ui) con caché incremental.
+
+P‑2
+
+TypeScript estricto & Path Aliases
+
+"strict": true, baseUrl: ".", alias @/ para raíz. Cero any implícitos.
+
+P‑3
+
+ESLint (Airbnb) + Prettier
+
+Config unificada; Husky + lint‑staged en pre‑commit.
+
+P‑4
+
+Vite + vitest
+
+Front: Vite; tests: Vitest + React Testing Library. Cobertura ≥ 85 %.
+
+P‑5
+
+Backend ESM + tsup
+
+API en TypeScript ESM, empaquetado con tsup.
+
+P‑6
+
+Zustand global state
+
+No Redux; slices por feature.
+
+P‑7
+
+Atomic Design
+
+/atoms, /molecules, /organisms, /pages.
+
+P‑8
+
+OpenAPI Codegen
+
+Tipos TS generados desde supabase OpenAPI para endpoints REST.
+
+P‑9
+
+Conventional Commits + Commitlint
+
+feat:, fix:, ci:, etc.; ver semver.
+
+P‑10
+
+Storybook automatizado
+
+Cada componente documentado; deploy a Vercel preview.
+
+P‑11
+
+Lighthouse & Bundle budgets
+
+Score ≥ 90; JS < 250 kB, GLB inicial < 10 MB.
+
+P‑12
+
+Env & Secrets
+
+.env.example; variables se inyectan via Vercel env.
+
+P‑13
+
+Sentry + Pino
+
+Front errors → Sentry; backend logs estructurados Pino + pino‑http.
+
+P‑14
+
+CI/CD GitHub Actions
+
+Workflows: lint, test, build, preview; no merge si step falla.
+
+P‑15
+
+Peer Review obligatorio
+
+≥ 1 reviewer; aprobar con review completo, no vía “Add suggestion” directa.
+
+P‑16
+
+3D Assets versioning
+
+_vMM en filename; Cloudflare R2 cache‑bust con query hash.
+
+P‑17
+
+Accessibility (WCAG AA)
+
+axe‑react en tests; color tokens verificados.
+
+P‑18
+
+Performance Tracing
+
+
+Web Vitals a /_app endpoint; backend APM via Supabase logs.

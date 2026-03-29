@@ -1,0 +1,21 @@
+# Displacement Map for TECH
+# Generated from: pbr-textures-sample/BeltParts/justiciero_belt_01/TECHVariant/albedo.png
+# Pattern: geometric
+# Intensity: 0.5
+# Smoothing: 0.1
+
+# Este archivo contiene el mapa de desplazamiento que deforma la geometría
+# Los valores van de 0 (negro, sin deformación) a 1 (blanco, deformación máxima)
+
+# Patrón específico para TECH:
+# - Patrones geométricos y líneas duras
+
+# Para usar en Three.js:
+# material.displacementMap = textureLoader.load('displacement-maps\justiciero_belt_01_TECH_displacement.png');
+# material.displacementScale = 0.5;
+# material.displacementBias = 0.0;
+
+# En una implementación real, este sería un archivo PNG con:
+# - Líneas del traje convertidas en elevaciones
+# - Pliegues y costuras como depresiones
+# - Bordes y detalles como variaciones de altura

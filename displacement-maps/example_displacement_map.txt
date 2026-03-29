@@ -1,0 +1,25 @@
+# Ejemplo de Mapa de Desplazamiento
+# Este archivo muestra cómo crear deformaciones basadas en texturas
+
+# Estructura del mapa:
+# - Blanco (255,255,255): Elevación máxima
+# - Gris (128,128,128): Sin deformación  
+# - Negro (0,0,0): Depresión máxima
+
+# Patrones comunes:
+# - Líneas del traje → Elevaciones sutiles
+# - Costuras → Depresiones finas
+# - Bordes → Elevaciones pronunciadas
+# - Pliegues → Variaciones de altura
+
+# Para usar en Three.js:
+# const material = new THREE.MeshStandardMaterial({
+#   displacementMap: displacementTexture,
+#   displacementScale: 0.5,
+#   displacementBias: 0.0
+# });
+
+# En una implementación real, este sería un archivo PNG con:
+# - Resolución: 1024x1024
+# - Formato: PNG con canal de intensidad
+# - Mapeo: UV coordinates del modelo 3D

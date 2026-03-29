@@ -1,0 +1,21 @@
+# Displacement Map for JUSTICIERO
+# Generated from: pbr-textures-sample/BootsParts/strong_boots_01/JUSTICIEROVariant/albedo.png
+# Pattern: armor
+# Intensity: 0.6
+# Smoothing: 0.2
+
+# Este archivo contiene el mapa de desplazamiento que deforma la geometría
+# Los valores van de 0 (negro, sin deformación) a 1 (blanco, deformación máxima)
+
+# Patrón específico para JUSTICIERO:
+# - Placas de armadura y bordes metálicos
+
+# Para usar en Three.js:
+# material.displacementMap = textureLoader.load('displacement-maps\strong_boots_01_JUSTICIERO_displacement.png');
+# material.displacementScale = 0.6;
+# material.displacementBias = 0.0;
+
+# En una implementación real, este sería un archivo PNG con:
+# - Líneas del traje convertidas en elevaciones
+# - Pliegues y costuras como depresiones
+# - Bordes y detalles como variaciones de altura
