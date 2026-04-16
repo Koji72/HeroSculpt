@@ -4,10 +4,10 @@
  * Usage: node scripts/deploy-hostinger.js <zip-path>
  */
 
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const API_TOKEN = process.env.HOSTINGER_API_TOKEN;
 const DOMAIN = 'darkslategrey-ape-448372.hostingersite.com';
@@ -21,15 +21,14 @@ if (!ZIP_PATH || !fs.existsSync(ZIP_PATH)) { console.error('zip path missing or 
 function request(method, urlStr, body, headers) {
   return new Promise((resolve, reject) => {
     const url = new URL(urlStr);
-    const mod = url.protocol === 'https:' ? https : http;
     const opts = {
       hostname: url.hostname,
-      port: url.port || (url.protocol === 'https:' ? 443 : 80),
+      port: url.port || 443,
       path: url.pathname + url.search,
       method,
       headers: { 'Content-Type': 'application/json', ...headers }
     };
-    const req = mod.request(opts, res => {
+    const req = https.request(opts, res => {
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }));
@@ -45,7 +44,6 @@ function uploadFile(urlStr, filePath, headers) {
     const url = new URL(urlStr);
     const fileStream = fs.createReadStream(filePath);
     const stats = fs.statSync(filePath);
-    const mod = https;
     const opts = {
       hostname: url.hostname,
       port: url.port || 443,
@@ -58,7 +56,7 @@ function uploadFile(urlStr, filePath, headers) {
         ...headers
       }
     };
-    const req = mod.request(opts, res => {
+    const req = https.request(opts, res => {
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
@@ -94,8 +92,7 @@ async function deploy() {
 
   // Step 3: Upload file via PATCH
   console.log('Uploading archive...');
-  const upRes = await uploadFile(uploadUrlWithFile,
-    ZIP_PATH,
+  const upRes = await uploadFile(uploadUrlWithFile, ZIP_PATH,
     { 'X-Auth': authToken, 'X-Auth-Rest': authRestToken }
   );
   if (upRes.status < 200 || upRes.status >= 300) throw new Error(`Upload failed: ${upRes.status} ${upRes.body}`);
