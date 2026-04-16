@@ -1,0 +1,80 @@
+name: Deploy HeroSculpt
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          NODE_ENV: production
+
+      - name: Create archive
+        run: |
+          cd dist && zip -r ../herosculpt-dist.zip . && cd ..
+          echo "Archive: $(du -sh herosculpt-dist.zip | cut -f1)"
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            dist/
+            herosculpt-dist.zip
+          retention-days: 1
+
+  deploy-hostinger:
+    name: Deploy → Hostinger Staging
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+
+      - name: Deploy to Hostinger
+        run: node scripts/deploy-hostinger.js herosculpt-dist.zip
+        env:
+          HOSTINGER_API_TOKEN: ${{ secrets.HOSTINGER_API_TOKEN }}
+
+  deploy-vps:
+    name: Deploy → OpenClaw VPS
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 72.62.16.119
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: /usr/local/bin/deploy-herosculpt.sh
+          command_timeout: 5m
