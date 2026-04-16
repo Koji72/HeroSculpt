@@ -110,6 +110,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 <label style={labelStyle}>Email</label>
                 <input
                   type="email"
+                  name="email"
                   placeholder="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -122,6 +123,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 <label style={labelStyle}>Contraseña</label>
                 <input
                   type="password"
+                  name="password"
                   placeholder="contraseña"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
