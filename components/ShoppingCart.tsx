@@ -65,7 +65,17 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
     if (!isAuthenticated) { onAuthRequired?.(); return; }
     setIsProcessing(true);
     try {
-      await onCheckout(cartItems);
+      const items: CartItem[] = cartItems.length > 0 ? cartItems : [{
+        id: crypto.randomUUID(),
+        name: 'Mi Héroe',
+        category: 'hero',
+        price: newTotal,
+        thumbnail: configParts[0]?.thumbnail ?? '',
+        quantity: 1,
+        configuration: currentConfiguration,
+        archetype: '',
+      }];
+      await onCheckout(items);
     } finally {
       setIsProcessing(false);
     }
