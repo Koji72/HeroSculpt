@@ -65,20 +65,30 @@ async function deploy() {
   }
   console.log('   Slot created.');
 
-  // 3. Upload file (PATCH)
+  // 3. Upload file (PATCH) with retry
   console.log('3/4 Uploading archive...');
   const fileBuffer = fs.readFileSync(ZIP_PATH);
-  const uploadRes = await fetch(uploadTarget, {
-    method: 'PATCH',
-    headers: {
-      'X-Auth':         authKey,
-      'X-Auth-Rest':    restAuthKey,
-      'Content-Type':   'application/offset+octet-stream',
-      'Content-Length': String(fileSize),
-      'Upload-Offset':  '0',
-    },
-    body: fileBuffer,
-  });
+  let uploadRes;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      uploadRes = await fetch(uploadTarget, {
+        method: 'PATCH',
+        headers: {
+          'X-Auth':         authKey,
+          'X-Auth-Rest':    restAuthKey,
+          'Content-Type':   'application/offset+octet-stream',
+          'Content-Length': String(fileSize),
+          'Upload-Offset':  '0',
+        },
+        body: fileBuffer,
+      });
+      break;
+    } catch (err) {
+      if (attempt === 3) throw err;
+      console.log(`   Upload attempt ${attempt} failed (${err.message}), retrying in ${attempt * 5}s...`);
+      await new Promise(r => setTimeout(r, attempt * 5000));
+    }
+  }
   if (!uploadRes.ok) {
     const t = await uploadRes.text();
     throw new Error(`Upload failed ${uploadRes.status}: ${t}`);
