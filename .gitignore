@@ -133,3 +133,14 @@ README_OLD.md
 docs/
 # scripts/
 "UI EXAMPLES/"
+
+# Local deploy / review artifacts
+HeroSculpt_*.tar.gz
+HeroSculpt_*.zip
+index-backup.tsx
+debug-*.html
+temp_*.html
+test-*.tsx
+test-*.cjs
+h
+tatus

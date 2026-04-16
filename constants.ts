@@ -456,7 +456,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/torso/strong_torso_01.glb', 
     priceUSD: 1.50, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_torso_01/100/100',
+    thumbnail: '/thumbnails/strong_torso_01.png',
   },
   {
     id: 'strong_torso_02', 
@@ -466,7 +466,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/torso/strong_torso_02.glb', 
     priceUSD: 1.60, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_torso_02/100/100',
+    thumbnail: '/thumbnails/strong_torso_02.png',
   },
   {
     id: 'strong_torso_03', 
@@ -476,7 +476,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/torso/strong_torso_03.glb', 
     priceUSD: 1.70, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_torso_03/100/100',
+    thumbnail: '/thumbnails/strong_torso_03.png',
   },
   {
     id: 'strong_torso_04', 
@@ -486,7 +486,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/torso/strong_torso_04.glb', 
     priceUSD: 1.80, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_torso_04/100/100',
+    thumbnail: '/thumbnails/strong_torso_04.png',
   },
   {
     id: 'strong_torso_05', 
@@ -496,7 +496,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/torso/strong_torso_05.glb', 
     priceUSD: 1.90, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_torso_05/100/100',
+    thumbnail: '/thumbnails/strong_torso_05.png',
   },
 
   // --- STRONG SUIT TORSO (Complete definitions) ---
@@ -508,7 +508,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_01_t01.glb',
     priceUSD: 0.8,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_01_t01.png',
   },
   {
     id: 'strong_suit_torso_01_t02',
@@ -518,7 +518,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_01_t02.glb',
     priceUSD: 0.8,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_01_t02/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_01_t02.png',
   },
   {
     id: 'strong_suit_torso_01_t03',
@@ -528,7 +528,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_01_t03.glb',
     priceUSD: 0.8,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_01_t03/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_01_t03.png',
   },
   {
     id: 'strong_suit_torso_01_t04',
@@ -538,7 +538,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_01_t04.glb',
     priceUSD: 0.8,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_01_t04/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_01_t04.png',
   },
   {
     id: 'strong_suit_torso_01_t05',
@@ -548,7 +548,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_01_t05.glb',
     priceUSD: 0.8,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_01_t05/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_01_t05.png',
   },
   {
     id: 'strong_suit_torso_02_t01',
@@ -558,7 +558,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_02_t01.glb',
     priceUSD: 0.85,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_02_t01/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_02_t01.png',
   },
   {
     id: 'strong_suit_torso_02_t02',
@@ -568,7 +568,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_02_t02.glb',
     priceUSD: 0.85,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_02_t02/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_02_t02.png',
   },
   {
     id: 'strong_suit_torso_02_t03',
@@ -578,7 +578,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_02_t03.glb',
     priceUSD: 0.85,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_02_t03/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_02_t03.png',
   },
   {
     id: 'strong_suit_torso_02_t04',
@@ -588,7 +588,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_02_t04.glb',
     priceUSD: 0.85,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_02_t04/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_02_t04.png',
   },
   {
     id: 'strong_suit_torso_02_t05',
@@ -598,7 +598,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_02_t05.glb',
     priceUSD: 0.85,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_02_t05/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_02_t05.png',
   },
   {
     id: 'strong_suit_torso_03_t01',
@@ -608,7 +608,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_03_t01.glb',
     priceUSD: 0.9,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_03_t01/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_03_t01.png',
   },
   {
     id: 'strong_suit_torso_03_t02',
@@ -618,7 +618,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_03_t02.glb',
     priceUSD: 0.9,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_03_t02/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_03_t02.png',
   },
   {
     id: 'strong_suit_torso_03_t03',
@@ -628,7 +628,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_03_t03.glb',
     priceUSD: 0.9,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_03_t03/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_03_t03.png',
   },
   {
     id: 'strong_suit_torso_03_t04',
@@ -638,7 +638,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_03_t04.glb',
     priceUSD: 0.9,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_03_t04/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_03_t04.png',
   },
   {
     id: 'strong_suit_torso_03_t05',
@@ -648,7 +648,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_03_t05.glb',
     priceUSD: 0.9,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_03_t05/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_03_t05.png',
   },
   {
     id: 'strong_suit_torso_04_t01',
@@ -658,7 +658,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_04_t01.glb',
     priceUSD: 0.95,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_04_t01/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_04_t01.png',
   },
   {
     id: 'strong_suit_torso_04_t02',
@@ -668,7 +668,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_04_t02.glb',
     priceUSD: 0.95,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_04_t02/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_04_t02.png',
   },
   {
     id: 'strong_suit_torso_04_t03',
@@ -678,7 +678,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_04_t03.glb',
     priceUSD: 0.95,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_04_t03/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_04_t03.png',
   },
   {
     id: 'strong_suit_torso_04_t04',
@@ -688,7 +688,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_04_t04.glb',
     priceUSD: 0.95,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_04_t04/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_04_t04.png',
   },
   {
     id: 'strong_suit_torso_04_t05',
@@ -698,7 +698,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_04_t05.glb',
     priceUSD: 0.95,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_suit_torso_04_t05/100/100',
+    thumbnail: '/thumbnails/strong_suit_torso_04_t05.png',
   },
 
   // --- STRONG LEGS (Multiple boot options per leg) ---
@@ -710,7 +710,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/legs/strong_legs_01.glb', 
     priceUSD: 1.00, 
     compatible: ['strong_boots_01_l01', 'strong_boots_02_l01', 'strong_boots_03_l01', 'strong_boots_04_l01'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_01/100/100',
+    thumbnail: '/thumbnails/strong_legs_01.png',
   },
   {
     id: 'strong_legs_02', 
@@ -720,7 +720,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/legs/strong_legs_02.glb', 
     priceUSD: 1.10, 
     compatible: ['strong_boots_02_l02', 'strong_boots_03_l02', 'strong_boots_04_l02'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_02/100/100',
+    thumbnail: '/thumbnails/strong_legs_02.png',
   },
   {
     id: 'strong_legs_03', 
@@ -730,7 +730,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/legs/strong_legs_03.glb', 
     priceUSD: 1.20, 
     compatible: ['strong_boots_01_l03', 'strong_boots_02_l03', 'strong_boots_03_l03', 'strong_boots_04_l03'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_03/100/100',
+    thumbnail: '/thumbnails/strong_legs_03.png',
   },
   {
     id: 'strong_legs_04', 
@@ -740,7 +740,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/legs/strong_legs_04.glb', 
     priceUSD: 1.30, 
     compatible: ['strong_boots_01_l04', 'strong_boots_02_l04', 'strong_boots_03_l04', 'strong_boots_04_l04'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_04/100/100',
+    thumbnail: '/thumbnails/strong_legs_04.png',
   },
   {
     id: 'strong_legs_05', 
@@ -750,7 +750,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/legs/strong_legs_05.glb', 
     priceUSD: 1.40, 
     compatible: ['strong_boots_01_l05', 'strong_boots_02_l05', 'strong_boots_03_l05', 'strong_boots_04_l05'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_05/100/100',
+    thumbnail: '/thumbnails/strong_legs_05.png',
   },
   {
     id: 'strong_legs_06', 
@@ -760,7 +760,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/legs/strong_legs_06.glb', 
     priceUSD: 1.50, 
     compatible: ['strong_boots_01_l06', 'strong_boots_02_l06', 'strong_boots_03_l06', 'strong_boots_04_l06'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_06/100/100',
+    thumbnail: '/thumbnails/strong_legs_06.png',
   },
 
   // --- STRONG BOOTS (Leg-specific compatibility) ---
@@ -772,7 +772,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_01_l01.glb',
     priceUSD: 0.75, 
     compatible: ['strong_legs_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_01_l01/100/100', 
+    thumbnail: '/thumbnails/strong_boots_01_l01.png', 
     attributes: { pair: true },
   },
   {
@@ -783,7 +783,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_01_l03.glb', 
     priceUSD: 0.75, 
     compatible: ['strong_legs_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_01_l03/100/100', 
+    thumbnail: '/thumbnails/strong_boots_01_l03.png', 
     attributes: { pair: true },
   },
   {
@@ -794,7 +794,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_01_l04.glb', 
     priceUSD: 0.75, 
     compatible: ['strong_legs_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_01_l04/100/100', 
+    thumbnail: '/thumbnails/strong_boots_01_l04.png', 
     attributes: { pair: true },
   },
   {
@@ -805,7 +805,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_01_l05.glb', 
     priceUSD: 0.75, 
     compatible: ['strong_legs_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_01_l05/100/100', 
+    thumbnail: '/thumbnails/strong_boots_01_l05.png', 
     attributes: { pair: true },
   },
   {
@@ -816,7 +816,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_01_l06.glb', 
     priceUSD: 0.75, 
     compatible: ['strong_legs_06'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_01_l06/100/100', 
+    thumbnail: '/thumbnails/strong_boots_01_l06.png', 
     attributes: { pair: true },
   },
   {
@@ -827,7 +827,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_02_l01.glb', 
     priceUSD: 0.80, 
     compatible: ['strong_legs_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_02_l01/100/100', 
+    thumbnail: '/thumbnails/strong_boots_02_l01.png', 
     attributes: { pair: true },
   },
   {
@@ -838,7 +838,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_02_l02.glb', 
     priceUSD: 0.80, 
     compatible: ['strong_legs_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_02_l02/100/100', 
+    thumbnail: '/thumbnails/strong_boots_02_l02.png', 
     attributes: { pair: true },
   },
   {
@@ -849,7 +849,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_02_l03.glb', 
     priceUSD: 0.80, 
     compatible: ['strong_legs_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_02_l03/100/100', 
+    thumbnail: '/thumbnails/strong_boots_02_l03.png', 
     attributes: { pair: true },
   },
   {
@@ -860,7 +860,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_02_l04.glb', 
     priceUSD: 0.80, 
     compatible: ['strong_legs_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_02_l04/100/100', 
+    thumbnail: '/thumbnails/strong_boots_02_l04.png', 
     attributes: { pair: true },
   },
   {
@@ -871,7 +871,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_02_l05.glb', 
     priceUSD: 0.80, 
     compatible: ['strong_legs_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_02_l05/100/100', 
+    thumbnail: '/thumbnails/strong_boots_02_l05.png', 
     attributes: { pair: true },
   },
   {
@@ -882,7 +882,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_02_l06.glb', 
     priceUSD: 0.80, 
     compatible: ['strong_legs_06'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_02_l06/100/100', 
+    thumbnail: '/thumbnails/strong_boots_02_l06.png', 
     attributes: { pair: true },
   },
   {
@@ -893,7 +893,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_03_l01.glb', 
     priceUSD: 0.85, 
     compatible: ['strong_legs_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_03_l01/100/100', 
+    thumbnail: '/thumbnails/strong_boots_03_l01.png', 
     attributes: { pair: true },
   },
   {
@@ -904,7 +904,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_03_l02.glb', 
     priceUSD: 0.85, 
     compatible: ['strong_legs_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_03_l02/100/100', 
+    thumbnail: '/thumbnails/strong_boots_03_l02.png', 
     attributes: { pair: true },
   },
   {
@@ -915,7 +915,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_03_l03.glb', 
     priceUSD: 0.85, 
     compatible: ['strong_legs_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_03_l03/100/100', 
+    thumbnail: '/thumbnails/strong_boots_03_l03.png', 
     attributes: { pair: true },
   },
   {
@@ -926,7 +926,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_03_l04.glb',
     priceUSD: 0.85, 
     compatible: ['strong_legs_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_03_l04/100/100', 
+    thumbnail: '/thumbnails/strong_boots_03_l04.png', 
     attributes: { pair: true },
   },
   {
@@ -937,7 +937,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_03_l05.glb', 
     priceUSD: 0.85, 
     compatible: ['strong_legs_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_03_l05/100/100', 
+    thumbnail: '/thumbnails/strong_boots_03_l05.png', 
     attributes: { pair: true },
   },
   {
@@ -948,7 +948,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_03_l06.glb', 
     priceUSD: 0.85, 
     compatible: ['strong_legs_06'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_03_l06/100/100', 
+    thumbnail: '/thumbnails/strong_boots_03_l06.png', 
     attributes: { pair: true },
   },
   {
@@ -959,7 +959,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_04_l01.glb', 
     priceUSD: 0.90, 
     compatible: ['strong_legs_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_04_l01/100/100', 
+    thumbnail: '/thumbnails/strong_boots_04_l01.png', 
     attributes: { pair: true },
   },
   {
@@ -970,7 +970,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_04_l02.glb', 
     priceUSD: 0.90, 
     compatible: ['strong_legs_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_04_l02/100/100', 
+    thumbnail: '/thumbnails/strong_boots_04_l02.png', 
     attributes: { pair: true },
   },
   {
@@ -981,7 +981,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_04_l03.glb', 
     priceUSD: 0.90, 
     compatible: ['strong_legs_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_04_l03/100/100', 
+    thumbnail: '/thumbnails/strong_boots_04_l03.png', 
     attributes: { pair: true },
   },
   {
@@ -992,7 +992,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_04_l04.glb', 
     priceUSD: 0.90, 
     compatible: ['strong_legs_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_04_l04/100/100', 
+    thumbnail: '/thumbnails/strong_boots_04_l04.png', 
     attributes: { pair: true },
   },
   {
@@ -1003,7 +1003,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_04_l05.glb', 
     priceUSD: 0.90, 
     compatible: ['strong_legs_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_04_l05/100/100', 
+    thumbnail: '/thumbnails/strong_boots_04_l05.png', 
     attributes: { pair: true },
   },
   {
@@ -1014,7 +1014,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/boots/strong_boots_04_l06.glb',
     priceUSD: 0.90, 
     compatible: ['strong_legs_06'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_04_l06/100/100', 
+    thumbnail: '/thumbnails/strong_boots_04_l06.png', 
     attributes: { pair: true },
   },
 
@@ -1027,7 +1027,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_01_t01.glb',
     priceUSD: 1.20, 
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_head_01_t01.png',
     attributes: { torsoType: '01', headType: '01' },
   },
   {
@@ -1038,7 +1038,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_01_t02.glb',
     priceUSD: 1.20,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_01_t02/100/100',
+    thumbnail: '/thumbnails/strong_head_01_t02.png',
     attributes: { torsoType: '02', headType: '01' },
   },
   {
@@ -1049,7 +1049,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_02_t01.glb',
     priceUSD: 1.25,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_02_t01/100/100',
+    thumbnail: '/thumbnails/strong_head_02_t01.png',
     attributes: { torsoType: '01', headType: '02' },
   },
   {
@@ -1060,7 +1060,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_03_t01.glb',
     priceUSD: 1.30,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_03_t01/100/100',
+    thumbnail: '/thumbnails/strong_head_03_t01.png',
     attributes: { torsoType: '01', headType: '03' },
   },
   {
@@ -1071,7 +1071,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_04_t01.glb',
     priceUSD: 1.35,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_04_t01/100/100',
+    thumbnail: '/thumbnails/strong_head_04_t01.png',
     attributes: { torsoType: '01', headType: '04' },
   },
   {
@@ -1082,7 +1082,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_02_t02.glb',
     priceUSD: 1.25,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_02_t02/100/100',
+    thumbnail: '/thumbnails/strong_head_02_t02.png',
     attributes: { torsoType: '02', headType: '02' },
   },
   {
@@ -1093,7 +1093,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_03_t02.glb',
     priceUSD: 1.30,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_03_t02/100/100',
+    thumbnail: '/thumbnails/strong_head_03_t02.png',
     attributes: { torsoType: '02', headType: '03' },
   },
   {
@@ -1104,7 +1104,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_04_t02.glb',
     priceUSD: 1.35,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_04_t02/100/100',
+    thumbnail: '/thumbnails/strong_head_04_t02.png',
     attributes: { torsoType: '02', headType: '04' },
   },
   {
@@ -1115,7 +1115,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_01_t03.glb',
     priceUSD: 1.20,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_01_t03/100/100',
+    thumbnail: '/thumbnails/strong_head_01_t03.png',
     attributes: { torsoType: '03', headType: '01' },
   },
   {
@@ -1126,7 +1126,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_02_t03.glb',
     priceUSD: 1.25,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_02_t03/100/100',
+    thumbnail: '/thumbnails/strong_head_02_t03.png',
     attributes: { torsoType: '03', headType: '02' },
   },
   {
@@ -1137,7 +1137,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_03_t03.glb',
     priceUSD: 1.30,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_03_t03/100/100',
+    thumbnail: '/thumbnails/strong_head_03_t03.png',
     attributes: { torsoType: '03', headType: '03' },
   },
   {
@@ -1148,7 +1148,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_04_t03.glb',
     priceUSD: 1.35,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_04_t03/100/100',
+    thumbnail: '/thumbnails/strong_head_04_t03.png',
     attributes: { torsoType: '03', headType: '04' },
   },
   {
@@ -1159,7 +1159,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_01_t04.glb',
     priceUSD: 1.20,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_01_t04/100/100',
+    thumbnail: '/thumbnails/strong_head_01_t04.png',
     attributes: { torsoType: '04', headType: '01' },
   },
   {
@@ -1170,7 +1170,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_02_t04.glb',
     priceUSD: 1.25,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_02_t04/100/100',
+    thumbnail: '/thumbnails/strong_head_02_t04.png',
     attributes: { torsoType: '04', headType: '02' },
   },
   {
@@ -1181,7 +1181,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_03_t04.glb',
     priceUSD: 1.30,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_03_t04/100/100',
+    thumbnail: '/thumbnails/strong_head_03_t04.png',
     attributes: { torsoType: '04', headType: '03' },
   },
   {
@@ -1192,7 +1192,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_04_t04.glb',
     priceUSD: 1.35,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_04_t04/100/100',
+    thumbnail: '/thumbnails/strong_head_04_t04.png',
     attributes: { torsoType: '04', headType: '04' },
   },
   {
@@ -1203,7 +1203,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_01_t05.glb',
     priceUSD: 1.20,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_01_t05/100/100',
+    thumbnail: '/thumbnails/strong_head_01_t05.png',
     attributes: { torsoType: '05', headType: '01' },
   },
   {
@@ -1214,7 +1214,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_02_t05.glb',
     priceUSD: 1.25,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_02_t05/100/100',
+    thumbnail: '/thumbnails/strong_head_02_t05.png',
     attributes: { torsoType: '05', headType: '02' },
   },
   {
@@ -1225,7 +1225,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_03_t05.glb',
     priceUSD: 1.30,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_03_t05/100/100',
+    thumbnail: '/thumbnails/strong_head_03_t05.png',
     attributes: { torsoType: '05', headType: '03' },
   },
   {
@@ -1236,7 +1236,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/head/strong_head_04_t05.glb',
     priceUSD: 1.35,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_04_t05/100/100',
+    thumbnail: '/thumbnails/strong_head_04_t05.png',
     attributes: { torsoType: '05', headType: '04' },
   },
 
@@ -1250,7 +1250,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t01_l.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1265,7 +1265,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t01_r.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1280,7 +1280,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t02_l.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1295,7 +1295,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t02_r.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1310,7 +1310,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t03_l.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1325,7 +1325,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t03_r.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1340,7 +1340,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t05_l.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1355,7 +1355,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_bands_01_t05_r.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_bands_01_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_bands_01_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1370,7 +1370,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t01_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t01_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t01_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1385,7 +1385,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t01_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1400,7 +1400,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t01_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t01_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t01_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1415,7 +1415,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t01_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1430,7 +1430,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t02_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t02_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t02_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1445,7 +1445,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t02_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1460,7 +1460,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t02_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t02_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t02_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1475,7 +1475,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t02_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1490,7 +1490,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t03_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t03_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t03_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1505,7 +1505,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t03_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1520,7 +1520,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t03_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t03_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t03_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1535,7 +1535,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t03_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1550,7 +1550,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t04_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t04_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t04_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1565,7 +1565,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t04_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t04_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t04_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1580,7 +1580,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t05_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t05_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t05_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1595,7 +1595,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t05_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1610,7 +1610,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_fist_01_t05_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_fist_01_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1625,7 +1625,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t01_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t01_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t01_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1640,7 +1640,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t01_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1655,7 +1655,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t01_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t01_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t01_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1670,7 +1670,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t01_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1685,7 +1685,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t02_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t02_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t02_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1700,7 +1700,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t02_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1715,7 +1715,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t02_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t02_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t02_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1730,7 +1730,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t02_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1745,7 +1745,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t03_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t03_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t03_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1760,7 +1760,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t03_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1775,7 +1775,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t03_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t03_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t03_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1790,7 +1790,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t03_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1805,7 +1805,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t04_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t04_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t04_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1820,7 +1820,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t04_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t04_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t04_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1835,7 +1835,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t04_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t04_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t04_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1850,7 +1850,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t04_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t04_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t04_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1865,7 +1865,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t05_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t05_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t05_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1880,7 +1880,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t05_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1895,7 +1895,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t05_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t05_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t05_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1910,7 +1910,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_01_t05_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_01_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_01_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1925,7 +1925,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t01_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -1940,7 +1940,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t01_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t01_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t01_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -1955,7 +1955,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t01_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -1970,7 +1970,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t02_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t02_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t02_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -1985,7 +1985,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t02_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2000,7 +2000,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t02_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t02_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t02_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2015,7 +2015,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t02_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2030,7 +2030,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t03_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t03_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t03_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2045,7 +2045,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t03_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2060,7 +2060,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t03_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t03_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t03_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2075,7 +2075,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t03_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2090,7 +2090,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t04_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t04_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t04_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2105,7 +2105,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t04_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t04_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t04_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2120,7 +2120,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t04_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t04_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t04_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2135,7 +2135,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t04_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t04_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t04_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2150,7 +2150,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t05_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t05_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t05_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2165,7 +2165,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t05_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2180,7 +2180,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t05_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t05_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t05_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2195,7 +2195,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_02_t05_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_02_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_02_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2210,7 +2210,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t01_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t01_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t01_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2225,7 +2225,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t01_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2240,7 +2240,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t01_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t01_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t01_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2255,7 +2255,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t01_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2270,7 +2270,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t02_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t02_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t02_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2285,7 +2285,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t02_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2300,7 +2300,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t02_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t02_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t02_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2315,7 +2315,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t02_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2330,7 +2330,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t03_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t03_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t03_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2345,7 +2345,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t03_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2360,7 +2360,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t03_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t03_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t03_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2375,7 +2375,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t03_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2390,7 +2390,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t04_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t04_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t04_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2405,7 +2405,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t04_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t04_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t04_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2420,7 +2420,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t04_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t04_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t04_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2435,7 +2435,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t04_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t04_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t04_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2450,7 +2450,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t05_l_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t05_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t05_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2465,7 +2465,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t05_l_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2480,7 +2480,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t05_r_g.glb',
   priceUSD: 0.75,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t05_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t05_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2495,7 +2495,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_hammer_03_t05_r_ng.glb',
   priceUSD: 0.65,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_hammer_03_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_hammer_03_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2510,7 +2510,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t01_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t01_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t01_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2525,7 +2525,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t01_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2540,7 +2540,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t01_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t01_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t01_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2555,7 +2555,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t01_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2570,7 +2570,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t02_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t02_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t02_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2585,7 +2585,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t02_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2600,7 +2600,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t02_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t02_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t02_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2615,7 +2615,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t02_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2630,7 +2630,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t03_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t03_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t03_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2645,7 +2645,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t03_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2660,7 +2660,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t03_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t03_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t03_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2675,7 +2675,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t03_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2690,7 +2690,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t04_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t04_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t04_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2705,7 +2705,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t04_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t04_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t04_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2720,7 +2720,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t04_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t04_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t04_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2735,7 +2735,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t04_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t04_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t04_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2750,7 +2750,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t05_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t05_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t05_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2765,7 +2765,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t05_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2780,7 +2780,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t05_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t05_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t05_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2795,7 +2795,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_noweapon_01_t05_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_noweapon_01_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_noweapon_01_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2810,7 +2810,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t01_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t01_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t01_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2825,7 +2825,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t01_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t01_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t01_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2840,7 +2840,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t01_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t01_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t01_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2855,7 +2855,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t01_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_01'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t01_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t01_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2870,7 +2870,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t02_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t02_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t02_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2885,7 +2885,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t02_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t02_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t02_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2900,7 +2900,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t02_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t02_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t02_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2915,7 +2915,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t02_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_02'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t02_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t02_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2930,7 +2930,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t03_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t03_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t03_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -2945,7 +2945,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t03_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t03_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t03_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -2960,7 +2960,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t03_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t03_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t03_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -2975,7 +2975,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t03_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_03'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t03_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t03_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -2990,7 +2990,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t04_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t04_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t04_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -3005,7 +3005,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t04_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t04_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t04_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -3020,7 +3020,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t04_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t04_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t04_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -3035,7 +3035,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t05_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t05_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t05_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -3050,7 +3050,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t05_l_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t05_l_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t05_l_ng.png',
   attributes: {
   "side": "left",
   "glove": false,
@@ -3065,7 +3065,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t05_r_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t05_r_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t05_r_g.png',
   attributes: {
   "side": "right",
   "glove": true,
@@ -3080,7 +3080,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_01_t05_r_ng.glb',
   priceUSD: 0.5,
   compatible: ['strong_torso_05'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_01_t05_r_ng/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_01_t05_r_ng.png',
   attributes: {
   "side": "right",
   "glove": false,
@@ -3095,7 +3095,7 @@ export const ALL_PARTS: Part[] = [
   gltfPath: 'assets/strong/hands/strong_hands_pistol_04_t04_l_g.glb',
   priceUSD: 0.6,
   compatible: ['strong_torso_04'],
-  thumbnail: 'https://picsum.photos/seed/strong_hands_pistol_04_t04_l_g/100/100',
+  thumbnail: '/thumbnails/strong_hands_pistol_04_t04_l_g.png',
   attributes: {
   "side": "left",
   "glove": true,
@@ -3110,7 +3110,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_01_t01.glb', 
     priceUSD: 0.35,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_cape_01_t01.png',
   },
   {
     id: 'strong_cape_01_t02',
@@ -3120,7 +3120,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_01_t02.glb',
     priceUSD: 0.35,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_01_t02/100/100',
+    thumbnail: '/thumbnails/strong_cape_01_t02.png',
   },
   {
     id: 'strong_cape_01_t03',
@@ -3130,7 +3130,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_01_t03.glb',
     priceUSD: 0.35,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_01_t03/100/100',
+    thumbnail: '/thumbnails/strong_cape_01_t03.png',
   },
   {
     id: 'strong_cape_01_t04',
@@ -3140,7 +3140,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_01_t04.glb',
     priceUSD: 0.35,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_01_t04/100/100',
+    thumbnail: '/thumbnails/strong_cape_01_t04.png',
   },
   {
     id: 'strong_cape_01_t05',
@@ -3150,7 +3150,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_01_t05.glb',
     priceUSD: 0.35,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_01_t05/100/100',
+    thumbnail: '/thumbnails/strong_cape_01_t05.png',
   },
   {
     id: 'strong_cape_02_t01',
@@ -3160,7 +3160,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_02_t01.glb',
     priceUSD: 0.4,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_02_t01/100/100',
+    thumbnail: '/thumbnails/strong_cape_02_t01.png',
   },
   {
     id: 'strong_cape_02_t02',
@@ -3170,7 +3170,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_02_t02.glb',
     priceUSD: 0.4,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_02_t02/100/100',
+    thumbnail: '/thumbnails/strong_cape_02_t02.png',
   },
   {
     id: 'strong_cape_02_t03',
@@ -3180,7 +3180,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_02_t03.glb',
     priceUSD: 0.4,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_02_t03/100/100',
+    thumbnail: '/thumbnails/strong_cape_02_t03.png',
   },
   {
     id: 'strong_cape_02_t04',
@@ -3190,7 +3190,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_02_t04.glb',
     priceUSD: 0.4,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_02_t04/100/100',
+    thumbnail: '/thumbnails/strong_cape_02_t04.png',
   },
   {
     id: 'strong_cape_02_t05',
@@ -3200,7 +3200,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_02_t05.glb',
     priceUSD: 0.4,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_02_t05/100/100',
+    thumbnail: '/thumbnails/strong_cape_02_t05.png',
   },
   {
     id: 'strong_cape_03_t01',
@@ -3210,7 +3210,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_03_t01.glb',
     priceUSD: 0.45,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_03_t01/100/100',
+    thumbnail: '/thumbnails/strong_cape_03_t01.png',
   },
   {
     id: 'strong_cape_03_t02',
@@ -3220,7 +3220,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_03_t02.glb',
     priceUSD: 0.45,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_03_t02/100/100',
+    thumbnail: '/thumbnails/strong_cape_03_t02.png',
   },
   {
     id: 'strong_cape_03_t03',
@@ -3230,7 +3230,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_03_t03.glb',
     priceUSD: 0.45,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_03_t03/100/100',
+    thumbnail: '/thumbnails/strong_cape_03_t03.png',
   },
   {
     id: 'strong_cape_03_t04',
@@ -3240,7 +3240,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_03_t04.glb',
     priceUSD: 0.45,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_03_t04/100/100',
+    thumbnail: '/thumbnails/strong_cape_03_t04.png',
   },
   {
     id: 'strong_cape_03_t05',
@@ -3250,7 +3250,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_03_t05.glb',
     priceUSD: 0.45,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_03_t05/100/100',
+    thumbnail: '/thumbnails/strong_cape_03_t05.png',
   },
   {
     id: 'strong_cape_04_t01',
@@ -3260,7 +3260,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_04_t01.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_04_t01/100/100',
+    thumbnail: '/thumbnails/strong_cape_04_t01.png',
   },
   {
     id: 'strong_cape_04_t02',
@@ -3270,7 +3270,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_04_t02.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_04_t02/100/100',
+    thumbnail: '/thumbnails/strong_cape_04_t02.png',
   },
   {
     id: 'strong_cape_04_t03',
@@ -3280,7 +3280,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_04_t03.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_04_t03/100/100',
+    thumbnail: '/thumbnails/strong_cape_04_t03.png',
   },
   {
     id: 'strong_cape_04_t04',
@@ -3290,7 +3290,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_04_t04.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_04_t04/100/100',
+    thumbnail: '/thumbnails/strong_cape_04_t04.png',
   },
   {
     id: 'strong_cape_04_t05',
@@ -3300,7 +3300,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/cape/strong_cape_04_t05.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_04_t05/100/100',
+    thumbnail: '/thumbnails/strong_cape_04_t05.png',
   },
 
   // --- STRONG CHEST BELT ACCESSORIES ---
@@ -3312,7 +3312,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_np.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_01', 'strong_torso_02', 'strong_torso_03', 'strong_torso_04', 'strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_np/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_np.png',
   },
   {
     id: 'strong_beltchest_01_t01_np',
@@ -3322,7 +3322,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t01_np.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t01_np/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t01_np.png',
   },
   {
     id: 'strong_beltchest_01_t01',
@@ -3332,7 +3332,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t01.glb',
     priceUSD: 0.6,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t01.png',
   },
   {
     id: 'strong_beltchest_01_t02_np',
@@ -3342,7 +3342,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t02_np.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t02_np/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t02_np.png',
   },
   {
     id: 'strong_beltchest_01_t02',
@@ -3352,7 +3352,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t02.glb',
     priceUSD: 0.6,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t02/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t02.png',
   },
   {
     id: 'strong_beltchest_01_t03_np',
@@ -3362,7 +3362,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t03_np.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t03_np/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t03_np.png',
   },
   {
     id: 'strong_beltchest_01_t03',
@@ -3372,7 +3372,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t03.glb',
     priceUSD: 0.6,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t03/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t03.png',
   },
   {
     id: 'strong_beltchest_01_t04_np',
@@ -3382,7 +3382,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t04_np.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t04_np/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t04_np.png',
   },
   {
     id: 'strong_beltchest_01_t04',
@@ -3392,7 +3392,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t04.glb',
     priceUSD: 0.6,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t04/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t04.png',
   },
   {
     id: 'strong_beltchest_01_t05_np',
@@ -3402,7 +3402,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t05_np.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t05_np/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t05_np.png',
   },
   {
     id: 'strong_beltchest_01_t05',
@@ -3412,7 +3412,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t05.glb',
     priceUSD: 0.6,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_beltchest_01_t05/100/100',
+    thumbnail: '/thumbnails/strong_beltchest_01_t05.png',
   },
 
   // --- STRONG BELT ACCESSORIES ---
@@ -3424,7 +3424,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/belt/strong_belt_01.glb', 
     priceUSD: 0.30, 
     compatible: ['strong_torso_01', 'strong_torso_02', 'strong_torso_03', 'strong_torso_04', 'strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_belt_01/100/100',
+    thumbnail: '/thumbnails/strong_belt_01.png',
   },
   {
     id: 'strong_belt_02', 
@@ -3434,7 +3434,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/belt/strong_belt_02.glb', 
     priceUSD: 0.35, 
     compatible: ['strong_torso_01', 'strong_torso_02', 'strong_torso_03', 'strong_torso_04', 'strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_belt_02/100/100',
+    thumbnail: '/thumbnails/strong_belt_02.png',
   },
 
   // --- STRONG BUCKLES ---
@@ -3446,7 +3446,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/buckle/strong_buckle_01.glb', 
     priceUSD: 0.10, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_01/100/100',
+    thumbnail: '/thumbnails/strong_buckle_01.png',
   },
   {
     id: 'strong_buckle_02', 
@@ -3456,7 +3456,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/buckle/strong_buckle_02.glb', 
     priceUSD: 0.12, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_02/100/100',
+    thumbnail: '/thumbnails/strong_buckle_02.png',
   },
   {
     id: 'strong_buckle_03', 
@@ -3466,7 +3466,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/buckle/strong_buckle_03.glb', 
     priceUSD: 0.15, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_03/100/100',
+    thumbnail: '/thumbnails/strong_buckle_03.png',
   },
   {
     id: 'strong_buckle_04', 
@@ -3476,7 +3476,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/buckle/strong_buckle_04.glb', 
     priceUSD: 0.18, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_04/100/100',
+    thumbnail: '/thumbnails/strong_buckle_04.png',
   },
   {
     id: 'strong_buckle_05', 
@@ -3486,7 +3486,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/buckle/strong_buckle_05.glb', 
     priceUSD: 0.20, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_05/100/100',
+    thumbnail: '/thumbnails/strong_buckle_05.png',
   },
   {
     id: 'strong_buckle_06', 
@@ -3496,7 +3496,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/buckle/strong_buckle_06.glb', 
     priceUSD: 0.25, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_06/100/100',
+    thumbnail: '/thumbnails/strong_buckle_06.png',
   },
 
   // --- STRONG POUCHES ---
@@ -3508,7 +3508,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/pouch/strong_pouch_01.glb', 
     priceUSD: 0.15, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_01/100/100',
+    thumbnail: '/thumbnails/strong_pouch_01.png',
   },
   {
     id: 'strong_pouch_02', 
@@ -3518,7 +3518,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/pouch/strong_pouch_02.glb', 
     priceUSD: 0.18, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_02/100/100',
+    thumbnail: '/thumbnails/strong_pouch_02.png',
   },
   {
     id: 'strong_pouch_03', 
@@ -3528,7 +3528,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/pouch/strong_pouch_03.glb', 
     priceUSD: 0.20, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_03/100/100',
+    thumbnail: '/thumbnails/strong_pouch_03.png',
   },
   {
     id: 'strong_pouch_04', 
@@ -3538,7 +3538,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/pouch/strong_pouch_04.glb', 
     priceUSD: 0.22, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_04/100/100',
+    thumbnail: '/thumbnails/strong_pouch_04.png',
   },
   {
     id: 'strong_pouch_05', 
@@ -3548,7 +3548,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/pouch/strong_pouch_05.glb', 
     priceUSD: 0.25, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_05/100/100',
+    thumbnail: '/thumbnails/strong_pouch_05.png',
   },
   {
     id: 'strong_pouch_06', 
@@ -3558,7 +3558,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/pouch/strong_pouch_06.glb', 
     priceUSD: 0.28, 
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_06/100/100',
+    thumbnail: '/thumbnails/strong_pouch_06.png',
   },
 
   // --- STRONG SYMBOLS (Dependent on torso) ---
@@ -3570,7 +3570,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t01.glb', 
     priceUSD: 0.30, 
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t01.png',
   },
   {
     id: 'strong_symbol_01_t02', 
@@ -3580,7 +3580,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t02.glb', 
     priceUSD: 0.30, 
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t02/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t02.png',
   },
   {
     id: 'strong_symbol_01_t03', 
@@ -3590,7 +3590,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t03.glb', 
     priceUSD: 0.30, 
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t03/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t03.png',
   },
   {
     id: 'strong_symbol_01_t04', 
@@ -3600,7 +3600,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t04.glb', 
     priceUSD: 0.30, 
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t04.png',
   },
   {
     id: 'strong_symbol_01_t05', 
@@ -3610,7 +3610,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t05.glb', 
     priceUSD: 0.45,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t05.png',
   },
   {
     id: 'strong_symbol_02_t01', 
@@ -3620,7 +3620,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_02_t01.glb', 
     priceUSD: 0.35, 
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_02_t01/100/100',
+    thumbnail: '/thumbnails/strong_symbol_02_t01.png',
   },
   {
     id: 'strong_symbol_02_t02', 
@@ -3630,7 +3630,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_02_t02.glb', 
     priceUSD: 0.35, 
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_02_t02/100/100',
+    thumbnail: '/thumbnails/strong_symbol_02_t02.png',
   },
   {
     id: 'strong_symbol_02_t03', 
@@ -3640,7 +3640,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_02_t03.glb', 
     priceUSD: 0.35, 
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_02_t03/100/100',
+    thumbnail: '/thumbnails/strong_symbol_02_t03.png',
   },
   {
     id: 'strong_symbol_02_t04', 
@@ -3650,7 +3650,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_02_t04.glb', 
     priceUSD: 0.35, 
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_02_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_02_t04.png',
   },
   {
     id: 'strong_symbol_02_t05', 
@@ -3660,7 +3660,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_02_t05.glb', 
     priceUSD: 0.35, 
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_02_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_02_t05.png',
   },
   {
     id: 'strong_symbol_03_t01', 
@@ -3670,7 +3670,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_03_t01.glb', 
     priceUSD: 0.40, 
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_03_t01/100/100',
+    thumbnail: '/thumbnails/strong_symbol_03_t01.png',
   },
   {
     id: 'strong_symbol_03_t02', 
@@ -3680,7 +3680,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_03_t02.glb', 
     priceUSD: 0.40, 
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_03_t02/100/100',
+    thumbnail: '/thumbnails/strong_symbol_03_t02.png',
   },
   {
     id: 'strong_symbol_03_t03', 
@@ -3690,7 +3690,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_03_t03.glb', 
     priceUSD: 0.40, 
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_03_t03/100/100',
+    thumbnail: '/thumbnails/strong_symbol_03_t03.png',
   },
   {
     id: 'strong_symbol_03_t04', 
@@ -3700,7 +3700,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_03_t04.glb', 
     priceUSD: 0.40, 
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_03_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_03_t04.png',
   },
   {
     id: 'strong_symbol_03_t05', 
@@ -3710,7 +3710,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_03_t05.glb', 
     priceUSD: 0.40, 
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_03_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_03_t05.png',
   },
   {
     id: 'strong_symbol_04_t01', 
@@ -3720,7 +3720,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_04_t01.glb', 
     priceUSD: 0.45, 
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_04_t01/100/100',
+    thumbnail: '/thumbnails/strong_symbol_04_t01.png',
   },
   {
     id: 'strong_symbol_04_t02', 
@@ -3730,7 +3730,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_04_t02.glb', 
     priceUSD: 0.45, 
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_04_t02/100/100',
+    thumbnail: '/thumbnails/strong_symbol_04_t02.png',
   },
   {
     id: 'strong_symbol_04_t03', 
@@ -3740,7 +3740,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_04_t03.glb', 
     priceUSD: 0.45, 
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_04_t03/100/100',
+    thumbnail: '/thumbnails/strong_symbol_04_t03.png',
   },
   {
     id: 'strong_symbol_04_t04', 
@@ -3750,7 +3750,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_04_t04.glb', 
     priceUSD: 0.45, 
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_04_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_04_t04.png',
   },
   {
     id: 'strong_symbol_04_t05', 
@@ -3760,7 +3760,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_04_t05.glb', 
     priceUSD: 0.45, 
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_04_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_04_t05.png',
   },
   {
     id: 'strong_symbol_05_t01', 
@@ -3770,7 +3770,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_05_t01.glb', 
     priceUSD: 0.50,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_05_t01/100/100',
+    thumbnail: '/thumbnails/strong_symbol_05_t01.png',
   },
   {
     id: 'strong_symbol_05_t02', 
@@ -3780,7 +3780,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_05_t02.glb', 
     priceUSD: 0.50,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_05_t02/100/100',
+    thumbnail: '/thumbnails/strong_symbol_05_t02.png',
   },
   {
     id: 'strong_symbol_05_t03', 
@@ -3790,7 +3790,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_05_t03.glb', 
     priceUSD: 0.50,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_05_t03/100/100',
+    thumbnail: '/thumbnails/strong_symbol_05_t03.png',
   },
   {
     id: 'strong_symbol_05_t04', 
@@ -3800,7 +3800,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_05_t04.glb', 
     priceUSD: 0.50,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_05_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_05_t04.png',
   },
   {
     id: 'strong_symbol_05_t05', 
@@ -3810,7 +3810,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_05_t05.glb', 
     priceUSD: 0.50,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_05_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_05_t05.png',
   },
   {
     id: 'strong_symbol_06_t02', 
@@ -3820,7 +3820,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_06_t02.glb', 
     priceUSD: 0.55,
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_06_t02/100/100',
+    thumbnail: '/thumbnails/strong_symbol_06_t02.png',
   },
   {
     id: 'strong_symbol_06_t03', 
@@ -3830,7 +3830,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_06_t03.glb', 
     priceUSD: 0.55,
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_06_t03/100/100',
+    thumbnail: '/thumbnails/strong_symbol_06_t03.png',
   },
   {
     id: 'strong_symbol_06_t04', 
@@ -3840,7 +3840,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_06_t04.glb', 
     priceUSD: 0.55,
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_06_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_06_t04.png',
   },
   {
     id: 'strong_symbol_06_t05', 
@@ -3850,7 +3850,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_06_t05.glb', 
     priceUSD: 0.55,
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_06_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_06_t05.png',
   },
   // No Symbol variants
   {
@@ -3861,7 +3861,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_ns.glb', 
     priceUSD: 0.00, 
     compatible: ['strong_torso_01', 'strong_torso_02', 'strong_torso_03', 'strong_torso_04', 'strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_ns/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_ns.png',
     attributes: { none: true },
   },
   {
@@ -3872,7 +3872,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t01_ns.glb', 
     priceUSD: 0.00, 
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t01_ns/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t01_ns.png',
     attributes: { none: true },
   },
   {
@@ -3883,7 +3883,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t02_ns.glb', 
     priceUSD: 0.00, 
     compatible: ['strong_torso_02'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t02_ns/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t02_ns.png',
     attributes: { none: true },
   },
   {
@@ -3894,7 +3894,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t03_ns.glb', 
     priceUSD: 0.00, 
     compatible: ['strong_torso_03'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t03_ns/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t03_ns.png',
     attributes: { none: true },
   },
   {
@@ -3905,7 +3905,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_none_01_t04.glb', 
     priceUSD: 0.00, 
     compatible: ['strong_torso_04'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_none_01_t04/100/100',
+    thumbnail: '/thumbnails/strong_symbol_none_01_t04.png',
     attributes: { none: true },
   },
   {
@@ -3916,7 +3916,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/strong/symbol/strong_symbol_none_01_t05.glb', 
     priceUSD: 0.00, 
     compatible: ['strong_torso_05'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_none_01_t05/100/100',
+    thumbnail: '/thumbnails/strong_symbol_none_01_t05.png',
     attributes: { none: true },
   },
 
@@ -3929,7 +3929,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/torso/justiciero_torso_01.glb',
     priceUSD: 1.50,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_torso_01/100/100',
+    thumbnail: '/thumbnails/justiciero_torso_01.png',
   },
   {
     id: 'justiciero_legs_01',
@@ -3939,7 +3939,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/legs/justiciero_legs_01.glb',
     priceUSD: 1.20,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_legs_01/100/100',
+    thumbnail: '/thumbnails/justiciero_legs_01.png',
   },
   {
     id: 'justiciero_head_01',
@@ -3949,7 +3949,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/head/justiciero_head_01.glb',
     priceUSD: 1.00,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_head_01/100/100',
+    thumbnail: '/thumbnails/justiciero_head_01.png',
   },
   {
     id: 'justiciero_hand_left_01',
@@ -3959,7 +3959,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/hands/justiciero_hand_left_01.glb',
     priceUSD: 0.75,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_hand_left_01/100/100',
+    thumbnail: '/thumbnails/justiciero_hand_left_01.png',
   },
   {
     id: 'justiciero_hand_right_01',
@@ -3969,7 +3969,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/hands/justiciero_hand_right_01.glb',
     priceUSD: 0.75,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_hand_right_01/100/100',
+    thumbnail: '/thumbnails/justiciero_hand_right_01.png',
   },
   {
     id: 'justiciero_cape_01',
@@ -3979,7 +3979,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/cape/justiciero_cape_01.glb',
     priceUSD: 0.90,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_cape_01/100/100',
+    thumbnail: '/thumbnails/justiciero_cape_01.png',
   },
   {
     id: 'justiciero_beltchest_01',
@@ -3989,7 +3989,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/beltchest/justiciero_beltchest_01.glb',
     priceUSD: 0.80,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_beltchest_01/100/100',
+    thumbnail: '/thumbnails/justiciero_beltchest_01.png',
   },
 
   {
@@ -4000,7 +4000,7 @@ export const ALL_PARTS: Part[] = [
     gltfPath: 'assets/justiciero/boots/justiciero_boots_01.glb',
     priceUSD: 0.85,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_boots_01/100/100',
+    thumbnail: '/thumbnails/justiciero_boots_01.png',
   },
   // Add more Justiciero parts as needed based on your GLB files
 ];
@@ -4014,7 +4014,7 @@ export const createNonePart = (category: PartCategory, archetypeId: ArchetypeId)
   gltfPath: '',
   priceUSD: 0,
   compatible: [],
-  thumbnail: `https://picsum.photos/seed/none_${category}/100/100`,
+  thumbnail: `/thumbnails/none_${category}.png`,
   attributes: { none: true },
 });
 
@@ -4027,7 +4027,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/torso/strong_torso_01.glb',
     priceUSD: 1.50,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_torso_01/100/100',
+    thumbnail: '/thumbnails/strong_torso_01.png',
   },
   [PartCategory.HEAD]: {
     id: 'strong_head_01_t01',
@@ -4037,7 +4037,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/head/strong_head_01_t01.glb',
     priceUSD: 1.20,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_head_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_head_01_t01.png',
     attributes: { torsoType: '01', headType: '01' },
   },
   [PartCategory.HAND_LEFT]: {
@@ -4048,7 +4048,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/hands/strong_hands_fist_01_t01_l_ng.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t01_l_ng/100/100',
+    thumbnail: '/thumbnails/strong_hands_fist_01_t01_l_ng.png',
     attributes: { side: 'left', glove: false, weapon: 'fist' },
   },
   [PartCategory.HAND_RIGHT]: {
@@ -4059,7 +4059,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/hands/strong_hands_fist_01_t01_r_ng.glb',
     priceUSD: 0.5,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_hands_fist_01_t01_r_ng/100/100',
+    thumbnail: '/thumbnails/strong_hands_fist_01_t01_r_ng.png',
     attributes: { side: 'right', glove: false, weapon: 'fist' },
   },
   [PartCategory.LOWER_BODY]: {
@@ -4070,7 +4070,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/legs/strong_legs_01.glb',
     priceUSD: 1.00,
     compatible: ['strong_boots_01_l01', 'strong_boots_02_l01', 'strong_boots_03_l01', 'strong_boots_04_l01'],
-    thumbnail: 'https://picsum.photos/seed/strong_legs_01/100/100',
+    thumbnail: '/thumbnails/strong_legs_01.png',
   },
   [PartCategory.BOOTS]: {
     id: 'strong_boots_01_l01',
@@ -4080,7 +4080,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/boots/strong_boots_01_l01.glb',
     priceUSD: 0.75,
     compatible: ['strong_legs_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_boots_01_l01/100/100',
+    thumbnail: '/thumbnails/strong_boots_01_l01.png',
     attributes: { pair: true },
   },
   [PartCategory.CAPE]: {
@@ -4091,7 +4091,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/cape/strong_cape_01_t01.glb',
     priceUSD: 0.35,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_cape_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_cape_01_t01.png',
   },
   [PartCategory.BELT]: {
     id: 'strong_belt_01',
@@ -4101,7 +4101,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/belt/strong_belt_01.glb',
     priceUSD: 0.30,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_belt_01/100/100',
+    thumbnail: '/thumbnails/strong_belt_01.png',
   },
   [PartCategory.BUCKLE]: {
     id: 'strong_buckle_01',
@@ -4111,7 +4111,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/buckle/strong_buckle_01.glb',
     priceUSD: 0.10,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_buckle_01/100/100',
+    thumbnail: '/thumbnails/strong_buckle_01.png',
   },
   [PartCategory.POUCH]: {
     id: 'strong_pouch_01',
@@ -4121,7 +4121,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/pouch/strong_pouch_01.glb',
     priceUSD: 0.15,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/strong_pouch_01/100/100',
+    thumbnail: '/thumbnails/strong_pouch_01.png',
   },
   [PartCategory.SYMBOL]: {
     id: 'strong_symbol_01_t01',
@@ -4131,7 +4131,7 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     gltfPath: 'assets/strong/symbol/strong_symbol_01_t01.glb',
     priceUSD: 0.30,
     compatible: ['strong_torso_01'],
-    thumbnail: 'https://picsum.photos/seed/strong_symbol_01_t01/100/100',
+    thumbnail: '/thumbnails/strong_symbol_01_t01.png',
   },
 };
 
@@ -4144,7 +4144,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/torso/justiciero_torso_01.glb',
     priceUSD: 1.50,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_torso_01/100/100',
+    thumbnail: '/thumbnails/justiciero_torso_01.png',
   },
   [PartCategory.HEAD]: {
     id: 'justiciero_head_01',
@@ -4154,7 +4154,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/head/justiciero_head_01.glb',
     priceUSD: 1.00,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_head_01/100/100',
+    thumbnail: '/thumbnails/justiciero_head_01.png',
   },
   [PartCategory.HAND_LEFT]: {
     id: 'justiciero_hand_left_01',
@@ -4164,7 +4164,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/hands/justiciero_hand_left_01.glb',
     priceUSD: 0.75,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_hand_left_01/100/100',
+    thumbnail: '/thumbnails/justiciero_hand_left_01.png',
   },
   [PartCategory.HAND_RIGHT]: {
     id: 'justiciero_hand_right_01',
@@ -4174,7 +4174,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/hands/justiciero_hand_right_01.glb',
     priceUSD: 0.75,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_hand_right_01/100/100',
+    thumbnail: '/thumbnails/justiciero_hand_right_01.png',
   },
   [PartCategory.LOWER_BODY]: {
     id: 'justiciero_legs_01',
@@ -4184,7 +4184,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/legs/justiciero_legs_01.glb',
     priceUSD: 1.20,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_legs_01/100/100',
+    thumbnail: '/thumbnails/justiciero_legs_01.png',
   },
   [PartCategory.BOOTS]: {
     id: 'justiciero_boots_01',
@@ -4194,7 +4194,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/boots/justiciero_boots_01.glb',
     priceUSD: 0.85,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_boots_01/100/100',
+    thumbnail: '/thumbnails/justiciero_boots_01.png',
   },
   [PartCategory.CAPE]: {
     id: 'justiciero_cape_01',
@@ -4204,7 +4204,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/cape/justiciero_cape_01.glb',
     priceUSD: 0.90,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_cape_01/100/100',
+    thumbnail: '/thumbnails/justiciero_cape_01.png',
   },
   [PartCategory.CHEST_BELT]: {
     id: 'justiciero_beltchest_01',
@@ -4214,7 +4214,7 @@ export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {
     gltfPath: 'assets/justiciero/beltchest/justiciero_beltchest_01.glb',
     priceUSD: 0.80,
     compatible: [],
-    thumbnail: 'https://picsum.photos/seed/justiciero_beltchest_01/100/100',
+    thumbnail: '/thumbnails/justiciero_beltchest_01.png',
   },
 };
 

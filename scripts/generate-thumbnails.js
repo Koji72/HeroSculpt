@@ -18,7 +18,7 @@
 
 import puppeteer from 'puppeteer';
 import { execSync } from 'child_process';
-import { readdirSync, existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'fs';
+import { readdirSync, existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync, copyFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -65,8 +65,10 @@ function buildThreeBundle(distDir) {
   writeFileSync(ENTRY_FILE, [
     "import * as THREE from 'three';",
     "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';",
+    "import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';",
     "window.__THREE__ = THREE;",
     "window.__GLTFLoader__ = GLTFLoader;",
+    "window.__DRACOLoader__ = DRACOLoader;",
   ].join('\n'));
 
   try {
@@ -91,9 +93,10 @@ const SCENE_HTML = `<!DOCTYPE html>
 <script src="${BASE_URL}/_three-bundle.js"></script>
 <script>
 (function () {
-  const THREE     = window.__THREE__;
-  const GLTFLoader = window.__GLTFLoader__;
-  if (!THREE || !GLTFLoader) {
+  const THREE      = window.__THREE__;
+  const GLTFLoader  = window.__GLTFLoader__;
+  const DRACOLoader = window.__DRACOLoader__;
+  if (!THREE || !GLTFLoader || !DRACOLoader) {
     document.title = 'ERROR:no-three';
     return;
   }
@@ -118,7 +121,10 @@ const SCENE_HTML = `<!DOCTYPE html>
   scene.add(fillLight);
   scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('/_draco/');
   const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
   let currentModel = null;
 
   window.renderGLB = function (glbUrl) {
@@ -161,6 +167,16 @@ const SCENE_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
+function copyDracoAssets(distDir) {
+  const dracoSrc = path.join(ROOT, 'node_modules', 'three', 'examples', 'jsm', 'libs', 'draco', 'gltf');
+  const dracoOut = path.join(distDir, '_draco');
+  mkdirSync(dracoOut, { recursive: true });
+
+  for (const file of ['draco_decoder.js', 'draco_decoder.wasm', 'draco_wasm_wrapper.js']) {
+    copyFileSync(path.join(dracoSrc, file), path.join(dracoOut, file));
+  }
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -195,6 +211,7 @@ async function main() {
   }
 
   buildThreeBundle(DIST_DIR);
+  copyDracoAssets(DIST_DIR);
 
   // Write scene HTML to dist/ so it's accessible at BASE_URL/_ts.html
   const SCENE_FILE = path.join(DIST_DIR, '_ts.html');
@@ -215,7 +232,7 @@ async function main() {
     page.on('pageerror', err => console.error('  [page error]', err.message));
 
     // Load the scene (Three.js bundle + scene setup, all from localhost — no CDN)
-    await page.goto(`${BASE_URL}/_ts.html`, { waitUntil: 'networkidle0', timeout: 30_000 });
+    await page.goto(`${BASE_URL}/_ts.html`, { waitUntil: 'load', timeout: 30_000 });
 
     const title = await page.title();
     if (title.startsWith('ERROR')) {
