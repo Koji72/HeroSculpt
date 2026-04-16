@@ -16,7 +16,7 @@
  */
 
 import puppeteer from 'puppeteer';
-import { readdirSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { readdirSync, existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -51,8 +51,12 @@ export function derivePartId(glbPath) {
   return path.basename(glbPath, '.glb');
 }
 
-// ── Minimal Three.js scene injected into Puppeteer ───────────────────────────
-// Loads Three.js from CDN — VPS needs internet access.
+// ── Three.js CDN base — requests are intercepted and served from node_modules ─
+const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.177.0/';
+
+// ── Minimal Three.js scene written to dist/ and served via localhost:5177 ────
+// Using localhost avoids ES module origin restrictions from page.setContent.
+// CDN requests are intercepted → served from local node_modules (no internet needed).
 const SCENE_HTML = `<!DOCTYPE html>
 <html>
 <head><style>*{margin:0;padding:0} body{background:#0f0f1a;}</style></head>
@@ -60,8 +64,8 @@ const SCENE_HTML = `<!DOCTYPE html>
 <canvas id="c"></canvas>
 <script type="importmap">
 {"imports":{
-  "three":"https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
-  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"
+  "three":"${THREE_CDN}build/three.module.js",
+  "three/addons/":"${THREE_CDN}examples/jsm/"
 }}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -162,6 +166,16 @@ async function main() {
     process.exit(0);
   }
 
+  // Write scene HTML to dist/ so it's served at http://localhost:5177/_ts.html
+  // (avoids ES module origin restrictions from page.setContent on about:blank)
+  const DIST_DIR   = path.join(ROOT, 'dist');
+  const SCENE_FILE = path.join(DIST_DIR, '_ts.html');
+  if (!existsSync(DIST_DIR)) {
+    console.error('❌ dist/ not found — run npm run build first, or ensure serve is running');
+    process.exit(1);
+  }
+  writeFileSync(SCENE_FILE, SCENE_HTML);
+
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -171,7 +185,35 @@ async function main() {
     const page = await browser.newPage();
     await page.setViewport({ width: 512, height: 512 });
 
-    await page.setContent(SCENE_HTML, { waitUntil: 'networkidle0' });
+    // Intercept CDN requests → serve Three.js from local node_modules
+    // This allows the script to work without internet access on the VPS.
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const url = req.url();
+      if (url.startsWith(THREE_CDN)) {
+        const rel   = url.slice(THREE_CDN.length).split('?')[0];
+        const local = path.join(ROOT, 'node_modules', 'three', rel);
+        if (existsSync(local)) {
+          req.respond({
+            status: 200,
+            contentType: 'application/javascript; charset=utf-8',
+            body: readFileSync(local),
+          });
+        } else {
+          console.warn(`  [CDN intercept] not found locally: ${rel}`);
+          req.abort('failed');
+        }
+      } else {
+        req.continue();
+      }
+    });
+
+    // Log browser console errors for debugging
+    page.on('console', msg => {
+      if (msg.type() === 'error') console.error('  [browser]', msg.text());
+    });
+
+    await page.goto(`${BASE_URL}/_ts.html`, { waitUntil: 'load', timeout: 30_000 });
     await page.waitForFunction(() => window._sceneReady === true, { timeout: 30_000 });
 
     let done = 0;
@@ -203,6 +245,7 @@ async function main() {
     console.log(`\n✅ Done. Rendered: ${done}  Failed: ${failed}`);
   } finally {
     await browser.close();
+    try { unlinkSync(SCENE_FILE); } catch {}  // clean up temp scene file
   }
 
   updateConstants();
