@@ -7,8 +7,9 @@
  * After all renders: patches constants.ts to replace picsum.photos URLs.
  *
  * Pre-conditions:
- *   - `serve` (or `npm run dev`) running on port 5177
+ *   - serve (or npm run dev) running on port 5177
  *   - Node 18+ with puppeteer installed (npm install)
+ *   - esbuild available (comes with vite, in node_modules/.bin/esbuild)
  *
  * Usage:
  *   node scripts/generate-thumbnails.js            # full run
@@ -16,6 +17,7 @@
  */
 
 import puppeteer from 'puppeteer';
+import { execSync } from 'child_process';
 import { readdirSync, existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -40,7 +42,7 @@ function findGlbFiles(dir) {
   return results;
 }
 
-/** Convert an absolute glb path to a URL the headless browser can fetch. */
+/** Convert absolute glb path to a URL served by localhost. */
 function glbToUrl(glbPath) {
   const rel = path.relative(path.join(ROOT, 'public'), glbPath).replace(/\\/g, '/');
   return `${BASE_URL}/${rel}`;
@@ -51,91 +53,110 @@ export function derivePartId(glbPath) {
   return path.basename(glbPath, '.glb');
 }
 
-// ── Three.js CDN base — requests are intercepted and served from node_modules ─
-const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.177.0/';
+// ── Build Three.js + GLTFLoader bundle (no CDN, no importmaps) ───────────────
+// Uses esbuild (ships with vite) to create a single IIFE containing Three.js
+// and GLTFLoader. Output is served from dist/ via localhost:5177.
+function buildThreeBundle(distDir) {
+  const BUNDLE_OUT   = path.join(distDir, '_three-bundle.js');
+  const ENTRY_FILE   = path.join(ROOT, 'scripts', '_three_entry_tmp.js');
+  const ESBUILD_BIN  = path.join(ROOT, 'node_modules', '.bin', 'esbuild');
 
-// ── Minimal Three.js scene written to dist/ and served via localhost:5177 ────
-// Using localhost avoids ES module origin restrictions from page.setContent.
-// CDN requests are intercepted → served from local node_modules (no internet needed).
-const SCENE_HTML = `<!DOCTYPE html>
-<html>
-<head><style>*{margin:0;padding:0} body{background:#0f0f1a;}</style></head>
-<body>
-<canvas id="c"></canvas>
-<script type="importmap">
-{"imports":{
-  "three":"${THREE_CDN}build/three.module.js",
-  "three/addons/":"${THREE_CDN}examples/jsm/"
-}}</script>
-<script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  // Write minimal entry that exports THREE and GLTFLoader to window
+  writeFileSync(ENTRY_FILE, [
+    "import * as THREE from 'three';",
+    "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';",
+    "window.__THREE__ = THREE;",
+    "window.__GLTFLoader__ = GLTFLoader;",
+  ].join('\n'));
 
-const W = 512, H = 512;
-const canvas = document.getElementById('c');
-canvas.width  = W;
-canvas.height = H;
-
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setSize(W, H);
-renderer.setPixelRatio(1);
-renderer.setClearColor(0x0f0f1a);
-renderer.shadowMap.enabled = true;
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0f0f1a);
-
-const camera = new THREE.PerspectiveCamera(45, W / H, 0.01, 1000);
-
-const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
-keyLight.position.set(2, 3, 2);
-scene.add(keyLight);
-
-const fillLight = new THREE.DirectionalLight(0x8090ff, 0.4);
-fillLight.position.set(-2, 1, -1);
-scene.add(fillLight);
-
-scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-
-const loader = new GLTFLoader();
-let currentModel = null;
-
-window.renderGLB = async (glbUrl) => {
-  if (currentModel) {
-    scene.remove(currentModel);
-    currentModel = null;
+  try {
+    execSync(
+      `"${ESBUILD_BIN}" "${ENTRY_FILE}" --bundle --format=iife --outfile="${BUNDLE_OUT}"`,
+      { cwd: ROOT, stdio: 'pipe' }
+    );
+    console.log(`✅ Three.js bundle written to dist/_three-bundle.js (${Math.round(readFileSync(BUNDLE_OUT).length / 1024)}KB)`);
+  } finally {
+    try { unlinkSync(ENTRY_FILE); } catch {}
   }
 
-  const gltf = await loader.loadAsync(glbUrl);
-  currentModel = gltf.scene;
-  scene.add(currentModel);
+  return BUNDLE_OUT;
+}
 
-  // Auto-fit camera: 3/4 isometric view (azimuth 45 deg, elevation 30 deg)
-  const box    = new THREE.Box3().setFromObject(currentModel);
-  const center = box.getCenter(new THREE.Vector3());
-  const size   = box.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y, size.z);
-  const fov    = camera.fov * (Math.PI / 180);
-  const dist   = (maxDim / 2) / Math.tan(fov / 2) * 1.8;
+// ── Minimal scene HTML — uses bundle from localhost, no ES module imports ────
+const SCENE_HTML = `<!DOCTYPE html>
+<html>
+<head><style>*{margin:0;padding:0} body{background:#0f0f1a;overflow:hidden;}</style></head>
+<body>
+<canvas id="c" width="512" height="512"></canvas>
+<script src="${BASE_URL}/_three-bundle.js"></script>
+<script>
+(function () {
+  const THREE     = window.__THREE__;
+  const GLTFLoader = window.__GLTFLoader__;
+  if (!THREE || !GLTFLoader) {
+    document.title = 'ERROR:no-three';
+    return;
+  }
 
-  const az = Math.PI / 4;   // 45 deg azimuth
-  const el = Math.PI / 6;   // 30 deg elevation
+  const W = 512, H = 512;
+  const canvas   = document.getElementById('c');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x0f0f1a);
+  renderer.shadowMap.enabled = true;
 
-  camera.position.set(
-    center.x + dist * Math.sin(az) * Math.cos(el),
-    center.y + dist * Math.sin(el),
-    center.z + dist * Math.cos(az) * Math.cos(el)
-  );
-  camera.lookAt(center);
+  const scene  = new THREE.Scene();
+  scene.background = new THREE.Color(0x0f0f1a);
+  const camera = new THREE.PerspectiveCamera(45, W / H, 0.01, 1000);
 
-  // Two render passes to ensure material textures resolve
-  renderer.render(scene, camera);
-  await new Promise(r => requestAnimationFrame(() => { renderer.render(scene, camera); r(); }));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  keyLight.position.set(2, 3, 2);
+  scene.add(keyLight);
+  const fillLight = new THREE.DirectionalLight(0x8090ff, 0.4);
+  fillLight.position.set(-2, 1, -1);
+  scene.add(fillLight);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
-  window._renderDone = true;
-};
+  const loader = new GLTFLoader();
+  let currentModel = null;
 
-window._sceneReady = true;
+  window.renderGLB = function (glbUrl) {
+    return new Promise(function (resolve, reject) {
+      if (currentModel) {
+        scene.remove(currentModel);
+        currentModel = null;
+      }
+      loader.load(glbUrl, function (gltf) {
+        currentModel = gltf.scene;
+        scene.add(currentModel);
+
+        var box    = new THREE.Box3().setFromObject(currentModel);
+        var center = box.getCenter(new THREE.Vector3());
+        var size   = box.getSize(new THREE.Vector3());
+        var maxDim = Math.max(size.x, size.y, size.z);
+        var fov    = camera.fov * (Math.PI / 180);
+        var dist   = (maxDim / 2) / Math.tan(fov / 2) * 1.8;
+        var az = Math.PI / 4;
+        var el = Math.PI / 6;
+        camera.position.set(
+          center.x + dist * Math.sin(az) * Math.cos(el),
+          center.y + dist * Math.sin(el),
+          center.z + dist * Math.cos(az) * Math.cos(el)
+        );
+        camera.lookAt(center);
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(function () {
+          renderer.render(scene, camera);
+          resolve();
+        });
+      }, undefined, reject);
+    });
+  };
+
+  window._sceneReady = true;
+})();
 </script>
 </body>
 </html>`;
@@ -144,7 +165,7 @@ window._sceneReady = true;
 
 async function main() {
   if (!existsSync(ASSETS_DIR)) {
-    console.error('❌ public/assets/ not found — run from the HeroSculpt project root');
+    console.error('ERROR public/assets/ not found -- run from HeroSculpt project root');
     process.exit(1);
   }
   mkdirSync(OUT_DIR, { recursive: true });
@@ -152,7 +173,7 @@ async function main() {
   const glbFiles = findGlbFiles(ASSETS_DIR);
   const pending  = glbFiles.filter(f => !existsSync(path.join(OUT_DIR, derivePartId(f) + '.png')));
 
-  console.log(`📦 Found ${glbFiles.length} GLB files. ${glbFiles.length - pending.length} already rendered. ${pending.length} to render.`);
+  console.log(`Found ${glbFiles.length} GLB files. ${glbFiles.length - pending.length} already rendered. ${pending.length} to render.`);
 
   if (DRY_RUN) {
     console.log('\n[DRY RUN] First 10 pending:');
@@ -161,19 +182,22 @@ async function main() {
   }
 
   if (pending.length === 0) {
-    console.log('✅ All thumbnails up to date.');
+    console.log('All thumbnails up to date.');
     updateConstants();
     process.exit(0);
   }
 
-  // Write scene HTML to dist/ so it's served at http://localhost:5177/_ts.html
-  // (avoids ES module origin restrictions from page.setContent on about:blank)
-  const DIST_DIR   = path.join(ROOT, 'dist');
-  const SCENE_FILE = path.join(DIST_DIR, '_ts.html');
+  // Build the Three.js bundle
+  const DIST_DIR = path.join(ROOT, 'dist');
   if (!existsSync(DIST_DIR)) {
-    console.error('❌ dist/ not found — run npm run build first, or ensure serve is running');
+    console.error('ERROR dist/ not found -- run npm run build first, or ensure serve is running');
     process.exit(1);
   }
+
+  buildThreeBundle(DIST_DIR);
+
+  // Write scene HTML to dist/ so it's accessible at BASE_URL/_ts.html
+  const SCENE_FILE = path.join(DIST_DIR, '_ts.html');
   writeFileSync(SCENE_FILE, SCENE_HTML);
 
   const browser = await puppeteer.launch({
@@ -185,36 +209,22 @@ async function main() {
     const page = await browser.newPage();
     await page.setViewport({ width: 512, height: 512 });
 
-    // Intercept CDN requests → serve Three.js from local node_modules
-    // This allows the script to work without internet access on the VPS.
-    await page.setRequestInterception(true);
-    page.on('request', (req) => {
-      const url = req.url();
-      if (url.startsWith(THREE_CDN)) {
-        const rel   = url.slice(THREE_CDN.length).split('?')[0];
-        const local = path.join(ROOT, 'node_modules', 'three', rel);
-        if (existsSync(local)) {
-          req.respond({
-            status: 200,
-            contentType: 'application/javascript; charset=utf-8',
-            body: readFileSync(local),
-          });
-        } else {
-          console.warn(`  [CDN intercept] not found locally: ${rel}`);
-          req.abort('failed');
-        }
-      } else {
-        req.continue();
-      }
-    });
-
-    // Log browser console errors for debugging
     page.on('console', msg => {
-      if (msg.type() === 'error') console.error('  [browser]', msg.text());
+      if (msg.type() === 'error') console.error('  [browser error]', msg.text());
     });
+    page.on('pageerror', err => console.error('  [page error]', err.message));
 
-    await page.goto(`${BASE_URL}/_ts.html`, { waitUntil: 'load', timeout: 30_000 });
+    // Load the scene (Three.js bundle + scene setup, all from localhost — no CDN)
+    await page.goto(`${BASE_URL}/_ts.html`, { waitUntil: 'networkidle0', timeout: 30_000 });
+
+    const title = await page.title();
+    if (title.startsWith('ERROR')) {
+      console.error(`ERROR Scene init failed: ${title}`);
+      process.exit(1);
+    }
+
     await page.waitForFunction(() => window._sceneReady === true, { timeout: 30_000 });
+    console.log('Scene ready. Starting renders...');
 
     let done = 0;
     let failed = 0;
@@ -225,9 +235,8 @@ async function main() {
       const outFile = path.join(OUT_DIR, partId + '.png');
 
       try {
-        await page.evaluate(() => { window._renderDone = false; });
         await page.evaluate((url) => window.renderGLB(url), glbUrl);
-        await page.waitForFunction(() => window._renderDone === true, { timeout: 10_000 });
+        await page.waitForFunction(() => window._sceneReady === true, { timeout: 10_000 });
 
         const canvasEl = await page.$('#c');
         await canvasEl.screenshot({ path: outFile, type: 'png' });
@@ -237,15 +246,16 @@ async function main() {
           console.log(`  [${done}/${pending.length}] ${partId}`);
         }
       } catch (err) {
-        console.error(`  ❌ Failed: ${partId} — ${err.message}`);
+        console.error(`  FAILED: ${partId} -- ${err.message}`);
         failed++;
       }
     }
 
-    console.log(`\n✅ Done. Rendered: ${done}  Failed: ${failed}`);
+    console.log(`\nDone. Rendered: ${done}  Failed: ${failed}`);
   } finally {
     await browser.close();
-    try { unlinkSync(SCENE_FILE); } catch {}  // clean up temp scene file
+    try { unlinkSync(SCENE_FILE); } catch {}
+    // Keep the bundle for potential re-runs; it will be overwritten next time
   }
 
   updateConstants();
@@ -263,15 +273,15 @@ function updateConstants() {
   );
 
   if (before === after) {
-    console.log('ℹ️  constants.ts thumbnail URLs already updated.');
+    console.log('constants.ts thumbnail URLs already updated.');
     return;
   }
 
   writeFileSync(constantsPath, after);
-  console.log('✅ constants.ts: updated thumbnail URLs to /thumbnails/{id}.png');
+  console.log('constants.ts: updated thumbnail URLs to /thumbnails/{id}.png');
 }
 
 main().catch(e => {
-  console.error('\n❌ Fatal error:', e.message);
+  console.error('\nFATAL:', e.message);
   process.exit(1);
 });
