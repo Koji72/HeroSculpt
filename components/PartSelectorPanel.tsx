@@ -38,6 +38,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   const [previewParts, setPreviewParts] = useState<SelectedParts>(selectedParts);
   const [hasChanges, setHasChanges] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
 
@@ -257,9 +258,9 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   }, [activeCategory, selectedParts, onPreviewChange, onPartSelect]);
 
   const handleHoverPreview = useCallback((part: Part | null) => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => {
     if (!activeCategory || !onPreviewChange) return;
-
-    console.log('🔍 [HOVER PREVIEW] Recibiendo part:', part?.id || 'null', 'para categoría:', activeCategory);
 
     let hoverPreviewParts: SelectedParts = { ...selectedParts };
 
@@ -416,6 +417,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       boots: hoverPreviewParts[PartCategory.BOOTS]?.id || 'removed'
     });
     onPreviewChange(hoverPreviewParts);
+    }, 150);
   }, [activeCategory, selectedParts, onPreviewChange, characterViewerRef]);
 
   useEffect(() => {
@@ -432,6 +434,18 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleCancelChanges]);
+
+  useEffect(() => {
+    if (!activeCategory || !selectedArchetype || !characterViewerRef?.current) return;
+    const partsToPreload = ALL_PARTS.filter(
+      p =>
+        p.category === activeCategory &&
+        p.archetype === selectedArchetype &&
+        !p.attributes?.none &&
+        Boolean(p.gltfPath)
+    );
+    characterViewerRef.current.preloadParts(partsToPreload);
+  }, [activeCategory, selectedArchetype]);
 
   if (!selectedArchetype || !activeCategory) {
     // console.log('🚫 PartSelectorPanel not showing - missing:', { selectedArchetype, activeCategory });
@@ -749,7 +763,15 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '6px',
           alignContent: 'start',
-        }}>
+        }}
+        onMouseLeave={() => {
+          if (hoverTimerRef.current) {
+            clearTimeout(hoverTimerRef.current);
+            hoverTimerRef.current = null;
+          }
+          if (onPreviewChange) onPreviewChange({});
+        }}
+      >
           {partsToShow.map(part => {
             if (!part || typeof part !== 'object' || !part.id) {
               return null;

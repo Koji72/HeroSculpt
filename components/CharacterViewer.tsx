@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-import { SelectedParts, ArchetypeId, PartCategory } from '../types';
+import { SelectedParts, ArchetypeId, PartCategory, Part } from '../types';
 import { ALL_PARTS, DEFAULT_JUSTICIERO_BUILD, DEFAULT_STRONG_BUILD } from '../constants';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -61,6 +61,7 @@ export interface CharacterViewerRef {
   setComposer: (composer: EffectComposer | null) => void; // New method for effects
       debugMeshes: () => void; // Nueva función de debug
     debugAvailableParts: () => void; // Debug available parts
+  preloadParts: (parts: Part[]) => void;
 }
 
 const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
@@ -2105,7 +2106,15 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       } else {
         console.log('❌ Model group not available for debugging');
       }
-    }
+    },
+    preloadParts: (parts: Part[]) => {
+      const paths = parts
+        .filter(p => p.gltfPath && !p.attributes?.none)
+        .map(p => p.gltfPath);
+      if (paths.length > 0) {
+        modelCache.preloadModels(paths);
+      }
+    },
   }));
 
   const displayName = characterName || (selectedParts && (selectedParts as any).__characterName) || '';
