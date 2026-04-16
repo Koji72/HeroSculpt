@@ -1,201 +1,66 @@
-# 🦸‍♂️ Superhero 3D Customizer
+# Superhero 3D Customizer
 
-Un customizador 3D avanzado de superhéroes con sistema completo de e-commerce y biblioteca personal.
+Frontend de personalizacion 3D de superheroes construido con React, Vite, TypeScript y Three.js.
 
-![Version](https://img.shields.io/badge/version-2.0-blue.svg)
-![React](https://img.shields.io/badge/React-18.0-blue.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
-![Three.js](https://img.shields.io/badge/Three.js-latest-green.svg)
-![Supabase](https://img.shields.io/badge/Supabase-enabled-green.svg)
+## Estado actual
 
-## ✨ Características Principales
+- `npm run build` funciona.
+- `npm run test:run` pasa en verde.
+- El frontend ya no expone claves de OpenAI, Resend o secretos de Stripe.
+- Los servicios de pago, email e IA deben resolverse desde backend.
 
-### 🎨 **Customización 3D Avanzada**
-- Sistema de arquetipo con físico realista
-- Customización completa por categorías (torso, cabeza, manos, etc.)
-- Compatibilidad inteligente entre partes
-- Visualización 3D en tiempo real con Three.js
-- Sistema de materiales y texturas
+## Ejecutar en local
 
-### 🛒 **Sistema de E-commerce Híbrido**
-- Carrito de compras funcional
-- **Modo Gratis**: Descarga gratuita para usuarios registrados
-- **Modo Pagos**: Integración completa con Stripe (preparado)
-- Confirmación de compras con exportación
-- Integración completa con Supabase
-- **Sistema híbrido**: Cambio instantáneo entre modos gratis/pago
+1. Instala dependencias:
 
-### 🛡️ **Sistema de Seguridad Avanzado**
-- Rate limiting para prevenir spam y ataques
-- Headers de seguridad con Helmet.js
-- Validación robusta de entrada
-- Logging de seguridad en tiempo real
-- Protección contra XSS y SQL injection
-- CORS configurado de forma estricta
-
-### 📚 **Biblioteca Personal**
-- Historial completo de compras
-- Recarga de configuraciones compradas
-- Descarga directa STL/GLB desde biblioteca
-- Gestión de compras por usuario
-
-### 🔐 **Sistema de Usuarios**
-- Autenticación con Supabase
-- Perfiles personales
-- Seguridad RLS (Row Level Security)
-- Gestión de sesiones
-
-## 🚀 Instalación y Configuración
-
-### 1. **Clonar el Repositorio**
 ```bash
-git clone https://github.com/USER/REPO//supabase.com)
-2. Ejecutar script SQL: `supabase-setup-clean.sql`
-3. Configurar variables de entorno:
-
-```env
-VITE_SUPABASE_URL=tu_url_de_supabase
-VITE_SUPABASE_ANON_KEY=tu_clave_anonima
+npm install
 ```
 
-### 4. **Verificar Configuración**
+2. Configura variables de entorno:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+VITE_BACKEND_URL=http://localhost:3001
+```
+
+3. Verifica la configuracion minima:
+
 ```bash
 npm run verify-supabase
 ```
 
-### 5. **Ejecutar en Desarrollo**
+4. Arranca desarrollo:
+
 ```bash
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:5177`
+La app intenta usar el puerto `5177`. Si ya esta ocupado, Vite subira al siguiente disponible.
 
-## 🏗️ Arquitectura del Proyecto
-
-```
-📁 Project Structure
-├── 🎨 components/           # Componentes React
-│   ├── 🛒 ShoppingCart.tsx
-│   ├── 📚 PurchaseLibrary.tsx
-│   ├── ✅ PurchaseConfirmation.tsx
-│   └── 🎮 CharacterViewer.tsx
-├── 🔧 services/            # Servicios y APIs
-│   └── 📊 purchaseHistoryService.ts
-├── 🗄️ src/parts/          # Definiciones de partes 3D
-├── 📚 docs/               # Documentación
-├── 🔧 scripts/           # Scripts de utilidad
-└── 🏗️ lib/               # Librerías y utilidades
-```
-
-## 🎮 Cómo Usar
-
-### 1. **Crear Superhéroe**
-- Selecciona arquetipo (Strong, Speed, Tech, etc.)
-- Personaliza cada categoría de parte
-- Visualiza en tiempo real
-
-### 2. **Comprar Configuración**
-- Agrega configuraciones al carrito
-- Procesa checkout (simulado)
-- Recibe confirmación con opciones de descarga
-
-### 3. **Acceder a Biblioteca**
-- Ve tu historial desde el perfil
-- Recarga configuraciones anteriores
-- Descarga modelos STL/GLB
-
-## 🛠️ Tecnologías Utilizadas
-
-### **Frontend**
-- ⚛️ **React 18** - Framework principal
-- 🎯 **TypeScript** - Tipado estático
-- 🎨 **Tailwind CSS** - Estilos modernos
-- 🎮 **Three.js** - Renderizado 3D
-- ⚡ **Vite** - Build tool rápido
-
-### **Backend & Base de Datos**
-- 🗄️ **Supabase** - Backend as a Service
-- 🔐 **Auth** - Autenticación de usuarios
-- 📊 **PostgreSQL** - Base de datos relacional
-
-### **3D & Exportación**
-- 🎯 **GLTFLoader** - Carga de modelos
-- 📥 **GLTFExporter** - Exportación GLB
-- 🖨️ **STLExporter** - Exportación para impresión 3D
-
-## 📊 Base de Datos
-
-### **Tablas Principales**
-- `purchases` - Compras principales
-- `purchase_items` - Items individuales de compras
-- `user_configurations` - Configuraciones guardadas
-
-### **Seguridad**
-- Row Level Security (RLS) habilitado
-- Acceso basado en autenticación
-- Políticas de usuario por defecto
-
-## 🎯 Flujo de Usuario
-
-1. **🎨 Customización** → Crear superhéroe personalizado
-2. **🛒 Carrito** → Agregar configuraciones deseadas
-3. **💳 Checkout** → Procesar compra (simulada)
-4. **✅ Confirmación** → Recibir confirmación con descarga
-5. **📚 Biblioteca** → Acceder a compras desde perfil
-6. **📥 Descarga** → STL para impresión, GLB para visualización
-
-## 🔧 Scripts Disponibles
+## Scripts utiles
 
 ```bash
-npm run dev          # Servidor de desarrollo (puerto 5177)
-npm run build        # Build para producción
-npm run preview      # Preview del build
-npm run verify-supabase  # Verificar conexión con Supabase
-
-# 🎯 Scripts de Sistema de Pagos
-node scripts/activate-payments.js     # Activar modo de pagos reales
-node scripts/activate-free-mode.js    # Volver al modo gratis
-
-# 🛡️ Scripts de Seguridad
-node scripts/install-security-deps.js # Instalar dependencias de seguridad
-node scripts/test-security.js         # Probar mejoras de seguridad
+npm run dev
+npm run build
+npm run preview
+npm run test:run
+npm run test:coverage
 ```
 
-## 📁 Documentación Adicional
+## Arquitectura
 
-- 📋 [Integración de Biblioteca](docs/PURCHASE_LIBRARY_INTEGRATION.md)
-- 🛠️ [Configuración de Supabase](supabase-setup-instructions.md)
-- 📈 [Mejoras del Sistema](docs/IMPROVEMENTS_SUMMARY.md)
-- 🔍 [Índice de Documentación](docs/DOCUMENTATION_INDEX.md)
+- [App.tsx](/C:/Users/david/HeroSculpt-test/App.tsx): shell principal de la app.
+- [components/CharacterViewer.tsx](/C:/Users/david/HeroSculpt-test/components/CharacterViewer.tsx): visor 3D y exportacion.
+- [components/ShoppingCart.tsx](/C:/Users/david/HeroSculpt-test/components/ShoppingCart.tsx): flujo de carrito.
+- [services/stripeService.ts](/C:/Users/david/HeroSculpt-test/services/stripeService.ts): checkout delegado a backend.
+- [services/resendEmailService.ts](/C:/Users/david/HeroSculpt-test/services/resendEmailService.ts): envio de email delegado a backend con fallback local.
+- [lib/supabase.ts](/C:/Users/david/HeroSculpt-test/lib/supabase.ts): cliente de Supabase para frontend.
 
-## 🤝 Contribución
+## Notas
 
-1. Fork el proyecto
-2. Crea una branch (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'feat: nueva funcionalidad'`)
-4. Push a la branch (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
-## 📝 Licencia
-
-Este proyecto está bajo la licencia MIT. Ver `LICENSE` para más detalles.
-
-## 🚀 Estado del Proyecto
-
-✅ **Completado:**
-- Sistema de customización 3D completo
-- Carrito de compras y checkout híbrido
-- Integración con Supabase
-- Biblioteca personal de compras
-- Exportación STL/GLB funcional
-- Autenticación de usuarios
-- **Sistema híbrido de pagos** (gratis/pago)
-
-🔄 **En Desarrollo:**
-- Optimizaciones de rendimiento
-- Nuevas partes y arquetipos
-- Activación de pagos reales (cuando sea necesario)
-
----
-
-**Desarrollado con ❤️ para la comunidad de superhéroes 🦸‍♂️🦸‍♀️**
+- `VITE_*` solo debe contener valores publicos aptos para navegador.
+- Las claves privadas como `SUPABASE_SERVICE_KEY`, `RESEND_API_KEY` o secretos de Stripe deben quedarse en backend.
+- El repositorio aun contiene material legacy y archivos de prototipo que no forman parte del flujo validado.

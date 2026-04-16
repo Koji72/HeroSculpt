@@ -14,6 +14,8 @@ import { notificationService } from '../services/notificationService';
 type TabType = 'dashboard' | 'characters' | 'campaigns' | 'community' | 'events' | 'gallery' | 'achievements' | 'settings';
 
 const MutantsMastermindsHQ: React.FC = () => {
+  const headerPattern = `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
+  const heroPattern = `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20s-20-8.954-20-20 8.954-20 20-20 20 8.954 20 20z'/%3E%3C/g%3E%3C/svg%3E")`;
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [isLoading, setIsLoading] = useState(false);
@@ -123,7 +125,7 @@ const MutantsMastermindsHQ: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
              {/* Superhero Header */}
       <header className="relative overflow-hidden bg-gradient-to-r from-blue-900/80 via-purple-900/80 to-red-900/80 border-b border-blue-500/30 backdrop-blur-sm">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: headerPattern }}></div>
         
         <div className="relative px-6 py-4">
           <div className="flex items-center justify-between">
@@ -197,7 +199,7 @@ const MutantsMastermindsHQ: React.FC = () => {
           <div className="space-y-8 animate-fadeIn">
             {/* Hero Welcome */}
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900/40 via-purple-900/40 to-red-900/40 border border-blue-500/30 p-8">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Cpath d="M20 20c0 11.046-8.954 20-20 20s-20-8.954-20-20 8.954-20 20-20 20 8.954 20 20z"/%3E%3C/g%3E%3C/svg%3E')]"></div>
+              <div className="absolute inset-0" style={{ backgroundImage: heroPattern }}></div>
               
               <div className="relative z-10">
                 <div className="flex items-center space-x-4 mb-6">

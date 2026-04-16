@@ -2,6 +2,7 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
 let stripePromise: Promise<Stripe | null>;
 
@@ -14,7 +15,7 @@ export const getStripe = () => {
 
 // Call backend to create Stripe session
 export async function createStripeCheckoutSession(cartItems, userEmail) {
-  const response = await fetch('http://localhost:3001/api/create-checkout-session', {
+  const response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ cartItems, userEmail })

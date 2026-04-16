@@ -8,6 +8,21 @@ export interface VTTTokenExport {
 }
 
 export class VTTService {
+  private static createGradient(
+    ctx: CanvasRenderingContext2D,
+    args: [number, number, number, number],
+    stops: Array<[number, string]>,
+    fallback: string
+  ): CanvasGradient | string {
+    if (typeof ctx.createLinearGradient !== 'function') {
+      return fallback;
+    }
+
+    const gradient = ctx.createLinearGradient(...args);
+    stops.forEach(([offset, color]) => gradient.addColorStop(offset, color));
+    return gradient;
+  }
+
   static async exportToken(
     character: RPGCharacterSync,
     options: VTTTokenExport,
@@ -69,10 +84,16 @@ export class VTTService {
         ctx.beginPath();
         this.innerPath(ctx, shape, cx, cy, innerR);
         ctx.clip();
-        const bannerGrad = ctx.createLinearGradient(0, bannerY, 0, cy + innerR);
-        bannerGrad.addColorStop(0, 'rgba(0,0,0,0)');
-        bannerGrad.addColorStop(0.3, 'rgba(0,0,0,0.82)');
-        bannerGrad.addColorStop(1, 'rgba(0,0,0,0.92)');
+        const bannerGrad = this.createGradient(
+          ctx,
+          [0, bannerY, 0, cy + innerR],
+          [
+            [0, 'rgba(0,0,0,0)'],
+            [0.3, 'rgba(0,0,0,0.82)'],
+            [1, 'rgba(0,0,0,0.92)'],
+          ],
+          'rgba(0,0,0,0.92)'
+        );
         ctx.fillStyle = bannerGrad;
         ctx.fillRect(cx - innerR, bannerY, innerR * 2, bannerH + 10);
 
@@ -94,10 +115,16 @@ export class VTTService {
         ctx.fill('evenodd');
 
         // Bevel highlight: top-left lighter
-        const highlightGrad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
-        highlightGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
-        highlightGrad.addColorStop(0.5, 'rgba(255,255,255,0.0)');
-        highlightGrad.addColorStop(1, 'rgba(0,0,0,0.30)');
+        const highlightGrad = this.createGradient(
+          ctx,
+          [cx - outerR, cy - outerR, cx + outerR, cy + outerR],
+          [
+            [0, 'rgba(255,255,255,0.35)'],
+            [0.5, 'rgba(255,255,255,0.0)'],
+            [1, 'rgba(0,0,0,0.30)'],
+          ],
+          'rgba(255,255,255,0.15)'
+        );
         ctx.beginPath();
         this.outerPath(ctx, shape, cx, cy, outerR);
         this.innerPath(ctx, shape, cx, cy, innerR);

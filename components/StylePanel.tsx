@@ -18,6 +18,7 @@ export interface StylePanelProps {
   onMaterialChange: (partId: string, material: MaterialType) => void;
   onApplyToAll: (color: string, material: MaterialType) => void;
   onClose: () => void;
+  embedded?: boolean;
 }
 
 const COLOR_PRESETS = ['#1d4ed8', '#dc2626', '#16a34a', '#7c3aed', '#f59e0b', '#e2e8f0'];
@@ -31,6 +32,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
   onMaterialChange,
   onApplyToAll,
   onClose,
+  embedded = false,
 }) => {
   const active = parts.find((p) => p.id === activePart) ?? parts[0];
   const [localColor, setLocalColor] = useState(active?.color ?? '#1d4ed8');
@@ -45,15 +47,15 @@ const StylePanel: React.FC<StylePanelProps> = ({
 
   return (
     <div style={{
-      width: 360,
+      width: embedded ? '100%' : 360,
       background: 'var(--color-surface)',
-      borderLeft: '2px solid var(--color-border-strong)',
+      borderLeft: embedded ? 'none' : '2px solid var(--color-border-strong)',
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
     }}>
       {/* Header */}
-      <div style={{
+      {!embedded && <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -79,7 +81,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
         >
           ✕
         </button>
-      </div>
+      </div>}
 
       {/* 2-column body */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>

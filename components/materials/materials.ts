@@ -276,101 +276,103 @@ export function getMaterialForPath(path: string): THREE.Material {
   // Create new materials instead of cloning to avoid texture issues
   if (/head/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0xfefefe,
-      roughness: 0.3,
+      color: 0xb78f73,
+      roughness: 0.86,
       metalness: 0.0,
-      clearcoat: 0.1,
-      clearcoatRoughness: 0.1,
+      clearcoat: 0.01,
+      clearcoatRoughness: 0.88,
+      sheen: 0.03,
+      reflectivity: 0.03,
     });
   }
   if (/boots/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666,
-      roughness: 0.45,
-      metalness: 0.3,
-      clearcoat: 0.2,
-      reflectivity: 0.2,
+      color: 0x334155,
+      roughness: 0.62,
+      metalness: 0.18,
+      clearcoat: 0.12,
+      reflectivity: 0.12,
     });
   }
   if (/symbol/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666, // gray
-      roughness: 0.18,
-      metalness: 1.0,
-      clearcoat: 0.4,
-      reflectivity: 0.8,
+      color: 0xd4a017,
+      roughness: 0.34,
+      metalness: 0.9,
+      clearcoat: 0.45,
+      reflectivity: 0.55,
     });
   }
   if (/belt(?!chest)/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666, // gray
-      roughness: 0.6,
-      metalness: 0.2,
+      color: 0x7c5c46,
+      roughness: 0.74,
+      metalness: 0.08,
       clearcoat: 0.1,
-      reflectivity: 0.15,
+      reflectivity: 0.08,
     });
   }
   if (/pouch/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x8b6f4e, // light brown
-      roughness: 0.65,
-      metalness: 0.15,
+      color: 0x8b6a4f,
+      roughness: 0.78,
+      metalness: 0.05,
       clearcoat: 0.08,
-      reflectivity: 0.12,
+      reflectivity: 0.06,
     });
   }
   if (/equip|buckle|chest/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0xcccccc,
-      roughness: 0.4,
-      metalness: 0.6,
+      color: 0xb8c4d6,
+      roughness: 0.42,
+      metalness: 0.7,
       clearcoat: 0.3,
-      reflectivity: 0.4,
+      reflectivity: 0.32,
     });
   }
   if (/torso/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666,
-      roughness: 0.35,
-      metalness: 0.15,
-      clearcoat: 0.6,
-      clearcoatRoughness: 0.15,
-      sheen: 0.4,
-      sheenColor: 0xffffff,
-      sheenRoughness: 0.3,
-      transmission: 0.1,
+      color: 0x3f5f7a,
+      roughness: 0.58,
+      metalness: 0.08,
+      clearcoat: 0.25,
+      clearcoatRoughness: 0.38,
+      sheen: 0.22,
+      sheenColor: 0xe6edf5,
+      sheenRoughness: 0.55,
+      transmission: 0.0,
       ior: 1.45,
-      reflectivity: 0.25,
+      reflectivity: 0.12,
     });
   }
   if (/legs|lower_body/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666,
-      roughness: 0.4,
-      metalness: 0.2,
-      clearcoat: 0.3,
-      clearcoatRoughness: 0.2,
-      sheen: 0.25,
-      sheenColor: 0xffffff,
-      sheenRoughness: 0.5,
-      transmission: 0.05,
+      color: 0x475569,
+      roughness: 0.64,
+      metalness: 0.12,
+      clearcoat: 0.18,
+      clearcoatRoughness: 0.35,
+      sheen: 0.18,
+      sheenColor: 0xe5edf5,
+      sheenRoughness: 0.6,
+      transmission: 0.0,
       ior: 1.4,
-      reflectivity: 0.25,
+      reflectivity: 0.1,
     });
   }
   if (/hand/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666,
-      roughness: 0.5,
-      metalness: 0.2,
-      clearcoat: 0.2,
-      clearcoatRoughness: 0.1,
-      sheen: 0.3,
-      sheenColor: 0xffffff,
-      sheenRoughness: 0.4,
-      transmission: 0.05,
+      color: 0x4b5563,
+      roughness: 0.58,
+      metalness: 0.1,
+      clearcoat: 0.16,
+      clearcoatRoughness: 0.28,
+      sheen: 0.16,
+      sheenColor: 0xe5edf5,
+      sheenRoughness: 0.55,
+      transmission: 0.0,
       ior: 1.4,
-      reflectivity: 0.3,
+      reflectivity: 0.1,
     });
   }
   if (/shoulders/i.test(path)) {
@@ -403,31 +405,31 @@ export function getMaterialForPath(path: string): THREE.Material {
   }
   if (/cape/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x222222,
-      roughness: 0.7,
+      color: 0x243447,
+      roughness: 0.86,
       metalness: 0.05,
-      clearcoat: 0.1,
-      clearcoatRoughness: 0.2,
-      sheen: 0.2,
-      sheenColor: 0xffffff,
-      sheenRoughness: 0.6,
+      clearcoat: 0.02,
+      clearcoatRoughness: 0.8,
+      sheen: 0.28,
+      sheenColor: 0xcfd8e3,
+      sheenRoughness: 0.75,
       ior: 1.3,
-      reflectivity: 0.1,
+      reflectivity: 0.04,
     });
   }
   if (/weapon/i.test(path)) {
     return new THREE.MeshPhysicalMaterial({
-      color: 0x666666, // metal gray
-      roughness: 0.25,
-      metalness: 0.8,
+      color: 0x9aa6b2,
+      roughness: 0.3,
+      metalness: 0.82,
       clearcoat: 0.3,
-      reflectivity: 0.6,
+      reflectivity: 0.45,
     });
   }
   return new THREE.MeshPhysicalMaterial({
-    color: 0xaaaaaa,
-    roughness: 0.5,
-    metalness: 0.2,
+    color: 0x8a97a8,
+    roughness: 0.62,
+    metalness: 0.1,
   });
 }
 

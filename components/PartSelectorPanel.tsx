@@ -68,9 +68,9 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     if (partToApply) {
       onPartSelect(previewParts);
     }
-    // ✅ REMOVED: No resetCamera() to avoid zoom
-    onClose();
-  }, [previewParts, activeCategory, onPartSelect, onClose, characterViewerRef]);
+    setHasChanges(false);
+    // Panel stays open so user can keep selecting parts
+  }, [previewParts, activeCategory, onPartSelect]);
 
   const handlePreviewSelect = useCallback((part: Part) => {
     if (!activeCategory) {
@@ -252,7 +252,9 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     if (onPreviewChange) {
       onPreviewChange(newPreviewParts);
     }
-  }, [activeCategory, selectedParts, onPreviewChange]);
+    // Auto-apply on click so panel stays open and user can keep selecting
+    onPartSelect(newPreviewParts);
+  }, [activeCategory, selectedParts, onPreviewChange, onPartSelect]);
 
   const handleHoverPreview = useCallback((part: Part | null) => {
     if (!activeCategory || !onPreviewChange) return;

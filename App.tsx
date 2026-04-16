@@ -234,6 +234,7 @@ const AppContent: React.FC = () => {
 
   // Task 7: side panel state
   const [activeSidePanel, setActiveSidePanel] = useState<'style' | 'skins' | 'lights' | null>(null);
+  const activePanelMode: 'parts' | 'style' | 'skins' | 'lights' = activeSidePanel ?? 'parts';
 
   const STYLE_PART_LABELS: Record<string, string> = {
     torso: 'TORSO', legs: 'LEGS', head: 'HEAD', hand_left: 'L.HAND',
@@ -836,10 +837,19 @@ const AppContent: React.FC = () => {
     setTimeout(() => setArchetypeLoading(false), 2000);
   };
 
-  // Task 7: side panel toggle
+  // Task 7: side panel toggle — wired to right panel system
   const handleSidePanelToggle = (panel: 'style' | 'skins' | 'lights') => {
-    setActiveSidePanel((current) => current === panel ? null : panel);
+    toggleRightPanel(panel);
+  };
+
+  const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins' | 'lights') => {
     setIsPanelOpen(true);
+    if (mode === 'parts') {
+      setActiveSidePanel(null);
+      setActiveTab('parts');
+      return;
+    }
+    setActiveSidePanel(mode);
   };
 
   // Task 7: StylePanel handlers
@@ -923,21 +933,15 @@ const AppContent: React.FC = () => {
     setIsPanelOpen(true);
     setActiveSidePanel(null);
 
-    // ✅ CRITICAL FIX: Cerrar submenús al seleccionar una categoría
-    if (category === PartCategory.HEAD || category === PartCategory.SUIT_TORSO ||
-        category === PartCategory.HAND_LEFT || category === PartCategory.HAND_RIGHT) {
-      setTorsoSubmenuExpanded(false);
-    }
-    if (category === PartCategory.BELT) {
-      setBeltSubmenuExpanded(false);
-    }
-    if (category === PartCategory.LOWER_BODY) {
-      setLowerBodySubmenuExpanded(false);
-    }
+    // Cerrar todos los submenús al seleccionar cualquier categoría
+    setTorsoSubmenuExpanded(false);
+    setBeltSubmenuExpanded(false);
+    setLowerBodySubmenuExpanded(false);
   };
 
   const handleCloseSelector = () => {
     setActiveCategory(null);
+    setIsPanelOpen(false);
   };
 
   const handleSignOut = async () => {
@@ -1657,7 +1661,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="relative w-full h-full" style={{ background: 'var(--color-bg)' }}>
       {/* ── 3D VIEWER (full-screen background) ── */}
-      <div className="app-viewer">
+      <div className="app-viewer" style={{ right: activeRightPanel ? 354 : 34, transition: 'right 200ms ease' }}>
         <ErrorBoundary>
           <CharacterViewer
             key={characterViewerKey}
@@ -1696,14 +1700,14 @@ const AppContent: React.FC = () => {
       <header className="app-topbar">
         {/* Logo block */}
         <div style={{
-          background: 'var(--color-accent)',
+          background: 'linear-gradient(180deg, rgba(216, 162, 58, 0.98), rgba(184, 131, 31, 0.96))',
           padding: '0 18px',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
           flexShrink: 0,
         }}>
-          <span style={{ fontFamily: 'var(--font-comic)', fontSize: '22px', letterSpacing: '2px', color: '#000', lineHeight: 1 }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: '18px', fontWeight: 900, letterSpacing: '1.8px', color: '#09090f', lineHeight: 1 }}>
             HERO BUILDER
           </span>
         </div>
@@ -1763,7 +1767,7 @@ const AppContent: React.FC = () => {
           {!user && (
             <button
               className="btn-comic btn-primary"
-              style={{ fontSize: '14px', padding: '5px 14px', background: 'var(--color-accent)', color: '#000', border: 'none', fontFamily: 'var(--font-comic, Bangers, sans-serif)', letterSpacing: 1, cursor: 'pointer' }}
+              style={{ fontSize: '14px', padding: '5px 14px', background: 'var(--color-accent)', color: '#09090f', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-body)', fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer' }}
               onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
             >
               JOIN ▶
@@ -1773,7 +1777,7 @@ const AppContent: React.FC = () => {
             <button
               ref={userButtonRef}
               className="btn-comic btn-outline"
-              style={{ fontSize: '13px', padding: '5px 12px' }}
+              style={{ fontSize: '13px', padding: '5px 12px', fontFamily: 'var(--font-body)', fontWeight: 700 }}
               onClick={() => setIsUserDropdownOpen(v => !v)}
             >
               👤 {user.email?.split('@')[0]?.toUpperCase()}
@@ -1810,15 +1814,13 @@ const AppContent: React.FC = () => {
           onLowerBodyToggle={handleLowerBodySubmenuToggle}
           getLowerBodyButtonRef={getLowerBodyButtonRef}
           isLowerBodySubmenuExpanded={lowerBodySubmenuExpanded}
-          activeSidePanel={activeSidePanel}
-          onSidePanelToggle={handleSidePanelToggle}
         />
       </aside>
 
       {/* ── RIGHT PANEL ── */}
       <div className={`app-panel ${isPanelOpen ? 'open' : ''}`}>
         {/* Close button shared header */}
-        <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 10 }}>
+        <div style={{ display: 'none', position: 'absolute', top: 12, right: 12, zIndex: 10 }}>
           <button
             onClick={() => { setIsPanelOpen(false); setActiveSidePanel(null); }}
             style={{
@@ -1828,7 +1830,102 @@ const AppContent: React.FC = () => {
           >✕</button>
         </div>
 
-        {!activeSidePanel && activeTab === 'parts' && (
+        <div className="app-panel-shell">
+          <div className="app-panel-top">
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 800, letterSpacing: 1.4, color: 'var(--color-accent)', textTransform: 'uppercase', marginBottom: 4 }}>
+                Customizer
+              </div>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 18, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
+                {{ parts: 'Parts', style: 'Style', skins: 'Skins', lights: 'Lights' }[activePanelMode]}
+              </div>
+              <div style={{ marginTop: 6, fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.35, color: 'var(--color-text-muted)', maxWidth: 230 }}>
+                {{
+                  parts: 'Swap hero parts and build the silhouette before refining materials.',
+                  style: 'Adjust color and material behavior for each part or the whole build.',
+                  skins: 'Apply curated looks quickly when you want a stronger preset direction.',
+                  lights: 'Tune the display lighting to present the character more clearly.',
+                }[activePanelMode]}
+              </div>
+            </div>
+            <button
+              onClick={() => { setIsPanelOpen(false); setActiveSidePanel(null); }}
+              style={{
+                width: 32,
+                height: 32,
+                flexShrink: 0,
+                background: 'rgba(19, 19, 31, 0.92)',
+                border: '1px solid rgba(71, 85, 105, 0.55)',
+                borderRadius: 8,
+                cursor: 'pointer',
+                color: 'var(--color-text-muted)',
+                fontSize: 16,
+                lineHeight: 1,
+              }}
+              title="Close panel"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="app-panel-tabs">
+            {([
+              ['parts', 'Parts'],
+              ['style', 'Style'],
+              ['skins', 'Skins'],
+              ['lights', 'Lights'],
+            ] as const).map(([mode, label]) => (
+              <button
+                key={mode}
+                type="button"
+                className={`app-panel-tab ${activePanelMode === mode ? 'active' : ''}`}
+                onClick={() => handlePanelModeChange(mode)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="app-panel-body">
+            {activePanelMode === 'parts' && (
+              <PartSelectorPanel
+                activeCategory={activeCategory}
+                selectedArchetype={selectedArchetype || ArchetypeId.STRONG}
+                selectedParts={selectedParts}
+                onPartSelect={handleSelectPart}
+                onClose={handleCloseSelector}
+                onPreviewChange={characterViewerRef.current?.handlePreviewPartsChange}
+                id="part-selector-panel"
+                registerElement={registerElement}
+                characterViewerRef={characterViewerRef}
+                ownedPartIds={ownedPartIds}
+              />
+            )}
+
+            {activePanelMode === 'style' && (
+              <StylePanel
+                parts={stylePanelParts}
+                activePart={activePanelPart}
+                onPartSelect={setActivePanelPart}
+                onColorChange={handleStylePanelColorChange}
+                onMaterialChange={handleStylePanelMaterialChange}
+                onApplyToAll={handleApplyToAll}
+                onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }}
+                embedded
+              />
+            )}
+
+            {activePanelMode === 'skins' && (
+              <SkinsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
+            )}
+
+            {activePanelMode === 'lights' && (
+              <LightsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
+            )}
+          </div>
+        </div>
+
+        {false && !activeSidePanel && activeTab === 'parts' && (
           <PartSelectorPanel
             activeCategory={activeCategory}
             selectedArchetype={selectedArchetype || ArchetypeId.STRONG}
@@ -1843,7 +1940,7 @@ const AppContent: React.FC = () => {
           />
         )}
 
-        {!activeSidePanel && activeTab === 'materials' && (
+        {false && !activeSidePanel && activeTab === 'materials' && (
           <MaterialPanel
             isOpen={isPanelOpen && activeTab === 'materials'}
             onClose={() => setIsPanelOpen(false)}
@@ -1853,20 +1950,20 @@ const AppContent: React.FC = () => {
           />
         )}
 
-        {!activeSidePanel && activeTab === 'skins' && (
+        {false && !activeSidePanel && activeTab === 'skins' && (
           <SkinsPanel apiRef={characterViewerRef} onClose={() => setIsPanelOpen(false)} />
         )}
 
-        {!activeSidePanel && activeTab === 'effects' && (
+        {false && !activeSidePanel && activeTab === 'effects' && (
           <PowerEffectsPanel onClose={() => setIsPanelOpen(false)} />
         )}
 
-        {!activeSidePanel && activeTab === 'lighting' && (
+        {false && !activeSidePanel && activeTab === 'lighting' && (
           <LightsPanel apiRef={characterViewerRef} onClose={() => setIsPanelOpen(false)} />
         )}
 
         {/* Task 7: activeSidePanel renders */}
-        {activeSidePanel === 'style' && (
+        {false && activeSidePanel === 'style' && (
           <StylePanel
             parts={stylePanelParts}
             activePart={activePanelPart}
@@ -1877,10 +1974,10 @@ const AppContent: React.FC = () => {
             onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }}
           />
         )}
-        {activeSidePanel === 'skins' && (
+        {false && activeSidePanel === 'skins' && (
           <SkinsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
         )}
-        {activeSidePanel === 'lights' && (
+        {false && activeSidePanel === 'lights' && (
           <LightsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
         )}
       </div>
@@ -1889,16 +1986,16 @@ const AppContent: React.FC = () => {
       <div className="app-bottom" style={{ display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px' }}>
         {/* Pose navigation */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-          <button className="btn-comic btn-ghost" style={{ width: 28, height: 28, padding: 0, fontSize: 12 }}
+          <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handlePreviousPose}>◀</button>
-          <span style={{ fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: 0.8, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
             POSE {(currentPoseIndex ?? 0) + 1} / {savedPoses?.length ?? 1}
           </span>
-          <button className="btn-comic btn-ghost" style={{ width: 28, height: 28, padding: 0, fontSize: 12 }}
+          <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handleNextPose}>▶</button>
         </div>
 
-        <div style={{ width: 1, height: 28, background: 'var(--color-border)' }} />
+        <div style={{ width: 1, height: 28, background: 'rgba(71, 85, 105, 0.45)' }} />
 
         {/* View presets */}
         <div style={{ display: 'flex', gap: 4 }}>
@@ -1908,7 +2005,7 @@ const AppContent: React.FC = () => {
               <button
                 key={label}
                 className="btn-comic btn-ghost"
-                style={{ fontSize: 11, padding: '3px 8px', letterSpacing: 1 }}
+                style={{ fontSize: 11, padding: '3px 10px', letterSpacing: 0.6, fontFamily: 'var(--font-body)', fontWeight: 700 }}
                 onClick={() => (characterViewerRef.current as any)?.setViewAngle(angles[i])}
               >
                 {label}
@@ -1917,28 +2014,28 @@ const AppContent: React.FC = () => {
           })}
         </div>
 
-        <div style={{ width: 1, height: 28, background: 'var(--color-border)' }} />
+        <div style={{ width: 1, height: 28, background: 'rgba(71, 85, 105, 0.45)' }} />
 
         {/* Export */}
         <div style={{ display: 'flex', gap: 4 }}>
           <button
             type="button"
             onClick={() => characterViewerRef.current?.exportModel?.()}
-            style={{ padding: '5px 12px', background: 'transparent', border: '2px solid var(--color-border)', borderRadius: 'var(--radius)', color: '#9ca3af', fontSize: 10, fontWeight: 'bold', letterSpacing: 1, cursor: 'pointer', fontFamily: 'var(--font-comic)' }}
+            style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
             🎮 GLB
           </button>
           <button
             type="button"
             onClick={() => setShowSTLModal(true)}
-            style={{ padding: '5px 12px', background: 'transparent', border: '2px solid var(--color-border)', borderRadius: 'var(--radius)', color: '#9ca3af', fontSize: 10, fontWeight: 'bold', letterSpacing: 1, cursor: 'pointer', fontFamily: 'var(--font-comic)' }}
+            style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
             🖨️ STL
           </button>
           <button
             type="button"
             onClick={handleOpenVTTLibrary}
-            style={{ padding: '5px 12px', background: 'transparent', border: '2px solid var(--color-accent)', borderRadius: 'var(--radius)', color: 'var(--color-accent)', fontSize: 10, fontWeight: 'bold', letterSpacing: 1, cursor: 'pointer', fontFamily: 'var(--font-comic)' }}
+            style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px solid rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
             🎲 VTT
           </button>
@@ -1946,14 +2043,14 @@ const AppContent: React.FC = () => {
             <button
               type="button"
               onClick={handleSaveCurrentPoseAsNew}
-              style={{ padding: '5px 12px', background: 'transparent', border: '2px solid var(--color-accent)', borderRadius: 'var(--radius)', color: 'var(--color-accent)', fontSize: 10, fontWeight: 'bold', letterSpacing: 1, cursor: 'pointer', fontFamily: 'var(--font-comic)' }}
+              style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px dashed rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
             >
               💾 POSE
             </button>
           ) : (
             <button
               type="button"
-              style={{ padding: '5px 12px', background: 'transparent', border: '1px dashed var(--color-accent)', borderRadius: 'var(--radius)', color: 'var(--color-accent)', fontSize: 10, fontWeight: 'bold', letterSpacing: 1, cursor: 'not-allowed', fontFamily: 'var(--font-comic)', opacity: 0.5 }}
+              style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.04)', border: '1px dashed rgba(216, 162, 58, 0.26)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'not-allowed', fontFamily: 'var(--font-body)', opacity: 0.5 }}
               onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
               title="🔒 POSES · CREATE FREE ACCOUNT"
             >

@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { SelectedParts, ArchetypeId, PartCategory } from '../types';
-import { ALL_PARTS } from '../constants';
+import { ALL_PARTS, DEFAULT_JUSTICIERO_BUILD, DEFAULT_STRONG_BUILD } from '../constants';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass';
@@ -13,7 +13,6 @@ import { exportModel, downloadBlob, generateModelName } from '../lib/utils';
 import { modelCache } from '../lib/modelCache';
 import PoseNavigation from './PoseNavigation';
 import { LightingPreset } from './materials/materials'; // Corrected import path
-import { useThreeScene } from '../hooks/useThreeScene'; // Importar el nuevo hook
 import { areSelectedPartsEqual } from '../lib/utils'; // Import the new utility
 
 interface CharacterViewerProps {
@@ -64,7 +63,7 @@ export interface CharacterViewerRef {
     debugAvailableParts: () => void; // Debug available parts
 }
 
-const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({ 
+const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   selectedParts, 
   selectedArchetype,
   characterName, 
@@ -78,10 +77,15 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   onRenamePose,
   onSaveAsNew,
 }, ref) => {
+  const getDefaultBuildForArchetype = useCallback((archetype: ArchetypeId | null): SelectedParts => {
+    if (archetype === ArchetypeId.JUSTICIERO) {
+      return DEFAULT_JUSTICIERO_BUILD;
+    }
+    return DEFAULT_STRONG_BUILD;
+  }, []);
+
   const mountRef = useRef<HTMLDivElement>(null);
   
-  const { /*scene, camera, renderer, controls, composer, setComposer, animate*/ } = useThreeScene({ canvasRef: mountRef });
-
   const modelGroupRef = useRef<THREE.Group | null>(null);
   const loaderRef = useRef<GLTFLoader | null>(null);
   // const initialCameraPosition = useRef<THREE.Vector3 | null>(null); // Removed: no longer used
@@ -307,7 +311,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     // Scene setup with Strong archetype theme
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a1a1a);
+    scene.background = new THREE.Color('#b6bec8');
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(
@@ -328,10 +332,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(mountWidth, mountHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setClearColor(0x1a1a1a, 1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.setClearColor('#aeb7c2', 1);
     currentMount.appendChild(renderer.domElement);
     rendererRef.current = renderer;
   
@@ -394,20 +401,25 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     controlsRef.current = controls;
 
     // Lighting setup
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    keyLight.position.set(5, 10, 7.5);
+    const keyLight = new THREE.DirectionalLight(0xfff3e2, 1.5);
+    keyLight.position.set(7, 12, 9);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
+    keyLight.shadow.bias = -0.0001;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xaaaaaa, 0.5);
-    fillLight.position.set(-5, 5, 5);
+    const fillLight = new THREE.DirectionalLight(0xdce7f4, 0.92);
+    fillLight.position.set(-8, 6, 6);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.6);
-    rimLight.position.set(0, 10, -10);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.72);
+    rimLight.position.set(-2, 9, -10);
     scene.add(rimLight);
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xc2c9d3, 0.95);
+    hemiLight.position.set(0, 14, 0);
+    scene.add(hemiLight);
 
     // Initialize GLTFLoader and DRACOLoader
     const dracoLoader = new DRACOLoader();
@@ -420,7 +432,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // Initialize the global model cache with loaders
     modelCache.initializeLoaders(loader, dracoLoader);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.42);
     scene.add(ambientLight);
 
     modelGroupRef.current = new THREE.Group();
@@ -577,95 +589,15 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       return;
     }
 
-    // ✅ FIXED: NEVER use previewParts in performModelLoad to avoid zoom
-    let partsToLoad = selectedParts;
-    
-    // ✅ NUEVO: Lógica para usuarios NO autenticados
-    if (!isAuthenticated) {
-      if (Object.keys(selectedParts).length === 0) {
-        // Usuario NO autenticado con selectedParts vacío - cargar partes por defecto
-        console.log('🔄 selectedParts está vacío y usuario NO autenticado, cargando partes por defecto del arquetipo:', selectedArchetype);
-        
-        // Cargar partes por defecto según el arquetipo
-        const defaultParts = ALL_PARTS.filter(part => part.archetype === selectedArchetype);
-        console.log('🔍 Partes disponibles para el arquetipo:', defaultParts.map(p => p.id));
-        
-        if (selectedArchetype === ArchetypeId.STRONG) {
-          const torso = defaultParts.find(p => p.id === 'strong_torso_01');
-          const head = defaultParts.find(p => p.id === 'strong_head_01_t01');
-          const handLeft = defaultParts.find(p => p.id === 'strong_hands_fist_01_t01_l_ng');
-          const handRight = defaultParts.find(p => p.id === 'strong_hands_fist_01_t01_r_ng');
-          const legs = defaultParts.find(p => p.id === 'strong_legs_01');
-          const boots = defaultParts.find(p => p.id === 'strong_boots_01_l0');
-          const cape = defaultParts.find(p => p.id === 'strong_cape_01_t01');
-          const belt = defaultParts.find(p => p.id === 'strong_belt_01');
-          const buckle = defaultParts.find(p => p.id === 'strong_buckle_01');
-          
-          partsToLoad = {
-            ...(torso && { [PartCategory.TORSO]: torso }),
-            ...(head && { [PartCategory.HEAD]: head }),
-            ...(handLeft && { [PartCategory.HAND_LEFT]: handLeft }),
-            ...(handRight && { [PartCategory.HAND_RIGHT]: handRight }),
-            ...(legs && { [PartCategory.LEGS]: legs }),
-            ...(boots && { [PartCategory.BOOTS]: boots }),
-            ...(cape && { [PartCategory.CAPE]: cape }),
-            ...(belt && { [PartCategory.BELT]: belt }),
-            ...(buckle && { [PartCategory.BUCKLE]: buckle }),
-          };
-        } else if (selectedArchetype === ArchetypeId.JUSTICIERO) {
-          const torso = defaultParts.find(p => p.id === 'justiciero_torso_01');
-          const head = defaultParts.find(p => p.id === 'justiciero_head_01');
-          const handLeft = defaultParts.find(p => p.id === 'justiciero_hand_left_01');
-          const handRight = defaultParts.find(p => p.id === 'justiciero_hand_right_01');
-          const legs = defaultParts.find(p => p.id === 'justiciero_legs_01');
-          const boots = defaultParts.find(p => p.id === 'justiciero_boots_01');
-          const cape = defaultParts.find(p => p.id === 'justiciero_cape_01');
-          const beltchest = defaultParts.find(p => p.id === 'justiciero_beltchest_01');
-          
-          partsToLoad = {
-            ...(torso && { [PartCategory.TORSO]: torso }),
-            ...(head && { [PartCategory.HEAD]: head }),
-            ...(handLeft && { [PartCategory.HAND_LEFT]: handLeft }),
-            ...(handRight && { [PartCategory.HAND_RIGHT]: handRight }),
-            ...(legs && { [PartCategory.LEGS]: legs }),
-            ...(boots && { [PartCategory.BOOTS]: boots }),
-            ...(cape && { [PartCategory.CAPE]: cape }),
-            ...(beltchest && { [PartCategory.CHEST_BELT]: beltchest }),
-          };
-        }
-      } else {
-        // Usuario NO autenticado con selectedParts (ha seleccionado partes) - completar con partes faltantes
-        console.log('🔄 Usuario NO autenticado con selectedParts, completando partes faltantes');
-        
-        const defaultParts = ALL_PARTS.filter(part => part.archetype === selectedArchetype);
-        
-        if (selectedArchetype === ArchetypeId.STRONG) {
-          // Completar con partes por defecto si faltan
-          const missingParts = {
-            ...(!selectedParts[PartCategory.TORSO] && { [PartCategory.TORSO]: defaultParts.find(p => p.id === 'strong_torso_01') }),
-            ...(!selectedParts[PartCategory.HEAD] && { [PartCategory.HEAD]: defaultParts.find(p => p.id === 'strong_head_01_t01') }),
-            ...(!selectedParts[PartCategory.HAND_LEFT] && { [PartCategory.HAND_LEFT]: defaultParts.find(p => p.id === 'strong_hands_fist_01_t01_l_ng') }),
-            ...(!selectedParts[PartCategory.HAND_RIGHT] && { [PartCategory.HAND_RIGHT]: defaultParts.find(p => p.id === 'strong_hands_fist_01_t01_r_ng') }),
-            ...(!selectedParts[PartCategory.LOWER_BODY] && { [PartCategory.LOWER_BODY]: defaultParts.find(p => p.id === 'strong_legs_01') }),
-            ...(!selectedParts[PartCategory.BOOTS] && { [PartCategory.BOOTS]: defaultParts.find(p => p.id === 'strong_boots_01_l0') }),
-            ...(!selectedParts[PartCategory.CAPE] && { [PartCategory.CAPE]: defaultParts.find(p => p.id === 'strong_cape_01_t01') }),
-            ...(!selectedParts[PartCategory.BELT] && { [PartCategory.BELT]: defaultParts.find(p => p.id === 'strong_belt_01') }),
-            ...(!selectedParts[PartCategory.BUCKLE] && { [PartCategory.BUCKLE]: defaultParts.find(p => p.id === 'strong_buckle_01') }),
-          };
-          
-          // Filtrar partes undefined
-          Object.keys(missingParts).forEach(key => {
-            if (!missingParts[key as PartCategory]) {
-              delete missingParts[key as PartCategory];
-            }
-          });
-          
-          partsToLoad = { ...selectedParts, ...missingParts };
-          console.log('✅ Partes completadas para usuario NO autenticado:', Object.keys(partsToLoad));
-        }
-      }
-    } else if (Object.keys(selectedParts).length === 0 && isAuthenticated) {
-      console.log('👤 Usuario autenticado con selectedParts vacío - NO cargando modelo básico');
+    // ✅ FIXED: Always fall back to a complete default build when parts are missing.
+    const defaultBuild = getDefaultBuildForArchetype(selectedArchetype);
+    const hasSelectedParts = Object.keys(selectedParts).length > 0;
+    let partsToLoad = hasSelectedParts ? { ...defaultBuild, ...selectedParts } : { ...defaultBuild };
+
+    if (!hasSelectedParts) {
+      console.log('🔄 selectedParts vacío, cargando build por defecto para el visor:', selectedArchetype);
+    } else {
+      console.log('🔄 Completando piezas faltantes con el build por defecto');
     }
     
     const startTime = performance.now();
@@ -772,7 +704,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // ✅ NUEVO: Cargar pedestal siempre
     console.log('🔵 CARGANDO PEDESTAL - Siempre');
     try {
-      const baseModelPath = `${basePath}assets/strong/Base/strong_base_01.glb`;
+      const baseModelPath = `${basePath}assets/strong/base/strong_base_01.glb`;
       console.log('🔵 Cargando pedestal desde:', baseModelPath);
       const baseModel = await modelCache.getModel(baseModelPath);
       
@@ -795,12 +727,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               child.material.forEach(mat => {
                 mat.transparent = false;
                 mat.opacity = 1;
-                mat.color.setHex(0x888888); // Color gris visible
+                mat.color.setHex(0x8a94a1);
+                mat.roughness = 0.92;
+                mat.metalness = 0.04;
               });
             } else {
               child.material.transparent = false;
               child.material.opacity = 1;
-              child.material.color.setHex(0x888888); // Color gris visible
+              child.material.color.setHex(0x8a94a1);
+              child.material.roughness = 0.92;
+              child.material.metalness = 0.04;
             }
           }
         }
@@ -2247,19 +2183,29 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       {/* Removed: not used */}
 
       {/* Precision Controls - Bottom Center, above the fixed bottom bar (56px) */}
-      <div className="absolute left-0 right-0 flex justify-center z-30" style={{ bottom: '64px' }}>
-        <div className="flex items-center gap-2">
+      <div className="absolute left-0 right-0 flex justify-center z-30" style={{ bottom: '66px' }}>
+        <div
+          className="flex items-center gap-2"
+          style={{
+            padding: '8px 10px',
+            borderRadius: 10,
+            background: 'rgba(11, 14, 20, 0.5)',
+            border: '1px solid rgba(71, 85, 105, 0.4)',
+            boxShadow: '0 8px 18px rgba(0,0,0,0.2)',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
         {/* Rotate Left */}
         <button
           onClick={handleRotateLeft}
           className="flex items-center justify-center transition-colors duration-200"
           style={{
-            width: 36, height: 36,
-            background: 'rgba(10,10,15,0.85)',
-            border: '2px solid var(--color-border-strong)',
-            borderRadius: 'var(--radius)',
+            width: 34, height: 34,
+            background: 'rgba(16,20,30,0.94)',
+            border: '1px solid rgba(71, 85, 105, 0.62)',
+            borderRadius: '7px',
             color: 'var(--color-text-muted)',
-            fontFamily: 'var(--font-comic)',
+            fontFamily: 'var(--font-body)',
             fontSize: 18,
             cursor: 'pointer',
           }}
@@ -2275,12 +2221,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onClick={handleZoomOut}
           className="flex items-center justify-center transition-colors duration-200"
           style={{
-            width: 36, height: 36,
-            background: 'rgba(10,10,15,0.85)',
-            border: '2px solid var(--color-border-strong)',
-            borderRadius: 'var(--radius)',
+            width: 34, height: 34,
+            background: 'rgba(16,20,30,0.94)',
+            border: '1px solid rgba(71, 85, 105, 0.62)',
+            borderRadius: '7px',
             color: 'var(--color-text-muted)',
-            fontFamily: 'var(--font-comic)',
+            fontFamily: 'var(--font-body)',
             fontSize: 16,
             cursor: 'pointer',
           }}
@@ -2296,21 +2242,22 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onClick={handleResetCamera}
           className="flex items-center justify-center transition-colors duration-200"
           style={{
-            width: 36, height: 36,
-            background: 'rgba(10,10,15,0.85)',
-            border: '2px solid var(--color-accent)',
-            borderRadius: 'var(--radius)',
+            width: 40, height: 34,
+            background: 'rgba(245, 158, 11, 0.1)',
+            border: '1px solid rgba(245, 158, 11, 0.48)',
+            borderRadius: '7px',
             color: 'var(--color-accent)',
-            fontFamily: 'var(--font-comic)',
-            fontSize: 14,
-            letterSpacing: 1,
+            fontFamily: 'var(--font-body)',
+            fontSize: 18,
+            fontWeight: 800,
+            letterSpacing: 0.1,
             cursor: 'pointer',
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-accent-dim)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(10,10,15,0.85)'; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(245, 158, 11, 0.16)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(245, 158, 11, 0.1)'; }}
           title="Reset view"
         >
-          RST
+          ↺
         </button>
 
         {/* Zoom In */}
@@ -2318,12 +2265,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onClick={handleZoomIn}
           className="flex items-center justify-center transition-colors duration-200"
           style={{
-            width: 36, height: 36,
-            background: 'rgba(10,10,15,0.85)',
-            border: '2px solid var(--color-border-strong)',
-            borderRadius: 'var(--radius)',
+            width: 34, height: 34,
+            background: 'rgba(16,20,30,0.94)',
+            border: '1px solid rgba(71, 85, 105, 0.62)',
+            borderRadius: '7px',
             color: 'var(--color-text-muted)',
-            fontFamily: 'var(--font-comic)',
+            fontFamily: 'var(--font-body)',
             fontSize: 16,
             cursor: 'pointer',
           }}
@@ -2339,12 +2286,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onClick={handleRotateRight}
           className="flex items-center justify-center transition-colors duration-200"
           style={{
-            width: 36, height: 36,
-            background: 'rgba(10,10,15,0.85)',
-            border: '2px solid var(--color-border-strong)',
-            borderRadius: 'var(--radius)',
+            width: 34, height: 34,
+            background: 'rgba(16,20,30,0.94)',
+            border: '1px solid rgba(71, 85, 105, 0.62)',
+            borderRadius: '7px',
             color: 'var(--color-text-muted)',
-            fontFamily: 'var(--font-comic)',
+            fontFamily: 'var(--font-body)',
             fontSize: 18,
             cursor: 'pointer',
           }}

@@ -13,11 +13,11 @@ export async function preloadDracoDecoder(): Promise<void> {
 
 // Prefetch a small set of commonly used GLBs from the Strong pack
 const STRONG_PREFETCH_PATHS: string[] = [
-  '/assets/strong/Base/strong_base.glb',
+  '/assets/strong/base/strong_base_01.glb',
   '/assets/strong/torso/strong_torso_01.glb',
-  '/assets/strong/hands/strong_hands_fist_l_01.glb',
-  '/assets/strong/hands/strong_hands_fist_r_01.glb',
-  '/assets/strong/boots/strong_boots_01.glb'
+  '/assets/strong/hands/strong_hands_fist_01_t01_l_ng.glb',
+  '/assets/strong/hands/strong_hands_fist_01_t01_r_ng.glb',
+  '/assets/strong/boots/strong_boots_01_l01.glb'
 ];
 
 export async function prefetchStrongCommonAssets(): Promise<void> {

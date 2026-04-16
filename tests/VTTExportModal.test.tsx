@@ -6,12 +6,17 @@ import VTTExportModal from '../components/VTTExportModal';
 
 // Mock canvas for jsdom
 beforeEach(() => {
+  const gradient = {
+    addColorStop: vi.fn(),
+  };
   const ctx = {
     clearRect: vi.fn(), fillRect: vi.fn(), fillStyle: '',
     save: vi.fn(), restore: vi.fn(),
     beginPath: vi.fn(), closePath: vi.fn(), clip: vi.fn(),
     arc: vi.fn(), moveTo: vi.fn(), lineTo: vi.fn(),
     drawImage: vi.fn(), strokeStyle: '', lineWidth: 0, stroke: vi.fn(),
+    fill: vi.fn(), fillText: vi.fn(), font: '', textAlign: 'left', textBaseline: 'alphabetic',
+    createLinearGradient: vi.fn(() => gradient),
     shadowColor: '', shadowBlur: 0, shadowOffsetX: 0, shadowOffsetY: 0,
   };
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx as any);

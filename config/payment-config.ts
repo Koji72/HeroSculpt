@@ -26,9 +26,7 @@ export const PAYMENT_CONFIG = {
   STRIPE: {
     enabled: true, // Stripe siempre configurado
     testMode: true, // Usar modo de prueba
-      publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
-  secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || '',
-  webhookSecret: import.meta.env.VITE_STRIPE_WEBHOOK_SECRET || ''
+    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
   }
 };
 
@@ -85,8 +83,7 @@ export const enableFreeMode = () => {
 // 🎯 Función para verificar si Stripe está configurado
 export const isStripeConfigured = () => {
   return PAYMENT_CONFIG.STRIPE.enabled && 
-         PAYMENT_CONFIG.STRIPE.publishableKey !== '' &&
-         PAYMENT_CONFIG.STRIPE.secretKey !== '';
+         PAYMENT_CONFIG.STRIPE.publishableKey !== '';
 };
 
 export default PAYMENT_CONFIG; 

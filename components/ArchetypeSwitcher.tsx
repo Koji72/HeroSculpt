@@ -40,8 +40,8 @@ const ArchetypeTooltip = ({
     left: 0,
     marginTop: 6,
     width: 220,
-    background: 'var(--color-surface)',
-    border: '2px solid var(--color-accent)',
+    background: 'rgba(12, 12, 20, 0.96)',
+    border: '1px solid rgba(216, 162, 58, 0.28)',
     borderRadius: 'var(--radius)',
     padding: 12,
     boxShadow: '0 8px 32px rgba(0,0,0,0.8)',
@@ -50,10 +50,10 @@ const ArchetypeTooltip = ({
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
       <span style={{ fontSize: 24 }}>{archetype.icon}</span>
       <div>
-        <div style={{ color: 'var(--color-accent)', fontSize: 12, fontWeight: 'bold', letterSpacing: 2, fontFamily: 'var(--font-comic)' }}>
+        <div style={{ color: 'var(--color-accent)', fontSize: 12, fontWeight: 800, letterSpacing: 1.4, fontFamily: 'var(--font-body)' }}>
           {archetype.name}
         </div>
-        <div style={{ color: '#9ca3af', fontSize: 9 }}>{archetype.title}</div>
+        <div style={{ color: '#9ca3af', fontSize: 9, fontFamily: 'var(--font-body)' }}>{archetype.title}</div>
       </div>
     </div>
     <div style={{ fontSize: 9, color: '#9ca3af', marginBottom: 8, lineHeight: 1.5 }}>
@@ -146,11 +146,11 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
     display: 'flex',
     alignItems: 'center',
     gap: 5,
-    padding: '4px 10px',
-    background: isActive ? 'var(--color-accent)' : 'var(--color-surface-2)',
+    padding: '6px 12px',
+    background: isActive ? 'rgba(216, 162, 58, 0.92)' : 'rgba(19, 19, 31, 0.9)',
     color: isActive ? '#000' : '#9ca3af',
-    border: `1px solid ${isActive ? 'var(--color-accent)' : 'var(--color-border)'}`,
-    borderRadius: 'var(--radius)',
+    border: `1px solid ${isActive ? 'rgba(216, 162, 58, 0.9)' : 'rgba(71, 85, 105, 0.55)'}`,
+    borderRadius: 6,
     fontSize: 11,
     fontWeight: 'bold',
     letterSpacing: 1,
@@ -158,6 +158,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
     flexShrink: 0,
     position: 'relative' as const,
     outline: 'none',
+    boxShadow: isActive ? 'inset 0 0 0 1px rgba(255,255,255,0.12)' : 'none',
   });
 
   return (
@@ -206,7 +207,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
             <span>{a.icon}</span>
             <span>{a.name}</span>
             {a.id === activeArchetypeId && (
-              <span style={{ fontSize: 8, background: 'rgba(0,0,0,0.3)', padding: '1px 4px', borderRadius: 2 }}>ACTIVE</span>
+              <span style={{ fontSize: 8, background: 'rgba(0,0,0,0.16)', padding: '2px 5px', borderRadius: 4 }}>ACTIVE</span>
             )}
           </button>
           {hoveredId === a.id && (
@@ -222,7 +223,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
       {overflow.length > 0 && (
         <div ref={moreRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button
-            style={{ ...chipStyle(false), border: '1px dashed var(--color-border)', color: '#6b7280', background: 'var(--color-surface-2)' }}
+            style={{ ...chipStyle(false), border: '1px dashed rgba(71, 85, 105, 0.55)', color: '#6b7280', background: 'rgba(19, 19, 31, 0.82)' }}
             onClick={() => setShowMore((v) => !v)}
           >
             ••• MORE
@@ -233,8 +234,8 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
               top: '100%',
               left: 0,
               marginTop: 6,
-              background: 'var(--color-surface)',
-              border: '2px solid var(--color-border-strong)',
+              background: 'rgba(12, 12, 20, 0.96)',
+              border: '1px solid rgba(71, 85, 105, 0.6)',
               borderRadius: 'var(--radius)',
               padding: 6,
               zIndex: 1000,
@@ -254,9 +255,10 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
                       display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px',
                       borderRadius: 'var(--radius)', cursor: 'pointer',
                       color: a.id === activeArchetypeId ? 'var(--color-accent)' : '#9ca3af',
-                      fontSize: 11, letterSpacing: 1, fontWeight: 'bold',
-                      background: hoveredId === a.id ? 'var(--color-surface-2)' : 'transparent',
+                      fontSize: 11, letterSpacing: 0.8, fontWeight: 700,
+                      background: hoveredId === a.id ? 'rgba(216, 162, 58, 0.08)' : 'transparent',
                       border: 'none', width: '100%', textAlign: 'left',
+                      fontFamily: 'var(--font-body)',
                     }}
                   >
                     <span>{a.icon}</span>

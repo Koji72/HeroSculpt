@@ -6,19 +6,15 @@ interface PartCategoryToolbarProps {
   activeCategory: PartCategory | null;
   id: string;
   registerElement: (id: string, element: HTMLElement | null) => void;
-  // Props para el submenu del Torso
   onTorsoToggle: () => void;
   getTorsoButtonRef: (ref: HTMLButtonElement | null) => void;
   isTorsoSubmenuExpanded: boolean;
-  // Props para el submenu del Belt
   onBeltToggle: () => void;
   getBeltButtonRef: (ref: HTMLButtonElement | null) => void;
   isBeltSubmenuExpanded: boolean;
-  // Props para el submenu del Lower Body
   onLowerBodyToggle: () => void;
   getLowerBodyButtonRef: (ref: HTMLButtonElement | null) => void;
   isLowerBodySubmenuExpanded: boolean;
-  // Props para los iconos de panel lateral
   activeSidePanel?: 'style' | 'skins' | 'lights' | null;
   onSidePanelToggle?: (panel: 'style' | 'skins' | 'lights') => void;
 }
@@ -61,47 +57,52 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     getLowerBodyButtonRef(lowerBodyButtonRef.current);
   }, [getLowerBodyButtonRef]);
 
-  useEffect(() => {
-    // console.log('PartCategoryToolbar rendered with:', { activeCategory });
-  }, [activeCategory]);
+  const mainCategories = [PartCategory.BACKPACK];
 
-  // Categorías que NO están en ningún submenú
-  const mainCategories = [
-    PartCategory.BACKPACK,
-  ];
+  const isTorsoOrSubActive =
+    activeCategory === PartCategory.TORSO ||
+    (activeCategory &&
+      [
+        PartCategory.HEAD,
+        PartCategory.SUIT_TORSO,
+        PartCategory.CAPE,
+        PartCategory.SYMBOL,
+        PartCategory.CHEST_BELT,
+        PartCategory.SHOULDERS,
+        PartCategory.FOREARMS,
+        PartCategory.HAND_LEFT,
+        PartCategory.HAND_RIGHT,
+      ].includes(activeCategory));
 
-  // Determinar si el upper body o sus subcategorías están activas
-  const isTorsoOrSubActive = activeCategory === PartCategory.TORSO ||
-    (activeCategory && [PartCategory.HEAD, PartCategory.SUIT_TORSO, PartCategory.CAPE, PartCategory.SYMBOL, PartCategory.CHEST_BELT, PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT].includes(activeCategory));
-
-  // Determinar si el belt o sus subcategorías están activas
-  const isBeltOrSubActive = activeCategory === PartCategory.BELT ||
+  const isBeltOrSubActive =
+    activeCategory === PartCategory.BELT ||
     (activeCategory && [PartCategory.POUCH, PartCategory.BUCKLE].includes(activeCategory));
 
-  // Determinar si el lower body o sus subcategorías están activas
-  const isLowerBodyOrSubActive = activeCategory === PartCategory.LOWER_BODY ||
+  const isLowerBodyOrSubActive =
+    activeCategory === PartCategory.LOWER_BODY ||
     (activeCategory && [PartCategory.BOOTS].includes(activeCategory));
 
   const sidebarBtnStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
     width: '60px',
-    padding: '8px 4px',
-    background: isActive ? 'var(--color-accent-dim)' : 'transparent',
-    border: `1.5px solid ${isActive ? 'var(--color-accent)' : 'var(--color-border)'}`,
-    borderRadius: 'var(--radius)',
+    padding: '8px 4px 9px',
+    background: isActive ? 'rgba(216, 162, 58, 0.08)' : 'rgba(19, 19, 31, 0.58)',
+    border: `1px solid ${isActive ? 'rgba(216, 162, 58, 0.42)' : 'rgba(71, 85, 105, 0.46)'}`,
+    borderRadius: '8px',
     cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 4,
-    transition: 'background 0.1s, border-color 0.1s',
+    gap: 6,
+    transition: 'background 0.12s, border-color 0.12s, transform 0.12s',
+    boxShadow: isActive ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'none',
   });
 
   const iconBoxStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
     width: 28,
     height: 28,
-    background: isActive ? 'var(--color-accent-dim)' : 'var(--color-border)',
-    borderRadius: 2,
-    border: isActive ? '1px solid var(--color-accent-mid)' : 'none',
+    background: isActive ? 'rgba(216, 162, 58, 0.12)' : 'rgba(30, 41, 59, 0.9)',
+    borderRadius: 6,
+    border: isActive ? '1px solid rgba(216, 162, 58, 0.24)' : '1px solid rgba(71, 85, 105, 0.28)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -109,13 +110,21 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
   });
 
   const labelStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
-    fontFamily: 'var(--font-comic)',
+    fontFamily: 'var(--font-body)',
+    fontWeight: 700,
     fontSize: 9,
-    letterSpacing: '1.5px',
+    letterSpacing: '1px',
     color: isActive ? 'var(--color-accent)' : 'var(--color-text-faint)',
     textAlign: 'center',
     textTransform: 'uppercase',
+    lineHeight: 1.15,
   });
+
+  const sidePanelButtons: Array<{ key: 'style' | 'skins' | 'lights'; label: string }> = [
+    { key: 'style', label: 'STYLE' },
+    { key: 'skins', label: 'SKINS' },
+    { key: 'lights', label: 'LIGHTS' },
+  ];
 
   return (
     <div
@@ -132,7 +141,6 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         overflowX: 'hidden',
       }}
     >
-      {/* UPPER BODY button */}
       <button
         ref={torsoButtonRef}
         onClick={onTorsoToggle}
@@ -156,7 +164,6 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         </span>
       </button>
 
-      {/* BELT button */}
       <button
         ref={beltButtonRef}
         onClick={onBeltToggle}
@@ -179,7 +186,6 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         </span>
       </button>
 
-      {/* LOWER BODY button */}
       <button
         ref={lowerBodyButtonRef}
         onClick={onLowerBodyToggle}
@@ -202,8 +208,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         </span>
       </button>
 
-      {/* Main Categories (e.g. BACKPACK) */}
-      {mainCategories.map(category => {
+      {mainCategories.map((category) => {
         const isActive = activeCategory === category;
         return (
           <button
@@ -226,7 +231,37 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         );
       })}
 
-      {/* Style shortcuts — bottom of sidebar */}
+      {onSidePanelToggle && (
+        <>
+          <div style={{ width: '70%', height: 1, background: 'rgba(71, 85, 105, 0.48)', margin: '10px 0 4px' }} />
+          {sidePanelButtons.map(({ key, label }) => {
+            const isActive = activeSidePanel === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onSidePanelToggle(key)}
+                style={sidebarBtnStyle(isActive)}
+              >
+                <div style={iconBoxStyle(isActive)}>
+              <span
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 11,
+                      letterSpacing: 0.8,
+                      fontWeight: 700,
+                      color: isActive ? 'var(--color-accent)' : 'var(--color-text-faint)',
+                    }}
+                  >
+                    {label.slice(0, 2)}
+                  </span>
+                </div>
+                <span style={labelStyle(isActive)}>{label}</span>
+              </button>
+            );
+          })}
+        </>
+      )}
     </div>
   );
 };
