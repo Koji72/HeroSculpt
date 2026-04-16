@@ -13,6 +13,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   if (!isOpen) return null;
 
@@ -26,11 +27,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
         const { error: err } = await supabase.auth.signUp({ email, password });
         if (err) { setError(err.message); return; }
         sessionStorage.setItem('just_registered', '1');
-        // Modal stays open — App.tsx useEffect will close it via onAuthStateChange
+        setSignupSuccess(true);
       } else {
         const { error: err } = await supabase.auth.signInWithPassword({ email, password });
         if (err) { setError(err.message); return; }
-        // Modal stays open — App.tsx useEffect will close it
+        // Modal stays open — App.tsx useEffect will close it via onAuthStateChange
       }
     } finally {
       setLoading(false);
@@ -72,76 +73,97 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           aria-label="Cerrar"
         >✕</button>
 
-        {/* Title */}
-        <div style={{ textAlign: 'center', marginBottom: 20 }}>
-          <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
-            {mode === 'signup' ? 'ÚNETE AL ESCUADRÓN' : 'BIENVENIDO DE VUELTA'}
-          </div>
-          {mode === 'signup' && (
-            <div style={{ fontSize: 10, color: 'var(--color-text-muted, #64748b)', letterSpacing: 1, marginTop: 2 }}>
-              CREA TU CUENTA GRATUITA
+        {signupSuccess ? (
+          <>
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
+                ¡CUENTA CREADA!
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 14 }}>
-            <label style={labelStyle}>Email</label>
-            <input
-              type="email"
-              placeholder="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={inputStyle}
-              required
-              autoComplete="email"
-            />
-          </div>
-          <div style={{ marginBottom: 20 }}>
-            <label style={labelStyle}>Contraseña</label>
-            <input
-              type="password"
-              placeholder="contraseña"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              style={inputStyle}
-              required
-              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
-          >
-            {loading ? '...' : mode === 'signup' ? 'CREAR CUENTA →' : 'ENTRAR →'}
-          </button>
-
-          {error && (
-            <div style={{ marginTop: 10, fontSize: 12, color: 'var(--color-accent, #f59e0b)', textAlign: 'center' }}>
-              {error}
+            <p style={{ color: 'var(--color-text, #e2e8f0)', fontFamily: 'inherit', fontSize: 13, textAlign: 'center', marginBottom: 20 }}>
+              Revisa tu email para confirmar la cuenta y luego inicia sesión.
+            </p>
+            <button
+              onClick={onClose}
+              style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: 'pointer' }}
+            >
+              CERRAR
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Title */}
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
+                {mode === 'signup' ? 'ÚNETE AL ESCUADRÓN' : 'BIENVENIDO DE VUELTA'}
+              </div>
+              {mode === 'signup' && (
+                <div style={{ fontSize: 10, color: 'var(--color-text-muted, #64748b)', letterSpacing: 1, marginTop: 2 }}>
+                  CREA TU CUENTA GRATUITA
+                </div>
+              )}
             </div>
-          )}
-        </form>
 
-        {/* Mode toggle */}
-        <div style={{ textAlign: 'center', marginTop: 16, fontSize: 11, color: 'var(--color-text-muted, #64748b)' }}>
-          {mode === 'signup' ? (
-            <>¿Ya tienes cuenta?{' '}
-              <button onClick={() => { setMode('signin'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
-                INICIAR SESIÓN
+            {/* Form */}
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: 14 }}>
+                <label style={labelStyle}>Email</label>
+                <input
+                  type="email"
+                  placeholder="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  style={inputStyle}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              <div style={{ marginBottom: 20 }}>
+                <label style={labelStyle}>Contraseña</label>
+                <input
+                  type="password"
+                  placeholder="contraseña"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  style={inputStyle}
+                  required
+                  autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
+              >
+                {loading ? '...' : mode === 'signup' ? 'CREAR CUENTA →' : 'ENTRAR →'}
               </button>
-            </>
-          ) : (
-            <>¿Nuevo aquí?{' '}
-              <button onClick={() => { setMode('signup'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
-                ÚNETE GRATIS
-              </button>
-            </>
-          )}
-        </div>
+
+              {error && (
+                <div style={{ marginTop: 10, fontSize: 12, color: 'var(--color-accent, #f59e0b)', textAlign: 'center' }}>
+                  {error}
+                </div>
+              )}
+            </form>
+
+            {/* Mode toggle */}
+            <div style={{ textAlign: 'center', marginTop: 16, fontSize: 11, color: 'var(--color-text-muted, #64748b)' }}>
+              {mode === 'signup' ? (
+                <>¿Ya tienes cuenta?{' '}
+                  <button onClick={() => { setMode('signin'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
+                    INICIAR SESIÓN
+                  </button>
+                </>
+              ) : (
+                <>¿Nuevo aquí?{' '}
+                  <button onClick={() => { setMode('signup'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
+                    ÚNETE GRATIS
+                  </button>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
