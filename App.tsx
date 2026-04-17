@@ -1503,9 +1503,9 @@ const AppContent: React.FC = () => {
     setCurrentPoseIndex(newIndex);
     
     const newPose = savedPoses[newIndex];
-    
-    setUserSelectedParts(newPose.configuration);
-    
+
+    setSelectedParts(newPose.configuration);
+
     // ✅ NUEVO: Desactivar bandera después de un delay
     setTimeout(() => {
       setIsNavigatingPoses(false);
@@ -1516,18 +1516,18 @@ const AppContent: React.FC = () => {
     if (savedPoses.length === 0) {
       return;
     }
-    
+
     // ✅ NUEVO: Activar bandera de navegación
     setIsNavigatingPoses(true);
-    
+
     const newIndex = currentPoseIndex < savedPoses.length - 1 ? currentPoseIndex + 1 : 0;
-    
+
     setCurrentPoseIndex(newIndex);
-    
+
     const newPose = savedPoses[newIndex];
-    
-    setUserSelectedParts(newPose.configuration);
-    
+
+    setSelectedParts(newPose.configuration);
+
     // ✅ NUEVO: Desactivar bandera después de un delay
     setTimeout(() => {
       setIsNavigatingPoses(false);
@@ -1538,13 +1538,13 @@ const AppContent: React.FC = () => {
     if (index < 0 || index >= savedPoses.length) {
       return;
     }
-    
+
     // ✅ NUEVO: Activar bandera de navegación
     setIsNavigatingPoses(true);
-    
+
     const newPose = savedPoses[index];
     setCurrentPoseIndex(index);
-    setUserSelectedParts(newPose.configuration);
+    setSelectedParts(newPose.configuration);
     
     // ✅ NUEVO: Desactivar bandera después de un delay
     setTimeout(() => {
@@ -1577,9 +1577,9 @@ const AppContent: React.FC = () => {
     setCurrentPoseIndex(newIndex);
 
     if (newPoses.length === 0) {
-      setUserSelectedParts({});
+      setSelectedParts({});
     } else {
-      setUserSelectedParts(newPoses[newIndex].configuration);
+      setSelectedParts(newPoses[newIndex].configuration);
     }
   };
 
