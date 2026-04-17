@@ -221,6 +221,7 @@ const AppContent: React.FC = () => {
     setActiveRightPanel(p => p === panel ? null : panel);
 
   const [showShortcutsOverlay, setShowShortcutsOverlay] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   // Estado para panel de materiales
   const [isMaterialPanelOpen, setIsMaterialPanelOpen] = useState(false);
@@ -582,6 +583,30 @@ const AppContent: React.FC = () => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [handleUndo, handleRedo]);
+
+  // Load build from URL ?build= param on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('build');
+    if (!encoded) return;
+    try {
+      const payload = JSON.parse(atob(encoded)) as { a: string; p: Record<string, string> };
+      if (payload.a) setSelectedArchetype(payload.a as ArchetypeId);
+      if (payload.p) {
+        const parts: SelectedParts = {};
+        Object.entries(payload.p).forEach(([cat, id]) => {
+          const found = ALL_PARTS.find(p => p.id === id);
+          if (found) parts[cat as PartCategory] = found;
+        });
+        if (Object.keys(parts).length > 0) {
+          setUserSelectedParts(parts);
+        }
+      }
+      // Clean URL without reload
+      const clean = window.location.pathname;
+      window.history.replaceState(null, '', clean);
+    } catch {}
+  }, []);
 
   // Save última pose cuando el usuario salga de la página
   useEffect(() => {
@@ -1054,6 +1079,23 @@ const AppContent: React.FC = () => {
       a.download = `${characterName || 'hero'}-screenshot.png`;
       a.click();
     } catch {}
+  };
+
+  const handleShareBuild = () => {
+    const payload = {
+      a: selectedArchetype ?? ArchetypeId.STRONG,
+      p: Object.fromEntries(
+        Object.entries(selectedParts)
+          .filter(([, part]) => part && !part.attributes?.none)
+          .map(([cat, part]) => [cat, part!.id])
+      ),
+    };
+    const encoded = btoa(JSON.stringify(payload));
+    const url = `${window.location.origin}${window.location.pathname}?build=${encoded}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2500);
+    });
   };
 
   const handleRandomize = () => {
@@ -1825,6 +1867,14 @@ const AppContent: React.FC = () => {
             onClick={handleRandomize}
           >
             🎲 RANDOM
+          </button>
+          <button
+            className="btn-comic btn-outline"
+            title="Copiar enlace del build"
+            style={{ fontSize: '13px', padding: '5px 12px', transition: 'background 0.2s', background: shareCopied ? 'rgba(34,197,94,0.15)' : undefined, borderColor: shareCopied ? 'rgba(34,197,94,0.5)' : undefined, color: shareCopied ? '#22c55e' : undefined }}
+            onClick={handleShareBuild}
+          >
+            {shareCopied ? '✓ COPIADO' : '🔗 SHARE'}
           </button>
           {(() => {
             const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
