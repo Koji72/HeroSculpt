@@ -164,8 +164,8 @@ const AppContent: React.FC = () => {
 
   // Estado para hojas de personaje RPG
   const [isRPGSheetOpen, setIsRPGSheetOpen] = useState(false);
-  const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'style' | 'skins' | 'lights' | 'library' | null>('stats');
-  const toggleRightPanel = (panel: 'stats' | 'style' | 'skins' | 'lights' | 'library') =>
+  const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'style' | 'skins' | 'library' | null>('stats');
+  const toggleRightPanel = (panel: 'stats' | 'style' | 'skins' | 'library') =>
     setActiveRightPanel(p => p === panel ? null : panel);
 
   // Estado para panel de materiales
@@ -823,7 +823,7 @@ const AppContent: React.FC = () => {
   };
 
   // Task 7: side panel toggle — wired to right panel system
-  const handleSidePanelToggle = (panel: 'style' | 'skins' | 'lights') => {
+  const handleSidePanelToggle = (panel: 'style' | 'skins') => {
     toggleRightPanel(panel);
   };
 
@@ -2211,9 +2211,6 @@ const AppContent: React.FC = () => {
             {activeRightPanel === 'skins' && (
               <SkinsPanel apiRef={characterViewerRef} onClose={() => setActiveRightPanel(null)} />
             )}
-            {activeRightPanel === 'lights' && (
-              <LightsPanel apiRef={characterViewerRef} onClose={() => setActiveRightPanel(null)} />
-            )}
             {activeRightPanel === 'library' && (
               <PurchaseLibrary
                 isOpen={true}
@@ -2227,7 +2224,7 @@ const AppContent: React.FC = () => {
 
         {/* Columna de pestañas — siempre visible */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {(['stats', 'style', 'skins', 'lights'] as const).map(key => (
+          {(['stats', 'style', 'skins'] as const).map(key => (
             <button
               key={key}
               onClick={() => toggleRightPanel(key)}
