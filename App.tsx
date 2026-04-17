@@ -2446,10 +2446,15 @@ const AppContent: React.FC = () => {
 
         {/* Columna de pestañas — siempre visible */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {(['stats', 'style', 'skins'] as const).map(key => (
+          {([
+            { key: 'stats', icon: '📊', label: 'STATS' },
+            { key: 'style', icon: '🎨', label: 'ESTILO' },
+            { key: 'skins', icon: '✨', label: 'SKINS' },
+          ] as const).map(({ key, icon, label }) => (
             <button
               key={key}
               onClick={() => toggleRightPanel(key)}
+              title={label}
               style={{
                 writingMode: 'vertical-rl',
                 transform: 'rotate(180deg)',
@@ -2458,14 +2463,14 @@ const AppContent: React.FC = () => {
                 borderRight: 'none',
                 color: activeRightPanel === key ? '#000' : 'var(--color-accent, #f59e0b)',
                 fontFamily: 'var(--font-comic, Bangers, sans-serif)',
-                fontSize: '13px',
+                fontSize: '11px',
                 letterSpacing: '0.1em',
                 padding: '10px 6px',
                 cursor: 'pointer',
                 borderRadius: '4px 0 0 4px',
                 userSelect: 'none',
               }}
-            >{key.toUpperCase()}</button>
+            >{icon} {label}</button>
           ))}
           {/* LIBRARY tab — auth-conditional */}
           <button
@@ -2495,7 +2500,7 @@ const AppContent: React.FC = () => {
             }}
             title={!user ? 'Sign in to access your Library' : 'Library'}
           >
-            LIBRARY
+            📚 BUILDS
           </button>
         </div>
       </div>

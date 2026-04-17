@@ -175,7 +175,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={torsoButtonRef}
         onClick={onTorsoToggle}
-        onMouseEnter={e => showTooltip(e, 'UPPER BODY [1]')}
+        onMouseEnter={e => showTooltip(e, 'CUERPO SUPERIOR [1]')}
         onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isTorsoOrSubActive)}
       >
@@ -200,7 +200,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={beltButtonRef}
         onClick={onBeltToggle}
-        onMouseEnter={e => showTooltip(e, 'BELT & ACCESSORIES [2]')}
+        onMouseEnter={e => showTooltip(e, 'CINTURÓN Y ACCESORIOS [2]')}
         onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isBeltOrSubActive)}
       >
@@ -224,7 +224,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={lowerBodyButtonRef}
         onClick={onLowerBodyToggle}
-        onMouseEnter={e => showTooltip(e, 'LOWER BODY [3]')}
+        onMouseEnter={e => showTooltip(e, 'CUERPO INFERIOR [3]')}
         onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isLowerBodyOrSubActive)}
       >
@@ -280,7 +280,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
-                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? 'COLORS & MATERIALS' : label === 'SKINS' ? 'TEXTURES & SKINS' : 'LIGHTING')}
+                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? 'COLORES Y MATERIALES' : label === 'SKINS' ? 'TEXTURAS Y SKINS' : 'ILUMINACIÓN')}
                 onMouseLeave={() => setTooltip(null)}
                 style={sidebarBtnStyle(isActive)}
               >
