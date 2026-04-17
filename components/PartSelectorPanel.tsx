@@ -48,6 +48,12 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Keep previewParts in sync when the external selectedParts changes (pose navigation, archetype switch, etc.)
+  useEffect(() => {
+    setPreviewParts(selectedParts);
+    setHasChanges(false);
+  }, [selectedParts]);
+
 
 
   const handleCancelChanges = useCallback(() => {
