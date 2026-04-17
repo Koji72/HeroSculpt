@@ -181,17 +181,11 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
   // Si no hay character, mostrar loading
   if (!character) {
     return (
-      <div className="space-y-4" style={{ border: '2px solid red', padding: '10px' }}>
+      <div className="space-y-4" style={{ padding: '10px' }}>
         <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              RPG Character Sheet - LOADING
-            </CardTitle>
-          </CardHeader>
           <CardContent>
             <div className="text-slate-400 text-center py-8">
-              Loading character... {selectedArchetype}
+              Calculando estadísticas…
             </div>
           </CardContent>
         </Card>
