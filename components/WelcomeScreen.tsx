@@ -1,33 +1,41 @@
 import React, { useEffect, useState } from 'react';
+import type { ArchetypeInfo } from '../lib/archetypeData';
 
 interface WelcomeScreenProps {
   isOpen: boolean;
   userEmail: string;
   onClose: () => void;
   onOpenLibrary: () => void;
+  archetypes?: ArchetypeInfo[];
+  activeArchetypeId?: string;
+  onSelectArchetype?: (id: string) => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ isOpen, userEmail, onClose, onOpenLibrary }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
+  isOpen, userEmail, onClose, onOpenLibrary,
+  archetypes = [], activeArchetypeId, onSelectArchetype,
+}) => {
   const [visible, setVisible] = useState(false);
+  const [pickedId, setPickedId] = useState<string | null>(activeArchetypeId ?? null);
 
   useEffect(() => {
-    if (isOpen) requestAnimationFrame(() => setVisible(true));
-    else setVisible(false);
-  }, [isOpen]);
+    if (isOpen) {
+      setPickedId(activeArchetypeId ?? null);
+      requestAnimationFrame(() => setVisible(true));
+    } else {
+      setVisible(false);
+    }
+  }, [isOpen, activeArchetypeId]);
 
   if (!isOpen) return null;
 
-  const stats = [
-    { value: '300+', label: 'PARTS' },
-    { value: '6', label: 'ARCHETYPES' },
-    { value: '3', label: 'EXPORT FORMATS' },
-  ];
+  const displayArchetypes = archetypes.slice(0, 6);
+  const showArchetypes = displayArchetypes.length > 0;
 
-  const features = [
-    { icon: '📚', title: 'HERO LIBRARY', subtitle: 'Save & load unlimited builds', color: 'var(--color-accent)', action: () => { onOpenLibrary(); onClose(); }, cta: 'OPEN →' },
-    { icon: '🎭', title: 'POSE STUDIO', subtitle: 'Save poses for your characters', color: '#22c55e', action: null, cta: null },
-    { icon: '☁️', title: 'CLOUD SYNC', subtitle: 'Your heroes, everywhere', color: '#3b82f6', action: null, cta: null },
-  ];
+  const handleStart = () => {
+    if (pickedId && onSelectArchetype) onSelectArchetype(pickedId);
+    onClose();
+  };
 
   return (
     <div
@@ -43,7 +51,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ isOpen, userEmail, onClos
       <div style={{
         background: 'var(--color-surface-2, #1e293b)',
         border: '1px solid rgba(216,162,58,0.3)',
-        width: 360,
+        width: showArchetypes ? 420 : 360,
+        maxHeight: '90vh',
+        overflowY: 'auto',
         boxShadow: '0 0 60px rgba(216,162,58,0.12), 0 24px 60px rgba(0,0,0,0.7)',
         transform: visible ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.97)',
         transition: 'transform 0.25s cubic-bezier(0.34,1.56,0.64,1)',
@@ -54,34 +64,36 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ isOpen, userEmail, onClos
         <div style={{
           background: 'linear-gradient(135deg, rgba(216,162,58,0.15) 0%, rgba(9,9,15,0) 60%)',
           borderBottom: '1px solid rgba(216,162,58,0.18)',
-          padding: '28px 28px 20px',
+          padding: '24px 24px 16px',
           textAlign: 'center',
         }}>
           <div style={{
             fontFamily: 'var(--font-comic, Bangers, sans-serif)',
             fontSize: 11, letterSpacing: 4,
-            color: 'var(--color-accent)', marginBottom: 8,
+            color: 'var(--color-accent)', marginBottom: 6,
             textTransform: 'uppercase',
           }}>
             HERO BUILDER
           </div>
           <div style={{
             fontFamily: 'var(--font-comic, Bangers, sans-serif)',
-            fontSize: 32, letterSpacing: 4,
+            fontSize: 30, letterSpacing: 4,
             color: '#fff', lineHeight: 1,
             textShadow: '0 0 40px rgba(216,162,58,0.4)',
           }}>
             ¡BIENVENIDO!
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(148,163,184,0.7)', marginTop: 8 }}>
-            {userEmail}
-          </div>
+          {userEmail && (
+            <div style={{ fontSize: 10, color: 'rgba(148,163,184,0.6)', marginTop: 6 }}>
+              {userEmail}
+            </div>
+          )}
 
           {/* Stats row */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 16 }}>
-            {stats.map(s => (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 14 }}>
+            {[{ value: '300+', label: 'PARTS' }, { value: '6', label: 'ARCHETYPES' }, { value: '3', label: 'EXPORTS' }].map(s => (
               <div key={s.label} style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 20, color: 'var(--color-accent)', letterSpacing: 1 }}>
+                <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 18, color: 'var(--color-accent)', letterSpacing: 1 }}>
                   {s.value}
                 </div>
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: 8, letterSpacing: 1.5, color: 'rgba(100,116,139,0.9)', textTransform: 'uppercase' }}>
@@ -92,50 +104,84 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ isOpen, userEmail, onClos
           </div>
         </div>
 
-        {/* Features */}
-        <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {features.map((f) => (
-            <div
-              key={f.title}
-              style={{
-                background: 'var(--color-surface, #0f172a)',
-                border: '1px solid rgba(71,85,105,0.4)',
-                borderLeft: `3px solid ${f.color}`,
-                padding: '10px 14px',
-                display: 'flex', alignItems: 'center', gap: 12,
-                borderRadius: 2,
-              }}
-            >
-              <span style={{ fontSize: 20, flexShrink: 0 }}>{f.icon}</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 12, letterSpacing: 1.5, color: f.color }}>
-                  {f.title}
-                </div>
-                <div style={{ fontSize: 10, color: 'rgba(100,116,139,0.9)', marginTop: 2 }}>
-                  {f.subtitle}
-                </div>
-              </div>
-              {f.action && f.cta && (
-                <button
-                  onClick={f.action}
-                  style={{
-                    background: f.color, color: '#000', border: 'none',
-                    padding: '5px 12px', fontFamily: 'var(--font-comic, Bangers, sans-serif)',
-                    fontSize: 10, letterSpacing: 1, cursor: 'pointer', flexShrink: 0,
-                    borderRadius: 2,
-                  }}
-                >
-                  {f.cta}
-                </button>
-              )}
+        {/* Archetype picker */}
+        {showArchetypes && (
+          <div style={{ padding: '16px 20px 8px' }}>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 9, letterSpacing: 2, color: 'var(--color-text-faint)', textTransform: 'uppercase', marginBottom: 10, textAlign: 'center' }}>
+              ELIGE TU ARQUETIPO
             </div>
-          ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {displayArchetypes.map(a => {
+                const isSelected = pickedId === a.id;
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => setPickedId(a.id)}
+                    style={{
+                      background: isSelected ? 'rgba(216,162,58,0.14)' : 'rgba(15,23,42,0.7)',
+                      border: `1px solid ${isSelected ? 'rgba(216,162,58,0.6)' : 'rgba(71,85,105,0.35)'}`,
+                      borderRadius: 8,
+                      padding: '10px 6px',
+                      cursor: 'pointer',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                      transition: 'background 0.12s, border-color 0.12s, transform 0.1s',
+                      transform: isSelected ? 'scale(1.04)' : 'scale(1)',
+                      outline: 'none',
+                    }}
+                    onMouseOver={e => { if (!isSelected) e.currentTarget.style.borderColor = 'rgba(216,162,58,0.3)'; }}
+                    onMouseOut={e => { if (!isSelected) e.currentTarget.style.borderColor = 'rgba(71,85,105,0.35)'; }}
+                  >
+                    <span style={{ fontSize: 22 }}>{a.icon}</span>
+                    <span style={{
+                      fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 800,
+                      letterSpacing: 0.8, color: isSelected ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                      textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.2,
+                    }}>
+                      {a.name}
+                    </span>
+                    {isSelected && (
+                      <span style={{ fontSize: 7, color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 1 }}>
+                        ✓ ELEGIDO
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Library feature row */}
+        <div style={{ padding: showArchetypes ? '8px 20px 4px' : '16px 20px 4px' }}>
+          <div
+            style={{
+              background: 'var(--color-surface, #0f172a)',
+              border: '1px solid rgba(71,85,105,0.4)',
+              borderLeft: '3px solid var(--color-accent)',
+              padding: '10px 14px',
+              display: 'flex', alignItems: 'center', gap: 12,
+              borderRadius: 2,
+              cursor: 'pointer',
+            }}
+            onClick={() => { onOpenLibrary(); onClose(); }}
+          >
+            <span style={{ fontSize: 18, flexShrink: 0 }}>📚</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 12, letterSpacing: 1.5, color: 'var(--color-accent)' }}>
+                HERO LIBRARY
+              </div>
+              <div style={{ fontSize: 10, color: 'rgba(100,116,139,0.9)', marginTop: 2 }}>
+                Guarda y carga builds ilimitadas
+              </div>
+            </div>
+            <span style={{ color: 'var(--color-accent)', fontSize: 12, flexShrink: 0 }}>OPEN →</span>
+          </div>
         </div>
 
         {/* CTA */}
-        <div style={{ padding: '0 20px 20px' }}>
+        <div style={{ padding: '12px 20px 20px' }}>
           <button
-            onClick={onClose}
+            onClick={handleStart}
             style={{
               width: '100%', padding: '12px',
               background: 'var(--color-accent)', color: '#09090f',
@@ -147,7 +193,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ isOpen, userEmail, onClos
             onMouseOver={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
             onMouseOut={e => (e.currentTarget.style.filter = 'brightness(1)')}
           >
-            EMPEZAR A CREAR →
+            {pickedId ? `CREAR CON ${pickedId.toUpperCase()} →` : 'EMPEZAR A CREAR →'}
           </button>
         </div>
       </div>

@@ -2104,6 +2104,9 @@ const AppContent: React.FC = () => {
             setIsWelcomeScreenOpen(false);
             setActiveRightPanel('library');
           }}
+          archetypes={ARCHETYPES_LIST.slice(0, 6)}
+          activeArchetypeId={selectedArchetype ?? ArchetypeId.STRONG}
+          onSelectArchetype={handleArchetypeSelect}
         />
       )}
 
