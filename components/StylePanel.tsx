@@ -21,7 +21,18 @@ export interface StylePanelProps {
   embedded?: boolean;
 }
 
-const COLOR_PRESETS = ['#1d4ed8', '#dc2626', '#16a34a', '#7c3aed', '#f59e0b', '#e2e8f0'];
+const COLOR_PRESETS = [
+  '#1d4ed8', '#2563eb', '#0ea5e9', '#06b6d4',  // Blues
+  '#dc2626', '#f97316', '#f59e0b', '#eab308',  // Reds/Oranges
+  '#16a34a', '#7c3aed', '#ec4899', '#e2e8f0',  // Green/Purple/Pink/White
+  '#111827', '#1e293b', '#b45309', '#d4af37',  // Black/Dark/Bronze/Gold
+];
+const MATERIAL_META: Record<MaterialType, { icon: string; desc: string }> = {
+  FABRIC:  { icon: '🧵', desc: 'Suave, mate' },
+  METAL:   { icon: '⚙️', desc: 'Metálico brillante' },
+  PLASTIC: { icon: '🔷', desc: 'Liso, duro' },
+  CHROME:  { icon: '✨', desc: 'Espejo reflectante' },
+};
 const MATERIALS: MaterialType[] = ['FABRIC', 'METAL', 'PLASTIC', 'CHROME'];
 
 const StylePanel: React.FC<StylePanelProps> = ({
@@ -143,7 +154,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
               {/* Color section */}
               <div style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 9, color: '#6b7280', letterSpacing: 1, marginBottom: 6 }}>COLOR</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 4, marginBottom: 8 }}>
                   {COLOR_PRESETS.map((c) => (
                     <button
                       key={c}
@@ -151,15 +162,14 @@ const StylePanel: React.FC<StylePanelProps> = ({
                       aria-label={`color ${c}`}
                       onClick={() => { setLocalColor(c); onColorChange(activePart, c); }}
                       style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: '50%',
+                        width: '100%', aspectRatio: '1',
+                        borderRadius: 4,
                         background: c,
-                        border: `2px solid ${localColor === c ? 'var(--color-accent)' : 'rgba(255,255,255,0.15)'}`,
-                        cursor: 'pointer',
-                        flexShrink: 0,
-                        padding: 0,
-                        outline: 'none',
+                        border: `2px solid ${localColor === c ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)'}`,
+                        cursor: 'pointer', padding: 0, outline: 'none',
+                        transform: localColor === c ? 'scale(1.15)' : 'scale(1)',
+                        transition: 'transform 0.1s',
+                        boxShadow: localColor === c ? '0 0 6px rgba(216,162,58,0.6)' : 'none',
                       }}
                     />
                   ))}
@@ -182,28 +192,30 @@ const StylePanel: React.FC<StylePanelProps> = ({
               {/* Material section */}
               <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 9, color: '#6b7280', letterSpacing: 1, marginBottom: 6 }}>MATERIAL</div>
-                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                  {MATERIALS.map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => { setLocalMaterial(m); onMaterialChange(activePart, m); }}
-                      style={{
-                        padding: '4px 8px',
-                        background: localMaterial === m ? 'var(--color-accent)' : 'var(--color-surface-2)',
-                        color: localMaterial === m ? '#000' : '#9ca3af',
-                        border: `1.5px solid ${localMaterial === m ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                        borderRadius: 'var(--radius)',
-                        fontSize: 9,
-                        fontWeight: 'bold',
-                        letterSpacing: 1,
-                        cursor: 'pointer',
-                        outline: 'none',
-                      }}
-                    >
-                      {m}
-                    </button>
-                  ))}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+                  {MATERIALS.map((m) => {
+                    const meta = MATERIAL_META[m];
+                    const isActive = localMaterial === m;
+                    return (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => { setLocalMaterial(m); onMaterialChange(activePart, m); }}
+                        style={{
+                          padding: '6px 8px',
+                          background: isActive ? 'rgba(216,162,58,0.15)' : 'var(--color-surface-2)',
+                          color: isActive ? 'var(--color-accent)' : '#9ca3af',
+                          border: `1.5px solid ${isActive ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                          borderRadius: 'var(--radius)',
+                          fontSize: 9, fontWeight: 'bold', letterSpacing: 0.8,
+                          cursor: 'pointer', outline: 'none', textAlign: 'left',
+                        }}
+                      >
+                        <div>{meta.icon} {m}</div>
+                        <div style={{ fontSize: 8, opacity: 0.7, fontWeight: 400, letterSpacing: 0 }}>{meta.desc}</div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -226,7 +238,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                     outline: 'none',
                   }}
                 >
-                  APPLY TO THIS PART
+                  ✓ APLICAR A ESTA PARTE
                 </button>
                 <button
                   type="button"
@@ -244,7 +256,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                     outline: 'none',
                   }}
                 >
-                  APPLY TO ALL PARTS
+                  APLICAR A TODAS LAS PARTES
                 </button>
               </div>
             </>
