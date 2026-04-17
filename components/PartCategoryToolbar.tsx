@@ -252,6 +252,8 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
             key={category}
             id={`category-toolbar-item-${category}`}
             onClick={() => onSelectCategory(category)}
+            onMouseEnter={e => showTooltip(e, 'MOCHILA Y EXTRAS')}
+            onMouseLeave={() => setTooltip(null)}
             style={sidebarBtnStyle(isActive)}
           >
             <div style={iconBoxStyle(isActive)}>
@@ -262,7 +264,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
               </svg>
             </div>
             <span style={labelStyle(isActive)}>
-              {String(category).substring(0, 6)}
+              MOCHILA
             </span>
           </button>
         );
