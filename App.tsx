@@ -1844,6 +1844,33 @@ const AppContent: React.FC = () => {
           );
         })()}
 
+        {/* Hero name — inline editable */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, padding: '0 8px' }}>
+          <input
+            type="text"
+            value={characterName}
+            onChange={e => setCharacterName(e.target.value)}
+            onBlur={e => { if (!e.target.value.trim()) setCharacterName('Mi Héroe'); }}
+            maxLength={28}
+            placeholder="Mi Héroe"
+            style={{
+              background: 'rgba(19,19,31,0.7)',
+              border: '1px solid rgba(216,162,58,0.28)',
+              borderRadius: 6,
+              color: 'var(--color-accent)',
+              fontFamily: 'var(--font-comic)',
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: 1.2,
+              padding: '4px 10px',
+              outline: 'none',
+              width: 160,
+              textAlign: 'center',
+            }}
+            onFocus={e => e.target.select()}
+          />
+        </div>
+
         {/* Right actions */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', gap: '8px', flexShrink: 0 }}>
           <button
