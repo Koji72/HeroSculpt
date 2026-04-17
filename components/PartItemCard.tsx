@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Part } from '../types';
 import { X } from 'lucide-react';
 
@@ -14,6 +14,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
   part, isSelected, onSelect, onHover,
   ownedPartIds = new Set(),
 }) => {
+  const [hovered, setHovered] = useState(false);
   const isNonePart = part.attributes?.none === true;
   const isTorso = part.category === 'TORSO' || part.category === 'SUIT_TORSO';
 
@@ -22,35 +23,24 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
   const isPremium = !isNonePart && part.priceUSD > 0 && !isOwned;
   const premiumLabel = `$${part.priceUSD.toFixed(2)}`;
 
-  const handleClick = () => {
-    onSelect(part);
-  };
-
   const handleMouseEnter = () => {
-    if (onHover) {
-      onHover(part);
-    }
+    setHovered(true);
+    if (onHover) onHover(part);
   };
 
   const handleMouseLeave = () => {
-    // Don't clear hover when moving between parts to prevent model disappearing
-    // The container will handle clearing when mouse leaves the entire panel
+    setHovered(false);
   };
 
   return (
     <div
-      onClick={handleClick}
+      onClick={() => onSelect(part)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      title={
-        isNonePart ? 'Remove part' :
-        isPremium ? `${part.name} — $${part.priceUSD.toFixed(2)} · Añadir al carrito para descargar` :
-        `${part.name} - Click to apply`
-      }
       style={{
         aspectRatio: '1',
-        background: isSelected ? 'var(--color-accent-dim)' : 'var(--color-surface-2)',
-        border: `${isSelected ? 2 : 1.5}px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border)'}`,
+        background: isSelected ? 'var(--color-accent-dim)' : hovered ? 'rgba(30,41,59,0.95)' : 'var(--color-surface-2)',
+        border: `${isSelected ? 2 : 1.5}px solid ${isSelected ? 'var(--color-accent)' : hovered ? 'var(--color-accent)' : 'var(--color-border)'}`,
         borderRadius: 'var(--radius)',
         cursor: 'pointer',
         display: 'flex',
@@ -59,18 +49,11 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
         justifyContent: 'flex-end',
         padding: '4px',
         position: 'relative',
-        overflow: 'hidden',
-        transition: 'border-color 0.1s, background 0.1s',
-      }}
-      onMouseOver={(e) => {
-        if (!isSelected) {
-          (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--color-accent)';
-        }
-      }}
-      onMouseOut={(e) => {
-        if (!isSelected) {
-          (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--color-border)';
-        }
+        overflow: 'visible',
+        transform: hovered && !isSelected ? 'scale(1.06)' : 'scale(1)',
+        transition: 'border-color 0.1s, background 0.1s, transform 0.12s, box-shadow 0.12s',
+        boxShadow: hovered ? '0 0 12px rgba(216,162,58,0.25), 0 4px 12px rgba(0,0,0,0.4)' : 'none',
+        zIndex: hovered ? 2 : 1,
       }}
     >
       {/* Selected checkmark */}
@@ -109,18 +92,44 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
           />
         ) : null}
 
-        {/* PREMIUM lock overlay — rendered inside the thumbnail div */}
+        {/* PREMIUM overlay */}
         {isPremium && !isNonePart && (
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'rgba(0,0,0,0.55)',
+            background: 'rgba(0,0,0,0.45)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             borderRadius: 1,
           }}>
-            <span style={{ fontSize: 14 }}>🔒</span>
+            <span style={{
+              fontFamily: 'var(--font-comic)', fontSize: 8, letterSpacing: 0.5,
+              color: 'var(--color-accent)', fontWeight: 700,
+            }}>{premiumLabel}</span>
           </div>
         )}
       </div>
+
+      {/* Hover tooltip */}
+      {hovered && !isNonePart && (
+        <div style={{
+          position: 'absolute', bottom: 'calc(100% + 6px)', left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(15,23,42,0.97)',
+          border: '1px solid rgba(216,162,58,0.35)',
+          padding: '6px 10px',
+          borderRadius: 4,
+          whiteSpace: 'nowrap',
+          zIndex: 100,
+          pointerEvents: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+        }}>
+          <div style={{ fontFamily: 'var(--font-comic)', fontSize: 10, letterSpacing: 1, color: '#e2e8f0', fontWeight: 700 }}>
+            {part.name}
+          </div>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: 9, color: isFree ? '#60a5fa' : isOwned ? '#22c55e' : 'var(--color-accent)', marginTop: 2 }}>
+            {isFree ? 'FREE' : isOwned ? '✓ OWNED' : premiumLabel + ' · PREMIUM'}
+          </div>
+        </div>
+      )}
 
       {/* State badge — top-right corner */}
       {!isNonePart && (
