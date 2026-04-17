@@ -220,6 +220,8 @@ const AppContent: React.FC = () => {
   const toggleRightPanel = (panel: 'stats' | 'style' | 'skins' | 'library') =>
     setActiveRightPanel(p => p === panel ? null : panel);
 
+  const [showShortcutsOverlay, setShowShortcutsOverlay] = useState(false);
+
   // Estado para panel de materiales
   const [isMaterialPanelOpen, setIsMaterialPanelOpen] = useState(false);
   
@@ -573,6 +575,8 @@ const AppContent: React.FC = () => {
       if (event.key === '1') { event.preventDefault(); handleTorsoSubmenuToggle(); }
       if (event.key === '2') { event.preventDefault(); handleBeltSubmenuToggle(); }
       if (event.key === '3') { event.preventDefault(); handleLowerBodySubmenuToggle(); }
+      if (event.key === '?') { event.preventDefault(); setShowShortcutsOverlay(v => !v); }
+      if (event.key === 'Escape') { setShowShortcutsOverlay(false); }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -2112,7 +2116,44 @@ const AppContent: React.FC = () => {
             </button>
           )}
         </div>
+
+        {/* Help button */}
+        <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={() => setShowShortcutsOverlay(v => !v)}
+            title="Atajos de teclado (?)"
+            style={{ padding: '5px 10px', background: 'none', border: '1px solid rgba(71,85,105,0.4)', borderRadius: 6, color: 'rgba(100,116,139,0.7)', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+          >?</button>
+        </div>
       </div>
+
+      {/* Keyboard shortcuts overlay */}
+      {showShortcutsOverlay && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          onClick={() => setShowShortcutsOverlay(false)}
+        >
+          <div style={{ background: 'var(--color-surface-2)', border: '1px solid rgba(216,162,58,0.35)', borderRadius: 8, padding: '20px 28px', minWidth: 260, boxShadow: '0 16px 48px rgba(0,0,0,0.7)' }}>
+            <div style={{ fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2, color: 'var(--color-accent)', marginBottom: 14 }}>ATAJOS DE TECLADO</div>
+            {[
+              ['Ctrl+Z', 'Deshacer'],
+              ['Ctrl+Shift+Z', 'Rehacer'],
+              ['1', 'Panel cuerpo superior'],
+              ['2', 'Panel cinturón'],
+              ['3', 'Panel cuerpo inferior'],
+              ['C', 'Resetear cámara'],
+              ['?', 'Mostrar/ocultar esta ayuda'],
+              ['Esc', 'Cerrar panel'],
+            ].map(([key, desc]) => (
+              <div key={key} style={{ display: 'flex', gap: 12, marginBottom: 8, alignItems: 'center' }}>
+                <kbd style={{ fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 700, background: 'rgba(71,85,105,0.5)', border: '1px solid rgba(71,85,105,0.8)', borderRadius: 4, padding: '2px 6px', color: '#e2e8f0', minWidth: 70, textAlign: 'center', letterSpacing: 0.5 }}>{key}</kbd>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--color-text-muted)' }}>{desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── MODALS ── */}
       {isResetPasswordOpen && (
