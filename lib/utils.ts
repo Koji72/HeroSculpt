@@ -492,9 +492,8 @@ export function assignAdaptiveSuitTorsoForTorso(newTorso: Part, currentParts: Se
     }
   }
   
-  // No exact match, use first compatible or remove suit
-  console.log('⚠️ No exact suit type match, removing suit_torso');
-  delete newParts[PartCategory.SUIT_TORSO];
+  // No exact type match — use first compatible suit rather than removing it
+  newParts[PartCategory.SUIT_TORSO] = compatibleSuits[0];
   return newParts;
 } 
 

@@ -222,8 +222,13 @@ const AppContent: React.FC = () => {
   // Estado para hojas de personaje RPG
   const [isRPGSheetOpen, setIsRPGSheetOpen] = useState(false);
   const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'style' | 'skins' | 'library' | null>('stats');
-  const toggleRightPanel = (panel: 'stats' | 'style' | 'skins' | 'library') =>
+  const toggleRightPanel = (panel: 'stats' | 'style' | 'skins' | 'library') => {
+    if (panel === 'style' && activeCategory) {
+      const mapped = CATEGORY_TO_STYLE_PART[activeCategory];
+      if (mapped) setActivePanelPart(mapped);
+    }
     setActiveRightPanel(p => p === panel ? null : panel);
+  };
 
   const [showShortcutsOverlay, setShowShortcutsOverlay] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
@@ -1197,6 +1202,7 @@ const AppContent: React.FC = () => {
         })() : {}),
     };
 
+    pushPartsHistory(result);
     setSelectedParts(result);
   };
 
