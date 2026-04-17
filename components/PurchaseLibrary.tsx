@@ -291,7 +291,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     >
       <div className="panel-box" style={{ width: 520, maxWidth: '95vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div className="panel-header">
-          <span style={{ fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 3 }}>MY LIBRARY</span>
+          <span style={{ fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 3 }}>📚 MIS BUILDS</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button
               onClick={loadPurchases}
@@ -307,7 +307,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
         <div style={{ padding: '0', overflowY: 'auto', flex: 1, background: 'var(--color-surface)', display: 'flex', flexDirection: 'column' }}>
           {/* Subtitle */}
           <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--color-border-strong)', background: 'var(--color-surface-2)' }}>
-            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>Your purchases and saved configurations</p>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>Tus compras y configuraciones guardadas</p>
           </div>
 
           {/* Filters */}
@@ -317,25 +317,25 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                 onClick={() => setActiveFilter('all')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'all' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'all' ? '#000' : 'var(--color-text)' }}
               >
-                All ({purchases.length})
+                Todos ({purchases.length})
               </button>
               <button
                 onClick={() => setActiveFilter('recent')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'recent' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'recent' ? '#000' : 'var(--color-text)' }}
               >
-                Recent
+                Recientes
               </button>
               <button
                 onClick={() => setActiveFilter('completed')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'completed' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'completed' ? '#000' : 'var(--color-text)' }}
               >
-                Completed
+                Completados
               </button>
               <button
                 onClick={() => setActiveFilter('pending')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'pending' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'pending' ? '#000' : 'var(--color-text)' }}
               >
-                Pending
+                Pendientes
               </button>
             </div>
           </div>
@@ -346,13 +346,13 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-                  <p className="text-slate-400">Loading your library...</p>
+                  <p className="text-slate-400">Cargando tu biblioteca...</p>
                 </div>
               </div>
             ) : error ? (
               <div className="bg-red-900/20 border border-red-400/30 rounded-lg p-6 text-center">
                 <div className="text-4xl mb-3">⚠️</div>
-                <h3 className="text-red-400 font-bold mb-2">Error loading</h3>
+                <h3 className="text-red-400 font-bold mb-2">Error al cargar</h3>
                 <p className="text-slate-300 text-sm mb-4">{error}</p>
                 <button
                   onClick={loadPurchases}
@@ -365,12 +365,12 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📚</div>
                 <h3 className="text-slate-300 text-xl font-bold mb-2">
-                  {activeFilter === 'all' ? 'Your library is empty' : 'No purchases with this filter'}
+                  {activeFilter === 'all' ? 'Tu biblioteca está vacía' : 'Sin resultados con este filtro'}
                 </h3>
                 <p className="text-slate-400 text-sm mb-6">
                   {activeFilter === 'all' 
-                    ? 'Make your first purchase to start collecting superhero configurations'
-                    : 'Change the filter to see other purchases'
+                    ? 'Guarda tu primera configuración para empezar tu colección'
+                    : 'Cambia el filtro para ver otras compras'
                   }
                 </p>
                 <button
@@ -399,7 +399,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-white font-bold text-lg">{purchase.configuration_name}</h4>
                             <span className={`text-sm font-medium ${getStatusColor(purchase.status)}`}>
-                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? 'Completed' : 'Pending'}
+                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? 'Completado' : 'Pendiente'}
                             </span>
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
