@@ -177,6 +177,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
   };
 
   const handleLoadConfiguration = async (purchaseId: string, itemId: string) => {
+    setLoadingConfigId(itemId);
     try {
       const result = await PurchaseHistoryService.loadConfigurationFromPurchase(purchaseId, itemId);
       
@@ -200,15 +201,17 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       }
     } catch (error) {
       console.error('Error loading configuration:', error);
-      
+
       // Final fallback: try to load from the purchase data directly
       const currentPurchase = purchases.find(p => p.id === purchaseId);
       const currentItem = currentPurchase?.purchase_items?.find(item => item.id === itemId);
-      
+
       if (currentItem?.configuration_data) {
         const modelName = currentItem?.item_name || 'Modelo sin nombre';
         onLoadConfiguration(currentItem.configuration_data, modelName);
       }
+    } finally {
+      setLoadingConfigId(null);
     }
   };
 
@@ -445,12 +448,17 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                         value={editingName}
                                         onChange={(e) => setEditingName(e.target.value)}
                                         onKeyDown={(e) => handleNameKeyPress(e, item.id)}
-                                        onBlur={() => handleSaveName(item.id)}
+                                        onBlur={(e) => {
+                                          // Avoid double-save when focus moves to the save button
+                                          if ((e.relatedTarget as HTMLElement)?.dataset?.saveBtn === item.id) return;
+                                          handleSaveName(item.id);
+                                        }}
                                         className="flex-1 bg-slate-700 text-slate-200 px-3 py-1 rounded border border-blue-400 focus:outline-none focus:border-blue-300"
                                         autoFocus
                                         maxLength={50}
                                       />
                                       <button
+                                        data-save-btn={item.id}
                                         onClick={() => handleSaveName(item.id)}
                                         disabled={updatingName === item.id}
                                         className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50"

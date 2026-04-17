@@ -148,10 +148,19 @@ export class VTTService {
 
         const mimeType = `image/${options.format}`;
         const quality = options.format === 'jpg' ? 0.9 : 1.0;
-        try { resolve(canvas.toDataURL(mimeType, quality)); }
-        catch (e) { reject(e); }
+        let dataUrl: string;
+        try { dataUrl = canvas.toDataURL(mimeType, quality); }
+        catch (e) {
+          canvas.width = 0; canvas.height = 0; img.src = '';
+          reject(e); return;
+        }
+        canvas.width = 0; canvas.height = 0; img.src = '';
+        resolve(dataUrl);
       };
-      img.onerror = () => reject(new Error('Failed to load image'));
+      img.onerror = () => {
+        canvas.width = 0; canvas.height = 0; img.src = '';
+        reject(new Error('Failed to load image'));
+      };
       img.src = screenshotDataUrl;
     });
   }

@@ -111,26 +111,31 @@ export function assignDefaultHandsForTorso(newTorso: Part, currentParts: Selecte
 // ✅ Preserva cabezas compatibles del mismo tipo
 // ❌ NO CAMBIAR la lógica de compatibilidad y tipos
 export function assignAdaptiveHeadForTorso(newTorso: Part, currentParts: SelectedParts, originalParts?: SelectedParts): SelectedParts {
-  console.log('🔍 assignAdaptiveHeadForTorso called with:', { 
-    newTorsoId: newTorso.id, 
+  console.log('🔍 assignAdaptiveHeadForTorso called with:', {
+    newTorsoId: newTorso.id,
     currentParts: Object.keys(currentParts),
     originalParts: originalParts ? Object.keys(originalParts) : 'none'
   });
-  
+
   let newParts = { ...currentParts };
-  
+
+  // For suit_torso, use the base torso ID for compatibility lookups
+  const effectiveTorsoId = newTorso.category === PartCategory.SUIT_TORSO && newTorso.compatible.length > 0
+    ? newTorso.compatible[0]
+    : newTorso.id;
+
   // Usar las partes originales si están disponibles, sino usar las actuales
   const partsToCheck = originalParts || currentParts;
   console.log('🔍 Parts to check for current head:', Object.keys(partsToCheck));
   const currentHead = Object.values(partsToCheck).find(p => p.category === PartCategory.HEAD);
   console.log('🔍 Current head found:', currentHead?.id || 'none');
-  
+
   // Si no hay cabeza actual, usar la primera compatible
   if (!currentHead) {
-    const compatibleHeads = ALL_PARTS.filter(p => 
-      p.category === PartCategory.HEAD && 
+    const compatibleHeads = ALL_PARTS.filter(p =>
+      p.category === PartCategory.HEAD &&
       p.archetype === newTorso.archetype &&
-      p.compatible.includes(newTorso.id)
+      p.compatible.includes(effectiveTorsoId)
     );
     
     if (compatibleHeads.length > 0) {
@@ -141,30 +146,29 @@ export function assignAdaptiveHeadForTorso(newTorso: Part, currentParts: Selecte
   }
   
   // Verificar si la cabeza actual es compatible con el nuevo torso
-  const isCurrentHeadCompatible = currentHead.compatible.includes(newTorso.id);
-  
+  const isCurrentHeadCompatible = currentHead.compatible.includes(effectiveTorsoId);
+
   if (isCurrentHeadCompatible) {
     console.log('✅ Current head is compatible, keeping:', currentHead.id);
-    // No hacer nada, mantener la cabeza actual
     return newParts;
   }
-  
+
   // La cabeza actual no es compatible, buscar una del mismo tipo
   let currentType = null;
   const headMatch = currentHead.id.match(/strong_head_(\d+)_t\d+/);
   if (headMatch) {
     currentType = headMatch[1];
   }
-  
+
   console.log('🎯 Current head info:', { currentHeadId: currentHead.id, currentType, headMatch: headMatch ? headMatch[0] : 'no match' });
-  
-  const compatibleHeads = ALL_PARTS.filter(p => 
-    p.category === PartCategory.HEAD && 
+
+  const compatibleHeads = ALL_PARTS.filter(p =>
+    p.category === PartCategory.HEAD &&
     p.archetype === newTorso.archetype &&
-    p.compatible.includes(newTorso.id)
+    p.compatible.includes(effectiveTorsoId)
   );
-  
-  console.log('✅ Compatible heads found:', compatibleHeads.length, 'heads for torso:', newTorso.id);
+
+  console.log('✅ Compatible heads found:', compatibleHeads.length, 'heads for torso:', effectiveTorsoId);
   console.log('✅ Compatible heads IDs:', compatibleHeads.map(h => h.id));
   
   // Buscar una cabeza del mismo tipo
@@ -185,7 +189,7 @@ export function assignAdaptiveHeadForTorso(newTorso: Part, currentParts: Selecte
     console.log('📌 No matching type found, using first compatible:', compatibleHeads[0].id);
     newParts[PartCategory.HEAD] = compatibleHeads[0];
   } else {
-    console.log('❌ No compatible heads found for torso:', newTorso.id);
+    console.log('❌ No compatible heads found for torso:', effectiveTorsoId);
     // Limpiar cabeza si no hay compatibles
     delete newParts[PartCategory.HEAD];
   }
@@ -194,14 +198,19 @@ export function assignAdaptiveHeadForTorso(newTorso: Part, currentParts: Selecte
 }
 
 export function assignAdaptiveCapeForTorso(newTorso: Part, currentParts: SelectedParts, originalParts?: SelectedParts): SelectedParts {
-  console.log('🔍 assignAdaptiveCapeForTorso called with:', { 
-    newTorsoId: newTorso.id, 
+  console.log('🔍 assignAdaptiveCapeForTorso called with:', {
+    newTorsoId: newTorso.id,
     currentParts: Object.keys(currentParts),
     originalParts: originalParts ? Object.keys(originalParts) : 'none'
   });
-  
+
   let newParts = { ...currentParts };
-  
+
+  // For suit_torso, use the base torso ID for compatibility lookups
+  const effectiveTorsoId = newTorso.category === PartCategory.SUIT_TORSO && newTorso.compatible.length > 0
+    ? newTorso.compatible[0]
+    : newTorso.id;
+
   // Usar las partes originales si están disponibles, sino usar las actuales
   const partsToCheck = originalParts || currentParts;
   console.log('🔍 Parts to check for current cape:', Object.keys(partsToCheck));
@@ -209,13 +218,13 @@ export function assignAdaptiveCapeForTorso(newTorso: Part, currentParts: Selecte
   console.log('🔍 Current cape found:', currentCape?.id || 'none');
 
   // Buscar todas las capas compatibles con el nuevo torso
-  const compatibleCapes = ALL_PARTS.filter(p => 
-    p.category === PartCategory.CAPE && 
+  const compatibleCapes = ALL_PARTS.filter(p =>
+    p.category === PartCategory.CAPE &&
     p.archetype === newTorso.archetype &&
-    p.compatible.includes(newTorso.id)
+    p.compatible.includes(effectiveTorsoId)
   );
-  
-  console.log('✅ Compatible capes found:', compatibleCapes.length, 'capes for torso:', newTorso.id);
+
+  console.log('✅ Compatible capes found:', compatibleCapes.length, 'capes for torso:', effectiveTorsoId);
   console.log('✅ Compatible capes IDs:', compatibleCapes.map(c => c.id));
 
   // Si no hay capa actual, usar la primera compatible
@@ -228,7 +237,7 @@ export function assignAdaptiveCapeForTorso(newTorso: Part, currentParts: Selecte
   }
 
   // Verificar si la capa actual es compatible con el nuevo torso
-  const isCurrentCapeCompatible = currentCape.compatible.includes(newTorso.id);
+  const isCurrentCapeCompatible = currentCape.compatible.includes(effectiveTorsoId);
   
   if (isCurrentCapeCompatible) {
     console.log('✅ Current cape is compatible, keeping:', currentCape.id);
@@ -263,7 +272,7 @@ export function assignAdaptiveCapeForTorso(newTorso: Part, currentParts: Selecte
     console.log('📌 No matching type found, using first compatible:', compatibleCapes[0].id);
     newParts[PartCategory.CAPE] = compatibleCapes[0];
   } else {
-    console.log('❌ No compatible capes found for torso:', newTorso.id);
+    console.log('❌ No compatible capes found for torso:', effectiveTorsoId);
     // Limpiar capa si no hay compatibles
     delete newParts[PartCategory.CAPE];
   }
@@ -337,26 +346,31 @@ export function assignAdaptiveBootsForTorso(newLegs: Part, currentParts: Selecte
 // ✅ Sistema de compatibilidad para símbolos con torso
 // ❌ NO CAMBIAR - Usado en hover y selección de símbolos
 export function assignAdaptiveSymbolForTorso(newTorso: Part, currentParts: SelectedParts, originalParts?: SelectedParts): SelectedParts {
-  console.log('🔍 assignAdaptiveSymbolForTorso called with:', { 
-    newTorsoId: newTorso.id, 
+  console.log('🔍 assignAdaptiveSymbolForTorso called with:', {
+    newTorsoId: newTorso.id,
     currentParts: Object.keys(currentParts),
     originalParts: originalParts ? Object.keys(originalParts) : 'none'
   });
-  
+
   let newParts = { ...currentParts };
-  
+
+  // For suit_torso, use the base torso ID for compatibility lookups
+  const effectiveTorsoId = newTorso.category === PartCategory.SUIT_TORSO && newTorso.compatible.length > 0
+    ? newTorso.compatible[0]
+    : newTorso.id;
+
   // Usar las partes originales si están disponibles, sino usar las actuales
   const partsToCheck = originalParts || currentParts;
   console.log('🔍 Parts to check for current symbol:', Object.keys(partsToCheck));
   const currentSymbol = Object.values(partsToCheck).find(p => p.category === PartCategory.SYMBOL);
   console.log('🔍 Current symbol found:', currentSymbol?.id || 'none');
-  
+
   // Si no hay símbolo actual, usar el primero compatible
   if (!currentSymbol) {
-    const compatibleSymbols = ALL_PARTS.filter(p => 
-      p.category === PartCategory.SYMBOL && 
+    const compatibleSymbols = ALL_PARTS.filter(p =>
+      p.category === PartCategory.SYMBOL &&
       p.archetype === newTorso.archetype &&
-      p.compatible.includes(newTorso.id)
+      p.compatible.includes(effectiveTorsoId)
     );
     
     if (compatibleSymbols.length > 0) {
@@ -367,7 +381,7 @@ export function assignAdaptiveSymbolForTorso(newTorso: Part, currentParts: Selec
   }
   
   // Verificar si el símbolo actual es compatible con el nuevo torso
-  const isCurrentSymbolCompatible = currentSymbol.compatible.includes(newTorso.id);
+  const isCurrentSymbolCompatible = currentSymbol.compatible.includes(effectiveTorsoId);
   
   if (isCurrentSymbolCompatible) {
     console.log('✅ Current symbol is compatible, keeping:', currentSymbol.id);
@@ -384,13 +398,13 @@ export function assignAdaptiveSymbolForTorso(newTorso: Part, currentParts: Selec
   
   console.log('🎯 Current symbol info:', { currentSymbolId: currentSymbol.id, currentType, symbolMatch: symbolMatch ? symbolMatch[0] : 'no match' });
   
-  const compatibleSymbols = ALL_PARTS.filter(p => 
-    p.category === PartCategory.SYMBOL && 
+  const compatibleSymbols = ALL_PARTS.filter(p =>
+    p.category === PartCategory.SYMBOL &&
     p.archetype === newTorso.archetype &&
-    p.compatible.includes(newTorso.id)
+    p.compatible.includes(effectiveTorsoId)
   );
-  
-  console.log('✅ Compatible symbols found:', compatibleSymbols.length, 'symbols for torso:', newTorso.id);
+
+  console.log('✅ Compatible symbols found:', compatibleSymbols.length, 'symbols for torso:', effectiveTorsoId);
   console.log('✅ Compatible symbols IDs:', compatibleSymbols.map(s => s.id));
   
   // Buscar un símbolo del mismo tipo
@@ -411,7 +425,7 @@ export function assignAdaptiveSymbolForTorso(newTorso: Part, currentParts: Selec
     console.log('📌 No matching type found, using first compatible:', compatibleSymbols[0].id);
     newParts[PartCategory.SYMBOL] = compatibleSymbols[0];
   } else {
-    console.log('❌ No compatible symbols found for torso:', newTorso.id);
+    console.log('❌ No compatible symbols found for torso:', effectiveTorsoId);
     // Limpiar símbolo si no hay compatibles
     delete newParts[PartCategory.SYMBOL];
   }

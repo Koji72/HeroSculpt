@@ -523,6 +523,7 @@ const AppContent: React.FC = () => {
 
   const characterViewerRef = useRef<CharacterViewerRef>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
+  const archetypeLoadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ✅ FIXED: handleResetToDefaultBuild - Use proper build based on authentication status
   const handleResetToDefaultBuild = useCallback(() => {
@@ -661,27 +662,18 @@ const AppContent: React.FC = () => {
       // Clean URL without reload
       window.history.replaceState(null, '', window.location.pathname);
     } catch {}
-  }, [loading]);
+  }, [loading, setSelectedParts]);
 
   // Save última pose cuando el usuario salga de la página
   useEffect(() => {
-    const handleBeforeUnload = async () => {
+    const handleBeforeUnload = () => {
       if (selectedArchetype && savedPoses.length > 0) {
-        try {
-      
-          setIsSavingLastPose(true);
-          await SessionStorageService.saveLastPose(
-            selectedArchetype,
-            selectedParts,
-            currentPoseIndex,
-            savedPoses
-          );
-      
-          setIsSavingLastPose(false);
-        } catch (error) {
-          // Removed debug log
-          setIsSavingLastPose(false);
-        }
+        SessionStorageService.saveLastPose(
+          selectedArchetype,
+          selectedParts,
+          currentPoseIndex,
+          savedPoses
+        );
       }
     };
 
@@ -928,8 +920,15 @@ const AppContent: React.FC = () => {
     setIsPanelOpen(false);
     setArchetypeLoading(true);
     setCharacterViewerKey((k: number) => k + 1);
-    setTimeout(() => setArchetypeLoading(false), 2000);
+    if (archetypeLoadingTimerRef.current !== null) clearTimeout(archetypeLoadingTimerRef.current);
+    archetypeLoadingTimerRef.current = setTimeout(() => setArchetypeLoading(false), 2000);
   };
+
+  useEffect(() => {
+    return () => {
+      if (archetypeLoadingTimerRef.current !== null) clearTimeout(archetypeLoadingTimerRef.current);
+    };
+  }, []);
 
   // Task 7: side panel toggle — wired to right panel system
   const handleSidePanelToggle = (panel: 'style' | 'skins') => {

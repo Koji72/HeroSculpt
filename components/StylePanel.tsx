@@ -160,7 +160,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                       key={c}
                       type="button"
                       aria-label={`color ${c}`}
-                      onClick={() => { setLocalColor(c); onColorChange(activePart, c); }}
+                      onClick={() => { const id = activePart; setLocalColor(c); onColorChange(id, c); }}
                       style={{
                         width: '100%', aspectRatio: '1',
                         borderRadius: 4,
@@ -177,7 +177,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                 <input
                   type="color"
                   value={localColor}
-                  onChange={(e) => { setLocalColor(e.target.value); onColorChange(activePart, e.target.value); }}
+                  onChange={(e) => { const id = activePart; setLocalColor(e.target.value); onColorChange(id, e.target.value); }}
                   style={{
                     width: '100%',
                     height: 28,
@@ -200,7 +200,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                       <button
                         key={m}
                         type="button"
-                        onClick={() => { setLocalMaterial(m); onMaterialChange(activePart, m); }}
+                        onClick={() => { const id = activePart; setLocalMaterial(m); onMaterialChange(id, m); }}
                         style={{
                           padding: '6px 8px',
                           background: isActive ? 'rgba(216,162,58,0.15)' : 'var(--color-surface-2)',

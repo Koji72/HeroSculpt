@@ -14,10 +14,6 @@ type SkinPreset = {
   build: (api: CharacterViewerRef) => void;
 };
 
-interface SkinsPanelProps {
-  apiRef: React.RefObject<CharacterViewerRef | null>;
-}
-
 const applyColors = (
   api: CharacterViewerRef,
   colors: Partial<Record<PartCategory, number>>

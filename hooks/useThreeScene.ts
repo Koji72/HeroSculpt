@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
@@ -11,14 +11,12 @@ interface ThreeSceneConfig {
 }
 
 interface ThreeSceneState {
-  scene: THREE.Scene | null;
-  camera: THREE.PerspectiveCamera | null;
-  renderer: THREE.WebGLRenderer | null;
-  controls: OrbitControls | null;
-  composer: EffectComposer | null;
+  sceneRef: React.RefObject<THREE.Scene | null>;
+  cameraRef: React.RefObject<THREE.PerspectiveCamera | null>;
+  rendererRef: React.RefObject<THREE.WebGLRenderer | null>;
+  controlsRef: React.RefObject<OrbitControls | null>;
+  composerRef: React.RefObject<EffectComposer | null>;
   animate: () => void;
-  // Add methods to update Three.js instances if needed for external control
-  // For example, to pass the composer from AdvancedEffects to this hook
   setComposer: (newComposer: EffectComposer | null) => void;
 }
 
@@ -235,11 +233,11 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
   }, []);
 
   return {
-    scene: sceneRef.current,
-    camera: cameraRef.current,
-    renderer: rendererRef.current,
-    controls: controlsRef.current,
-    composer: composerRef.current,
+    sceneRef,
+    cameraRef,
+    rendererRef,
+    controlsRef,
+    composerRef,
     animate,
     setComposer,
   };

@@ -545,28 +545,28 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     // Caso especial para CAPE - verificar compatibilidad con torso
     if (part.category === PartCategory.CAPE) {
       const selectedTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
-      if (!selectedTorso) {
-        return part.compatible.includes('strong_torso_01');
-      }
-      return part.compatible.includes(selectedTorso.id);
+      if (!selectedTorso) return part.compatible.includes('strong_torso_01');
+      const effectiveId = selectedTorso.category === PartCategory.SUIT_TORSO && selectedTorso.compatible.length > 0
+        ? selectedTorso.compatible[0] : selectedTorso.id;
+      return part.compatible.includes(effectiveId);
     }
-    
+
     // Caso especial para HEAD - verificar compatibilidad con torso
     if (part.category === PartCategory.HEAD) {
       const selectedTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
-      if (!selectedTorso) {
-        return part.compatible.includes('strong_torso_01');
-      }
-      return part.compatible.includes(selectedTorso.id);
+      if (!selectedTorso) return part.compatible.includes('strong_torso_01');
+      const effectiveId = selectedTorso.category === PartCategory.SUIT_TORSO && selectedTorso.compatible.length > 0
+        ? selectedTorso.compatible[0] : selectedTorso.id;
+      return part.compatible.includes(effectiveId);
     }
-    
+
     // Caso especial para SYMBOL - verificar compatibilidad con torso
     if (part.category === PartCategory.SYMBOL) {
       const selectedTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
-      if (!selectedTorso) {
-        return part.compatible.includes('strong_torso_01');
-      }
-      return part.compatible.includes(selectedTorso.id);
+      if (!selectedTorso) return part.compatible.includes('strong_torso_01');
+      const effectiveId = selectedTorso.category === PartCategory.SUIT_TORSO && selectedTorso.compatible.length > 0
+        ? selectedTorso.compatible[0] : selectedTorso.id;
+      return part.compatible.includes(effectiveId);
     }
     
     // Caso especial para CHEST_BELT - usar l�gica de nombres
