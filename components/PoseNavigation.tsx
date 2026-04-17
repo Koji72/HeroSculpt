@@ -156,12 +156,47 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         </button>
       )}
 
-      {/* Overlay para cerrar el selector */}
+      {/* Pose selector dropdown */}
       {showPoseSelector && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setShowPoseSelector(false)}
-        />
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setShowPoseSelector(false)} />
+          <div
+            className="absolute top-12 left-0 z-50 bg-slate-800/95 border border-slate-600/60 rounded-xl shadow-2xl backdrop-blur-sm min-w-[220px] max-h-72 overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            {savedPoses.map((pose, index) => (
+              <div
+                key={pose.id}
+                className={`flex items-center gap-2 px-3 py-2 cursor-pointer group hover:bg-slate-700/70 transition-colors ${index === currentPoseIndex ? 'bg-slate-700/50 text-green-400' : 'text-slate-200'}`}
+              >
+                {editingPoseIndex === index ? (
+                  <input
+                    autoFocus
+                    className="flex-1 bg-slate-900 border border-green-400/50 rounded px-2 py-0.5 text-sm text-white outline-none"
+                    value={editingName}
+                    onChange={e => setEditingName(e.target.value)}
+                    onKeyDown={handleRenameKeyPress}
+                    onBlur={handleRenameCancel}
+                  />
+                ) : (
+                  <span className="flex-1 text-sm truncate" onClick={() => handlePoseSelect(index)}>
+                    {index + 1}. {pose.name}
+                    {pose.source === 'purchase' && <span className="ml-1 text-xs text-yellow-400">★</span>}
+                  </span>
+                )}
+                {editingPoseIndex !== index && pose.source === 'saved' && onRenamePose && (
+                  <button
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-white text-xs px-1 transition-opacity"
+                    onMouseDown={e => { e.preventDefault(); handleRenameClick(index, pose.name); }}
+                    title="Renombrar"
+                  >
+                    ✏
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

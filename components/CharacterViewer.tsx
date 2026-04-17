@@ -461,10 +461,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     composer.addPass(bloomPass);
     composerRef.current = composer;
 
+    let rafId: number;
     const animate = () => {
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
       controls.update();
-      composerRef.current?.render(); // ? FIXED: Use ref instead of direct variable
+      composerRef.current?.render();
     };
     animate();
 
@@ -528,8 +529,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       console.log('CharacterViewer: Cleaning up Three.js scene');
     }
     }
-      setIsThreeJSReady(false); // ? Mark as not ready during cleanup
-      isInitializedRef.current = false; // ? Reset initialization flag
+      cancelAnimationFrame(rafId);
+      setIsThreeJSReady(false);
+      isInitializedRef.current = false;
       resizeObserver.disconnect();
       if (currentMount && rendererRef.current?.domElement) {
         currentMount.removeChild(rendererRef.current.domElement);

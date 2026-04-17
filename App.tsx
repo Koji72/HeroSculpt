@@ -84,7 +84,7 @@ const AppContent: React.FC = () => {
   const { lang, setLang } = useLang();
   const [selectedArchetype, setSelectedArchetype] = useState<ArchetypeId | null>(ArchetypeId.STRONG);
   // ✅ CRITICAL FIX: GET AUTH FIRST
-  const { isAuthenticated, loading, signOut, user } = useAuth();
+  const { isAuthenticated, loading, signOut, user, isPasswordRecovery, clearPasswordRecovery } = useAuth();
   const { favorites: favoriteIds, toggleFavorite } = useFavorites();
   const { recordUsed, getRecent } = useRecentParts();
 
@@ -166,10 +166,7 @@ const AppContent: React.FC = () => {
   }, [setSelectedParts]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signup');
-  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(() => {
-    const hash = window.location.hash;
-    return hash.includes('type=recovery') || hash.includes('type=signup');
-  });
+  const isResetPasswordOpen = isPasswordRecovery;
   const [isWelcomeScreenOpen, setIsWelcomeScreenOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
@@ -432,39 +429,26 @@ const AppContent: React.FC = () => {
       });
 
       if (allPoses.length > 0) {
-        // ✅ CRITICAL FIX: Cargar la ÚLTIMA pose (la más reciente) en lugar de la primera
         const lastPoseIndex = allPoses.length - 1;
         const latestPose = allPoses[lastPoseIndex];
         setSavedPoses(allPoses);
         setCurrentPoseIndex(lastPoseIndex);
-        // ✅ CRITICAL FIX: NO sobrescribir la selección actual del usuario
-        // Solo cargar si no hay una selección activa
         setSelectedParts(prev => {
-          // Si ya hay partes seleccionadas, mantenerlas
-          if (Object.keys(prev).length > 0) {
-            return prev;
-          }
-          // Solo cargar la pose si no hay selección actual
+          if (Object.keys(prev).length > 0) return prev;
           return latestPose.configuration;
         });
         setCharacterName(latestPose.name);
       } else {
         setSavedPoses([]);
         setCurrentPoseIndex(0);
-        // ✅ CRITICAL FIX: NO sobrescribir la selección actual del usuario
         setSelectedParts(prev => {
-          // Si ya hay partes seleccionadas, mantenerlas
-          if (Object.keys(prev).length > 0) {
-            return prev;
-          }
-          // Solo cargar el default si no hay selección actual
+          if (Object.keys(prev).length > 0) return prev;
           return DEFAULT_STRONG_BUILD;
         });
         setCharacterName('New Hero');
       }
-      
-      // Asegurarse de que el CharacterViewer se actualice con la configuración correcta
-      // setCharacterViewerKey(prev => prev + 1); // ❌ REMOVIDO: Esto causaba bucles de re-renderizado
+
+      return allPoses;
 
     } catch (error) {
       // En caso de error, resetear a un estado seguro (DEFAULT_STRONG_BUILD para autenticados)
@@ -1539,11 +1523,13 @@ const AppContent: React.FC = () => {
       return;
     }
 
-    // ✅ NUEVO: Activar bandera de navegación
     setIsNavigatingPoses(true);
 
     const newPose = savedPoses[index];
     setCurrentPoseIndex(index);
+    // Reset lastSelectedPartsRef so CharacterViewer always reloads the target
+    // pose even if its parts happen to equal the current selection.
+    characterViewerRef.current?.resetState();
     setSelectedParts(newPose.configuration);
     
     // ✅ NUEVO: Desactivar bandera después de un delay
@@ -1605,13 +1591,8 @@ const AppContent: React.FC = () => {
       if (newConfig) {
         // Removed debug log
         
-        // Recargar poses para incluir la nueva
-        await loadUserPoses();
-        
-        // Navegar a la nueva pose
-        const newPoseIndex = savedPoses.length; // La nueva será la última
-        setCurrentPoseIndex(newPoseIndex);
-        setSelectedParts(selectedParts); // Mantener la configuración actual
+        const newPoses = await loadUserPoses();
+        setCurrentPoseIndex((newPoses?.length ?? 1) - 1);
         
         // Removed debug log
       }
@@ -2280,7 +2261,7 @@ const AppContent: React.FC = () => {
 
       {/* ── MODALS ── */}
       {isResetPasswordOpen && (
-        <ResetPasswordModal onClose={() => setIsResetPasswordOpen(false)} />
+        <ResetPasswordModal onClose={clearPasswordRecovery} />
       )}
 
       {isAuthModalOpen && (
@@ -2346,6 +2327,9 @@ const AppContent: React.FC = () => {
         isExpanded={beltSubmenuExpanded}
         onToggle={handleBeltSubmenuToggle}
         submenuPosition={beltSubmenuPosition}
+        selectedArchetype={selectedArchetype || ArchetypeId.STRONG}
+        onPartHover={handlePartHover}
+        onPartUnhover={handlePartUnhover}
       />
 
       {/* Submenú de Legs - Renderizado en un nivel superior */}

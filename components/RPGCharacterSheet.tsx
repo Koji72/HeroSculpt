@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArchetypeId, SelectedParts, RPGCharacterSync } from '../types';
 import { useLang, t } from '../lib/i18n';
 import { syncRPGCharacterFromParts, getPartChangeImpact } from '../lib/archetypeData';
@@ -31,52 +31,43 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
 
   const { lang } = useLang();
   const [character, setCharacter] = useState<RPGCharacterSync | null>(null);
-  const [lastParts, setLastParts] = useState<SelectedParts>({});
+  const characterRef = useRef<RPGCharacterSync | null>(null);
+  const lastPartsRef = useRef<SelectedParts>({});
   const [recentChanges, setRecentChanges] = useState<{
     statChanges: Partial<any>;
     newAbilities: string[];
     removedAbilities: string[];
   } | null>(null);
 
-  // Sincronizar personaje cuando cambian las partes
   useEffect(() => {
-    if (!selectedArchetype) {
-      return;
-    }
+    if (!selectedArchetype) return;
 
     let newCharacter: RPGCharacterSync;
     try {
-      newCharacter = syncRPGCharacterFromParts(selectedArchetype, selectedParts, character);
+      newCharacter = syncRPGCharacterFromParts(selectedArchetype, selectedParts, characterRef.current);
     } catch (error) {
       console.error('❌ Error in syncRPGCharacterFromParts:', error);
       return;
     }
-    
-    // Solo actualizar el estado 'character' si es realmente diferente
-    if (!areRPGCharactersEqual(character, newCharacter)) {
+
+    if (!areRPGCharactersEqual(characterRef.current, newCharacter)) {
+      characterRef.current = newCharacter;
       setCharacter(newCharacter);
+      onCharacterUpdate?.(newCharacter);
     }
 
-    // Solo llamar a onCharacterUpdate si el personaje ha cambiado realmente
-    if (onCharacterUpdate && !areRPGCharactersEqual(character, newCharacter)) {
-      onCharacterUpdate(newCharacter);
-    }
-
-    // Detectar cambios específicos
-    if (Object.keys(lastParts).length > 0) {
-      const changes = detectPartChanges(lastParts, selectedParts, selectedArchetype);
+    if (Object.keys(lastPartsRef.current).length > 0 && !arePartsEqual(lastPartsRef.current, selectedParts)) {
+      const changes = detectPartChanges(lastPartsRef.current, selectedParts, selectedArchetype);
       if (changes) {
         setRecentChanges(changes);
-        // Limpiar cambios después de 3 segundos
         setTimeout(() => setRecentChanges(null), 3000);
       }
     }
 
-    // Solo actualizar lastParts si selectedParts ha cambiado realmente
-    if (!arePartsEqual(lastParts, selectedParts)) {
-      setLastParts(selectedParts);
+    if (!arePartsEqual(lastPartsRef.current, selectedParts)) {
+      lastPartsRef.current = selectedParts;
     }
-  }, [selectedArchetype, selectedParts, onCharacterUpdate, character, lastParts]);
+  }, [selectedArchetype, selectedParts, onCharacterUpdate]);
 
   const detectPartChanges = (
     oldParts: SelectedParts,

@@ -1,6 +1,7 @@
 import React from 'react';
-import { PartCategory } from '../types';
+import { PartCategory, Part, ArchetypeId } from '../types';
 import { useLang, t } from '../lib/i18n';
+import { ALL_PARTS } from '../constants';
 
 interface BeltSubmenuProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -8,6 +9,9 @@ interface BeltSubmenuProps {
   isExpanded: boolean;
   onToggle: () => void;
   submenuPosition: { top: number; left: number };
+  selectedArchetype: ArchetypeId;
+  onPartHover: (part: Part) => void;
+  onPartUnhover: () => void;
 }
 
 const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
@@ -15,7 +19,10 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
   activeCategory,
   isExpanded,
   onToggle,
-  submenuPosition
+  submenuPosition,
+  selectedArchetype,
+  onPartHover,
+  onPartUnhover,
 }) => {
   const { lang } = useLang();
   const submenuCategories = [
@@ -55,6 +62,11 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
+            onMouseEnter={() => {
+              const part = ALL_PARTS.find(p => p.category === category && p.archetype === selectedArchetype);
+              if (part) onPartHover(part);
+            }}
+            onMouseLeave={onPartUnhover}
             style={{
               width: '100%',
               padding: '8px 12px',

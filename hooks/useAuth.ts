@@ -7,23 +7,31 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
 
-  // 🔧 OPTIMIZADO: Memoizar el estado de autenticación para evitar re-cálculos
   const isAuthenticated = useMemo(() => !!user, [user]);
 
-  // 🔧 OPTIMIZADO: Usar useCallback para evitar re-creaciones de funciones
   const handleAuthStateChange = useCallback((event: string, session: Session | null) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('useAuth: Auth state changed:', event, session?.user?.email);
+    if (event === 'PASSWORD_RECOVERY') {
+      // Don't treat recovery as a normal sign-in — just surface the flag so
+      // the app can open the reset-password modal instead of the main UI.
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsPasswordRecovery(true);
+      setLoading(false);
+      return;
     }
-    
+
+    setIsPasswordRecovery(false);
     setSession(session);
     setUser(session?.user ?? null);
-    setError(null); // Limpiar errores cuando hay cambios de estado
+    setError(null);
     setLoading(false);
   }, []);
 
   // 🔧 OPTIMIZADO: Usar useCallback para la función de logout
+  const clearPasswordRecovery = useCallback(() => setIsPasswordRecovery(false), []);
+
   const signOut = useCallback(async () => {
     if (!supabase) {
       console.warn('useAuth: Supabase not available for sign out');
@@ -101,7 +109,6 @@ export function useAuth() {
     };
   }, [handleAuthStateChange]);
 
-  // 🔧 OPTIMIZADO: Retornar objeto memoizado para evitar re-renders innecesarios
   return useMemo(() => ({
     user,
     session,
@@ -109,5 +116,7 @@ export function useAuth() {
     error,
     signOut,
     isAuthenticated,
-  }), [user, session, loading, error, signOut, isAuthenticated]);
+    isPasswordRecovery,
+    clearPasswordRecovery,
+  }), [user, session, loading, error, signOut, isAuthenticated, isPasswordRecovery, clearPasswordRecovery]);
 } 
