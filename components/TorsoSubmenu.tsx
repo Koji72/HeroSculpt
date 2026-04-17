@@ -1,5 +1,6 @@
 import React from 'react';
 import { PartCategory } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface TorsoSubmenuProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -16,17 +17,18 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
   onToggle,
   submenuPosition
 }) => {
+  const { lang } = useLang();
   const submenuCategories = [
-    { category: PartCategory.TORSO, label: 'TORSO', icon: '🦾' },
-    { category: PartCategory.HEAD, label: 'CABEZA', icon: '👤' },
-    { category: PartCategory.SUIT_TORSO, label: 'TRAJE', icon: '👕' },
-    { category: PartCategory.CAPE, label: 'CAPA', icon: '🦇' },
-    { category: PartCategory.SYMBOL, label: 'SÍMBOLO', icon: '⭐' },
-    { category: PartCategory.CHEST_BELT, label: 'PECHO', icon: '🛡️' },
-    { category: PartCategory.SHOULDERS, label: 'HOMBROS', icon: '💪' },
-    { category: PartCategory.FOREARMS, label: 'ANTEBRAZOS', icon: '🦾' },
-    { category: PartCategory.HAND_LEFT, label: 'MANO IZQ', icon: '✋' },
-    { category: PartCategory.HAND_RIGHT, label: 'MANO DER', icon: '✋' },
+    { category: PartCategory.TORSO, label: t('sub.torso', lang), icon: '🦾' },
+    { category: PartCategory.HEAD, label: t('sub.head', lang), icon: '👤' },
+    { category: PartCategory.SUIT_TORSO, label: t('sub.suit', lang), icon: '👕' },
+    { category: PartCategory.CAPE, label: t('sub.cape', lang), icon: '🦇' },
+    { category: PartCategory.SYMBOL, label: t('sub.symbol', lang), icon: '⭐' },
+    { category: PartCategory.CHEST_BELT, label: t('sub.chest', lang), icon: '🛡️' },
+    { category: PartCategory.SHOULDERS, label: t('sub.shoulders', lang), icon: '💪' },
+    { category: PartCategory.FOREARMS, label: t('sub.forearms', lang), icon: '🦾' },
+    { category: PartCategory.HAND_LEFT, label: t('sub.hand_left', lang), icon: '✋' },
+    { category: PartCategory.HAND_RIGHT, label: t('sub.hand_right', lang), icon: '✋' },
   ];
 
   const isTorsoActive = activeCategory === PartCategory.TORSO ||

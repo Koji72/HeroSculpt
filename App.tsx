@@ -30,6 +30,7 @@ import ArchetypeSwitcher from './components/ArchetypeSwitcher';
 import STLScaleModal from './components/STLScaleModal';
 import StylePanel, { type PartEntry, type MaterialType } from './components/StylePanel';
 import { SessionStorageService } from './services/sessionStorageService';
+import { useLang, t } from './lib/i18n';
 
 import { modelCache } from './lib/modelCache';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -80,6 +81,7 @@ const buildThreeMaterial = (type: MaterialType, color: number): THREE.MeshPhysic
 };
 
 const AppContent: React.FC = () => {
+  const { lang, setLang } = useLang();
   const [selectedArchetype, setSelectedArchetype] = useState<ArchetypeId | null>(ArchetypeId.STRONG);
   // ✅ CRITICAL FIX: GET AUTH FIRST
   const { isAuthenticated, loading, signOut, user } = useAuth();
@@ -590,6 +592,19 @@ const AppContent: React.FC = () => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [handleUndo, handleRedo]);
+
+  // Close submenus when clicking outside the sidebar
+  useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      const sidebar = document.getElementById('category-toolbar')?.closest('.app-sidebar');
+      if (sidebar && sidebar.contains(e.target as Node)) return;
+      setTorsoSubmenuExpanded(false);
+      setBeltSubmenuExpanded(false);
+      setLowerBodySubmenuExpanded(false);
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => document.removeEventListener('mousedown', handleMouseDown);
+  }, []);
 
   // Load build from URL ?build= param on mount
   useEffect(() => {
@@ -1772,7 +1787,7 @@ const AppContent: React.FC = () => {
             zIndex: 50, pointerEvents: 'none',
           }}>
             <div style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 4 }}>
-              CARGANDO…
+              {t('loading', lang)}
             </div>
           </div>
         )}
@@ -1809,9 +1824,9 @@ const AppContent: React.FC = () => {
           const partCount = Object.values(selectedParts).filter(p => p && !p.attributes?.none).length;
           const activeStep = partCount >= 3 ? 3 : 2;
           const steps: Array<{ n: number; label: string }> = [
-            { n: 1, label: 'ARCHETYPE' },
-            { n: 2, label: 'BUILD' },
-            { n: 3, label: 'EXPORT' },
+            { n: 1, label: t('steps.archetype', lang) },
+            { n: 2, label: t('steps.build', lang) },
+            { n: 3, label: t('steps.export', lang) },
           ];
           return (
             <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0, padding: '0 16px' }}>
@@ -1857,9 +1872,9 @@ const AppContent: React.FC = () => {
             type="text"
             value={characterName}
             onChange={e => setCharacterName(e.target.value)}
-            onBlur={e => { if (!e.target.value.trim()) setCharacterName('Mi Héroe'); }}
+            onBlur={e => { if (!e.target.value.trim()) setCharacterName(t('topbar.heroplaceholder', lang)); }}
             maxLength={28}
-            placeholder="Mi Héroe"
+            placeholder={t('topbar.heroplaceholder', lang)}
             style={{
               background: 'rgba(19,19,31,0.7)',
               border: '1px solid rgba(216,162,58,0.28)',
@@ -1881,6 +1896,14 @@ const AppContent: React.FC = () => {
         {/* Right actions */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', gap: '8px', flexShrink: 0 }}>
           <button
+            type="button"
+            onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
+            title={lang === 'en' ? 'Switch to Spanish' : 'Cambiar a inglés'}
+            style={{ fontSize: '11px', padding: '4px 9px', background: 'rgba(19,19,31,0.7)', border: '1px solid rgba(71,85,105,0.5)', borderRadius: 6, color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 0.5, cursor: 'pointer', flexShrink: 0 }}
+          >
+            {lang === 'en' ? '🇬🇧 EN' : '🇪🇸 ES'}
+          </button>
+          <button
             className="btn-comic btn-outline"
             title="Undo (Ctrl+Z)"
             disabled={!canUndo}
@@ -1896,19 +1919,19 @@ const AppContent: React.FC = () => {
           >↪</button>
           <button
             className="btn-comic btn-outline"
-            title="Aleatorizar partes del arquetipo"
+            title={t('topbar.random', lang)}
             style={{ fontSize: '13px', padding: '5px 12px' }}
             onClick={handleRandomize}
           >
-            🎲 RANDOM
+            {t('topbar.random', lang)}
           </button>
           <button
             className="btn-comic btn-outline"
-            title="Copiar enlace del build"
+            title={t('topbar.share', lang)}
             style={{ fontSize: '13px', padding: '5px 12px', transition: 'background 0.2s', background: shareCopied ? 'rgba(34,197,94,0.15)' : undefined, borderColor: shareCopied ? 'rgba(34,197,94,0.5)' : undefined, color: shareCopied ? '#22c55e' : undefined }}
             onClick={handleShareBuild}
           >
-            {shareCopied ? '✓ COPIADO' : '🔗 SHARE'}
+            {shareCopied ? t('topbar.copied', lang) : t('topbar.share', lang)}
           </button>
           {(() => {
             const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -1918,7 +1941,7 @@ const AppContent: React.FC = () => {
                 style={{ fontSize: '14px', padding: '5px 16px', position: 'relative' }}
                 onClick={handleOpenCart}
               >
-                {cartCount > 0 ? 'CHECKOUT →' : 'MI BUILD →'}
+                {cartCount > 0 ? t('topbar.checkout', lang) : t('topbar.mybuild', lang)}
                 {cartCount > 0 && (
                   <span style={{
                     position: 'absolute', top: -4, right: -4,
@@ -1940,7 +1963,7 @@ const AppContent: React.FC = () => {
               onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
               title="Crea una cuenta gratis para guardar tu héroe"
             >
-              💾 GUARDAR HÉROE
+              {t('topbar.savehero', lang)}
             </button>
           )}
           {user && (
@@ -2020,17 +2043,17 @@ const AppContent: React.FC = () => {
           <div className="app-panel-top">
             <div style={{ minWidth: 0 }}>
               <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 800, letterSpacing: 1.4, color: 'var(--color-accent)', textTransform: 'uppercase', marginBottom: 4 }}>
-                PERSONALIZADOR
+                {t('panel.title', lang)}
               </div>
               <div style={{ fontFamily: 'var(--font-body)', fontSize: 18, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
-                {{ parts: 'Partes', style: 'Estilo', skins: 'Skins', lights: 'Luces' }[activePanelMode]}
+                {{ parts: t('panel.parts', lang), style: t('panel.style', lang), skins: t('panel.skins', lang), lights: t('panel.lights', lang) }[activePanelMode]}
               </div>
               <div style={{ marginTop: 6, fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.35, color: 'var(--color-text-muted)', maxWidth: 230 }}>
                 {{
-                  parts: 'Elige y combina piezas para construir la silueta de tu héroe.',
-                  style: 'Ajusta colores y materiales por pieza o aplica un estilo global.',
-                  skins: 'Aplica looks predefinidos para conseguir estilos rápidamente.',
-                  lights: 'Configura la iluminación para presentar mejor al personaje.',
+                  parts: t('panel.parts.desc', lang),
+                  style: t('panel.style.desc', lang),
+                  skins: t('panel.skins.desc', lang),
+                  lights: t('panel.lights.desc', lang),
                 }[activePanelMode]}
               </div>
             </div>
@@ -2048,7 +2071,7 @@ const AppContent: React.FC = () => {
                 fontSize: 16,
                 lineHeight: 1,
               }}
-              title="Cerrar panel"
+              title={t('panel.close', lang)}
             >
               ×
             </button>
@@ -2056,10 +2079,10 @@ const AppContent: React.FC = () => {
 
           <div className="app-panel-tabs">
             {([
-              ['parts', 'Partes'],
-              ['style', 'Estilo'],
-              ['skins', 'Skins'],
-              ['lights', 'Luces'],
+              ['parts', t('panel.parts', lang)],
+              ['style', t('panel.style', lang)],
+              ['skins', t('panel.skins', lang)],
+              ['lights', t('panel.lights', lang)],
             ] as const).map(([mode, label]) => (
               <button
                 key={mode}
@@ -2133,7 +2156,7 @@ const AppContent: React.FC = () => {
 
         {/* View presets */}
         <div style={{ display: 'flex', gap: 4 }}>
-          {(['FRONT', 'SIDE', '3/4', 'BACK'] as const).map((label, i) => {
+          {([t('bottom.front', lang), t('bottom.side', lang), '3/4', t('bottom.back', lang)] as const).map((label, i) => {
             const angles = [0.5, 0.25, 0.375, 0];
             return (
               <button
@@ -2219,16 +2242,16 @@ const AppContent: React.FC = () => {
           onClick={() => setShowShortcutsOverlay(false)}
         >
           <div style={{ background: 'var(--color-surface-2)', border: '1px solid rgba(216,162,58,0.35)', borderRadius: 8, padding: '20px 28px', minWidth: 260, boxShadow: '0 16px 48px rgba(0,0,0,0.7)' }}>
-            <div style={{ fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2, color: 'var(--color-accent)', marginBottom: 14 }}>ATAJOS DE TECLADO</div>
+            <div style={{ fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2, color: 'var(--color-accent)', marginBottom: 14 }}>{t('shortcuts.title', lang)}</div>
             {[
-              ['Ctrl+Z', 'Deshacer'],
-              ['Ctrl+Shift+Z', 'Rehacer'],
-              ['1', 'Panel cuerpo superior'],
-              ['2', 'Panel cinturón'],
-              ['3', 'Panel cuerpo inferior'],
-              ['C', 'Resetear cámara'],
-              ['?', 'Mostrar/ocultar esta ayuda'],
-              ['Esc', 'Cerrar panel'],
+              ['Ctrl+Z', t('shortcuts.undo', lang)],
+              ['Ctrl+Shift+Z', t('shortcuts.redo', lang)],
+              ['1', t('shortcuts.upper', lang)],
+              ['2', t('shortcuts.belt', lang)],
+              ['3', t('shortcuts.lower', lang)],
+              ['C', t('shortcuts.camera', lang)],
+              ['?', t('shortcuts.help', lang)],
+              ['Esc', t('shortcuts.close', lang)],
             ].map(([key, desc]) => (
               <div key={key} style={{ display: 'flex', gap: 12, marginBottom: 8, alignItems: 'center' }}>
                 <kbd style={{ fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 700, background: 'rgba(71,85,105,0.5)', border: '1px solid rgba(71,85,105,0.8)', borderRadius: 4, padding: '2px 6px', color: '#e2e8f0', minWidth: 70, textAlign: 'center', letterSpacing: 0.5 }}>{key}</kbd>
@@ -2481,9 +2504,9 @@ const AppContent: React.FC = () => {
         {/* Columna de pestañas — siempre visible */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {([
-            { key: 'stats', icon: '📊', label: 'STATS' },
-            { key: 'style', icon: '🎨', label: 'ESTILO' },
-            { key: 'skins', icon: '✨', label: 'SKINS' },
+            { key: 'stats', icon: '📊', label: t('rtab.stats', lang) },
+            { key: 'style', icon: '🎨', label: t('rtab.style', lang) },
+            { key: 'skins', icon: '✨', label: t('rtab.skins', lang) },
           ] as const).map(({ key, icon, label }) => (
             <button
               key={key}
@@ -2532,9 +2555,9 @@ const AppContent: React.FC = () => {
               userSelect: 'none',
               opacity: !user ? 0.7 : 1,
             }}
-            title={!user ? 'Inicia sesión para acceder a tu biblioteca' : 'Biblioteca'}
+            title={!user ? t('rtab.library_locked', lang) : t('rtab.builds', lang)}
           >
-            📚 BUILDS
+            {t('rtab.builds', lang)}
           </button>
         </div>
       </div>

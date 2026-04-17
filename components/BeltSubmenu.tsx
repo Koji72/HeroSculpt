@@ -1,5 +1,6 @@
 import React from 'react';
 import { PartCategory } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface BeltSubmenuProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -16,12 +17,11 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
   onToggle,
   submenuPosition
 }) => {
-  // Removed debug log
-
+  const { lang } = useLang();
   const submenuCategories = [
-    { category: PartCategory.BELT, label: 'CINTURÓN', icon: '🪖' },
-    { category: PartCategory.POUCH, label: 'BOLSA', icon: '🎒' },
-    { category: PartCategory.BUCKLE, label: 'HEBILLA', icon: '🔗' },
+    { category: PartCategory.BELT, label: t('sub.belt', lang), icon: '🪖' },
+    { category: PartCategory.POUCH, label: t('sub.pouch', lang), icon: '🎒' },
+    { category: PartCategory.BUCKLE, label: t('sub.buckle', lang), icon: '🔗' },
   ];
 
   const isBeltActive = activeCategory === PartCategory.BELT ||

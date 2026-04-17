@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { ArchetypeInfo } from '../lib/archetypeData'; // re-exported from types
 import { type ArchetypeId } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 export interface ArchetypeSwitcherProps {
   archetypes: ArchetypeInfo[];
@@ -29,10 +30,12 @@ const ArchetypeTooltip = ({
   archetype,
   onConfirmSelect,
   isActive,
+  lang,
 }: {
   archetype: ArchetypeInfo;
   onConfirmSelect: () => void;
   isActive?: boolean;
+  lang: import('../lib/i18n').Lang;
 }) => (
   <div style={{
     position: 'absolute',
@@ -59,9 +62,9 @@ const ArchetypeTooltip = ({
     <div style={{ fontSize: 9, color: '#9ca3af', marginBottom: 8, lineHeight: 1.5 }}>
       {archetype.famousExamples?.length ? archetype.famousExamples.slice(0, 3).join(', ') + '.' : ''}
     </div>
-    <StatBar label="POWER" value={archetype.stats.power} />
-    <StatBar label="DEFENSE" value={archetype.stats.defense} />
-    <StatBar label="SPEED" value={archetype.stats.speed} />
+    <StatBar label={t('arch.stats.power', lang)} value={archetype.stats.power} />
+    <StatBar label={t('arch.stats.defense', lang)} value={archetype.stats.defense} />
+    <StatBar label={t('arch.stats.speed', lang)} value={archetype.stats.speed} />
     {!isActive && (
       <button
         onClick={onConfirmSelect}
@@ -80,7 +83,7 @@ const ArchetypeTooltip = ({
           fontFamily: 'var(--font-comic)',
         }}
       >
-        ⚡ SELECT {archetype.name}
+        ⚡ {t('arch.select', lang)} {archetype.name}
       </button>
     )}
   </div>
@@ -92,6 +95,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
   hasUnsavedParts,
   onSelect,
 }) => {
+  const { lang } = useLang();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMore, setShowMore] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -207,7 +211,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
             <span>{a.icon}</span>
             <span>{a.name}</span>
             {a.id === activeArchetypeId && (
-              <span style={{ fontSize: 8, background: 'rgba(0,0,0,0.16)', padding: '2px 5px', borderRadius: 4 }}>ACTIVE</span>
+              <span style={{ fontSize: 8, background: 'rgba(0,0,0,0.16)', padding: '2px 5px', borderRadius: 4 }}>{t('arch.active', lang)}</span>
             )}
           </button>
           {hoveredId === a.id && (
@@ -215,6 +219,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
               archetype={a}
               onConfirmSelect={() => handleChipClick(a.id)}
               isActive={a.id === activeArchetypeId}
+              lang={lang}
             />
           )}
         </div>
@@ -226,7 +231,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
             style={{ ...chipStyle(false), border: '1px dashed rgba(71, 85, 105, 0.55)', color: '#6b7280', background: 'rgba(19, 19, 31, 0.82)' }}
             onClick={() => setShowMore((v) => !v)}
           >
-            ••• MORE
+            {t('arch.more', lang)}
           </button>
           {showMore && (
             <div style={{
@@ -269,6 +274,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
                       archetype={a}
                       onConfirmSelect={() => { handleChipClick(a.id); setShowMore(false); }}
                       isActive={a.id === activeArchetypeId}
+                      lang={lang}
                     />
                   )}
                 </div>

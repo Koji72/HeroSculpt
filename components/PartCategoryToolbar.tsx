@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PartCategory } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface PartCategoryToolbarProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -38,6 +39,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
   onSidePanelToggle,
   categoryCounts,
 }) => {
+  const { lang } = useLang();
   const ref = useRef<HTMLDivElement>(null);
   const torsoButtonRef = useRef<HTMLButtonElement>(null);
   const beltButtonRef = useRef<HTMLButtonElement>(null);
@@ -175,7 +177,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={torsoButtonRef}
         onClick={onTorsoToggle}
-        onMouseEnter={e => showTooltip(e, 'CUERPO SUPERIOR [1]')}
+        onMouseEnter={e => showTooltip(e, t('toolbar.upper', lang))}
         onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isTorsoOrSubActive)}
       >
@@ -200,7 +202,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={beltButtonRef}
         onClick={onBeltToggle}
-        onMouseEnter={e => showTooltip(e, 'CINTURÓN Y ACCESORIOS [2]')}
+        onMouseEnter={e => showTooltip(e, t('toolbar.belt', lang))}
         onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isBeltOrSubActive)}
       >
@@ -224,7 +226,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={lowerBodyButtonRef}
         onClick={onLowerBodyToggle}
-        onMouseEnter={e => showTooltip(e, 'CUERPO INFERIOR [3]')}
+        onMouseEnter={e => showTooltip(e, t('toolbar.lower', lang))}
         onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isLowerBodyOrSubActive)}
       >
@@ -252,7 +254,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
             key={category}
             id={`category-toolbar-item-${category}`}
             onClick={() => onSelectCategory(category)}
-            onMouseEnter={e => showTooltip(e, 'MOCHILA Y EXTRAS')}
+            onMouseEnter={e => showTooltip(e, t('toolbar.backpack', lang))}
             onMouseLeave={() => setTooltip(null)}
             style={sidebarBtnStyle(isActive)}
           >
@@ -264,7 +266,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
               </svg>
             </div>
             <span style={labelStyle(isActive)}>
-              MOCHILA
+              {t('toolbar.backpack.label', lang)}
             </span>
           </button>
         );
@@ -282,7 +284,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
-                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? 'COLORES Y MATERIALES' : label === 'SKINS' ? 'TEXTURAS Y SKINS' : 'ILUMINACIÓN')}
+                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? t('toolbar.style', lang) : label === 'SKINS' ? t('toolbar.skins', lang) : t('toolbar.lights', lang))}
                 onMouseLeave={() => setTooltip(null)}
                 style={sidebarBtnStyle(isActive)}
               >

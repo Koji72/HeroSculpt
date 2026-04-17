@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { ArchetypeInfo } from '../lib/archetypeData';
+import { useLang, t } from '../lib/i18n';
 
 interface WelcomeScreenProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   isOpen, userEmail, onClose, onOpenLibrary,
   archetypes = [], activeArchetypeId, onSelectArchetype,
 }) => {
+  const { lang } = useLang();
   const [visible, setVisible] = useState(false);
   const [pickedId, setPickedId] = useState<string | null>(activeArchetypeId ?? null);
 
@@ -91,7 +93,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
           {/* Stats row */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 14 }}>
-            {[{ value: '300+', label: 'PARTS' }, { value: '6', label: 'ARCHETYPES' }, { value: '3', label: 'EXPORTS' }].map(s => (
+            {[{ value: '300+', label: t('welcome.parts', lang) }, { value: '6', label: t('welcome.archetypes', lang) }, { value: '3', label: t('welcome.exports', lang) }].map(s => (
               <div key={s.label} style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 18, color: 'var(--color-accent)', letterSpacing: 1 }}>
                   {s.value}
@@ -108,7 +110,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         {showArchetypes && (
           <div style={{ padding: '16px 20px 8px' }}>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 9, letterSpacing: 2, color: 'var(--color-text-faint)', textTransform: 'uppercase', marginBottom: 10, textAlign: 'center' }}>
-              ELIGE TU ARQUETIPO
+              {t('welcome.pick', lang)}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {displayArchetypes.map(a => {
@@ -141,7 +143,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                     </span>
                     {isSelected && (
                       <span style={{ fontSize: 7, color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 1 }}>
-                        ✓ ELEGIDO
+                        {t('welcome.picked', lang)}
                       </span>
                     )}
                   </button>
@@ -168,13 +170,13 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <span style={{ fontSize: 18, flexShrink: 0 }}>📚</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 12, letterSpacing: 1.5, color: 'var(--color-accent)' }}>
-                HERO LIBRARY
+                {t('welcome.library', lang)}
               </div>
               <div style={{ fontSize: 10, color: 'rgba(100,116,139,0.9)', marginTop: 2 }}>
-                Guarda y carga builds ilimitadas
+                {lang === 'en' ? 'Save and load unlimited builds' : 'Guarda y carga builds ilimitadas'}
               </div>
             </div>
-            <span style={{ color: 'var(--color-accent)', fontSize: 12, flexShrink: 0 }}>OPEN →</span>
+            <span style={{ color: 'var(--color-accent)', fontSize: 12, flexShrink: 0 }}>{t('welcome.library.open', lang)}</span>
           </div>
         </div>
 
@@ -193,7 +195,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             onMouseOver={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
             onMouseOut={e => (e.currentTarget.style.filter = 'brightness(1)')}
           >
-            {pickedId ? `CREAR CON ${pickedId.toUpperCase()} →` : 'EMPEZAR A CREAR →'}
+            {pickedId ? `${t('welcome.start.with', lang)} ${pickedId.toUpperCase()} →` : t('welcome.start', lang)}
           </button>
         </div>
       </div>

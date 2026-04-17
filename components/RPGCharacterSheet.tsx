@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArchetypeId, SelectedParts, RPGCharacterSync } from '../types';
+import { useLang, t } from '../lib/i18n';
 import { syncRPGCharacterFromParts, getPartChangeImpact } from '../lib/archetypeData';
 import { areRPGCharactersEqual, arePartsEqual } from '../lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -28,6 +29,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
   onCharacterUpdate
 }) => {
 
+  const { lang } = useLang();
   const [character, setCharacter] = useState<RPGCharacterSync | null>(null);
   const [lastParts, setLastParts] = useState<SelectedParts>({});
   const [recentChanges, setRecentChanges] = useState<{
@@ -185,7 +187,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
         <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
           <CardContent>
             <div className="text-slate-400 text-center py-8">
-              Calculando estadísticas…
+              {t('rpg.loading', lang)}
             </div>
           </CardContent>
         </Card>
@@ -201,14 +203,13 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Zap className="h-5 w-5" />
-              Recent Changes
+              {t('rpg.recent_changes', lang)}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {/* Cambios en Stats */}
             {Object.keys(recentChanges.statChanges).length > 0 && (
               <div>
-                <h4 className="text-blue-300 text-sm font-semibold mb-2">Statistics:</h4>
+                <h4 className="text-blue-300 text-sm font-semibold mb-2">{t('rpg.stats', lang)}:</h4>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(recentChanges.statChanges).map(([stat, change]) => (
                     <Badge 
@@ -226,7 +227,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
             {/* Nuevas Habilidades */}
             {recentChanges.newAbilities.length > 0 && (
               <div>
-                <h4 className="text-green-300 text-sm font-semibold mb-2">New Abilities:</h4>
+                <h4 className="text-green-300 text-sm font-semibold mb-2">{t('rpg.new_abilities', lang)}</h4>
                 <div className="flex flex-wrap gap-1">
                   {recentChanges.newAbilities.map((ability, index) => (
                     <Badge key={index} variant="default" className="text-xs bg-green-600">
@@ -241,7 +242,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
             {/* Habilidades Removidas */}
             {recentChanges.removedAbilities.length > 0 && (
               <div>
-                <h4 className="text-red-300 text-sm font-semibold mb-2">Removed Abilities:</h4>
+                <h4 className="text-red-300 text-sm font-semibold mb-2">{t('rpg.removed_abilities', lang)}</h4>
                 <div className="flex flex-wrap gap-1">
                   {recentChanges.removedAbilities.map((ability, index) => (
                     <Badge key={index} variant="destructive" className="text-xs">
@@ -260,7 +261,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
         <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
               <Target className="h-5 w-5" />
-              RPG Character Sheet
+              {t('rpg.sheet.title', lang)}
             <div className="flex items-center gap-2 ml-auto">
               <Clock className="h-4 w-4 text-slate-400" />
               <span className="text-slate-400 text-sm">
@@ -274,7 +275,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-white font-bold text-lg">{character.archetypeId}</h3>
-              <p className="text-slate-400 text-sm">Selected Archetype</p>
+              <p className="text-slate-400 text-sm">{t('rpg.archetype', lang)}</p>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-2">
@@ -287,7 +288,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
                   {character.compatibility.score}/100
                 </span>
               </div>
-              <p className="text-slate-400 text-sm">Compatibility</p>
+              <p className="text-slate-400 text-sm">{t('rpg.compatibility', lang)}</p>
             </div>
           </div>
 
@@ -295,7 +296,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
           <div>
             <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              Statistics
+              {t('rpg.stats', lang)}
             </h4>
             <div className="space-y-3">
               {Object.entries(character.calculatedStats).map(([stat, value]) => (
@@ -313,7 +314,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
 
           {/* Atributos Físicos */}
           <div>
-            <h4 className="text-white font-semibold mb-3">Physical Attributes</h4>
+            <h4 className="text-white font-semibold mb-3">{t('rpg.physical', lang)}</h4>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(character.physicalAttributes).map(([attr, value]) => (
                 <div key={attr} className="bg-slate-700/50 p-2 rounded">
@@ -327,7 +328,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
           {/* Efectos Visuales */}
           {character.visualEffects.length > 0 && (
             <div>
-              <h4 className="text-white font-semibold mb-3">Visual Effects</h4>
+              <h4 className="text-white font-semibold mb-3">{t('rpg.visual_effects', lang)}</h4>
               <div className="flex flex-wrap gap-2">
                 {character.visualEffects.map((effect, index) => (
                   <Badge key={index} variant="outline" className="text-purple-300 border-purple-500">
@@ -341,7 +342,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
           {/* Sugerencias */}
           {character.compatibility.suggestions.length > 0 && (
             <div>
-              <h4 className="text-white font-semibold mb-3">Suggestions</h4>
+              <h4 className="text-white font-semibold mb-3">{t('rpg.suggestions', lang)}</h4>
               <div className="space-y-2">
                 {character.compatibility.suggestions.map((suggestion, index) => (
                   <div key={index} className="text-slate-300 text-sm bg-slate-700/50 p-2 rounded">

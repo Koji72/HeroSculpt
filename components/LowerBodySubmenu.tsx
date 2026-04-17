@@ -1,5 +1,6 @@
 import React from 'react';
 import { PartCategory, Part, ArchetypeId } from '../types';
+import { useLang, t } from '../lib/i18n';
 import { ALL_PARTS } from '../constants';
 import { CharacterViewerRef } from './CharacterViewer';
 
@@ -24,9 +25,10 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
   onPartHover,       // Destructure new prop
   onPartUnhover      // Destructure new prop
 }) => {
+  const { lang } = useLang();
   const submenuCategories = [
-    { category: PartCategory.LOWER_BODY, label: 'PIERNAS', icon: '🦵' },
-    { category: PartCategory.BOOTS, label: 'BOTAS', icon: '👢' },
+    { category: PartCategory.LOWER_BODY, label: t('sub.legs', lang), icon: '🦵' },
+    { category: PartCategory.BOOTS, label: t('sub.boots', lang), icon: '👢' },
   ];
 
   // Variable para determinar si el lower body está activo (no utilizada pero mantenida para consistencia)
