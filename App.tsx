@@ -1714,7 +1714,8 @@ const AppContent: React.FC = () => {
 
         {/* 3-step flow indicator */}
         {(() => {
-          const activeStep = Object.keys(selectedParts).length > 0 ? 3 : 2;
+          const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+          const activeStep = cartCount > 0 ? 3 : 2;
           const steps: Array<{ n: number; label: string }> = [
             { n: 1, label: 'ARCHETYPE' },
             { n: 2, label: 'BUILD' },
@@ -1767,11 +1768,11 @@ const AppContent: React.FC = () => {
             🎲 RANDOM
           </button>
           <button
-            className="btn-comic btn-outline"
-            style={{ fontSize: '13px', padding: '5px 14px', position: 'relative' }}
+            className="btn-comic btn-primary"
+            style={{ fontSize: '14px', padding: '5px 16px', position: 'relative' }}
             onClick={handleOpenCart}
           >
-            CART
+            CHECKOUT →
             {cartItems.reduce((sum, item) => sum + item.quantity, 0) > 0 && (
               <span style={{
                 position: 'absolute', top: -4, right: -4,
@@ -1783,13 +1784,6 @@ const AppContent: React.FC = () => {
                 {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
               </span>
             )}
-          </button>
-          <button
-            className="btn-comic btn-primary"
-            style={{ fontSize: '14px', padding: '5px 16px' }}
-            onClick={handleOpenCart}
-          >
-            CHECKOUT →
           </button>
           {!user && (
             <button
