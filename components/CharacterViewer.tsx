@@ -98,6 +98,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   const [previewParts, setPreviewParts] = useState<SelectedParts | null>(null);
   const lastSelectedPartsRef = useRef<SelectedParts>({});
   const lastSelectedArchetypeRef = useRef<ArchetypeId | null>(null);
+  const hoverLoadCountRef = useRef(0);
   const [isThreeJSReady, setIsThreeJSReady] = useState(false); // ? NUEVO: Flag para controlar cuando Three.js est� listo
   const [edgeDetectionActive, setEdgeDetectionActive] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -1150,11 +1151,15 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         const exportScene = new THREE.Scene();
         const exportModelGroup = modelGroupRef.current.clone();
+        // Strip any hover-preview models that may be in the scene
+        [...exportModelGroup.children]
+          .filter(c => c.userData.isPreview)
+          .forEach(c => exportModelGroup.remove(c));
         exportModelGroup.position.set(0, 0, 0);
         exportModelGroup.rotation.set(0, 0, 0);
         exportModelGroup.scale.set(1, 1, 1);
         exportScene.add(exportModelGroup);
-        
+
         // Add basic lighting for the export (only directional lights are supported)
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
         directionalLight.position.set(5, 5, 5);
@@ -1189,6 +1194,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         const exportScene = new THREE.Scene();
         const exportModelGroup = modelGroupRef.current.clone();
+        // Strip any hover-preview models that may be in the scene
+        [...exportModelGroup.children]
+          .filter(c => c.userData.isPreview)
+          .forEach(c => exportModelGroup.remove(c));
         exportModelGroup.position.set(0, 0, 0);
         exportModelGroup.rotation.set(0, 0, 0);
         exportModelGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
@@ -1220,8 +1229,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       console.log('CharacterViewer: Preview parts changed:', changedParts);
     }
       
-      // ?? MARCAR QUE ESTAMOS EN HOVER PREVIEW
       setIsHoverPreviewActive(true);
+      const loadId = ++hoverLoadCountRef.current;
       
 
       
@@ -1423,7 +1432,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }
       }));
 
-      setIsHoverPreviewActive(false);
+      // Only clear the flag if no newer hover load has started since this one
+      if (loadId === hoverLoadCountRef.current) {
+        setIsHoverPreviewActive(false);
+      }
     },
     clearPreview: () => {
       setPreviewParts(null);
