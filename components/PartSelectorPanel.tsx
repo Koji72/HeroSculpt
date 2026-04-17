@@ -253,7 +253,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     }
     
     setPreviewParts(newPreviewParts);
-    setHasChanges(true);
+    setHasChanges(false);
     // Don't call onPreviewChange here — it sets isHoverPreviewActive=true in CharacterViewer
     // which blocks the main model loading effect triggered by onPartSelect below.
     // The hover preview is only for mouseover; clicks go directly through onPartSelect.
@@ -265,7 +265,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     hoverTimerRef.current = setTimeout(() => {
     if (!activeCategory || !onPreviewChange) return;
 
-    let hoverPreviewParts: SelectedParts = { ...previewParts };
+    let hoverPreviewParts: SelectedParts = { ...selectedParts };
 
     // Determinar la parte a mostrar en el preview. Si es null o "none", se considera que no hay parte.
     const partToDisplay: Part | null = (part && !part.attributes?.none) ? part : null;

@@ -106,7 +106,7 @@ export class SessionStorageService {
       
       if (isExpired) {
         console.log('SessionStorageService: Session expired, clearing old data');
-        this.clearSession();
+        await this.clearSession();
         return null;
       }
 

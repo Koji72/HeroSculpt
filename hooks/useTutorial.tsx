@@ -92,27 +92,19 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const nextStep = useCallback((trigger?: string) => {
     if (!tutorialActive) return;
-
-    // Check if we should advance based on trigger
-    if (trigger && currentStep?.trigger && currentStep.trigger !== trigger) {
-      return; // Don't advance if trigger doesn't match
-    }
-
-    if (currentStepIndex < TUTORIAL_STEPS.length - 1) {
-      setCurrentStepIndex(prev => prev + 1);
-    } else {
-      // Tutorial completed
+    setCurrentStepIndex(prev => {
+      const step = TUTORIAL_STEPS[prev];
+      if (trigger && step?.trigger && step.trigger !== trigger) return prev;
+      if (prev < TUTORIAL_STEPS.length - 1) return prev + 1;
       setTutorialActive(false);
-      setCurrentStepIndex(-1);
       setHighlightedElement(null);
-    }
-  }, [tutorialActive, currentStepIndex, currentStep?.trigger]);
+      return -1;
+    });
+  }, [tutorialActive]);
 
   const prevStep = useCallback(() => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(prev => prev - 1);
-    }
-  }, [currentStepIndex]);
+    setCurrentStepIndex(prev => prev > 0 ? prev - 1 : prev);
+  }, []);
 
   const skipTutorial = useCallback(() => {
     setTutorialActive(false);

@@ -1506,7 +1506,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       });
       
       previewModelsToRemove.forEach(model => {
-        modelGroup.remove(model);
+        model.parent?.remove(model);
         // Do NOT dispose — geometry/materials are shared with cache clones.
       });
       

@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export interface Notification {
   id: string;
@@ -25,7 +26,7 @@ export class NotificationService {
   private static instance: NotificationService;
   private listeners: Map<string, (notification: Notification) => void> = new Map();
   private audioContext: AudioContext | null = null;
-  private realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
+  private realtimeChannel: RealtimeChannel | null = null;
 
   static getInstance(): NotificationService {
     if (!NotificationService.instance) {
@@ -49,6 +50,7 @@ export class NotificationService {
 
   // 📡 CONFIGURAR SUSCRIPCIONES EN TIEMPO REAL (llamar tras sign-in con el userId real)
   setupRealtimeSubscriptions(userId: string): void {
+    if (!supabase) return;
     this.unsubscribe();
     this.realtimeChannel = supabase
       .channel(`notifications:${userId}`)
@@ -65,7 +67,7 @@ export class NotificationService {
 
   unsubscribe(): void {
     if (this.realtimeChannel) {
-      supabase.removeChannel(this.realtimeChannel);
+      if (supabase) supabase.removeChannel(this.realtimeChannel);
       this.realtimeChannel = null;
     }
   }
@@ -195,6 +197,7 @@ export class NotificationService {
     actionUrl?: string
   ): Promise<Notification> {
     try {
+      if (!supabase) throw new Error('Supabase not configured');
       const notification: Omit<Notification, 'id'> = {
         type,
         title,
@@ -269,6 +272,7 @@ export class NotificationService {
   // 📋 OBTENER NOTIFICACIONES
   async getNotifications(userId: string, limit: number = 50): Promise<Notification[]> {
     try {
+      if (!supabase) return [];
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -288,6 +292,7 @@ export class NotificationService {
   // ✅ MARCAR COMO LEÍDA
   async markAsRead(userId: string, notificationId: string): Promise<void> {
     try {
+      if (!supabase) return;
       const { error } = await supabase
         .from('notifications')
         .update({ isRead: true })
@@ -304,6 +309,7 @@ export class NotificationService {
   // 🗑️ ELIMINAR NOTIFICACIÓN
   async deleteNotification(userId: string, notificationId: string): Promise<void> {
     try {
+      if (!supabase) return;
       const { error } = await supabase
         .from('notifications')
         .delete()
