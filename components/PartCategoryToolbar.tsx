@@ -16,8 +16,8 @@ interface PartCategoryToolbarProps {
   onLowerBodyToggle: () => void;
   getLowerBodyButtonRef: (ref: HTMLButtonElement | null) => void;
   isLowerBodySubmenuExpanded: boolean;
-  activeSidePanel?: 'style' | 'skins' | 'lights' | null;
-  onSidePanelToggle?: (panel: 'style' | 'skins' | 'lights') => void;
+  activeSidePanel?: 'style' | 'skins' | null;
+  onSidePanelToggle?: (panel: 'style' | 'skins') => void;
   categoryCounts?: { upper: number; belt: number; lower: number; backpack: number };
 }
 
@@ -125,10 +125,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     lineHeight: 1.15,
   });
 
-  const sidePanelButtons: Array<{ key: 'style' | 'skins' | 'lights'; label: string }> = [
+  const sidePanelButtons: Array<{ key: 'style' | 'skins'; label: string }> = [
     { key: 'style', label: 'STYLE' },
     { key: 'skins', label: 'SKINS' },
-    { key: 'lights', label: 'LIGHTS' },
   ];
 
   const showTooltip = (e: React.MouseEvent<HTMLButtonElement>, label: string) => {
@@ -284,7 +283,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
-                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? t('toolbar.style', lang) : label === 'SKINS' ? t('toolbar.skins', lang) : t('toolbar.lights', lang))}
+                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? t('toolbar.style', lang) : t('toolbar.skins', lang))}
                 onMouseLeave={() => setTooltip(null)}
                 style={sidebarBtnStyle(isActive)}
               >

@@ -69,6 +69,12 @@ const STYLE_PART_TO_CATEGORY: Record<string, string> = {
   cape: 'CAPE', boots: 'BOOTS', belt: 'BELT',
 };
 
+const CATEGORY_TO_STYLE_PART: Record<string, string> = {
+  TORSO: 'torso', SUIT_TORSO: 'torso', LOWER_BODY: 'legs', HEAD: 'head',
+  HAND_LEFT: 'hand_left', HAND_RIGHT: 'hand_right',
+  CAPE: 'cape', BOOTS: 'boots', BELT: 'belt', CHEST_BELT: 'belt',
+};
+
 const buildThreeMaterial = (type: MaterialType, color: number): THREE.MeshPhysicalMaterial => {
   const presets: Record<MaterialType, { roughness: number; metalness: number; clearcoat: number }> = {
     FABRIC: { roughness: 0.85, metalness: 0.0, clearcoat: 0.0 },
@@ -272,8 +278,8 @@ const AppContent: React.FC = () => {
   const [showSTLModal, setShowSTLModal] = useState(false);
 
   // Task 7: side panel state
-  const [activeSidePanel, setActiveSidePanel] = useState<'style' | 'skins' | 'lights' | null>(null);
-  const activePanelMode: 'parts' | 'style' | 'skins' | 'lights' = activeSidePanel ?? 'parts';
+  const [activeSidePanel, setActiveSidePanel] = useState<'style' | 'skins' | null>(null);
+  const activePanelMode: 'parts' | 'style' | 'skins' = activeSidePanel ?? 'parts';
 
   const STYLE_PART_LABELS: Record<string, string> = {
     torso: 'TORSO', legs: 'LEGS', head: 'HEAD', hand_left: 'L.HAND',
@@ -900,12 +906,16 @@ const AppContent: React.FC = () => {
     toggleRightPanel(panel);
   };
 
-  const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins' | 'lights') => {
+  const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins') => {
     setIsPanelOpen(true);
     if (mode === 'parts') {
       setActiveSidePanel(null);
       setActiveTab('parts');
       return;
+    }
+    if (mode === 'style' && activeCategory) {
+      const mapped = CATEGORY_TO_STYLE_PART[activeCategory];
+      if (mapped) setActivePanelPart(mapped);
     }
     setActiveSidePanel(mode);
   };
@@ -2071,7 +2081,6 @@ const AppContent: React.FC = () => {
               ['parts', t('panel.parts', lang)],
               ['style', t('panel.style', lang)],
               ['skins', t('panel.skins', lang)],
-              ['lights', t('panel.lights', lang)],
             ] as const).map(([mode, label]) => (
               <button
                 key={mode}
@@ -2120,9 +2129,6 @@ const AppContent: React.FC = () => {
               <SkinsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
             )}
 
-            {activePanelMode === 'lights' && (
-              <LightsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
-            )}
           </div>
         </div>
 
