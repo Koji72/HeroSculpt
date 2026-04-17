@@ -95,6 +95,9 @@ export class PurchaseHistoryService {
     error?: string;
   }> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || user.id !== userId) return { success: false, error: 'Not authenticated' };
+
       const { data, error } = await supabase
         .from('purchases')
         .select(`

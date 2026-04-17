@@ -175,9 +175,12 @@ class MAndMCommunityService {
   }
 
   async createPost(post: Partial<MAndMCommunityPost>): Promise<MAndMCommunityPost> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
     const now = new Date();
     const postData = {
       ...post,
+      userId: user.id,
       createdAt: now,
       updatedAt: now,
       likes: 0,
@@ -216,8 +219,8 @@ class MAndMCommunityService {
 
     if (error) throw new Error(`Error liking post: ${error.message}`);
 
-    // Actualizar contador de likes
-    await supabase.rpc('increment_post_likes', { post_id: postId });
+    const { error: rpcError } = await supabase.rpc('increment_post_likes', { post_id: postId });
+    if (rpcError) throw new Error(`Error incrementing post likes: ${rpcError.message}`);
   }
 
   async unlikePost(postId: string, userId: string): Promise<void> {
@@ -229,8 +232,8 @@ class MAndMCommunityService {
 
     if (error) throw new Error(`Error unliking post: ${error.message}`);
 
-    // Decrementar contador de likes
-    await supabase.rpc('decrement_post_likes', { post_id: postId });
+    const { error: rpcError } = await supabase.rpc('decrement_post_likes', { post_id: postId });
+    if (rpcError) throw new Error(`Error decrementing post likes: ${rpcError.message}`);
   }
 
   // ===== RANKINGS Y LEADERBOARDS =====

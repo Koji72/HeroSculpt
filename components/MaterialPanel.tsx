@@ -63,13 +63,13 @@ const MaterialPanel = React.memo(({
           console.log(`MaterialPanel: Applying color to all parts`);
         }
         characterViewerRef.current.applyColorToAllParts(color);
-        const newColors = { ...currentColors };
-        Object.keys(selectedParts).forEach(category => {
-          if (category !== PartCategory.HEAD) {
-            newColors[category] = color;
-          }
+        setCurrentColors(prev => {
+          const newColors = { ...prev };
+          Object.keys(selectedParts).forEach(category => {
+            if (category !== PartCategory.HEAD) newColors[category] = color;
+          });
+          return newColors;
         });
-        setCurrentColors(newColors);
       }
     } else {
       if (process.env.NODE_ENV === 'development') {

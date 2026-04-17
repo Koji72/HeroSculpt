@@ -172,13 +172,17 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
   };
 
   useEffect(() => {
+    let composer: EffectComposer | null = null;
     if (isEnabled) {
-      const newComposer = createComposer();
-      onComposerChange?.(newComposer);
+      composer = createComposer();
+      onComposerChange?.(composer);
     } else {
       onComposerChange?.(null);
     }
-  }, [isEnabled, effectSettings, getScene, getCamera, getRenderer]);
+    return () => {
+      composer?.dispose();
+    };
+  }, [isEnabled, effectSettings, getScene, getCamera, getRenderer, onComposerChange]);
 
   const updateEffectSettings = (effect: 'ssao' | 'bloom' | 'colorCorrection', setting: string, value: number) => {
     setEffectSettings(prev => ({

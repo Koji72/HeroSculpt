@@ -534,13 +534,13 @@ class MutantsMastermindsService {
     this.clearCache(`achievements_${userId}`);
     this.clearCache(`stats_${userId}`);
     
-    // Recargar datos
+    // Fetch data first so getUserStats reads from warm cache
     await Promise.all([
       this.getCharacters(userId),
       this.getCampaigns(userId),
       this.getAchievements(userId),
-      this.getUserStats(userId)
     ]);
+    await this.getUserStats(userId);
   }
 }
 

@@ -213,6 +213,9 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
       isInitialized.current = false;
       cancelAnimationFrame(animationIdRef.current);
       resizeObserver.disconnect();
+      currentMount.removeEventListener('wheel', preventWheelZoom);
+      (currentMount as any).removeEventListener('mousewheel', preventWheelZoom);
+      (currentMount as any).removeEventListener('DOMMouseScroll', preventWheelZoom);
       if (currentMount && rendererRef.current?.domElement) {
         currentMount.removeChild(rendererRef.current.domElement);
       }

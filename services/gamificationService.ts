@@ -217,6 +217,9 @@ export class GamificationService {
   // 👤 OBTENER ESTADÍSTICAS DEL USUARIO
   async getUserStats(userId: string): Promise<UserStats> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || user.id !== userId) throw new Error('Not authorized');
+
       const { data, error } = await supabase
         .from('user_stats')
         .select('*')
@@ -261,6 +264,9 @@ export class GamificationService {
   // 📊 ACTUALIZAR ESTADÍSTICAS
   async updateUserStats(userId: string, updates: Partial<UserStats>): Promise<UserStats> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || user.id !== userId) throw new Error('Not authorized');
+
       const { data, error } = await supabase
         .from('user_stats')
         .update(updates)
@@ -343,7 +349,7 @@ export class GamificationService {
           if (currentValue !== requirement.value) return false;
           break;
         case 'greater_than':
-          if (currentValue <= requirement.value) return false;
+          if (currentValue < requirement.value) return false;
           break;
         case 'less_than':
           if (currentValue >= requirement.value) return false;

@@ -627,6 +627,14 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
 
   }), []); // 🔧 OPTIMIZADO: Dependencias vacías para evitar recreación
 
+  useEffect(() => {
+    return () => {
+      Object.values(materialPresets).forEach(presets =>
+        presets.forEach(p => p.material.dispose())
+      );
+    };
+  }, [materialPresets]);
+
   // 🔧 OPTIMIZADO: Usar useMemo para evitar recálculos innecesarios
   const availableCategories = useMemo(() => {
     // Mostrar todas las categorías disponibles, no solo las seleccionadas
@@ -828,6 +836,8 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
 
     if (onMaterialChange) {
       onMaterialChange(material, selectedPart);
+    } else {
+      material.dispose();
     }
   };
 
@@ -854,7 +864,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
 
   useEffect(() => {
     updateMaterial();
-  }, [materialSettings, selectedPart]); // Add selectedPart to dependencies
+  }, [materialSettings, selectedPart, onMaterialChange]);
 
   const tabStyle = (tab: string): React.CSSProperties => ({
     flex: 1,
