@@ -44,7 +44,6 @@ import LastPoseIndicator from './components/LastPoseIndicator';
 import RPGCharacterSheetManager from './components/rpg-sheets/RPGCharacterSheetManager';
 import RPGCharacterSheet from './components/RPGCharacterSheet';
 import VTTExportModal from './components/VTTExportModal';
-import CharacterSheetTemplate from './components/CharacterSheetTemplate';
 import { RPGCharacterSync } from './types';
 import { STRONG_TORSO_PARTS } from './src/parts/strongTorsoParts';
 import { STRONG_LEGS_PARTS } from './src/parts/strongLegsParts';
@@ -160,9 +159,6 @@ const AppContent: React.FC = () => {
     totalPrice: number;
   } | null>(null);
 
-  // Estado para plantilla de hoja de personaje
-  const [isCharacterSheetTemplateOpen, setIsCharacterSheetTemplateOpen] = useState(false);
-  
   // ✅ NUEVO: Variable para detectar navegación entre poses
   const [isNavigatingPoses, setIsNavigatingPoses] = useState(false);
 
@@ -1534,21 +1530,6 @@ const AppContent: React.FC = () => {
     // REMOVED: handleLoadRPGCharacterToCustomizer(character); // Esto causaba bucle infinito
   };
 
-  // Funciones para plantilla de hoja de personaje
-  const handleOpenCharacterSheetTemplate = () => {
-    setIsCharacterSheetTemplateOpen(true);
-  };
-
-  const handleCloseCharacterSheetTemplate = () => {
-    setIsCharacterSheetTemplateOpen(false);
-  };
-
-  const handleSaveCharacterSheet = (characterData: any) => {
-    // Removed debug log
-    // Aquí puedes implementar la lógica para guardar en la base de datos
-    setIsCharacterSheetTemplateOpen(false);
-  };
-
   const mapStatToTorso = (stat: number) => {
     if (stat <= 3) return 'strong_torso_01';
     if (stat <= 6) return 'strong_torso_02';
@@ -1929,61 +1910,6 @@ const AppContent: React.FC = () => {
           </div>
         </div>
 
-        {false && !activeSidePanel && activeTab === 'parts' && (
-          <PartSelectorPanel
-            activeCategory={activeCategory}
-            selectedArchetype={selectedArchetype || ArchetypeId.STRONG}
-            selectedParts={selectedParts}
-            onPartSelect={handleSelectPart}
-            onClose={handleCloseSelector}
-            onPreviewChange={characterViewerRef.current?.handlePreviewPartsChange}
-            id="part-selector-panel"
-            registerElement={registerElement}
-            characterViewerRef={characterViewerRef}
-            ownedPartIds={ownedPartIds}
-          />
-        )}
-
-        {false && !activeSidePanel && activeTab === 'materials' && (
-          <MaterialPanel
-            isOpen={isPanelOpen && activeTab === 'materials'}
-            onClose={() => setIsPanelOpen(false)}
-            characterViewerRef={characterViewerRef}
-            selectedParts={selectedParts}
-            onLoadConfiguration={handleLoadConfiguration}
-          />
-        )}
-
-        {false && !activeSidePanel && activeTab === 'skins' && (
-          <SkinsPanel apiRef={characterViewerRef} onClose={() => setIsPanelOpen(false)} />
-        )}
-
-        {false && !activeSidePanel && activeTab === 'effects' && (
-          <PowerEffectsPanel onClose={() => setIsPanelOpen(false)} />
-        )}
-
-        {false && !activeSidePanel && activeTab === 'lighting' && (
-          <LightsPanel apiRef={characterViewerRef} onClose={() => setIsPanelOpen(false)} />
-        )}
-
-        {/* Task 7: activeSidePanel renders */}
-        {false && activeSidePanel === 'style' && (
-          <StylePanel
-            parts={stylePanelParts}
-            activePart={activePanelPart}
-            onPartSelect={setActivePanelPart}
-            onColorChange={handleStylePanelColorChange}
-            onMaterialChange={handleStylePanelMaterialChange}
-            onApplyToAll={handleApplyToAll}
-            onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }}
-          />
-        )}
-        {false && activeSidePanel === 'skins' && (
-          <SkinsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
-        )}
-        {false && activeSidePanel === 'lights' && (
-          <LightsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
-        )}
       </div>
 
       {/* ── BOTTOM BAR ── */}
@@ -2363,15 +2289,6 @@ const AppContent: React.FC = () => {
         />
       )}
 
-      {/* Modal de Plantilla de Hoja de Personaje */}
-      <CharacterSheetTemplate
-        isOpen={isCharacterSheetTemplateOpen}
-        onClose={handleCloseCharacterSheetTemplate}
-        selectedParts={selectedParts}
-        selectedArchetype={selectedArchetype}
-        onSave={handleSaveCharacterSheet}
-      />
-      
       {/* Botón para mostrar/ocultar panel de debug */}
       {import.meta.env.DEV && (
         <button
