@@ -9,6 +9,7 @@ import ShoppingCart from './components/ShoppingCart';
 import { ShieldCheckIcon, Cog6ToothIcon, UserIcon, BookOpenIcon, ShoppingCartIcon, FileTextIcon } from './components/icons';
 import PartCategoryToolbar from './components/PartCategoryToolbar';
 import AuthModal from './components/AuthModal';
+import ResetPasswordModal from './components/ResetPasswordModal';
 import WelcomeScreen from './components/WelcomeScreen';
 import SimpleSignUpModal from './components/SimpleSignUpModal';
 import UserProfile from './components/UserProfile';
@@ -125,6 +126,10 @@ const AppContent: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<PartCategory | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signup');
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(() => {
+    const hash = window.location.hash;
+    return hash.includes('type=recovery') || hash.includes('type=signup');
+  });
   const [isWelcomeScreenOpen, setIsWelcomeScreenOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
@@ -2021,6 +2026,10 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* ── MODALS ── */}
+      {isResetPasswordOpen && (
+        <ResetPasswordModal onClose={() => setIsResetPasswordOpen(false)} />
+      )}
+
       {isAuthModalOpen && (
         <AuthModal
           isOpen={isAuthModalOpen}
