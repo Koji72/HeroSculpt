@@ -18,9 +18,14 @@ export function assignDefaultHandsForTorso(newTorso: Part, currentParts: Selecte
   // ✅ CORREGIDO: NO eliminar manos existentes - preservarlas
   // Las manos se preservan automáticamente en currentParts
   
-  const torsoMatch = newTorso.id.match(/strong_torso_(\d+)/);
+  // For suit_torso, use the base torso ID from the compatible array for lookups
+  const effectiveTorsoId = newTorso.category === PartCategory.SUIT_TORSO && newTorso.compatible.length > 0
+    ? newTorso.compatible[0]
+    : newTorso.id;
+
+  const torsoMatch = effectiveTorsoId.match(/strong_torso_(\d+)/);
   if (!torsoMatch) return newParts;
-  
+
   const getHandType = (handId: string): string | null => {
     // Verificar tipos específicos primero usando el patrón correcto
     if (handId.includes('hands_pistol_')) return 'pistol';
@@ -52,15 +57,15 @@ export function assignDefaultHandsForTorso(newTorso: Part, currentParts: Selecte
   const currentLeftGlove = currentLeftHand ? getGloveStatus(currentLeftHand) : false;
   const currentRightGlove = currentRightHand ? getGloveStatus(currentRightHand) : false;
   
-  const compatibleLeftHands = ALL_PARTS.filter(p => 
-    p.category === PartCategory.HAND_LEFT && 
+  const compatibleLeftHands = ALL_PARTS.filter(p =>
+    p.category === PartCategory.HAND_LEFT &&
     p.archetype === newTorso.archetype &&
-    p.compatible.includes(newTorso.id)
+    p.compatible.includes(effectiveTorsoId)
   );
-  const compatibleRightHands = ALL_PARTS.filter(p => 
-    p.category === PartCategory.HAND_RIGHT && 
+  const compatibleRightHands = ALL_PARTS.filter(p =>
+    p.category === PartCategory.HAND_RIGHT &&
     p.archetype === newTorso.archetype &&
-    p.compatible.includes(newTorso.id)
+    p.compatible.includes(effectiveTorsoId)
   );
   
   const findMatchingHand = (hands: Part[], targetType: string | null, targetGlove: boolean): Part | null => {
@@ -438,33 +443,31 @@ export function assignAdaptiveSuitTorsoForTorso(newTorso: Part, currentParts: Se
     return newParts;
   }
   
-  // Check if current suit_torso is compatible with new torso
-  const isCurrentSuitCompatible = currentSuitTorso.compatible.includes(newTorso.id);
-  
+  // For suit_torso, resolve to base torso ID for compatibility lookups
+  const effectiveTorsoId = newTorso.category === PartCategory.SUIT_TORSO && newTorso.compatible.length > 0
+    ? newTorso.compatible[0]
+    : newTorso.id;
+
+  // Check if current suit_torso is compatible with the effective base torso
+  const isCurrentSuitCompatible = currentSuitTorso.compatible.includes(effectiveTorsoId);
+
   if (isCurrentSuitCompatible) {
-    console.log('✅ Current suit_torso is compatible, keeping:', currentSuitTorso.id);
     newParts[PartCategory.SUIT_TORSO] = currentSuitTorso;
     return newParts;
   }
-  
+
   // Current suit_torso not compatible, find matching type
   let currentSuitType = null;
   const suitMatch = currentSuitTorso.id.match(/strong_suit_torso_(\d+)_t\d+/);
   if (suitMatch) {
     currentSuitType = suitMatch[1];
   }
-  
-  console.log('🎯 Current suit_torso info:', { 
-    currentSuitId: currentSuitTorso.id, 
-    currentSuitType, 
-    suitMatch: suitMatch ? suitMatch[0] : 'no match' 
-  });
-  
-  // Find compatible suit_torsos for new torso
-  const compatibleSuits = ALL_PARTS.filter(p => 
-    p.category === PartCategory.SUIT_TORSO && 
+
+  // Find compatible suit_torsos for the effective base torso
+  const compatibleSuits = ALL_PARTS.filter(p =>
+    p.category === PartCategory.SUIT_TORSO &&
     p.archetype === newTorso.archetype &&
-    p.compatible.includes(newTorso.id)
+    p.compatible.includes(effectiveTorsoId)
   );
   
   if (compatibleSuits.length === 0) {

@@ -92,7 +92,8 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
       {/* Botón Anterior */}
       <button
         onClick={onPreviousPose}
-        className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-green-400 hover:text-green-300 border-green-400/20 hover:border-green-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 will-change-transform border items-center justify-center"
+        disabled={savedPoses.length <= 1}
+        className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-green-400 hover:text-green-300 border-green-400/20 hover:border-green-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 will-change-transform border items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
         title={`Pose anterior: ${savedPoses[currentPoseIndex > 0 ? currentPoseIndex - 1 : savedPoses.length - 1]?.name}`}
       >
         ◀
@@ -113,7 +114,8 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
       {/* Botón Siguiente */}
       <button
         onClick={onNextPose}
-        className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-green-400 hover:text-green-300 border-green-400/20 hover:border-green-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 will-change-transform border items-center justify-center"
+        disabled={savedPoses.length <= 1}
+        className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-green-400 hover:text-green-300 border-green-400/20 hover:border-green-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 will-change-transform border items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
         title={`Siguiente pose: ${savedPoses[currentPoseIndex < savedPoses.length - 1 ? currentPoseIndex + 1 : 0]?.name}`}
       >
         ▶

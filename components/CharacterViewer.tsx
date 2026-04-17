@@ -729,6 +729,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }
       });
       
+      if (generation !== loadGenerationRef.current) { setIsLoading(false); return; }
       modelGroup.add(baseModel);
       console.log('?? Pedestal cargado exitosamente. Children en modelGroup:', modelGroup.children.length);
       
@@ -927,8 +928,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       console.log(`??? CharacterViewer: Total meshes tagged for ${part.category}: ${meshCount}`);
     }
           
+          if (generation !== loadGenerationRef.current) { modelGroup.remove(model); return null; }
           modelGroup.add(model);
-          
+
           // ? NUEVO: Debug espec�fico para capas
           if (part.category === PartCategory.CAPE) {
             console.log('?? DEBUG CAPA - A�adida al modelGroup:', {
@@ -1145,7 +1147,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     setIsLoading(false);
 
-  }, [isThreeJSReady, isHoverPreviewActive, selectedParts, selectedArchetype]);
+  }, [isThreeJSReady, isHoverPreviewActive, selectedParts, selectedArchetype, isAuthenticated]);
 
   useImperativeHandle(ref, (): CharacterViewerRef => ({
     exportModel: async () => {
@@ -1624,14 +1626,15 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           console.error('? TokenScreenshot: Error taking token screenshot:', error);
           resolve('');
         } finally {
-          // Restore original camera state
-          cameraRef.current.position.copy(originalPosition);
-          controlsRef.current.target.copy(originalTarget);
-          cameraRef.current.fov = originalFOV;
-          cameraRef.current.updateProjectionMatrix();
-          controlsRef.current.update();
-          rendererRef.current.setClearColor(originalClearColor, originalClearAlpha);
-          rendererRef.current.render(sceneRef.current!, cameraRef.current!);
+          if (cameraRef.current && controlsRef.current && rendererRef.current && sceneRef.current) {
+            cameraRef.current.position.copy(originalPosition);
+            controlsRef.current.target.copy(originalTarget);
+            cameraRef.current.fov = originalFOV;
+            cameraRef.current.updateProjectionMatrix();
+            controlsRef.current.update();
+            rendererRef.current.setClearColor(originalClearColor, originalClearAlpha);
+            rendererRef.current.render(sceneRef.current, cameraRef.current);
+          }
         }
       });
     },
@@ -1701,14 +1704,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           console.error('? Error al aplicar zoom:', error);
           resolve('');
         } finally {
-          // Restaurar posici�n original de la c�mara
-          cameraRef.current.position.copy(originalPosition);
-          controlsRef.current.target.copy(originalTarget);
-          cameraRef.current.fov = originalFOV;
-          controlsRef.current.update();
-          
-          // Re-renderizar con posici�n original
-          rendererRef.current.render(sceneRef.current!, cameraRef.current!);
+          if (cameraRef.current && controlsRef.current && rendererRef.current && sceneRef.current) {
+            cameraRef.current.position.copy(originalPosition);
+            controlsRef.current.target.copy(originalTarget);
+            cameraRef.current.fov = originalFOV;
+            cameraRef.current.updateProjectionMatrix();
+            controlsRef.current.update();
+            rendererRef.current.render(sceneRef.current, cameraRef.current);
+          }
         }
       });
     },

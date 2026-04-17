@@ -363,37 +363,47 @@ class MAndMCommunityService {
   }
 
   async joinEvent(eventId: string, userId: string): Promise<void> {
+    const { data: event, error: fetchError } = await supabase
+      .from('mnm_events')
+      .select('participants')
+      .eq('id', eventId)
+      .single();
+    if (fetchError) throw new Error(`Error fetching event: ${fetchError.message}`);
+
+    const participants: string[] = Array.isArray(event?.participants) ? event.participants : [];
+    if (!participants.includes(userId)) participants.push(userId);
+
     const { error } = await supabase
       .from('mnm_events')
-      .update({
-        participants: supabase.sql`array_append(participants, ${userId})`
-      })
+      .update({ participants })
       .eq('id', eventId);
 
     if (error) throw new Error(`Error joining event: ${error.message}`);
 
-    // Limpiar caché
     this.clearCache('active_events');
   }
 
   async joinChallenge(challengeId: string, userId: string, userName: string): Promise<void> {
-    const participant = {
-      userId,
-      userName,
-      progress: 0,
-      completed: false
-    };
+    const { data: challenge, error: fetchError } = await supabase
+      .from('mnm_challenges')
+      .select('participants')
+      .eq('id', challengeId)
+      .single();
+    if (fetchError) throw new Error(`Error fetching challenge: ${fetchError.message}`);
+
+    const participants: any[] = Array.isArray(challenge?.participants) ? challenge.participants : [];
+    const alreadyJoined = participants.some((p: any) => p.userId === userId);
+    if (!alreadyJoined) {
+      participants.push({ userId, userName, progress: 0, completed: false });
+    }
 
     const { error } = await supabase
       .from('mnm_challenges')
-      .update({
-        participants: supabase.sql`array_append(participants, ${JSON.stringify(participant)})`
-      })
+      .update({ participants })
       .eq('id', challengeId);
 
     if (error) throw new Error(`Error joining challenge: ${error.message}`);
 
-    // Limpiar caché
     this.clearCache('active_challenges');
   }
 

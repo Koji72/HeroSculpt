@@ -127,9 +127,6 @@ export class SessionStorageService {
     localStorage.removeItem(SESSION_STORAGE_KEY);
     localStorage.removeItem(SESSION_TIMESTAMP_KEY);
     
-    // Debug: Log call stack to identify who is clearing the session
-    console.trace('SessionStorageService: clearSession() call stack');
-
     // Clear from Supabase if authenticated
     try {
       await SupabaseSessionService.clearCurrentSession();

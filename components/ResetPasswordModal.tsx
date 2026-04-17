@@ -46,8 +46,14 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
   return (
     <div
       style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{ background: 'var(--color-surface-2, #1e293b)', border: '1px solid var(--color-border, #334155)', width: 320, padding: 28, position: 'relative' }}>
+        <button
+          onClick={onClose}
+          style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--color-text-muted, #64748b)', lineHeight: 1 }}
+          aria-label="Cerrar"
+        >✕</button>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
             NUEVA CONTRASEÑA

@@ -118,26 +118,25 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         }
         
         newPreviewParts[activeCategory] = part;
-        
-        const fullCompatibleParts = assignDefaultHandsForTorso(part, newPreviewParts);
-        const finalCompatibleParts = assignAdaptiveHeadForTorso(part, fullCompatibleParts);
-        
-        const partsWithSymbol = { ...finalCompatibleParts };
+
+        // Chain sequentially so each step builds on the previous result
+        const afterHands = assignDefaultHandsForTorso(part, newPreviewParts);
+        const afterHead = assignAdaptiveHeadForTorso(part, afterHands);
+
+        const withSymbol = { ...afterHead };
         const currentSymbol = selectedParts[PartCategory.SYMBOL];
-        if (currentSymbol) partsWithSymbol[PartCategory.SYMBOL] = currentSymbol;
-        const finalPartsWithSymbol = assignAdaptiveSymbolForTorso(part, finalCompatibleParts, partsWithSymbol);
-        
-        const partsWithCape = { ...finalCompatibleParts };
+        if (currentSymbol) withSymbol[PartCategory.SYMBOL] = currentSymbol;
+        const afterSymbol = assignAdaptiveSymbolForTorso(part, afterHead, withSymbol);
+
+        const withCape = { ...afterSymbol };
         const currentCape = selectedParts[PartCategory.CAPE];
-        if (currentCape) partsWithCape[PartCategory.CAPE] = currentCape;
-        const finalPartsWithCape = assignAdaptiveCapeForTorso(part, finalCompatibleParts, partsWithCape);
-        
-        const partsWithSuit = { ...finalCompatibleParts };
+        if (currentCape) withCape[PartCategory.CAPE] = currentCape;
+        const afterCape = assignAdaptiveCapeForTorso(part, afterSymbol, withCape);
+
+        const withSuit = { ...afterCape };
         const currentSuit = selectedParts[PartCategory.SUIT_TORSO];
-        if (currentSuit) partsWithSuit[PartCategory.SUIT_TORSO] = currentSuit;
-        const finalPartsWithSuit = assignAdaptiveSuitTorsoForTorso(part, finalCompatibleParts, partsWithSuit);
-        
-        newPreviewParts = { ...newPreviewParts, ...finalCompatibleParts, ...finalPartsWithSymbol, ...finalPartsWithCape, ...finalPartsWithSuit };
+        if (currentSuit) withSuit[PartCategory.SUIT_TORSO] = currentSuit;
+        newPreviewParts = assignAdaptiveSuitTorsoForTorso(part, afterCape, withSuit);
         
         // console.log('? TORSO SELECT: Updated preview state:', {
         //   allParts: Object.keys(newPreviewParts),
@@ -292,6 +291,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         delete partsWithoutCurrentTorso[PartCategory.SUIT_TORSO];
       } else if (activeCategory === PartCategory.SUIT_TORSO) {
         delete partsWithoutCurrentTorso[PartCategory.SUIT_TORSO];
+        delete partsWithoutCurrentTorso[PartCategory.TORSO];
       }
 
       // Si hay una parte de torso para mostrar, la usamos para la compatibilidad
@@ -300,33 +300,26 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         // El problema era que partsWithoutCurrentTorso no conten�a las manos
         const partsWithHands = { ...partsWithoutCurrentTorso };
         
-        // ? APLICAR FUNCIONES DE COMPATIBILIDAD EN ORDEN - SIGUIENDO REGLAS CR�TICAS
-        const fullCompatibleParts = assignDefaultHandsForTorso(partToDisplay, partsWithHands);
-        const finalCompatibleParts = assignAdaptiveHeadForTorso(partToDisplay, fullCompatibleParts);
-        
-        const partsWithSymbol = { ...finalCompatibleParts };
+        // Chain sequentially so each step builds on the previous result
+        const afterHands = assignDefaultHandsForTorso(partToDisplay, partsWithHands);
+        const afterHead = assignAdaptiveHeadForTorso(partToDisplay, afterHands);
+
+        const withSymbol = { ...afterHead };
         const currentSymbol = selectedParts[PartCategory.SYMBOL];
-        if (currentSymbol) partsWithSymbol[PartCategory.SYMBOL] = currentSymbol;
-        const finalPartsWithSymbol = assignAdaptiveSymbolForTorso(partToDisplay, finalCompatibleParts, partsWithSymbol);
-        
-        const partsWithCape = { ...finalCompatibleParts };
+        if (currentSymbol) withSymbol[PartCategory.SYMBOL] = currentSymbol;
+        const afterSymbol = assignAdaptiveSymbolForTorso(partToDisplay, afterHead, withSymbol);
+
+        const withCape = { ...afterSymbol };
         const currentCape = selectedParts[PartCategory.CAPE];
-        if (currentCape) partsWithCape[PartCategory.CAPE] = currentCape;
-        const finalPartsWithCape = assignAdaptiveCapeForTorso(partToDisplay, finalCompatibleParts, partsWithCape);
-        
-        const partsWithSuit = { ...finalCompatibleParts };
+        if (currentCape) withCape[PartCategory.CAPE] = currentCape;
+        const afterCape = assignAdaptiveCapeForTorso(partToDisplay, afterSymbol, withCape);
+
+        const withSuit = { ...afterCape };
         const currentSuit = selectedParts[PartCategory.SUIT_TORSO];
-        if (currentSuit) partsWithSuit[PartCategory.SUIT_TORSO] = currentSuit;
-        const finalPartsWithSuit = assignAdaptiveSuitTorsoForTorso(partToDisplay, finalCompatibleParts, partsWithSuit);
-        
-        // ? COMBINAR TODOS LOS RESULTADOS - SIGUIENDO REGLAS CR�TICAS
-        hoverPreviewParts = { 
-          ...partsWithoutCurrentTorso,
-          ...finalCompatibleParts, 
-          ...finalPartsWithSymbol, 
-          ...finalPartsWithCape,
-          ...finalPartsWithSuit,
-          [activeCategory]: partToDisplay 
+        if (currentSuit) withSuit[PartCategory.SUIT_TORSO] = currentSuit;
+        hoverPreviewParts = {
+          ...assignAdaptiveSuitTorsoForTorso(partToDisplay, afterCape, withSuit),
+          [activeCategory]: partToDisplay
         };
       } else {
         // Si es "none" torso, asegurar que las dependencias tambi�n se eliminan del preview

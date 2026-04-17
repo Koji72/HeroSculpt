@@ -1729,7 +1729,7 @@ const SKINS: SkinPreset[] = [
 // ─── SKIN CATEGORIES for grouping ─────────────────────────────────────────
 const SKIN_CATEGORIES: { label: string; ids: string[] }[] = [
   { label: '🎨 COMIC / TOON', ids: ['moebius-toon', 'manga-high-contrast', 'cartoon-bright', 'comic-grain'] },
-  { label: '🦸 LEGENDS', ids: ['xmen-legend', 'xmen-legend-classic', 'magneto-legend', 'captain-america-sideshow', 'spider-man-sideshow', 'batman-legend', 'batman-dark-knight', 'batman-blue-gray-classic', 'gambit-rogue', 'colossus-studio-metal', 'classic-hero'] },
+  { label: '🦸 LEGENDS', ids: ['xmen-legend', 'xmen-legend-classic', 'magneto-legend', 'captain-america-sideshow', 'spider-man-sideshow', 'batman-legend', 'batman-dark-knight', 'batman-blue-gray-classic', 'gambit-rogue', 'colossus-studio-metal', 'classic-hero', 'hulk-warm-studio', 'captain-marvel-gallery'] },
   { label: '⚙️ SCI-FI / SPECIAL', ids: ['cosmic-warrior', 'cosmic-warrior-dark', 'tech-neon', 'alien-stalker', 'emerald-champion'] },
   { label: '🖌️ MINIATURE PAINT', ids: ['citadel-miniature', 'vallejo-military'] },
 ];

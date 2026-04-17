@@ -25,7 +25,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
   const isFree   = !isNonePart && part.priceUSD === 0;
   const isOwned  = !isNonePart && part.priceUSD > 0 && ownedPartIds.has(part.id);
   const isPremium = !isNonePart && part.priceUSD > 0 && !isOwned;
-  const premiumLabel = `$${part.priceUSD.toFixed(2)}`;
+  const premiumLabel = part.priceUSD != null ? `$${part.priceUSD.toFixed(2)}` : '';
   const isFavorite = !isNonePart && favoriteIds.has(part.id);
 
   const handleMouseEnter = () => {
@@ -110,8 +110,8 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
             alt={part.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             onError={(e) => {
-              e.currentTarget.src = 'https://via.placeholder.com/100/1e293b/f97316?text=Error';
-              e.currentTarget.alt = 'Error loading image';
+              e.currentTarget.onerror = null;
+              e.currentTarget.style.display = 'none';
             }}
           />
         ) : null}

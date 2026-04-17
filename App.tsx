@@ -532,10 +532,9 @@ const AppContent: React.FC = () => {
     
     // ✅ CRITICAL FIX: Usar el estado correcto según autenticación
     if (!isAuthenticated) {
-      // Usuario NO logueado: resetear guestSelectedParts
+      pushPartsHistory(GUEST_USER_BUILD);
       setGuestSelectedParts(GUEST_USER_BUILD);
     } else {
-      // Usuario logueado: resetear userSelectedParts según arquetipo
       let defaultBuild: SelectedParts;
       switch (selectedArchetype) {
         case ArchetypeId.STRONG:
@@ -547,6 +546,7 @@ const AppContent: React.FC = () => {
         default:
           defaultBuild = DEFAULT_STRONG_BUILD;
       }
+      pushPartsHistory(defaultBuild);
       setUserSelectedParts(defaultBuild);
     }
     
@@ -630,8 +630,9 @@ const AppContent: React.FC = () => {
     return () => document.removeEventListener('click', handleClick, true);
   }, []);
 
-  // Load build from URL ?build= param on mount
+  // Load build from URL ?build= param — wait for auth to resolve first
   useEffect(() => {
+    if (loading) return;
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get('build');
     if (!encoded) return;
@@ -645,14 +646,13 @@ const AppContent: React.FC = () => {
           if (found) parts[cat as PartCategory] = found;
         });
         if (Object.keys(parts).length > 0) {
-          setUserSelectedParts(parts);
+          setSelectedParts(parts);
         }
       }
       // Clean URL without reload
-      const clean = window.location.pathname;
-      window.history.replaceState(null, '', clean);
+      window.history.replaceState(null, '', window.location.pathname);
     } catch {}
-  }, []);
+  }, [loading]);
 
   // Save última pose cuando el usuario salga de la página
   useEffect(() => {
@@ -712,7 +712,7 @@ const AppContent: React.FC = () => {
       }
     };
     loadSessionOnAuthChange();
-  }, [isAuthenticated, loading, user, loadUserPoses]); // Add loadUserPoses to dependencies
+  }, [isAuthenticated, loading, user?.id, loadUserPoses]);
 
   // Detect fresh signup vs returning login
   useEffect(() => {
@@ -917,13 +917,13 @@ const AppContent: React.FC = () => {
   // Task 6: ArchetypeSwitcher handler
   const handleArchetypeSelect = (id: string) => {
     setSelectedArchetype(id as ArchetypeId);
-    // Reset selected parts when changing archetype
     if (isAuthenticated) {
       setUserSelectedParts({});
     } else {
       setGuestSelectedParts(GUEST_USER_BUILD);
     }
-    // Trigger remount with spinner
+    setActiveCategory(null);
+    setIsPanelOpen(false);
     setArchetypeLoading(true);
     setCharacterViewerKey((k: number) => k + 1);
     setTimeout(() => setArchetypeLoading(false), 2000);
@@ -993,6 +993,7 @@ const AppContent: React.FC = () => {
     }
 
     // ✅ CARGAR LAS NUEVAS PARTES (REEMPLAZANDO COMPLETAMENTE)
+    pushPartsHistory(parts);
     setSelectedParts(parts);
     
     // ✅ NUEVO: ACTUALIZAR EL NOMBRE DEL PERSONAJE SI SE PROPORCIONA
@@ -1527,12 +1528,10 @@ const AppContent: React.FC = () => {
     
     const newPose = savedPoses[newIndex];
 
+    pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    // ✅ NUEVO: Desactivar bandera después de un delay
-    setTimeout(() => {
-      setIsNavigatingPoses(false);
-    }, 100);
+    setTimeout(() => { setIsNavigatingPoses(false); }, 100);
   };
 
   const handleNextPose = () => {
@@ -1549,12 +1548,10 @@ const AppContent: React.FC = () => {
 
     const newPose = savedPoses[newIndex];
 
+    pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    // ✅ NUEVO: Desactivar bandera después de un delay
-    setTimeout(() => {
-      setIsNavigatingPoses(false);
-    }, 100);
+    setTimeout(() => { setIsNavigatingPoses(false); }, 100);
   };
 
   const handleSelectPose = (index: number) => {
@@ -1569,12 +1566,10 @@ const AppContent: React.FC = () => {
     // Reset lastSelectedPartsRef so CharacterViewer always reloads the target
     // pose even if its parts happen to equal the current selection.
     characterViewerRef.current?.resetState();
+    pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
-    
-    // ✅ NUEVO: Desactivar bandera después de un delay
-    setTimeout(() => {
-      setIsNavigatingPoses(false);
-    }, 100);
+
+    setTimeout(() => { setIsNavigatingPoses(false); }, 100);
   };
 
   const handleRenamePose = (index: number, newName: string) => {
@@ -1592,7 +1587,8 @@ const AppContent: React.FC = () => {
     const pose = savedPoses[index];
     if (!pose || pose.source !== 'saved') return;
 
-    const success = await UserConfigService.deleteConfiguration(pose.id);
+    const configId = pose.id.replace(/^saved-/, '');
+    const success = await UserConfigService.deleteConfiguration(configId);
     if (!success) return;
 
     const newPoses = savedPoses.filter((_, i) => i !== index);
@@ -2299,7 +2295,7 @@ const AppContent: React.FC = () => {
         <ResetPasswordModal onClose={clearPasswordRecovery} />
       )}
 
-      {isAuthModalOpen && (
+      {isAuthModalOpen && !isPasswordRecovery && (
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}

@@ -88,6 +88,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     (activeCategory && [PartCategory.BOOTS].includes(activeCategory));
 
   const sidebarBtnStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
+    position: 'relative',
     width: '60px',
     padding: '8px 4px 9px',
     background: isActive ? 'rgba(216, 162, 58, 0.08)' : 'rgba(19, 19, 31, 0.58)',
