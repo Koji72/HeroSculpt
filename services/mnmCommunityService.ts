@@ -194,7 +194,9 @@ class MAndMCommunityService {
     if (error) throw new Error(`Error creating post: ${error.message}`);
 
     // Limpiar caché del feed
-    this.clearCache(`feed_${post.userId}`);
+    if (post.userId) {
+      this.clearCache(`feed_${post.userId}`);
+    }
 
     return {
       ...data,
@@ -264,6 +266,8 @@ class MAndMCommunityService {
           .select('userId, totalExperience, totalCharacters, campaignsCompleted, achievementsUnlocked, communityPosts, likesReceived, playTime')
           .order('communityPosts', { ascending: false });
         break;
+      default:
+        throw new Error(`Unknown leaderboard type: ${type}`);
     }
 
     const { data, error } = await query.limit(limit);

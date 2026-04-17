@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
@@ -35,8 +35,10 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
     composerRef.current = newComposer;
   }, []);
 
+  const animationIdRef = useRef<number>(0);
+
   const animate = useCallback(() => {
-    requestAnimationFrame(animate);
+    animationIdRef.current = requestAnimationFrame(animate);
     controlsRef.current?.update();
 
     if (composerRef.current && composerRef.current.passes.length > 1) {
@@ -209,7 +211,7 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
 
     const cleanupScene = () => {
       isInitialized.current = false;
-      // No need to remove event listener for resize, ResizeObserver handles it.
+      cancelAnimationFrame(animationIdRef.current);
       resizeObserver.disconnect();
       if (currentMount && rendererRef.current?.domElement) {
         currentMount.removeChild(rendererRef.current.domElement);

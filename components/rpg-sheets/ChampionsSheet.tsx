@@ -55,13 +55,13 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
 
   const updateCharacter = React.useCallback((path: string, value: any) => {
     const keys = path.split('.');
-    const updated = { ...championsCharacter };
+    const updated = JSON.parse(JSON.stringify(championsCharacter));
     let current: any = updated;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       current = current[keys[i]];
     }
-    
+
     current[keys[keys.length - 1]] = value;
     onCharacterChange(updated);
   }, [championsCharacter, onCharacterChange]);
@@ -101,8 +101,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
 
     const handleBlur = React.useCallback(() => {
       setIsFocused(false);
-      setLocalValue(value);
-    }, [value]);
+    }, []);
 
     if (!isEditing) {
       return <span className={className}>{value || placeholder}</span>;

@@ -3,20 +3,21 @@ import { ModularCharacterData, CharacterSheetProps } from './BaseCharacterSheet'
 
 const GenericModularSheet: React.FC<CharacterSheetProps> = ({ character, isEditing, onCharacterChange, onToggleEdit }) => {
   const modular = character as ModularCharacterData;
+  const abilities = modular.abilities ?? [];
   const handleChange = (field: keyof ModularCharacterData, value: any) => {
     onCharacterChange({ ...modular, [field]: value });
   };
   const handleAbilityChange = (idx: number, field: 'key' | 'name' | 'icon', value: string) => {
-    const abilities = modular.abilities.map((ab, i) => i === idx ? { ...ab, [field]: value } : ab);
-    onCharacterChange({ ...modular, abilities });
+    const updated = abilities.map((ab, i) => i === idx ? { ...ab, [field]: value } : ab);
+    onCharacterChange({ ...modular, abilities: updated });
   };
   const handleAddAbility = () => {
-    const abilities = [...modular.abilities, { key: '', name: '', icon: '' }];
-    onCharacterChange({ ...modular, abilities });
+    const updated = [...abilities, { key: '', name: '', icon: '' }];
+    onCharacterChange({ ...modular, abilities: updated });
   };
   const handleRemoveAbility = (idx: number) => {
-    const abilities = modular.abilities.filter((_, i) => i !== idx);
-    onCharacterChange({ ...modular, abilities });
+    const updated = abilities.filter((_, i) => i !== idx);
+    onCharacterChange({ ...modular, abilities: updated });
   };
   return (
     <div className="w-full bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 p-4 overflow-auto">
@@ -88,7 +89,7 @@ const GenericModularSheet: React.FC<CharacterSheetProps> = ({ character, isEditi
         <div className="abilities-section bg-[#202a40] border-2 border-blue-400 rounded-lg mt-6 p-4">
           <h2 className="text-blue-400 text-xl font-bold border-b border-blue-400 pb-1 mb-4">Combat Abilities</h2>
           <div className="box-xo2 max-h-48 overflow-auto space-y-2">
-            {modular.abilities.map((ab, idx) => (
+            {abilities.map((ab, idx) => (
               <div key={idx} className="ability-entry flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-2 bg-[#1c2233] rounded mb-1 border border-blue-700">
                 <div className="flex gap-2 items-center w-full md:w-auto">
                   <input type="text" className="key w-14 text-center font-bold text-blue-400 bg-[#0d111a] border border-blue-400 rounded disabled:opacity-50 disabled:cursor-not-allowed" value={ab.key} onChange={e => handleAbilityChange(idx, 'key', e.target.value)} placeholder="Key" disabled={!isEditing} />

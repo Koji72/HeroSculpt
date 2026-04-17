@@ -220,7 +220,7 @@ class MutantsMastermindsService {
     return characters;
   }
 
-  async getCharacter(id: string): Promise<MAndMCharacter | null> {
+  async getCharacter(id: string, userId: string): Promise<MAndMCharacter | null> {
     const cacheKey = `character_${id}`;
     const cached = this.getFromCache(cacheKey);
     if (cached) return cached;
@@ -229,6 +229,7 @@ class MutantsMastermindsService {
       .from('mnm_characters')
       .select('*')
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (error) throw new Error(`Error fetching character: ${error.message}`);
@@ -261,6 +262,7 @@ class MutantsMastermindsService {
         .from('mnm_characters')
         .update(characterData)
         .eq('id', character.id)
+        .eq('userId', character.userId)
         .select()
         .single();
 

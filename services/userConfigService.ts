@@ -43,12 +43,15 @@ export class UserConfigService {
   }
 
   // Get all configurations for a user
-  static async getUserConfigurations(userId: string): Promise<UserConfiguration[]> {
+  static async getUserConfigurations(): Promise<UserConfiguration[]> {
     try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) return [];
+
       const { data, error } = await supabase
         .from('user_configurations')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(100);
 

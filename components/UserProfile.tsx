@@ -76,7 +76,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
   useEffect(() => {
     registerElement(id, ref.current);
-  }, [id, registerElement]);
+  }, [id, registerElement, isOpen]);
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -86,11 +86,14 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
   const loadUserConfigurations = async () => {
     if (!user) return;
-    
+
     setLoading(true);
-    const configs = await UserConfigService.getUserConfigurations(user.id);
-    setConfigurations(configs);
-    setLoading(false);
+    try {
+      const configs = await UserConfigService.getUserConfigurations();
+      setConfigurations(configs);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteConfiguration = async (configId: string) => {

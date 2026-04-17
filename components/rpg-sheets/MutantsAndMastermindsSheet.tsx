@@ -60,13 +60,13 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
 
   const updateCharacter = React.useCallback((path: string, value: any) => {
     const keys = path.split('.');
-    const updated = { ...mnmCharacter };
+    const updated = JSON.parse(JSON.stringify(mnmCharacter));
     let current: any = updated;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       current = current[keys[i]];
     }
-    
+
     current[keys[keys.length - 1]] = value;
     onCharacterChange(updated);
   }, [mnmCharacter, onCharacterChange]);
@@ -106,8 +106,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
 
     const handleBlur = React.useCallback(() => {
       setIsFocused(false);
-      setLocalValue(value);
-    }, [value]);
+    }, []);
 
     if (!isEditing) {
       return <span className={className}>{value || placeholder}</span>;

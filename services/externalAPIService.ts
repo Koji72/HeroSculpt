@@ -126,7 +126,7 @@ export class ExternalAPIService {
       return true;
     } catch (error) {
       console.error('Error sharing to Discord:', error);
-      await this.logAPICall(webhookId, 'discord', 'error', error.message);
+      await this.logAPICall(webhookId, 'discord', 'error', error instanceof Error ? error.message : String(error));
       return false;
     }
   }

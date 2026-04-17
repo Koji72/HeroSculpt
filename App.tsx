@@ -424,7 +424,7 @@ const AppContent: React.FC = () => {
       const purchasesResult = await PurchaseHistoryService.getUserPurchases(user.id);
       const purchases = purchasesResult.success ? purchasesResult.purchases || [] : [];
 
-      const configurations = await UserConfigService.getUserConfigurations(user.id);
+      const configurations = await UserConfigService.getUserConfigurations();
 
       const allPoses = [];
 

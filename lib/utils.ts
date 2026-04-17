@@ -715,9 +715,14 @@ export function arePartsEqual(parts1: SelectedParts, parts2: SelectedParts): boo
 export function areRPGCharactersEqual(char1: RPGCharacterSync | null, char2: RPGCharacterSync | null): boolean {
   if (!char1 && !char2) return true;
   if (!char1 || !char2) return false;
-  
-  return char1.archetypeId === char2.archetypeId;
-} 
+
+  return (
+    char1.archetypeId === char2.archetypeId &&
+    JSON.stringify(char1.calculatedStats) === JSON.stringify(char2.calculatedStats) &&
+    JSON.stringify(char1.physicalAttributes) === JSON.stringify(char2.physicalAttributes) &&
+    JSON.stringify(char1.visualEffects) === JSON.stringify(char2.visualEffects)
+  );
+}
 
 export function areSelectedPartsEqual(parts1: SelectedParts, parts2: SelectedParts): boolean {
   const keys1 = Object.keys(parts1);
