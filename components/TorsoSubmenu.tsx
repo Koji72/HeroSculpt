@@ -18,15 +18,15 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
 }) => {
   const submenuCategories = [
     { category: PartCategory.TORSO, label: 'TORSO', icon: '🦾' },
-    { category: PartCategory.HEAD, label: 'HEAD', icon: '👤' },
-    { category: PartCategory.SUIT_TORSO, label: 'SUIT', icon: '👕' },
-    { category: PartCategory.CAPE, label: 'CAPE', icon: '🦇' },
-    { category: PartCategory.SYMBOL, label: 'SYMBOL', icon: '⭐' },
-    { category: PartCategory.CHEST_BELT, label: 'CHEST BELT', icon: '🛡️' },
-    { category: PartCategory.SHOULDERS, label: 'SHOULDERS', icon: '💪' },
-    { category: PartCategory.FOREARMS, label: 'FOREARMS', icon: '🦾' },
-    { category: PartCategory.HAND_LEFT, label: 'LEFT HAND', icon: '✋' },
-    { category: PartCategory.HAND_RIGHT, label: 'RIGHT HAND', icon: '✋' },
+    { category: PartCategory.HEAD, label: 'CABEZA', icon: '👤' },
+    { category: PartCategory.SUIT_TORSO, label: 'TRAJE', icon: '👕' },
+    { category: PartCategory.CAPE, label: 'CAPA', icon: '🦇' },
+    { category: PartCategory.SYMBOL, label: 'SÍMBOLO', icon: '⭐' },
+    { category: PartCategory.CHEST_BELT, label: 'PECHO', icon: '🛡️' },
+    { category: PartCategory.SHOULDERS, label: 'HOMBROS', icon: '💪' },
+    { category: PartCategory.FOREARMS, label: 'ANTEBRAZOS', icon: '🦾' },
+    { category: PartCategory.HAND_LEFT, label: 'MANO IZQ', icon: '✋' },
+    { category: PartCategory.HAND_RIGHT, label: 'MANO DER', icon: '✋' },
   ];
 
   const isTorsoActive = activeCategory === PartCategory.TORSO ||

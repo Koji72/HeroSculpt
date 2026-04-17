@@ -19,9 +19,9 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
   // Removed debug log
 
   const submenuCategories = [
-    { category: PartCategory.BELT, label: 'BELT', icon: '🪖' },
-    { category: PartCategory.POUCH, label: 'POUCH', icon: '🎒' },
-    { category: PartCategory.BUCKLE, label: 'BUCKLE', icon: '🔗' },
+    { category: PartCategory.BELT, label: 'CINTURÓN', icon: '🪖' },
+    { category: PartCategory.POUCH, label: 'BOLSA', icon: '🎒' },
+    { category: PartCategory.BUCKLE, label: 'HEBILLA', icon: '🔗' },
   ];
 
   const isBeltActive = activeCategory === PartCategory.BELT ||

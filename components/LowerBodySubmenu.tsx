@@ -25,8 +25,8 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
   onPartUnhover      // Destructure new prop
 }) => {
   const submenuCategories = [
-    { category: PartCategory.LOWER_BODY, label: 'LEGS', icon: '🦵' },
-    { category: PartCategory.BOOTS, label: 'BOOTS', icon: '👢' },
+    { category: PartCategory.LOWER_BODY, label: 'PIERNAS', icon: '🦵' },
+    { category: PartCategory.BOOTS, label: 'BOTAS', icon: '👢' },
   ];
 
   // Variable para determinar si el lower body está activo (no utilizada pero mantenida para consistencia)
