@@ -577,7 +577,14 @@ const AppContent: React.FC = () => {
       if (event.key === '2') { event.preventDefault(); handleBeltSubmenuToggle(); }
       if (event.key === '3') { event.preventDefault(); handleLowerBodySubmenuToggle(); }
       if (event.key === '?') { event.preventDefault(); setShowShortcutsOverlay(v => !v); }
-      if (event.key === 'Escape') { setShowShortcutsOverlay(false); }
+      if (event.key === 'Escape') {
+        setShowShortcutsOverlay(false);
+        setTorsoSubmenuExpanded(false);
+        setBeltSubmenuExpanded(false);
+        setLowerBodySubmenuExpanded(false);
+        setIsPanelOpen(false);
+        setActiveCategory(null);
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -1765,7 +1772,7 @@ const AppContent: React.FC = () => {
             zIndex: 50, pointerEvents: 'none',
           }}>
             <div style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 4 }}>
-              LOADING…
+              CARGANDO…
             </div>
           </div>
         )}
@@ -1889,7 +1896,7 @@ const AppContent: React.FC = () => {
           >↪</button>
           <button
             className="btn-comic btn-outline"
-            title="Randomize parts for this archetype"
+            title="Aleatorizar partes del arquetipo"
             style={{ fontSize: '13px', padding: '5px 12px' }}
             onClick={handleRandomize}
           >
@@ -2013,17 +2020,17 @@ const AppContent: React.FC = () => {
           <div className="app-panel-top">
             <div style={{ minWidth: 0 }}>
               <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 800, letterSpacing: 1.4, color: 'var(--color-accent)', textTransform: 'uppercase', marginBottom: 4 }}>
-                Customizer
+                PERSONALIZADOR
               </div>
               <div style={{ fontFamily: 'var(--font-body)', fontSize: 18, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
-                {{ parts: 'Parts', style: 'Style', skins: 'Skins', lights: 'Lights' }[activePanelMode]}
+                {{ parts: 'Partes', style: 'Estilo', skins: 'Skins', lights: 'Luces' }[activePanelMode]}
               </div>
               <div style={{ marginTop: 6, fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.35, color: 'var(--color-text-muted)', maxWidth: 230 }}>
                 {{
-                  parts: 'Swap hero parts and build the silhouette before refining materials.',
-                  style: 'Adjust color and material behavior for each part or the whole build.',
-                  skins: 'Apply curated looks quickly when you want a stronger preset direction.',
-                  lights: 'Tune the display lighting to present the character more clearly.',
+                  parts: 'Elige y combina piezas para construir la silueta de tu héroe.',
+                  style: 'Ajusta colores y materiales por pieza o aplica un estilo global.',
+                  skins: 'Aplica looks predefinidos para conseguir estilos rápidamente.',
+                  lights: 'Configura la iluminación para presentar mejor al personaje.',
                 }[activePanelMode]}
               </div>
             </div>
@@ -2041,7 +2048,7 @@ const AppContent: React.FC = () => {
                 fontSize: 16,
                 lineHeight: 1,
               }}
-              title="Close panel"
+              title="Cerrar panel"
             >
               ×
             </button>
@@ -2049,10 +2056,10 @@ const AppContent: React.FC = () => {
 
           <div className="app-panel-tabs">
             {([
-              ['parts', 'Parts'],
-              ['style', 'Style'],
+              ['parts', 'Partes'],
+              ['style', 'Estilo'],
               ['skins', 'Skins'],
-              ['lights', 'Lights'],
+              ['lights', 'Luces'],
             ] as const).map(([mode, label]) => (
               <button
                 key={mode}
@@ -2525,7 +2532,7 @@ const AppContent: React.FC = () => {
               userSelect: 'none',
               opacity: !user ? 0.7 : 1,
             }}
-            title={!user ? 'Sign in to access your Library' : 'Library'}
+            title={!user ? 'Inicia sesión para acceder a tu biblioteca' : 'Biblioteca'}
           >
             📚 BUILDS
           </button>
