@@ -86,6 +86,14 @@ const dict = {
   'bottom.vtt': { en: '🎲 VTT', es: '🎲 VTT' },
   'bottom.save_pose': { en: '💾 POSE', es: '💾 POSE' },
 
+  // Pose navigation
+  'pose.delete': { en: 'Delete', es: 'Borrar' },
+  'pose.cancel': { en: 'Cancel', es: 'Cancelar' },
+  'pose.rename': { en: 'Rename', es: 'Renombrar' },
+  'pose.save_as_new': { en: '💾 Save', es: '💾 Guardar' },
+  'pose.delete_confirm': { en: 'Delete this pose?', es: '¿Borrar esta pose?' },
+  'pose.save_as_new_title': { en: 'Save as new editable pose', es: 'Guardar como nueva pose editable' },
+
   // Right panel tabs
   'rtab.stats': { en: 'STATS', es: 'STATS' },
   'rtab.style': { en: 'STYLE', es: 'ESTILO' },

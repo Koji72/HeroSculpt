@@ -142,5 +142,5 @@ debug-*.html
 temp_*.html
 test-*.tsx
 test-*.cjs
-h
-tatus
+# Root-level test screenshots
+/*.png

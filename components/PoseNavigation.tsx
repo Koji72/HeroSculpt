@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLang, t } from '../lib/i18n';
 
 interface PoseNavigationProps {
   savedPoses: Array<{
@@ -27,6 +28,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
   onSaveAsNew,
   onDeletePose,
 }) => {
+  const { lang } = useLang();
   const [showPoseSelector, setShowPoseSelector] = useState(false);
   const [editingPoseIndex, setEditingPoseIndex] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -125,20 +127,20 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
               onClick={() => { onDeletePose(currentPoseIndex); setConfirmingDelete(false); }}
               className="px-2 py-1 backdrop-blur-sm shadow-lg bg-red-700/90 hover:bg-red-600 text-white text-xs border-red-400/40 rounded-full transition-colors duration-200 border font-medium"
             >
-              Borrar
+              {t('pose.delete', lang)}
             </button>
             <button
               onClick={() => setConfirmingDelete(false)}
               className="px-2 py-1 backdrop-blur-sm shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-slate-300 text-xs border-slate-600/50 rounded-full transition-colors duration-200 border font-medium"
             >
-              Cancelar
+              {t('pose.cancel', lang)}
             </button>
           </div>
         ) : (
           <button
             onClick={() => setConfirmingDelete(true)}
             className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-red-700/80 text-red-400 hover:text-white border-red-400/20 hover:border-red-400/40 rounded-full transition-colors duration-200 will-change-transform border items-center justify-center"
-            title="Borrar esta pose"
+            title={t('pose.delete_confirm', lang)}
           >
             🗑
           </button>
@@ -150,9 +152,9 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         <button
           onClick={onSaveAsNew}
           className="backdrop-blur-sm shadow-lg bg-blue-600/80 hover:bg-blue-500/90 text-white text-xs border-blue-400/20 hover:border-blue-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 px-3 py-1 font-medium will-change-transform border cursor-pointer"
-          title="Save como nueva pose editable"
+          title={t('pose.save_as_new_title', lang)}
         >
-          💾 Save
+          {t('pose.save_as_new', lang)}
         </button>
       )}
 
@@ -188,7 +190,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
                   <button
                     className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-white text-xs px-1 transition-opacity"
                     onMouseDown={e => { e.preventDefault(); handleRenameClick(index, pose.name); }}
-                    title="Renombrar"
+                    title={t('pose.rename', lang)}
                   >
                     ✏
                   </button>
