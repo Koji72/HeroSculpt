@@ -96,8 +96,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
   const [isLoading, setIsLoading] = useState(false);
   const [previewParts, setPreviewParts] = useState<SelectedParts | null>(null);
-  const [lastSelectedParts, setLastSelectedParts] = useState<SelectedParts>({});
-  const [lastSelectedArchetype, setLastSelectedArchetype] = useState<ArchetypeId | null>(null);
+  const lastSelectedPartsRef = useRef<SelectedParts>({});
+  const lastSelectedArchetypeRef = useRef<ArchetypeId | null>(null);
   const [isThreeJSReady, setIsThreeJSReady] = useState(false); // ? NUEVO: Flag para controlar cuando Three.js est� listo
   const [edgeDetectionActive, setEdgeDetectionActive] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -1111,57 +1111,30 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // If the user clicked a part while hovering, selectedParts will differ from
     // lastSelectedParts — in that case we must reload regardless of hover state.
     if (isHoverPreviewActive) {
-      const partsChanged = !areSelectedPartsEqual(selectedParts, lastSelectedParts);
-      const archetypeChanged2 = selectedArchetype !== lastSelectedArchetype;
+      const partsChanged = !areSelectedPartsEqual(selectedParts, lastSelectedPartsRef.current);
+      const archetypeChanged2 = selectedArchetype !== lastSelectedArchetypeRef.current;
       if (!partsChanged && !archetypeChanged2) {
-        console.log('?? CharacterViewer useEffect: In hover preview with no real change, skipping.');
         return;
       }
-      // Real selection happened during hover — clear hover flag and fall through to reload.
       setIsHoverPreviewActive(false);
     }
 
-    // ? NUEVOS LOGS: Depurar las dependencias para entender los re-renders
-    console.log('?? CharacterViewer useEffect: Evaluando dependencias:', {
-      isThreeJSReady,
-      isHoverPreviewActive,
-      selectedPartsCount: Object.keys(selectedParts).length,
-      selectedPartsDebug: Object.entries(selectedParts).map(([key, part]) => `${key}: ${part?.id}`),
-      selectedArchetype,
-      lastSelectedPartsCount: Object.keys(lastSelectedParts).length,
-      lastSelectedArchetype,
-    });
+    const isFirstLoad = Object.keys(lastSelectedPartsRef.current).length === 0;
+    const archetypeChanged = selectedArchetype !== lastSelectedArchetypeRef.current;
 
-    // If it's the first load or archetype changed, do full load
-    const isFirstLoad = Object.keys(lastSelectedParts).length === 0;
-    const archetypeChanged = selectedArchetype !== lastSelectedArchetype;
-
-    console.log('?? CharacterViewer useEffect: Decision de carga:', {
-      isFirstLoad,
-      archetypeChanged,
-      selectedPartsEqualsLast: JSON.stringify(selectedParts) === JSON.stringify(lastSelectedParts),
-      archetypeEqualsLast: selectedArchetype === lastSelectedArchetype
-    });
-    
-    // ? FIXED: Solo actualizar si realmente cambiaron las partes o el arquetipo
-    if (isFirstLoad || archetypeChanged || !areSelectedPartsEqual(selectedParts, lastSelectedParts)) {
-      setLastSelectedParts(selectedParts);
-      setLastSelectedArchetype(selectedArchetype);
-      
-      // ? Execute model loading without useCallback issues
+    if (isFirstLoad || archetypeChanged || !areSelectedPartsEqual(selectedParts, lastSelectedPartsRef.current)) {
+      lastSelectedPartsRef.current = selectedParts;
+      lastSelectedArchetypeRef.current = selectedArchetype;
       performModelLoad().catch(error => {
         console.error('CharacterViewer: Error in performModelLoad:', error);
         setIsLoading(false);
       });
       return;
-    } else {
-      console.log('?? CharacterViewer useEffect: No hay cambios significativos, saltando performModelLoad.');
     }
-    
-    // Cuando no hay cambios, asegurar que el CharacterViewer est� listo
+
     setIsLoading(false);
 
-  }, [isThreeJSReady, isHoverPreviewActive, selectedParts, selectedArchetype, lastSelectedParts, lastSelectedArchetype]);
+  }, [isThreeJSReady, isHoverPreviewActive, selectedParts, selectedArchetype]);
 
   useImperativeHandle(ref, (): CharacterViewerRef => ({
     exportModel: async () => {
@@ -1424,8 +1397,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       console.log(`?? HOVER: Removed ${modelsToRemove.length} preview models`);
     }
 
-      // Load new models for changed categories
-      changedCategories.forEach(async (category) => {
+      // Load new models for changed categories — await all before clearing the flag
+      await Promise.all(changedCategories.map(async (category) => {
         const part = changedParts[category];
         if (!part || part.attributes?.none || part.attributes?.hidden || !part.gltfPath) {
           return;
@@ -1433,39 +1406,24 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         const modelPath = `${basePath}${part.gltfPath.startsWith('/') ? part.gltfPath.slice(1) : part.gltfPath}`;
         try {
-              // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`?? HOVER: Loading [${category}] incrementally: ${modelPath}`);
-    }
           const model = await modelCache.getModel(modelPath);
-          
-          // Ensure category is always set, with fallback for problematic models
-          model.userData.category = part.category || 
-                                    (part.id.includes('legs') ? PartCategory.LOWER_BODY : 
-                                     part.id.includes('boots') ? PartCategory.BOOTS : 
-                                     part.id.includes('torso') ? PartCategory.TORSO : 
-                                     part.id.includes('head') ? PartCategory.HEAD : 
-                                     part.id.includes('hands') && part.id.includes('_l') ? PartCategory.HAND_LEFT : 
-                                     part.id.includes('hands') && part.id.includes('_r') ? PartCategory.HAND_RIGHT : 
-                                     part.category); // Fallback to original if no match
+          model.userData.category = part.category ||
+                                    (part.id.includes('legs') ? PartCategory.LOWER_BODY :
+                                     part.id.includes('boots') ? PartCategory.BOOTS :
+                                     part.id.includes('torso') ? PartCategory.TORSO :
+                                     part.id.includes('head') ? PartCategory.HEAD :
+                                     part.id.includes('hands') && part.id.includes('_l') ? PartCategory.HAND_LEFT :
+                                     part.id.includes('hands') && part.id.includes('_r') ? PartCategory.HAND_RIGHT :
+                                     part.category);
           model.userData.partId = part.id;
-          
           model.userData.isPreview = true;
-          
           modelGroup.add(model);
-              // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`? HOVER: Successfully loaded [${category}] incrementally`);
-    }
         } catch (error) {
-          console.error(`? HOVER: Error loading model ${part.name} (${part.id})`, error);
+          console.error(`HOVER: Error loading model ${part.id}`, error);
         }
-      });
-      
-      // ?? DESMARCAR HOVER PREVIEW DESPU�S DEL DELAY
-      setTimeout(() => {
-        setIsHoverPreviewActive(false);
-      }, 150); // 150ms es suficiente para completar la carga
+      }));
+
+      setIsHoverPreviewActive(false);
     },
     clearPreview: () => {
       setPreviewParts(null);
@@ -1538,7 +1496,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
     resetState: () => {
       setPreviewParts(null);
-      setLastSelectedParts({});
+      lastSelectedPartsRef.current = {};
     },
     resetCamera: () => {
       handleResetCamera();
