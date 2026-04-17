@@ -769,7 +769,19 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     <div id="part-selector-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }} ref={ref}>
       {/* Header */}
       <div className="panel-header">
-        <span>{getCategoryName(activeCategory)}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getCategoryName(activeCategory)}</span>
+          {allPartsToShow.length > 0 && (
+            <span style={{
+              fontSize: 8, fontFamily: 'var(--font-body)', fontWeight: 700,
+              background: 'rgba(216,162,58,0.12)', color: 'var(--color-accent)',
+              border: '1px solid rgba(216,162,58,0.25)',
+              padding: '1px 5px', borderRadius: 3, letterSpacing: 0.5, flexShrink: 0,
+            }}>
+              {partsToShow.length === allPartsToShow.length ? allPartsToShow.length : `${partsToShow.length}/${allPartsToShow.length}`}
+            </span>
+          )}
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           {hasFavorites && (
             <button
@@ -795,7 +807,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--color-border)', flexShrink: 0 }}>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Buscar parte..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             style={{
@@ -813,7 +825,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px' }}>
           <div style={{ textAlign: 'center' }}>
             <XMarkIcon className="h-8 w-8" style={{ margin: '0 auto 8px' }} />
-            <p style={{ fontFamily: 'var(--font-comic)', fontSize: 14 }}>No compatible parts found for this combination.</p>
+            <p style={{ fontFamily: 'var(--font-comic)', fontSize: 13, color: 'var(--color-text-muted)' }}>Sin partes compatibles para esta combinación.</p>
           </div>
         </div>
       ) : (
@@ -861,7 +873,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           style={{ width: '100%', padding: '10px', fontSize: 18, letterSpacing: 3 }}
           onClick={handleApplyChanges}
         >
-          APPLY SELECTION
+          ✓ APLICAR
         </button>
       </div>
     </div>

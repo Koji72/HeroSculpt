@@ -1742,8 +1742,8 @@ const AppContent: React.FC = () => {
 
         {/* 3-step flow indicator */}
         {(() => {
-          const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-          const activeStep = cartCount > 0 ? 3 : 2;
+          const partCount = Object.values(selectedParts).filter(p => p && !p.attributes?.none).length;
+          const activeStep = partCount >= 3 ? 3 : 2;
           const steps: Array<{ n: number; label: string }> = [
             { n: 1, label: 'ARCHETYPE' },
             { n: 2, label: 'BUILD' },
@@ -1811,31 +1811,37 @@ const AppContent: React.FC = () => {
           >
             🎲 RANDOM
           </button>
-          <button
-            className="btn-comic btn-primary"
-            style={{ fontSize: '14px', padding: '5px 16px', position: 'relative' }}
-            onClick={handleOpenCart}
-          >
-            CHECKOUT →
-            {cartItems.reduce((sum, item) => sum + item.quantity, 0) > 0 && (
-              <span style={{
-                position: 'absolute', top: -4, right: -4,
-                background: 'var(--color-danger)', color: '#fff',
-                fontSize: '9px', fontWeight: 700,
-                width: 14, height: 14, borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-              </span>
-            )}
-          </button>
+          {(() => {
+            const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            return (
+              <button
+                className="btn-comic btn-primary"
+                style={{ fontSize: '14px', padding: '5px 16px', position: 'relative' }}
+                onClick={handleOpenCart}
+              >
+                {cartCount > 0 ? 'CHECKOUT →' : 'MI BUILD →'}
+                {cartCount > 0 && (
+                  <span style={{
+                    position: 'absolute', top: -4, right: -4,
+                    background: 'var(--color-danger)', color: '#fff',
+                    fontSize: '9px', fontWeight: 700,
+                    width: 14, height: 14, borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            );
+          })()}
           {!user && (
             <button
               className="btn-comic btn-primary"
-              style={{ fontSize: '14px', padding: '5px 14px', background: 'var(--color-accent)', color: '#09090f', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-body)', fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer' }}
+              style={{ fontSize: '13px', padding: '5px 14px', background: 'var(--color-accent)', color: '#09090f', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-body)', fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer' }}
               onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
+              title="Crea una cuenta gratis para guardar tu héroe"
             >
-              JOIN ▶
+              💾 GUARDAR HÉROE
             </button>
           )}
           {user && (
@@ -2047,6 +2053,13 @@ const AppContent: React.FC = () => {
 
         {/* Export */}
         <div style={{ display: 'flex', gap: 4 }}>
+          <button
+            type="button"
+            onClick={handleExportGLB}
+            style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+          >
+            📦 GLB
+          </button>
           <button
             type="button"
             onClick={() => setShowSTLModal(true)}
