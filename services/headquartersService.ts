@@ -53,6 +53,7 @@ export class HeadquartersService {
       const { data: galleryHeroes, error: galleryError } = await supabase
         .from('gallery_heroes')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(20);
 

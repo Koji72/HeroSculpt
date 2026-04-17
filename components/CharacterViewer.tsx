@@ -99,6 +99,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   const lastSelectedPartsRef = useRef<SelectedParts>({});
   const lastSelectedArchetypeRef = useRef<ArchetypeId | null>(null);
   const hoverLoadCountRef = useRef(0);
+  const loadGenerationRef = useRef(0);
   const [isThreeJSReady, setIsThreeJSReady] = useState(false); // ? NUEVO: Flag para controlar cuando Three.js est� listo
   const [edgeDetectionActive, setEdgeDetectionActive] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -571,6 +572,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
   // ? SIMPLIFIED: Single async function for model loading (no useCallback issues)
   const performModelLoad = async () => {
+    const generation = ++loadGenerationRef.current;
     console.log('?? CharacterViewer: performModelLoad iniciado - TIMESTAMP:', new Date().toISOString());
     console.log('?? Estado de autenticaci�n:', { isAuthenticated });
     console.log('?? selectedParts recibidas:', {
@@ -963,6 +965,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     try {
       await Promise.all(loadPromises);
+      // Bail out if a newer load started while we were awaiting
+      if (generation !== loadGenerationRef.current) {
+        setIsLoading(false);
+        return;
+      }
       const endTime = performance.now();
       const loadTime = Math.round(endTime - startTime);
       setIsLoading(false);
@@ -1429,6 +1436,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                                      part.category);
           model.userData.partId = part.id;
           model.userData.isPreview = true;
+          model.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.userData.isPreview = true;
+              child.userData.category = model.userData.category;
+              child.userData.partId = part.id;
+            }
+          });
           modelGroup.add(model);
         } catch (error) {
           console.error(`HOVER: Error loading model ${part.id}`, error);

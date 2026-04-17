@@ -609,7 +609,7 @@ const AppContent: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleUndo, handleRedo]);
+  }, [handleUndo, handleRedo, handleTorsoSubmenuToggle, handleBeltSubmenuToggle, handleLowerBodySubmenuToggle]);
 
   // Close submenus when clicking outside the sidebar or submenus
   useEffect(() => {

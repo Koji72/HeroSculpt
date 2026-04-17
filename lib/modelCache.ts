@@ -52,23 +52,7 @@ class ModelCache {
         // });
       }
       
-      const clonedModel = cachedModel.clone();
-      // Preserve userData from the original model
-      clonedModel.userData = { ...cachedModel.userData };
-      clonedModel.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.userData = { ...child.userData };
-        }
-      });
-      
-      console.log(`🔄 ModelCache: Cloned cached model for ${path}`, {
-        originalUserData: cachedModel.userData,
-        clonedUserData: clonedModel.userData,
-        originalChildrenCount: cachedModel.children.length,
-        clonedChildrenCount: clonedModel.children.length
-      });
-      
-      return clonedModel;
+      return this.cloneWithMaterials(cachedModel);
     }
 
     // Check if already loading
@@ -98,23 +82,7 @@ class ModelCache {
         // });
       }
       
-      const clonedModel = model.clone();
-      // Preserve userData from the original model
-      clonedModel.userData = { ...model.userData };
-      clonedModel.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.userData = { ...child.userData };
-        }
-      });
-      
-      console.log(`🔄 ModelCache: Cloned loading model for ${path}`, {
-        originalUserData: model.userData,
-        clonedUserData: clonedModel.userData,
-        originalChildrenCount: model.children.length,
-        clonedChildrenCount: clonedModel.children.length
-      });
-      
-      return clonedModel;
+      return this.cloneWithMaterials(model);
     }
 
     // Load new model
@@ -150,7 +118,7 @@ class ModelCache {
         // });
       }
       
-      return model.clone();
+      return this.cloneWithMaterials(model);
     } catch (error) {
       this.loadingPromises.delete(path);
       console.error(`ModelCache: Error in getModel for ${path}:`, error);
@@ -218,6 +186,22 @@ class ModelCache {
     }));
     await Promise.all(preloadPromises);
     // console.log(`ModelCache: Finished preload of ${paths.length} models.`);
+  }
+
+  private cloneWithMaterials(source: THREE.Group): THREE.Group {
+    const cloned = source.clone();
+    cloned.userData = { ...source.userData };
+    cloned.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.userData = { ...child.userData };
+        if (Array.isArray(child.material)) {
+          child.material = child.material.map((m: THREE.Material) => m.clone());
+        } else if (child.material) {
+          child.material = (child.material as THREE.Material).clone();
+        }
+      }
+    });
+    return cloned;
   }
 
   clearCache(): void {

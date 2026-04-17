@@ -49,7 +49,8 @@ export class UserConfigService {
         .from('user_configurations')
         .select('*')
         .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(100);
 
       if (error) {
         console.error('Error fetching configurations:', error);
@@ -89,10 +90,14 @@ export class UserConfigService {
   // Get a specific configuration
   static async getConfiguration(configId: string): Promise<UserConfiguration | null> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
       const { data, error } = await supabase
         .from('user_configurations')
         .select('*')
         .eq('id', configId)
+        .eq('user_id', user.id)
         .single();
 
       if (error) {
@@ -113,10 +118,14 @@ export class UserConfigService {
     updates: Partial<Omit<UserConfiguration, 'id' | 'created_at' | 'updated_at'>>
   ): Promise<UserConfiguration | null> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
       const { data, error } = await supabase
         .from('user_configurations')
         .update(updates)
         .eq('id', configId)
+        .eq('user_id', user.id)
         .select()
         .single();
 
@@ -135,10 +144,14 @@ export class UserConfigService {
   // Delete a configuration
   static async deleteConfiguration(configId: string): Promise<boolean> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+
       const { error } = await supabase
         .from('user_configurations')
         .delete()
-        .eq('id', configId);
+        .eq('id', configId)
+        .eq('user_id', user.id);
 
       if (error) {
         console.error('Error deleting configuration:', error);
@@ -155,10 +168,14 @@ export class UserConfigService {
   // Update only the name of a configuration
   static async updateConfigurationName(configId: string, newName: string): Promise<boolean> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+
       const { error } = await supabase
         .from('user_configurations')
         .update({ name: newName })
-        .eq('id', configId);
+        .eq('id', configId)
+        .eq('user_id', user.id);
 
       if (error) {
         console.error('Error updating configuration name:', error);

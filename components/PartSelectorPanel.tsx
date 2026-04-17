@@ -114,7 +114,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           delete newPreviewParts[PartCategory.SUIT_TORSO];
         } else if (activeCategory === PartCategory.SUIT_TORSO) {
           delete newPreviewParts[PartCategory.SUIT_TORSO];
-          // Keep current torso when selecting suit_torso
+          delete newPreviewParts[PartCategory.TORSO];
         }
         
         newPreviewParts[activeCategory] = part;
@@ -175,7 +175,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       if (part.attributes?.none) {
         delete newPreviewParts[activeCategory];
       } else {
-        const currentTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
+        const currentTorso = previewParts[PartCategory.TORSO] || previewParts[PartCategory.SUIT_TORSO];
         
         if (!currentTorso) {
           newPreviewParts[activeCategory] = part;
@@ -266,7 +266,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     hoverTimerRef.current = setTimeout(() => {
     if (!activeCategory || !onPreviewChange) return;
 
-    let hoverPreviewParts: SelectedParts = { ...selectedParts };
+    let hoverPreviewParts: SelectedParts = { ...previewParts };
 
     // Determinar la parte a mostrar en el preview. Si es null o "none", se considera que no hay parte.
     const partToDisplay: Part | null = (part && !part.attributes?.none) ? part : null;
@@ -407,7 +407,13 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     
     onPreviewChange(hoverPreviewParts);
     }, 150);
-  }, [activeCategory, selectedParts, onPreviewChange, characterViewerRef]);
+  }, [activeCategory, selectedParts, previewParts, onPreviewChange, characterViewerRef]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     registerElement(id, ref.current);
