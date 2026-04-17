@@ -99,12 +99,14 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       // console.log('?? TORSO SELECT: Recalculating compatible parts for torso:', part.id);
       
       if (part.attributes?.none) {
-        // For "none" torso, remove torso and related parts
+        // For "none" torso, remove torso and all torso-dependent parts
         delete newPreviewParts[activeCategory];
         delete newPreviewParts[PartCategory.HEAD];
         delete newPreviewParts[PartCategory.HAND_LEFT];
         delete newPreviewParts[PartCategory.HAND_RIGHT];
         delete newPreviewParts[PartCategory.SYMBOL];
+        delete newPreviewParts[PartCategory.CAPE];
+        delete newPreviewParts[PartCategory.SUIT_TORSO];
       } else {
         // ? CRITICAL: Remove both TORSO and SUIT_TORSO when selecting either
         if (activeCategory === PartCategory.TORSO) {

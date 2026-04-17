@@ -15,7 +15,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
 
   const totalPrice = Object.values(selectedParts).reduce((sum, part) => {
     if (part && !part.attributes?.none) {
-      return sum + part.priceUSD;
+      return sum + (part.priceUSD ?? 0);
     }
     return sum;
   }, 0);

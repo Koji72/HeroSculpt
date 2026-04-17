@@ -1128,6 +1128,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     if (isFirstLoad || archetypeChanged || !areSelectedPartsEqual(selectedParts, lastSelectedPartsRef.current)) {
       lastSelectedPartsRef.current = selectedParts;
       lastSelectedArchetypeRef.current = selectedArchetype;
+      if (archetypeChanged) hasUserInteractedWithCamera.current = false;
       performModelLoad().catch(error => {
         console.error('CharacterViewer: Error in performModelLoad:', error);
         setIsLoading(false);
@@ -1751,7 +1752,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               categoryMatch = child.userData.category === partType;
             }
             
-            if (categoryMatch) {
+            if (categoryMatch && !child.userData.isPreview) {
               child.material = material.clone();
               materializedMeshes++;
               console.log(`? Applied material to ${partType}: ${child.name || 'unnamed'}`);
@@ -1839,7 +1840,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             });
     }
             
-            if (child.userData.category === partType) {
+            if (child.userData.category === partType && !child.userData.isPreview) {
               foundMeshes++;
               if (child.material instanceof THREE.MeshPhysicalMaterial) {
                 child.material.color.setHex(color);

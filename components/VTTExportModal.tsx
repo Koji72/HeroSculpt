@@ -143,8 +143,8 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
 
       {/* Next */}
       <button
-        style={{ ...btnPrimary, width: '100%', opacity: (isCapturing || (!screenshot && !captureError)) ? 0.4 : 1 }}
-        disabled={isCapturing || (!screenshot && !captureError)}
+        style={{ ...btnPrimary, width: '100%', opacity: (isCapturing || !screenshot || captureError) ? 0.4 : 1 }}
+        disabled={isCapturing || !screenshot || captureError}
         onClick={() => setStep(2)}
       >
         SIGUIENTE →

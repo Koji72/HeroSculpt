@@ -186,7 +186,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   </div>
                 </div>
               <p className="text-slate-300 text-sm mb-4">
-                Member since {new Date(user?.created_at).toLocaleDateString()}
+                Member since {new Date(user?.created_at ?? Date.now()).toLocaleDateString()}
               </p>
               
               {/* XP Progress Bar */}

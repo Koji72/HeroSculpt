@@ -76,6 +76,8 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
         archetype: '',
       }];
       await onCheckout(items);
+    } catch (error) {
+      alert(`Error al procesar el pago. Por favor intenta de nuevo.`);
     } finally {
       setIsProcessing(false);
     }
