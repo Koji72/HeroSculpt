@@ -99,7 +99,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   const handleDeleteConfiguration = async (configId: string) => {
     const success = await UserConfigService.deleteConfiguration(configId);
     if (success) {
-      setConfigurations(configurations.filter(config => config.id !== configId));
+      setConfigurations(prev => prev.filter(config => config.id !== configId));
     }
   };
 

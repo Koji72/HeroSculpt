@@ -180,7 +180,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
                     value={editingName}
                     onChange={e => setEditingName(e.target.value)}
                     onKeyDown={handleRenameKeyPress}
-                    onBlur={handleRenameSave}
+                    onBlur={handleRenameCancel}
                   />
                 ) : (
                   <span className="flex-1 text-sm truncate" onClick={() => handlePoseSelect(index)}>

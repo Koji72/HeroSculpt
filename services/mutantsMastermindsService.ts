@@ -248,9 +248,12 @@ class MutantsMastermindsService {
   }
 
   async saveCharacter(character: Partial<MAndMCharacter>): Promise<MAndMCharacter> {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error('Not authenticated');
     const now = new Date();
     const characterData = {
       ...character,
+      userId: user.id,
       updatedAt: now,
       createdAt: character.createdAt || now
     };

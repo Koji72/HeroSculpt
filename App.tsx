@@ -510,10 +510,12 @@ const AppContent: React.FC = () => {
   // Load owned part IDs when user authenticates or changes
   useEffect(() => {
     if (!user?.id) { setOwnedPartIds(new Set()); return; }
+    let active = true;
     setOwnedPartIdsLoading(true);
     PurchaseHistoryService.getOwnedPartIds(user.id)
-      .then(setOwnedPartIds)
-      .finally(() => setOwnedPartIdsLoading(false));
+      .then(ids => { if (active) setOwnedPartIds(ids); })
+      .finally(() => { if (active) setOwnedPartIdsLoading(false); });
+    return () => { active = false; };
   }, [user?.id]);
 
   // Empty function for components that expect registerElement (tutorial functionality removed)
@@ -723,7 +725,7 @@ const AppContent: React.FC = () => {
       }
     };
     loadSessionOnAuthChange();
-  }, [isAuthenticated, loading, user?.id, loadUserPoses]);
+  }, [isAuthenticated, user?.id, loadUserPoses]);
 
   // Detect fresh signup vs returning login
   useEffect(() => {
@@ -806,37 +808,29 @@ const AppContent: React.FC = () => {
     }
 
     const updateCurrentPoseConfiguration = async () => {
-      if (savedPoses.length > 0 && currentPoseIndex >= 0 && currentPoseIndex < savedPoses.length) {
-        const currentPose = savedPoses[currentPoseIndex];
-        
-        // Verificar si la configuración realmente cambió
-        const currentConfig = currentPose.configuration;
-        const configChanged = JSON.stringify(currentConfig) !== JSON.stringify(selectedParts);
-        
-        if (configChanged) {
-          // Actualizar el estado local
-          setSavedPoses(prev => {
-            const newPoses = [...prev];
-            // Actualizar solo la configuración de la pose actual
-            newPoses[currentPoseIndex] = {
-              ...newPoses[currentPoseIndex],
-              configuration: selectedParts
-            };
-            return newPoses;
-          });
+      let shouldUpdateDB = false;
+      let poseId: string | undefined;
+      let poseName: string | undefined;
 
-          // Si es una pose guardada por el usuario, actualizar en la base de datos
-          if (currentPose.source === 'saved' && user?.id) {
-            try {
-              const configId = currentPose.id.replace('saved-', '');
-              
-              // Removed debug log
+      setSavedPoses(prev => {
+        if (prev.length === 0 || currentPoseIndex < 0 || currentPoseIndex >= prev.length) return prev;
+        const currentPose = prev[currentPoseIndex];
+        const configChanged = JSON.stringify(currentPose.configuration) !== JSON.stringify(selectedParts);
+        if (!configChanged) return prev;
+        shouldUpdateDB = currentPose.source === 'saved';
+        poseId = currentPose.id;
+        poseName = currentPose.name;
+        const newPoses = [...prev];
+        newPoses[currentPoseIndex] = { ...newPoses[currentPoseIndex], configuration: selectedParts };
+        return newPoses;
+      });
 
-              await UserConfigService.updateConfiguration(configId, { name: currentPose.name, selected_parts: selectedParts });
-                    } catch (error) {
+      if (shouldUpdateDB && user?.id && poseId && poseName) {
+        try {
+          const configId = poseId.replace('saved-', '');
+          await UserConfigService.updateConfiguration(configId, { name: poseName, selected_parts: selectedParts });
+        } catch (error) {
           // Removed debug log
-        }
-          }
         }
       }
     };
@@ -844,7 +838,7 @@ const AppContent: React.FC = () => {
     // Actualizar con un delay para evitar demasiadas actualizaciones (delay aumentado)
     const timeoutId = setTimeout(updateCurrentPoseConfiguration, 800);
     return () => clearTimeout(timeoutId);
-  }, [selectedParts, currentPoseIndex, user?.id, isNavigatingPoses, savedPoses]);
+  }, [selectedParts, currentPoseIndex, user?.id, isNavigatingPoses]);
 
   // Cargar configuración desde URL si existe parámetro 'load'
   useEffect(() => {
@@ -875,15 +869,12 @@ const AppContent: React.FC = () => {
           
               
               // Esperar un poco para que se cargue la configuración
-              setTimeout(() => {
+              const exportTid = setTimeout(() => {
                 handleExportGLB();
-                
-                // Mostrar mensaje de descarga
                 alert('Your 3D model is downloading! 📥');
-                
-                // Limpiar la URL
                 window.history.replaceState({}, document.title, window.location.pathname);
               }, 2000);
+              return () => clearTimeout(exportTid);
             } else {
               // Limpiar URL después de cargar si no hay descarga
               window.history.replaceState({}, document.title, window.location.pathname);
@@ -969,10 +960,10 @@ const AppContent: React.FC = () => {
   };
 
   const handleStylePanelMaterialChange = (partId: string, material: MaterialType) => {
+    const currentColor = stylePanelParts.find((p) => p.id === partId)?.color ?? '#9ca3af';
     setStylePanelParts((prev) => prev.map((p) => p.id === partId ? { ...p, material } : p));
     const category = STYLE_PART_TO_CATEGORY[partId];
     if (category && characterViewerRef.current) {
-      const currentColor = stylePanelParts.find((p) => p.id === partId)?.color ?? '#9ca3af';
       const mat = buildThreeMaterial(material, parseInt(currentColor.replace('#', ''), 16));
       characterViewerRef.current.applyMaterialToPart(mat, category);
     }

@@ -70,6 +70,9 @@ export class UserConfigService {
   // Get user's last pose (most recent configuration)
   static async getUserLastPose(userId: string): Promise<UserConfiguration | null> {
     try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user || user.id !== userId) return null;
+
       const { data, error } = await supabase
         .from('user_configurations')
         .select('*')

@@ -754,7 +754,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     } catch (error) {
       console.error('CharacterViewer: Error loading pedestal:', error);
     }
-    
+
+    if (generation !== loadGenerationRef.current) { setIsLoading(false); return; }
+
     // ? NUEVO: Limpieza de partes b�sicas solo para usuarios autenticados
     if (isAuthenticated) {
       console.log('?? LIMPIEZA - Eliminando partes b�sicas del personaje (no el pedestal)');
@@ -1314,9 +1316,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         });
         
         previewModelsToRemove.forEach(model => {
-          modelGroup.remove(model);
+          model.parent?.remove(model);
         });
-        
+
             // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
@@ -1763,9 +1765,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             }
             
             if (categoryMatch && !child.userData.isPreview) {
-              if (child.material && !Array.isArray(child.material)) {
-                child.material.dispose();
-              }
               child.material = material.clone();
               materializedMeshes++;
               console.log(`? Applied material to ${partType}: ${child.name || 'unnamed'}`);

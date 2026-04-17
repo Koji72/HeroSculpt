@@ -4133,6 +4133,26 @@ export const DEFAULT_STRONG_BUILD: SelectedParts = {
     compatible: ['strong_torso_01'],
     thumbnail: '/thumbnails/strong_symbol_01_t01.png',
   },
+  [PartCategory.SUIT_TORSO]: {
+    id: 'strong_suit_torso_01_t01',
+    name: 'Strong Suit Alpha (Torso 01)',
+    category: PartCategory.SUIT_TORSO,
+    archetype: ArchetypeId.STRONG,
+    gltfPath: 'assets/strong/suit_torsos/strong_suit_torso_01_t01.glb',
+    priceUSD: 0.8,
+    compatible: ['strong_torso_01'],
+    thumbnail: '/thumbnails/strong_suit_torso_01_t01.png',
+  },
+  [PartCategory.CHEST_BELT]: {
+    id: 'strong_beltchest_01_t01',
+    name: 'Strong Chest Belt 01 (Torso 01)',
+    category: PartCategory.CHEST_BELT,
+    archetype: ArchetypeId.STRONG,
+    gltfPath: 'assets/strong/chest_belt/strong_beltchest_01_t01.glb',
+    priceUSD: 0.6,
+    compatible: ['strong_torso_01'],
+    thumbnail: '/thumbnails/strong_beltchest_01_t01.png',
+  },
 };
 
 export const DEFAULT_JUSTICIERO_BUILD: SelectedParts = {

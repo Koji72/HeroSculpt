@@ -149,7 +149,9 @@ class MAndMCommunityService {
   // ===== FEED Y PUBLICACIONES =====
 
   async getCommunityFeed(userId: string, page = 1, limit = 20): Promise<MAndMCommunityPost[]> {
-    const cacheKey = `feed_${userId}_${page}_${limit}`;
+    const { data: { user } } = await supabase.auth.getUser();
+    const verifiedUserId = user?.id ?? '';
+    const cacheKey = `feed_${verifiedUserId}_${page}_${limit}`;
     const cached = this.getFromCache(cacheKey);
     if (cached) return cached;
 
@@ -158,7 +160,7 @@ class MAndMCommunityService {
     const { data, error } = await supabase
       .from('mnm_community_posts')
       .select('*')
-      .or('isPublic.eq.true,userId.eq.' + userId)
+      .or(`isPublic.eq.true${verifiedUserId ? ',userId.eq.' + verifiedUserId : ''}`)
       .order('createdAt', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -448,9 +450,12 @@ class MAndMCommunityService {
   }
 
   async submitToGallery(item: Partial<MAndMGalleryItem>): Promise<MAndMGalleryItem> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
     const now = new Date();
     const itemData = {
       ...item,
+      userId: user.id,
       createdAt: now,
       updatedAt: now,
       likes: 0,

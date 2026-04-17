@@ -23,7 +23,6 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
       const { error: err } = await supabase.auth.updateUser({ password });
       if (err) { setError(err.message); return; }
       setDone(true);
-      window.location.hash = '';
     } finally {
       setLoading(false);
     }
@@ -66,7 +65,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
               Contraseña actualizada. Ya puedes iniciar sesión.
             </p>
             <button
-              onClick={onClose}
+              onClick={() => { window.location.hash = ''; onClose(); }}
               style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: 'pointer' }}
             >
               ENTRAR →
