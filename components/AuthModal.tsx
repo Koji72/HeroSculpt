@@ -8,12 +8,13 @@ interface AuthModalProps {
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signup' }) => {
-  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
+  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
 
   if (!isOpen) return null;
 
@@ -23,7 +24,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     setError(null);
     setLoading(true);
     try {
-      if (mode === 'signup') {
+      if (mode === 'forgot') {
+        const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname,
+        });
+        if (err) { setError(err.message); return; }
+        setForgotSent(true);
+      } else if (mode === 'signup') {
         const { error: err } = await supabase.auth.signUp({ email, password });
         if (err) { setError(err.message); return; }
         sessionStorage.setItem('just_registered', '1');
@@ -73,7 +80,24 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           aria-label="Cerrar"
         >✕</button>
 
-        {signupSuccess ? (
+        {forgotSent ? (
+          <>
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
+                EMAIL ENVIADO
+              </div>
+            </div>
+            <p style={{ color: 'var(--color-text, #e2e8f0)', fontSize: 13, textAlign: 'center', marginBottom: 20 }}>
+              Revisa tu correo y sigue el enlace para crear una nueva contraseña.
+            </p>
+            <button
+              onClick={onClose}
+              style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: 'pointer' }}
+            >
+              CERRAR
+            </button>
+          </>
+        ) : signupSuccess ? (
           <>
             <div style={{ textAlign: 'center', marginBottom: 20 }}>
               <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
@@ -95,7 +119,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             {/* Title */}
             <div style={{ textAlign: 'center', marginBottom: 20 }}>
               <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
-                {mode === 'signup' ? 'ÚNETE AL ESCUADRÓN' : 'BIENVENIDO DE VUELTA'}
+                {mode === 'signup' ? 'ÚNETE AL ESCUADRÓN' : mode === 'forgot' ? 'RECUPERAR ACCESO' : 'BIENVENIDO DE VUELTA'}
               </div>
               {mode === 'signup' && (
                 <div style={{ fontSize: 10, color: 'var(--color-text-muted, #64748b)', letterSpacing: 1, marginTop: 2 }}>
@@ -106,7 +130,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
             {/* Form */}
             <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: 14 }}>
+              <div style={{ marginBottom: mode === 'forgot' ? 20 : 14 }}>
                 <label style={labelStyle}>Email</label>
                 <input
                   type="email"
@@ -119,26 +143,28 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                   autoComplete="email"
                 />
               </div>
-              <div style={{ marginBottom: 20 }}>
-                <label style={labelStyle}>Contraseña</label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="contraseña"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  style={inputStyle}
-                  required
-                  autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-                />
-              </div>
+              {mode !== 'forgot' && (
+                <div style={{ marginBottom: 20 }}>
+                  <label style={labelStyle}>Contraseña</label>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="contraseña"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    style={inputStyle}
+                    required
+                    autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
                 style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
               >
-                {loading ? '...' : mode === 'signup' ? 'CREAR CUENTA →' : 'ENTRAR →'}
+                {loading ? '...' : mode === 'signup' ? 'CREAR CUENTA →' : mode === 'forgot' ? 'ENVIAR ENLACE →' : 'ENTRAR →'}
               </button>
 
               {error && (
@@ -156,12 +182,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                     INICIAR SESIÓN
                   </button>
                 </>
+              ) : mode === 'forgot' ? (
+                <button onClick={() => { setMode('signin'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
+                  ← VOLVER
+                </button>
               ) : (
-                <>¿Nuevo aquí?{' '}
-                  <button onClick={() => { setMode('signup'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
-                    ÚNETE GRATIS
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+                  <span>¿Nuevo aquí?{' '}
+                    <button onClick={() => { setMode('signup'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-accent, #f59e0b)', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>
+                      ÚNETE GRATIS
+                    </button>
+                  </span>
+                  <button onClick={() => { setMode('forgot'); setError(null); }} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted, #64748b)', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
+                    ¿Olvidaste tu contraseña?
                   </button>
-                </>
+                </div>
               )}
             </div>
           </>
