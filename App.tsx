@@ -2027,6 +2027,8 @@ const AppContent: React.FC = () => {
               getLowerBodyButtonRef={getLowerBodyButtonRef}
               isLowerBodySubmenuExpanded={lowerBodySubmenuExpanded}
               categoryCounts={categoryCounts}
+              activeSidePanel={activeSidePanel}
+              onSidePanelToggle={handlePanelModeChange}
             />
           );
         })()}
@@ -2156,6 +2158,14 @@ const AppContent: React.FC = () => {
           </span>
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handleNextPose}>▶</button>
+          {user && savedPoses?.[currentPoseIndex ?? 0]?.source === 'saved' && (
+            <button
+              className="btn-comic btn-ghost"
+              style={{ width: 30, height: 30, padding: 0, fontSize: 13, borderRadius: 6, color: 'var(--color-danger, #f43f5e)' }}
+              title="Borrar esta pose"
+              onClick={() => handleDeletePose(currentPoseIndex ?? 0)}
+            >🗑</button>
+          )}
         </div>
 
         <div style={{ width: 1, height: 28, background: 'rgba(71, 85, 105, 0.45)' }} />
