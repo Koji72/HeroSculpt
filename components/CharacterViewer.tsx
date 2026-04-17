@@ -646,34 +646,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     }
     }
     
-    // Helper to recursively dispose of resources
-    const disposeNode = (node: THREE.Object3D) => {
-      if (node instanceof THREE.Mesh) {
-        if (node.geometry) {
-          node.geometry.dispose();
-          if (process.env.NODE_ENV === 'development') console.log(`Disposed geometry for: ${node.name || node.uuid}`);
-        }
-        if (node.material) {
-          if (Array.isArray(node.material)) {
-            node.material.forEach(mat => {
-              mat.dispose();
-              if (process.env.NODE_ENV === 'development') console.log(`Disposed material array item for: ${node.name || node.uuid}`);
-            });
-          } else {
-            node.material.dispose();
-            if (process.env.NODE_ENV === 'development') console.log(`Disposed material for: ${node.name || node.uuid}`);
-          }
-        }
-      }
-      // Dispose children recursively
-      node.children.forEach(child => disposeNode(child));
-    };
-    
-    // Force clear with manual removal and disposal for better reliability
+    // Just remove models from the scene — do NOT dispose geometry/materials.
+    // The modelCache holds the authoritative references; disposing clones here
+    // would corrupt the cached originals (Three.js clone() shares geometry and
+    // material objects by reference, not by value).
     const childrenToRemove = [...modelGroup.children];
     childrenToRemove.forEach(child => {
       modelGroup.remove(child);
-      disposeNode(child); // Dispose all resources of the child and its descendants
     });
     
     // ?? OPTIMIZADO: Solo log en desarrollo
@@ -787,16 +766,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       basicPartsToRemove.forEach(part => {
         console.log('?? Eliminando parte b�sica del personaje:', part.name);
         modelGroup.remove(part);
-        if (part instanceof THREE.Mesh) {
-          if (part.geometry) part.geometry.dispose();
-          if (part.material) {
-            if (Array.isArray(part.material)) {
-              part.material.forEach(mat => mat.dispose());
-            } else {
-              part.material.dispose();
-            }
-          }
-        }
+        // Do NOT dispose — geometry/materials are shared with cache clones.
       });
       
       if (basicPartsToRemove.length > 0) {
@@ -1137,11 +1107,18 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       return;
     }
 
-    // ? CRITICAL: Don't run if we're in preview mode (hover)
-    // The preview logic should be handled by handlePreviewPartsChange directly
+    // Skip only if hover preview is active AND selectedParts haven't actually changed.
+    // If the user clicked a part while hovering, selectedParts will differ from
+    // lastSelectedParts — in that case we must reload regardless of hover state.
     if (isHoverPreviewActive) {
-      console.log('?? CharacterViewer useEffect: In hover preview, skipping.');
-      return;
+      const partsChanged = !areSelectedPartsEqual(selectedParts, lastSelectedParts);
+      const archetypeChanged2 = selectedArchetype !== lastSelectedArchetype;
+      if (!partsChanged && !archetypeChanged2) {
+        console.log('?? CharacterViewer useEffect: In hover preview with no real change, skipping.');
+        return;
+      }
+      // Real selection happened during hover — clear hover flag and fall through to reload.
+      setIsHoverPreviewActive(false);
     }
 
     // ? NUEVOS LOGS: Depurar las dependencias para entender los re-renders
@@ -1278,14 +1255,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       // ? ENABLE ZOOM: Keep zoom enabled during preview
       // No need to disable zoom during preview
       
-      // Check if this is a "clear preview" call
-      const isClearPreview = (() => {
+      // Check if this is a "clear preview" call (empty object or identical to selectedParts)
+      const isClearPreview = Object.keys(changedParts).length === 0 || (() => {
         const changedKeys = Object.keys(changedParts).sort();
         const selectedKeys = Object.keys(selectedParts).sort();
-        
+
         if (changedKeys.length !== selectedKeys.length) return false;
         if (changedKeys.join(',') !== selectedKeys.join(',')) return false;
-        
+
         for (const category of changedKeys) {
           if (changedParts[category]?.id !== selectedParts[category]?.id) return false;
         }
@@ -1494,27 +1471,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       setPreviewParts(null);
       setIsHoverPreviewActive(false); // ?? DESMARCAR HOVER PREVIEW
       
-      // Helper to recursively dispose of resources (re-defined or imported from a common utility)
-      const disposeNode = (node: THREE.Object3D) => {
-        if (node instanceof THREE.Mesh) {
-          if (node.geometry) {
-            node.geometry.dispose();
-            if (process.env.NODE_ENV === 'development') console.log(`Disposed preview geometry for: ${node.name || node.uuid}`);
-          }
-          if (node.material) {
-            if (Array.isArray(node.material)) {
-              node.material.forEach(mat => {
-                mat.dispose();
-                if (process.env.NODE_ENV === 'development') console.log(`Disposed preview material array item for: ${node.name || node.uuid}`);
-              });
-            } else {
-              node.material.dispose();
-              if (process.env.NODE_ENV === 'development') console.log(`Disposed preview material for: ${node.name || node.uuid}`);
-            }
-          }
-        }
-        node.children.forEach(child => disposeNode(child));
-      };
       
       // Remove all preview models and restore original models visibility
       const modelGroup = modelGroupRef.current;
@@ -1565,7 +1521,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       
       previewModelsToRemove.forEach(model => {
         modelGroup.remove(model);
-        disposeNode(model); // Dispose resources of the removed preview model
+        // Do NOT dispose — geometry/materials are shared with cache clones.
       });
       
           // ?? OPTIMIZADO: Solo log en desarrollo

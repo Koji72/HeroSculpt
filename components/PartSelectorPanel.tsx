@@ -78,14 +78,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   }, [selectedParts, onPreviewChange]);
 
   const handleApplyChanges = useCallback(() => {
-    // Si no hay cambios, aplicar la parte actualmente seleccionada en preview
-    const partToApply = Object.values(previewParts).find(p => p.category === activeCategory);
-    if (partToApply) {
-      onPartSelect(previewParts);
-    }
+    onPartSelect(previewParts);
     setHasChanges(false);
-    // Panel stays open so user can keep selecting parts
-  }, [previewParts, activeCategory, onPartSelect]);
+    onClose();
+  }, [previewParts, onPartSelect, onClose]);
 
   const handlePreviewSelect = useCallback((part: Part) => {
     if (!activeCategory) {
@@ -257,12 +253,11 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     
     setPreviewParts(newPreviewParts);
     setHasChanges(true);
-    if (onPreviewChange) {
-      onPreviewChange(newPreviewParts);
-    }
-    // Auto-apply on click so panel stays open and user can keep selecting
+    // Don't call onPreviewChange here — it sets isHoverPreviewActive=true in CharacterViewer
+    // which blocks the main model loading effect triggered by onPartSelect below.
+    // The hover preview is only for mouseover; clicks go directly through onPartSelect.
     onPartSelect(newPreviewParts);
-  }, [activeCategory, selectedParts, onPreviewChange, onPartSelect]);
+  }, [activeCategory, previewParts, selectedParts, onPartSelect]);
 
   const handleHoverPreview = useCallback((part: Part | null) => {
     if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);

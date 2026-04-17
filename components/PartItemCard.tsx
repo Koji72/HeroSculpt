@@ -35,6 +35,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
 
   const handleMouseLeave = () => {
     setHovered(false);
+    if (onHover) onHover(null);
   };
 
   return (
