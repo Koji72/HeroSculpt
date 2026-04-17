@@ -23,6 +23,7 @@ import PurchaseLibrary from './components/PurchaseLibrary';
 import GuestEmailModal from './components/GuestEmailModal';
 import { useAuth } from './hooks/useAuth';
 import { useFavorites } from './hooks/useFavorites';
+import { useRecentParts } from './hooks/useRecentParts';
 import { assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveCapeForTorso, assignAdaptiveBootsForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso } from './lib/utils';
 import { ARCHETYPE_DATA, ARCHETYPES_LIST } from './lib/archetypeData';
 import ArchetypeSwitcher from './components/ArchetypeSwitcher';
@@ -83,6 +84,7 @@ const AppContent: React.FC = () => {
   // ✅ CRITICAL FIX: GET AUTH FIRST
   const { isAuthenticated, loading, signOut, user } = useAuth();
   const { favorites: favoriteIds, toggleFavorite } = useFavorites();
+  const { recordUsed, getRecent } = useRecentParts();
 
   // ✅ CRITICAL FIX: TWO COMPLETELY SEPARATE STATES
   // - Non-authenticated users: GUEST_USER_BUILD (fixed state)
@@ -931,8 +933,12 @@ const AppContent: React.FC = () => {
   const handleSelectPart = useCallback((newSelectedParts: SelectedParts) => {
     pushPartsHistory(newSelectedParts);
     setSelectedParts(newSelectedParts);
+    // Record recently used per category
+    Object.values(newSelectedParts).forEach(part => {
+      if (part && !part.attributes?.none) recordUsed(part.category, part.id);
+    });
     return true;
-  }, [setSelectedParts, pushPartsHistory]);
+  }, [setSelectedParts, pushPartsHistory, recordUsed]);
 
   const handleEditCategory = (category: PartCategory) => {
     setActiveCategory(category);
@@ -1857,21 +1863,37 @@ const AppContent: React.FC = () => {
 
       {/* ── LEFT SIDEBAR ── */}
       <aside className="app-sidebar">
-        <PartCategoryToolbar
-          id="part-category-toolbar"
-          registerElement={registerElement}
-          onSelectCategory={handleEditCategory}
-          activeCategory={activeCategory}
-          onTorsoToggle={handleTorsoSubmenuToggle}
-          getTorsoButtonRef={getTorsoButtonRef}
-          isTorsoSubmenuExpanded={torsoSubmenuExpanded}
-          onBeltToggle={handleBeltSubmenuToggle}
-          getBeltButtonRef={getBeltButtonRef}
-          isBeltSubmenuExpanded={beltSubmenuExpanded}
-          onLowerBodyToggle={handleLowerBodySubmenuToggle}
-          getLowerBodyButtonRef={getLowerBodyButtonRef}
-          isLowerBodySubmenuExpanded={lowerBodySubmenuExpanded}
-        />
+        {(() => {
+          const arch = selectedArchetype || ArchetypeId.STRONG;
+          const archParts = ALL_PARTS.filter(p => p.archetype === arch && !p.attributes?.none);
+          const upperCats = new Set([PartCategory.TORSO, PartCategory.HEAD, PartCategory.SUIT_TORSO, PartCategory.CAPE, PartCategory.SYMBOL, PartCategory.CHEST_BELT, PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT]);
+          const beltCats = new Set([PartCategory.BELT, PartCategory.POUCH, PartCategory.BUCKLE]);
+          const lowerCats = new Set([PartCategory.LOWER_BODY, PartCategory.BOOTS]);
+          const categoryCounts = {
+            upper: archParts.filter(p => upperCats.has(p.category as PartCategory)).length,
+            belt: archParts.filter(p => beltCats.has(p.category as PartCategory)).length,
+            lower: archParts.filter(p => lowerCats.has(p.category as PartCategory)).length,
+            backpack: archParts.filter(p => p.category === PartCategory.BACKPACK).length,
+          };
+          return (
+            <PartCategoryToolbar
+              id="part-category-toolbar"
+              registerElement={registerElement}
+              onSelectCategory={handleEditCategory}
+              activeCategory={activeCategory}
+              onTorsoToggle={handleTorsoSubmenuToggle}
+              getTorsoButtonRef={getTorsoButtonRef}
+              isTorsoSubmenuExpanded={torsoSubmenuExpanded}
+              onBeltToggle={handleBeltSubmenuToggle}
+              getBeltButtonRef={getBeltButtonRef}
+              isBeltSubmenuExpanded={beltSubmenuExpanded}
+              onLowerBodyToggle={handleLowerBodySubmenuToggle}
+              getLowerBodyButtonRef={getLowerBodyButtonRef}
+              isLowerBodySubmenuExpanded={lowerBodySubmenuExpanded}
+              categoryCounts={categoryCounts}
+            />
+          );
+        })()}
       </aside>
 
       {/* ── RIGHT PANEL ── */}
@@ -1958,6 +1980,7 @@ const AppContent: React.FC = () => {
                 ownedPartIds={ownedPartIds}
                 favoriteIds={favoriteIds}
                 onToggleFavorite={toggleFavorite}
+                getRecentParts={getRecent}
               />
             )}
 

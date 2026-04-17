@@ -22,6 +22,7 @@ interface PartSelectorPanelProps {
   ownedPartIds?: Set<string>;
   favoriteIds?: Set<string>;
   onToggleFavorite?: (partId: string) => void;
+  getRecentParts?: (category: string) => string[];
 }
 
 const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
@@ -37,6 +38,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   ownedPartIds = new Set(),
   favoriteIds = new Set(),
   onToggleFavorite,
+  getRecentParts,
 }) => {
 
   const [previewParts, setPreviewParts] = useState<SelectedParts>(selectedParts);
@@ -743,7 +745,18 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     return previewParts[activeCategory]?.id === part.id;
   };
 
-  const allPartsToShow = (nonePart ? [nonePart] : []).concat(availableParts).filter(part => part && typeof part === 'object' && part.id);
+  const recentIds = activeCategory && getRecentParts ? getRecentParts(activeCategory) : [];
+  const sortedAvailable = recentIds.length
+    ? [...availableParts].sort((a, b) => {
+        const ai = recentIds.indexOf(a.id);
+        const bi = recentIds.indexOf(b.id);
+        if (ai === -1 && bi === -1) return 0;
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      })
+    : availableParts;
+  const allPartsToShow = (nonePart ? [nonePart] : []).concat(sortedAvailable).filter(part => part && typeof part === 'object' && part.id);
   const partsToShow = allPartsToShow.filter(p => {
     if (p.attributes?.none) return true;
     if (showFavoritesOnly && !favoriteIds.has(p.id)) return false;

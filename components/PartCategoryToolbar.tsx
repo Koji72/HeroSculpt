@@ -17,6 +17,7 @@ interface PartCategoryToolbarProps {
   isLowerBodySubmenuExpanded: boolean;
   activeSidePanel?: 'style' | 'skins' | 'lights' | null;
   onSidePanelToggle?: (panel: 'style' | 'skins' | 'lights') => void;
+  categoryCounts?: { upper: number; belt: number; lower: number; backpack: number };
 }
 
 const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
@@ -35,6 +36,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
   isLowerBodySubmenuExpanded,
   activeSidePanel,
   onSidePanelToggle,
+  categoryCounts,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const torsoButtonRef = useRef<HTMLButtonElement>(null);
@@ -186,13 +188,13 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         </div>
         <span style={labelStyle(isTorsoOrSubActive)}>
           UPPER{'\u00A0'}
-          <svg
-            style={{ display: 'inline', verticalAlign: 'middle', transform: isTorsoSubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-            width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-          >
-            <path d="M9 5l7 7-7 7" />
-          </svg>
+          <svg style={{ display: 'inline', verticalAlign: 'middle', transform: isTorsoSubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </span>
+        {categoryCounts && categoryCounts.upper > 0 && (
+          <span style={{ position: 'absolute', top: 3, right: 3, background: 'rgba(216,162,58,0.18)', color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontSize: 7, fontWeight: 800, padding: '0px 3px', borderRadius: 3, letterSpacing: 0 }}>
+            {categoryCounts.upper}
+          </span>
+        )}
       </button>
 
       <button
@@ -210,13 +212,13 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         </div>
         <span style={labelStyle(isBeltOrSubActive)}>
           BELT{'\u00A0'}
-          <svg
-            style={{ display: 'inline', verticalAlign: 'middle', transform: isBeltSubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-            width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-          >
-            <path d="M9 5l7 7-7 7" />
-          </svg>
+          <svg style={{ display: 'inline', verticalAlign: 'middle', transform: isBeltSubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </span>
+        {categoryCounts && categoryCounts.belt > 0 && (
+          <span style={{ position: 'absolute', top: 3, right: 3, background: 'rgba(216,162,58,0.18)', color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontSize: 7, fontWeight: 800, padding: '0px 3px', borderRadius: 3, letterSpacing: 0 }}>
+            {categoryCounts.belt}
+          </span>
+        )}
       </button>
 
       <button
@@ -234,13 +236,13 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         </div>
         <span style={labelStyle(isLowerBodyOrSubActive)}>
           LOWER{'\u00A0'}
-          <svg
-            style={{ display: 'inline', verticalAlign: 'middle', transform: isLowerBodySubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-            width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-          >
-            <path d="M9 5l7 7-7 7" />
-          </svg>
+          <svg style={{ display: 'inline', verticalAlign: 'middle', transform: isLowerBodySubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </span>
+        {categoryCounts && categoryCounts.lower > 0 && (
+          <span style={{ position: 'absolute', top: 3, right: 3, background: 'rgba(216,162,58,0.18)', color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontSize: 7, fontWeight: 800, padding: '0px 3px', borderRadius: 3, letterSpacing: 0 }}>
+            {categoryCounts.lower}
+          </span>
+        )}
       </button>
 
       {mainCategories.map((category) => {
