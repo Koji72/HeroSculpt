@@ -1041,6 +1041,17 @@ const AppContent: React.FC = () => {
     }
   };
 
+  const handleScreenshot = async () => {
+    if (!characterViewerRef.current?.takeScreenshot) return;
+    try {
+      const dataUrl = await characterViewerRef.current.takeScreenshot();
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `${characterName || 'hero'}-screenshot.png`;
+      a.click();
+    } catch {}
+  };
+
   const handleRandomize = () => {
     const archetype = selectedArchetype ?? ArchetypeId.STRONG;
     const ap = ALL_PARTS.filter((p) => p.archetype === archetype);
@@ -2053,6 +2064,14 @@ const AppContent: React.FC = () => {
 
         {/* Export */}
         <div style={{ display: 'flex', gap: 4 }}>
+          <button
+            type="button"
+            onClick={handleScreenshot}
+            title="Captura de pantalla PNG"
+            style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+          >
+            📷 PNG
+          </button>
           <button
             type="button"
             onClick={handleExportGLB}
