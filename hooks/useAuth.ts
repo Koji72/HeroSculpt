@@ -73,38 +73,13 @@ export function useAuth() {
       return;
     }
 
-    let isMounted = true;
-
-    // Obtener sesión inicial
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (!isMounted) return;
-      
-      if (error) {
-        console.error('useAuth: Error getting session:', error);
-        setError(error.message);
-      } else {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('useAuth: Session loaded:', session?.user?.email);
-        }
-      }
-      setLoading(false);
-    }).catch((error: any) => {
-      if (!isMounted) return;
-      
-      console.error('useAuth: Unexpected error getting session:', error);
-      setError('Error inesperado al cargar la sesión');
-      setLoading(false);
-    });
-
-    // Escuchar cambios de autenticación
+    // onAuthStateChange fires INITIAL_SESSION immediately on registration in Supabase v2,
+    // so getSession() is redundant and creates a double-write race.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
     return () => {
-      isMounted = false;
       subscription.unsubscribe();
     };
   }, [handleAuthStateChange]);

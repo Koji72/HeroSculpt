@@ -25,6 +25,7 @@ export class NotificationService {
   private static instance: NotificationService;
   private listeners: Map<string, (notification: Notification) => void> = new Map();
   private audioContext: AudioContext | null = null;
+  private realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
 
   static getInstance(): NotificationService {
     if (!NotificationService.instance) {
@@ -33,9 +34,8 @@ export class NotificationService {
     return NotificationService.instance;
   }
 
-  constructor() {
+  private constructor() {
     this.initializeAudioContext();
-    this.setupRealtimeSubscriptions();
   }
 
   // 🎵 INICIALIZAR CONTEXTO DE AUDIO
@@ -47,19 +47,27 @@ export class NotificationService {
     }
   }
 
-  // 📡 CONFIGURAR SUSCRIPCIONES EN TIEMPO REAL
-  private setupRealtimeSubscriptions(): void {
-    // Suscribirse a cambios en la base de datos
-    supabase
-      .channel('notifications')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'notifications' 
+  // 📡 CONFIGURAR SUSCRIPCIONES EN TIEMPO REAL (llamar tras sign-in con el userId real)
+  setupRealtimeSubscriptions(userId: string): void {
+    this.unsubscribe();
+    this.realtimeChannel = supabase
+      .channel(`notifications:${userId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${userId}`
       }, (payload) => {
         this.handleRealtimeNotification(payload);
       })
       .subscribe();
+  }
+
+  unsubscribe(): void {
+    if (this.realtimeChannel) {
+      supabase.removeChannel(this.realtimeChannel);
+      this.realtimeChannel = null;
+    }
   }
 
   // 🎯 MANEJAR NOTIFICACIÓN EN TIEMPO REAL

@@ -981,12 +981,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     }
       
             // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA C�MARA
-      modelGroup.rotation.y = Math.PI;
-
-      // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA C�MARA
-      modelGroup.rotation.y = Math.PI;
-
-      // ? AUTO-FRAMING: Frame character when no user interaction and models are loaded
+            modelGroup.rotation.y = Math.PI;  // ? AUTO-FRAMING: Frame character when no user interaction and models are loaded
       const shouldAutoFrame = !isHoverPreviewActive && modelGroup.children.length > 0 && !hasUserInteractedWithCamera.current;
       
       if (shouldAutoFrame) {
@@ -1536,8 +1531,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     setViewAngle: (azimuthPercentage: number) => {
       if (cameraRef.current && controlsRef.current) {
         const targetAzimuth = (azimuthPercentage / 100) * 2 * Math.PI;
-        const distance = 8;
-        
         controlsRef.current.target.set(CAMERA_CONSTANTS.DEFAULT_TARGET.x, CAMERA_CONSTANTS.DEFAULT_TARGET.y, CAMERA_CONSTANTS.DEFAULT_TARGET.z);
         
         const spherical = new THREE.Spherical();
@@ -1770,6 +1763,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             }
             
             if (categoryMatch && !child.userData.isPreview) {
+              if (child.material && !Array.isArray(child.material)) {
+                child.material.dispose();
+              }
               child.material = material.clone();
               materializedMeshes++;
               console.log(`? Applied material to ${partType}: ${child.name || 'unnamed'}`);
@@ -1797,7 +1793,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           lightsToRemove.push(child);
         }
       });
-      lightsToRemove.forEach(light => currentScene.remove(light));
+      lightsToRemove.forEach(light => {
+        if ((light as THREE.DirectionalLight).shadow?.map) {
+          (light as THREE.DirectionalLight).shadow.map!.dispose();
+        }
+        currentScene.remove(light);
+      });
 
       const keyLight = new THREE.DirectionalLight(preset.keyLight.color, preset.keyLight.intensity);
       keyLight.position.copy(preset.keyLight.position);
@@ -1918,6 +1919,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
              if (wireframe.parent) {
                wireframe.parent.remove(wireframe);
              }
+             wireframe.geometry.dispose();
+             (wireframe.material as THREE.Material).dispose();
            });
            edgeLinesRef.current = [];
          }

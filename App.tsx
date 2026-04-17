@@ -38,6 +38,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { PurchaseHistoryService } from './services/purchaseHistoryService';
 import { ResendEmailService } from './services/resendEmailService';
 import { UserConfigService } from './services/userConfigService';
+import { notificationService } from './services/notificationService';
 import { Card } from "./components/ui/card";
 import HeaderDropdown from './components/HeaderDropdown';
 import MaterialPanel from './components/MaterialPanel';
@@ -568,6 +569,12 @@ const AppContent: React.FC = () => {
     }
   }, [activeCategory]);
 
+  const handleResetCamera = useCallback(() => {
+    if (characterViewerRef.current?.resetCamera) {
+      characterViewerRef.current.resetCamera();
+    }
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -609,7 +616,7 @@ const AppContent: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleUndo, handleRedo, handleTorsoSubmenuToggle, handleBeltSubmenuToggle, handleLowerBodySubmenuToggle]);
+  }, [handleUndo, handleRedo, handleResetCamera, handleTorsoSubmenuToggle, handleBeltSubmenuToggle, handleLowerBodySubmenuToggle]);
 
   // Close submenus when clicking outside the sidebar or submenus
   useEffect(() => {
@@ -695,20 +702,24 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     const loadSessionOnAuthChange = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && user?.id) {
+        notificationService.setupRealtimeSubscriptions(user.id);
+
         // ✅ Cargar arquetipo de la sesión guardada
         const savedSession = await SessionStorageService.loadSession();
         if (savedSession?.selectedArchetype) {
           setSelectedArchetype(savedSession.selectedArchetype);
         }
-        
+
         // ✅ NO cargar partes de la sesión - las cargará loadUserPoses con la última pose del usuario
         await loadUserPoses();
-        
+
         // ✅ NUEVO: Restaurar posición de la cámara después del login (más cerca del modelo)
         setTimeout(() => {
           handleResetCamera();
         }, 800); // Delay aumentado para asegurar que el modelo se haya cargado completamente
+      } else if (!isAuthenticated) {
+        notificationService.unsubscribe();
       }
     };
     loadSessionOnAuthChange();
@@ -833,7 +844,7 @@ const AppContent: React.FC = () => {
     // Actualizar con un delay para evitar demasiadas actualizaciones (delay aumentado)
     const timeoutId = setTimeout(updateCurrentPoseConfiguration, 800);
     return () => clearTimeout(timeoutId);
-  }, [selectedParts, currentPoseIndex, user?.id, isNavigatingPoses, savedPoses.length]); // ✅ FIXED: Usar savedPoses.length en lugar de savedPoses
+  }, [selectedParts, currentPoseIndex, user?.id, isNavigatingPoses, savedPoses]);
 
   // Cargar configuración desde URL si existe parámetro 'load'
   useEffect(() => {
@@ -1206,15 +1217,6 @@ const AppContent: React.FC = () => {
     pushPartsHistory(result);
     setSelectedParts(result);
   };
-
-
-
-  const handleResetCamera = () => {
-    if (characterViewerRef.current?.resetCamera) {
-      characterViewerRef.current.resetCamera();
-    }
-  };
-
   
 
   const handleOpenAuthModal = () => {
@@ -1323,7 +1325,6 @@ const AppContent: React.FC = () => {
         
         // ✅ CORREGIDO: Usar PurchaseHistoryService para usuarios registrados
         const saveResult = await PurchaseHistoryService.savePurchase(
-          user.id,
           items.map(item => ({
             id: item.id,
             name: item.name,

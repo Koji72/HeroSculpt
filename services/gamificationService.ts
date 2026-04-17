@@ -283,15 +283,15 @@ export class GamificationService {
       const userStats = await this.getUserStats(userId);
       const unlockedAchievements: Achievement[] = [];
 
+      const alreadyUnlocked = await this.getUserAchievements(userId);
+      const unlockedIds = new Set(alreadyUnlocked.filter(a => a.isUnlocked).map(a => a.id));
+
       for (const achievement of this.achievements) {
-        if (achievement.isUnlocked) continue;
+        if (unlockedIds.has(achievement.id)) continue;
 
         const isUnlocked = this.evaluateAchievement(achievement, userStats);
-        
+
         if (isUnlocked) {
-          achievement.isUnlocked = true;
-          achievement.unlockedAt = new Date();
-          
           // Guardar logro desbloqueado
           await this.unlockAchievement(userId, achievement);
           
@@ -322,8 +322,9 @@ export class GamificationService {
           currentValue = userStats.charactersCreated;
           break;
         case 'power_level':
-          currentValue = userStats.level;
-          break;
+          return false; // power_level is per-character, not tracked in user_stats
+        case 'archetype_mastery':
+          return false; // archetypesUsed not yet tracked in user_stats
         case 'missions_completed':
           currentValue = userStats.missionsCompleted;
           break;

@@ -28,7 +28,6 @@ export class PurchaseHistoryService {
    * Guardar una compra completa en Supabase
    */
   static async savePurchase(
-    userId: string,
     items: Array<{
       id: string;
       name: string;
@@ -39,11 +38,14 @@ export class PurchaseHistoryService {
     totalPrice: number
   ): Promise<{ success: boolean; purchaseId?: string; error?: string }> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { success: false, error: 'Not authenticated' };
+
       // Crear el registro de compra principal
       const { data: purchase, error: purchaseError } = await supabase
         .from('purchases')
         .insert({
-          user_id: userId,
+          user_id: user.id,
           configuration_name: `Compra ${new Date().toLocaleDateString()}`,
           total_price: totalPrice,
           items_count: items.reduce((sum, item) => sum + item.quantity, 0),
@@ -161,6 +163,9 @@ export class PurchaseHistoryService {
    */
   static async loadConfigurationFromPurchase(purchaseId: string, itemId: string): Promise<{ success: boolean; configuration?: SelectedParts; error?: string }> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { success: false, error: 'Not authenticated' };
+
       const { data: purchase, error } = await supabase
         .from('purchases')
         .select(`
@@ -171,6 +176,7 @@ export class PurchaseHistoryService {
           )
         `)
         .eq('id', purchaseId)
+        .eq('user_id', user.id)
         .eq('purchase_items.id', itemId)
         .single();
 

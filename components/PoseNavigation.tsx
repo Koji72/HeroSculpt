@@ -163,7 +163,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
       {/* Pose selector dropdown */}
       {showPoseSelector && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setShowPoseSelector(false)} />
+          <div className="fixed inset-0 z-40" onClick={() => { setShowPoseSelector(false); setConfirmingDelete(false); }} />
           <div
             className="absolute top-12 left-0 z-50 bg-slate-800/95 border border-slate-600/60 rounded-xl shadow-2xl backdrop-blur-sm min-w-[220px] max-h-72 overflow-y-auto"
             onClick={e => e.stopPropagation()}
@@ -180,7 +180,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
                     value={editingName}
                     onChange={e => setEditingName(e.target.value)}
                     onKeyDown={handleRenameKeyPress}
-                    onBlur={handleRenameCancel}
+                    onBlur={handleRenameSave}
                   />
                 ) : (
                   <span className="flex-1 text-sm truncate" onClick={() => handlePoseSelect(index)}>

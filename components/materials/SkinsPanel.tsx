@@ -266,6 +266,7 @@ function createComicGrainGradient(): THREE.Texture {
 const createMangaHighContrastSkin = (api: CharacterViewerRef) => {
   clearMaterialOverrides();
   clearColorOverrides();
+  resetAllCategoriesToNeutral(api);
   setAOIntensity(0.18); // Máximo contraste en AO
 
   // Material manga con alto contraste dramático
@@ -297,6 +298,9 @@ const createMangaHighContrastSkin = (api: CharacterViewerRef) => {
     [bodyMaterial, PartCategory.SUIT_TORSO],
     [bodyMaterial, PartCategory.LOWER_BODY],
     [bodyMaterial, PartCategory.BOOTS],
+    [bodyMaterial, PartCategory.HEAD],
+    [bodyMaterial, PartCategory.HAND_LEFT],
+    [bodyMaterial, PartCategory.HAND_RIGHT],
     [accentMaterial, PartCategory.CAPE],
     [accentMaterial, PartCategory.SYMBOL],
     [darkAccent, PartCategory.BELT],
@@ -357,7 +361,8 @@ const createCartoonBrightSkin = (api: CharacterViewerRef) => {
     [skinTone, PartCategory.HAND_RIGHT],
     [brightRed, PartCategory.CAPE],
     [brightYellow, PartCategory.SYMBOL],
-    [brightYellow, PartCategory.BELT]
+    [brightYellow, PartCategory.BELT],
+    [brightYellow, PartCategory.BUCKLE]
   ];
 
   materialMap.forEach(([material, category]) => {
@@ -1090,7 +1095,9 @@ const createGambitRogue = (api: CharacterViewerRef) => {
 
 // New: Emerald Champion (green metallic hero suit)
 const createEmeraldChampion = (api: CharacterViewerRef) => {
-  // Metallic look with moderate AO
+  clearMaterialOverrides();
+  clearColorOverrides();
+  resetAllCategoriesToNeutral(api);
   setAOIntensity(0.06);
 
   // Lighting preset: cold key, soft blue fill, cool rim

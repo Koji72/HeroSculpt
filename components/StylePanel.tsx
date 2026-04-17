@@ -54,7 +54,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
       setLocalColor(active.color);
       setLocalMaterial(active.material);
     }
-  }, [activePart, active?.color, active?.material]);
+  }, [active?.id, active?.color, active?.material]);
 
   return (
     <div style={{
