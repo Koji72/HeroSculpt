@@ -22,6 +22,7 @@ import PurchaseConfirmation from './components/PurchaseConfirmation';
 import PurchaseLibrary from './components/PurchaseLibrary';
 import GuestEmailModal from './components/GuestEmailModal';
 import { useAuth } from './hooks/useAuth';
+import { useFavorites } from './hooks/useFavorites';
 import { assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveCapeForTorso, assignAdaptiveBootsForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso } from './lib/utils';
 import { ARCHETYPE_DATA, ARCHETYPES_LIST } from './lib/archetypeData';
 import ArchetypeSwitcher from './components/ArchetypeSwitcher';
@@ -81,6 +82,7 @@ const AppContent: React.FC = () => {
   const [selectedArchetype, setSelectedArchetype] = useState<ArchetypeId | null>(ArchetypeId.STRONG);
   // ✅ CRITICAL FIX: GET AUTH FIRST
   const { isAuthenticated, loading, signOut, user } = useAuth();
+  const { favorites: favoriteIds, toggleFavorite } = useFavorites();
 
   // ✅ CRITICAL FIX: TWO COMPLETELY SEPARATE STATES
   // - Non-authenticated users: GUEST_USER_BUILD (fixed state)
@@ -556,6 +558,10 @@ const AppContent: React.FC = () => {
         event.preventDefault();
         handleResetCamera();
       }
+      // Category shortcuts: 1=Upper, 2=Belt, 3=Lower
+      if (event.key === '1') { event.preventDefault(); handleTorsoSubmenuToggle(); }
+      if (event.key === '2') { event.preventDefault(); handleBeltSubmenuToggle(); }
+      if (event.key === '3') { event.preventDefault(); handleLowerBodySubmenuToggle(); }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -1941,6 +1947,8 @@ const AppContent: React.FC = () => {
                 registerElement={registerElement}
                 characterViewerRef={characterViewerRef}
                 ownedPartIds={ownedPartIds}
+                favoriteIds={favoriteIds}
+                onToggleFavorite={toggleFavorite}
               />
             )}
 

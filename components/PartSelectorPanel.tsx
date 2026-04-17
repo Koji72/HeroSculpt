@@ -20,6 +20,8 @@ interface PartSelectorPanelProps {
   registerElement: (id: string, element: HTMLElement | null) => void;
   characterViewerRef?: React.RefObject<CharacterViewerRef>;
   ownedPartIds?: Set<string>;
+  favoriteIds?: Set<string>;
+  onToggleFavorite?: (partId: string) => void;
 }
 
 const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
@@ -33,11 +35,14 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   registerElement,
   characterViewerRef,
   ownedPartIds = new Set(),
+  favoriteIds = new Set(),
+  onToggleFavorite,
 }) => {
 
   const [previewParts, setPreviewParts] = useState<SelectedParts>(selectedParts);
   const [hasChanges, setHasChanges] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -739,19 +744,37 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   };
 
   const allPartsToShow = (nonePart ? [nonePart] : []).concat(availableParts).filter(part => part && typeof part === 'object' && part.id);
-  const partsToShow = searchQuery.trim()
-    ? allPartsToShow.filter(p => p.attributes?.none || p.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : allPartsToShow;
+  const partsToShow = allPartsToShow.filter(p => {
+    if (p.attributes?.none) return true;
+    if (showFavoritesOnly && !favoriteIds.has(p.id)) return false;
+    if (searchQuery.trim() && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+  const hasFavorites = allPartsToShow.some(p => !p.attributes?.none && favoriteIds.has(p.id));
 
   return (
     <div id="part-selector-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }} ref={ref}>
       {/* Header */}
       <div className="panel-header">
         <span>{getCategoryName(activeCategory)}</span>
-        <button
-          onClick={handleCancelChanges}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
-        >?</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {hasFavorites && (
+            <button
+              onClick={() => setShowFavoritesOnly(v => !v)}
+              title={showFavoritesOnly ? 'Show all parts' : 'Show favorites only'}
+              style={{
+                background: showFavoritesOnly ? 'rgba(244,63,94,0.15)' : 'none',
+                border: showFavoritesOnly ? '1px solid rgba(244,63,94,0.4)' : 'none',
+                borderRadius: 4, cursor: 'pointer', fontSize: 13, padding: '1px 5px',
+                color: showFavoritesOnly ? '#f43f5e' : 'rgba(100,116,139,0.7)',
+              }}
+            >♥</button>
+          )}
+          <button
+            onClick={handleCancelChanges}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
+          >✕</button>
+        </div>
       </div>
 
       {/* Search bar */}
@@ -810,6 +833,8 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
                 onSelect={handlePreviewSelect}
                 onHover={handleHoverPreview}
                 ownedPartIds={ownedPartIds}
+                favoriteIds={favoriteIds}
+                onToggleFavorite={onToggleFavorite}
               />
             );
           })}

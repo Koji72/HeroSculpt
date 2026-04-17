@@ -8,11 +8,15 @@ interface PartItemCardProps {
   onSelect: (part: Part) => void;
   onHover?: (part: Part | null) => void;
   ownedPartIds?: Set<string>;
+  favoriteIds?: Set<string>;
+  onToggleFavorite?: (partId: string) => void;
 }
 
 const PartItemCard: React.FC<PartItemCardProps> = ({
   part, isSelected, onSelect, onHover,
   ownedPartIds = new Set(),
+  favoriteIds = new Set(),
+  onToggleFavorite,
 }) => {
   const [hovered, setHovered] = useState(false);
   const isNonePart = part.attributes?.none === true;
@@ -22,6 +26,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
   const isOwned  = !isNonePart && part.priceUSD > 0 && ownedPartIds.has(part.id);
   const isPremium = !isNonePart && part.priceUSD > 0 && !isOwned;
   const premiumLabel = `$${part.priceUSD.toFixed(2)}`;
+  const isFavorite = !isNonePart && favoriteIds.has(part.id);
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -63,6 +68,24 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
           fontFamily: 'var(--font-comic)', fontSize: 10,
           color: 'var(--color-accent)', fontWeight: 700,
         }}>✓</span>
+      )}
+
+      {/* Favorite button */}
+      {!isNonePart && onToggleFavorite && (isFavorite || hovered) && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleFavorite(part.id); }}
+          style={{
+            position: 'absolute', top: 2, left: isSelected ? 18 : 2,
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontSize: 10, lineHeight: 1, padding: 2,
+            color: isFavorite ? '#f43f5e' : 'rgba(148,163,184,0.6)',
+            transition: 'color 0.1s, transform 0.1s',
+            transform: isFavorite ? 'scale(1.2)' : 'scale(1)',
+          }}
+          title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {isFavorite ? '♥' : '♡'}
+        </button>
       )}
 
       {/* Thumbnail */}
