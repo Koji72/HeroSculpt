@@ -146,7 +146,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         onMouseOut={handleMenuItemOut}
         onClick={onOpenSettings}
       >
-        <Cog6ToothIcon className="h-5 w-5" /> Settings
+        <Cog6ToothIcon className="h-5 w-5" /> Ajustes
       </button>
       <button
         style={menuItemStyle}
@@ -178,7 +178,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         }}
         onClick={onSignOut}
       >
-        <span style={{ width: 20, height: 20 }}>🚪</span> Sign out
+        <span style={{ width: 20, height: 20 }}>🚪</span> Cerrar sesión
       </button>
     </div>
   );
