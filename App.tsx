@@ -178,9 +178,18 @@ const AppContent: React.FC = () => {
 
   // Estados del carrito de compras
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('herosculpt_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [ownedPartIds, setOwnedPartIds] = useState<Set<string>>(new Set());
   const [ownedPartIdsLoading, setOwnedPartIdsLoading] = useState(false);
+
+  useEffect(() => {
+    try { localStorage.setItem('herosculpt_cart', JSON.stringify(cartItems)); } catch {}
+  }, [cartItems]);
 
   // Estado para confirmación de compra
   const [isPurchaseConfirmationOpen, setIsPurchaseConfirmationOpen] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PartCategory } from '../types';
 
 interface PartCategoryToolbarProps {
@@ -40,6 +40,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
   const torsoButtonRef = useRef<HTMLButtonElement>(null);
   const beltButtonRef = useRef<HTMLButtonElement>(null);
   const lowerBodyButtonRef = useRef<HTMLButtonElement>(null);
+  const [tooltip, setTooltip] = useState<{ label: string; y: number } | null>(null);
 
   useEffect(() => {
     registerElement(id, ref.current);
@@ -126,6 +127,33 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     { key: 'lights', label: 'LIGHTS' },
   ];
 
+  const showTooltip = (e: React.MouseEvent<HTMLButtonElement>, label: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({ label, y: rect.top + rect.height / 2 });
+  };
+
+  const Tooltip = tooltip ? (
+    <div style={{
+      position: 'fixed',
+      left: 76,
+      top: tooltip.y,
+      transform: 'translateY(-50%)',
+      background: 'rgba(15,23,42,0.97)',
+      border: '1px solid rgba(216,162,58,0.3)',
+      color: '#e2e8f0',
+      fontFamily: 'var(--font-body)',
+      fontSize: 10, fontWeight: 700, letterSpacing: 1,
+      padding: '5px 10px',
+      borderRadius: 4,
+      pointerEvents: 'none',
+      whiteSpace: 'nowrap',
+      zIndex: 500,
+      boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+    }}>
+      {tooltip.label}
+    </div>
+  ) : null;
+
   return (
     <div
       id="category-toolbar"
@@ -139,11 +167,14 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         width: '100%',
         overflowY: 'auto',
         overflowX: 'hidden',
+        position: 'relative',
       }}
     >
       <button
         ref={torsoButtonRef}
         onClick={onTorsoToggle}
+        onMouseEnter={e => showTooltip(e, 'UPPER BODY [1]')}
+        onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isTorsoOrSubActive)}
       >
         <div style={iconBoxStyle(isTorsoOrSubActive)}>
@@ -167,6 +198,8 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={beltButtonRef}
         onClick={onBeltToggle}
+        onMouseEnter={e => showTooltip(e, 'BELT & ACCESSORIES [2]')}
+        onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isBeltOrSubActive)}
       >
         <div style={iconBoxStyle(isBeltOrSubActive)}>
@@ -189,6 +222,8 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={lowerBodyButtonRef}
         onClick={onLowerBodyToggle}
+        onMouseEnter={e => showTooltip(e, 'LOWER BODY [3]')}
+        onMouseLeave={() => setTooltip(null)}
         style={sidebarBtnStyle(isLowerBodyOrSubActive)}
       >
         <div style={iconBoxStyle(isLowerBodyOrSubActive)}>
@@ -231,6 +266,8 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         );
       })}
 
+      {Tooltip}
+
       {onSidePanelToggle && (
         <>
           <div style={{ width: '70%', height: 1, background: 'rgba(71, 85, 105, 0.48)', margin: '10px 0 4px' }} />
@@ -241,6 +278,8 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
+                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? 'COLORS & MATERIALS' : label === 'SKINS' ? 'TEXTURES & SKINS' : 'LIGHTING')}
+                onMouseLeave={() => setTooltip(null)}
                 style={sidebarBtnStyle(isActive)}
               >
                 <div style={iconBoxStyle(isActive)}>
