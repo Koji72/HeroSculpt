@@ -73,11 +73,11 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
         throw new Error('Scene or renderer not available');
       }
 
-      const modelName = generateModelName(characterName || 'Character', selectedArchetype);
-      const result = await exportModel(scene, renderer, modelName);
+      const modelName = generateModelName(selectedParts, selectedArchetype);
+      const result = await exportModel(scene, { format: 'glb', includeTextures: true, compression: true });
       
-      if (result.success) {
-        downloadBlob(result.blob, `${modelName}.glb`);
+      if (result.success && result.data) {
+        downloadBlob(result.data, `${modelName}.glb`);
       } else {
         console.error('Export failed:', result.error);
       }
@@ -86,7 +86,7 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
     } finally {
       setIsExporting(false);
     }
-  }, [canvas3DRef, modelLoaderRef, selectedArchetype, characterName]);
+  }, [canvas3DRef, modelLoaderRef, selectedArchetype, selectedParts]);
 
   const handleExportSTL = useCallback(async () => {
     if (!canvas3DRef?.current || !modelLoaderRef?.current || !selectedArchetype) return;
@@ -100,11 +100,11 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
         throw new Error('Scene or renderer not available');
       }
 
-      const modelName = generateModelName(characterName || 'Character', selectedArchetype);
-      const result = await exportModel(scene, renderer, modelName, 'stl');
+      const modelName = generateModelName(selectedParts, selectedArchetype);
+      const result = await exportModel(scene, { format: 'stl', includeTextures: false, compression: false });
       
-      if (result.success) {
-        downloadBlob(result.blob, `${modelName}.stl`);
+      if (result.success && result.data) {
+        downloadBlob(result.data, `${modelName}.stl`);
       } else {
         console.error('Export failed:', result.error);
       }
@@ -113,7 +113,7 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
     } finally {
       setIsExporting(false);
     }
-  }, [canvas3DRef, modelLoaderRef, selectedArchetype, characterName]);
+  }, [canvas3DRef, modelLoaderRef, selectedArchetype, selectedParts]);
 
   return (
     <div className="absolute top-4 left-4 z-50">

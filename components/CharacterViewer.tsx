@@ -20,8 +20,8 @@ interface CharacterViewerProps {
   selectedArchetype: ArchetypeId | null;
   characterName?: string; // NUEVO
   onCharacterNameChange?: (newName: string) => void; // NUEVO
-  isAuthenticated?: boolean; // ✅ NUEVO: Estado de autenticación
-  // Nueva funcionalidad para navegación de poses
+  isAuthenticated?: boolean; // ? NUEVO: Estado de autenticaci�n
+  // Nueva funcionalidad para navegaci�n de poses
   savedPoses?: Array<{
     id: string;
     name: string;
@@ -35,6 +35,7 @@ interface CharacterViewerProps {
   onSelectPose?: (index: number) => void;
   onRenamePose?: (index: number, newName: string) => void;
   onSaveAsNew?: () => void;
+  onDeletePose?: (index: number) => void;
 }
 
 // Expose methods to parent component
@@ -59,7 +60,7 @@ export interface CharacterViewerRef {
   applyTextureToPart: (partType: string) => void;
   toggleEdgeDetection: (selectedPart?: string) => void;
   setComposer: (composer: EffectComposer | null) => void; // New method for effects
-      debugMeshes: () => void; // Nueva función de debug
+      debugMeshes: () => void; // Nueva funci�n de debug
     debugAvailableParts: () => void; // Debug available parts
   preloadParts: (parts: Part[]) => void;
 }
@@ -69,7 +70,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   selectedArchetype,
   characterName, 
   onCharacterNameChange,
-  isAuthenticated = false, // ✅ NUEVO: Estado de autenticación con valor por defecto
+  isAuthenticated = false, // ? NUEVO: Estado de autenticaci�n con valor por defecto
   savedPoses,
   currentPoseIndex = 0,
   onPreviousPose,
@@ -77,6 +78,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   onSelectPose,
   onRenamePose,
   onSaveAsNew,
+  onDeletePose,
 }, ref) => {
   const getDefaultBuildForArchetype = useCallback((archetype: ArchetypeId | null): SelectedParts => {
     if (archetype === ArchetypeId.JUSTICIERO) {
@@ -96,7 +98,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   const [previewParts, setPreviewParts] = useState<SelectedParts | null>(null);
   const [lastSelectedParts, setLastSelectedParts] = useState<SelectedParts>({});
   const [lastSelectedArchetype, setLastSelectedArchetype] = useState<ArchetypeId | null>(null);
-  const [isThreeJSReady, setIsThreeJSReady] = useState(false); // ✅ NUEVO: Flag para controlar cuando Three.js está listo
+  const [isThreeJSReady, setIsThreeJSReady] = useState(false); // ? NUEVO: Flag para controlar cuando Three.js est� listo
   const [edgeDetectionActive, setEdgeDetectionActive] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(characterName || '');
@@ -114,7 +116,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
   const hasUserInteractedWithCamera = useRef(false); // NEW: Track if user has moved camera
 
-  // ✅ NEW: Camera Constants for Consistency
+  // ? NEW: Camera Constants for Consistency
   const CAMERA_CONSTANTS = {
     DEFAULT_TARGET: new THREE.Vector3(0, 1.5, 0),
     AUTO_FRAME_TARGET: new THREE.Vector3(0, 1.5, 0), // Orbit around mid-body (chest), not feet
@@ -260,7 +262,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     setTempName(characterName || '');
   }, [characterName]);
 
-  // ✅ Reset camera interaction when user authentication changes
+  // ? Reset camera interaction when user authentication changes
   useEffect(() => {
     if (isAuthenticated) {
       console.log('CharacterViewer: User authenticated, resetting camera interaction flag');
@@ -270,11 +272,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
   // Initialize cache
   useLayoutEffect(() => {
-    // ✅ PREVENT MULTIPLE INITIALIZATION
+    // ? PREVENT MULTIPLE INITIALIZATION
     if (isInitializedRef.current) {
-      // 🔧 OPTIMIZADO: Solo log en desarrollo
+      // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Already initialized, skipping');
     }
@@ -287,9 +289,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       return;
     }
 
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Starting Three.js initialization...');
     }
@@ -302,7 +304,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     const mountWidth = Math.max(currentMount.clientWidth, 300);
     const mountHeight = Math.max(currentMount.clientHeight, 400);
     
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: mountRef.current dimensions (before renderer init):', {
         original: { width: currentMount.clientWidth, height: currentMount.clientHeight },
@@ -343,9 +345,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     currentMount.appendChild(renderer.domElement);
     rendererRef.current = renderer;
   
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Renderer initialized with size:', {
         width: currentMount.clientWidth,
@@ -360,7 +362,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     controls.dampingFactor = 0.1;
     controls.rotateSpeed = 1.5;
     controls.zoomSpeed = 1.2;
-    // Centrar la cámara en el origen
+    // Centrar la c�mara en el origen
     controls.target.set(CAMERA_CONSTANTS.DEFAULT_TARGET.x, CAMERA_CONSTANTS.DEFAULT_TARGET.y, CAMERA_CONSTANTS.DEFAULT_TARGET.z);
     
     // Enable azimuthal rotation (horizontal) while limiting vertical movement
@@ -372,7 +374,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     controls.minPolarAngle = Math.PI / 6; // 30 degrees (can look from above)
     controls.maxPolarAngle = Math.PI / 2; // 90 degrees (horizontal, prevents viewing from below)
     
-    // ✅ NEW: Set zoom limits directly on OrbitControls
+    // ? NEW: Set zoom limits directly on OrbitControls
     controls.minDistance = CAMERA_CONSTANTS.MIN_ZOOM_DISTANCE;
     controls.maxDistance = CAMERA_CONSTANTS.MAX_ZOOM_DISTANCE;
     
@@ -386,16 +388,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // This ensures the angle limits work correctly
     controls.update(); // First update to calculate current angles
     
-    // Set azimuthal angle to 20% rotation (π/5 = 36°) - moved 15% more to the left
+    // Set azimuthal angle to 20% rotation (p/5 = 36�) - moved 15% more to the left
     const targetAzimuth = Math.PI / 5;
     const spherical = new THREE.Spherical();
     spherical.setFromVector3(camera.position.clone().sub(controls.target));
     spherical.theta = targetAzimuth; // Set azimuthal angle
     camera.position.copy(new THREE.Vector3().setFromSpherical(spherical).add(controls.target));
     
-    // console.log('📐 Azimuth angle:', (controls.getAzimuthalAngle() * 180 / Math.PI).toFixed(1), '°');
+    // console.log('?? Azimuth angle:', (controls.getAzimuthalAngle() * 180 / Math.PI).toFixed(1), '�');
     
-    // ✅ ENABLE ZOOM - Allow zoom functionality
+    // ? ENABLE ZOOM - Allow zoom functionality
     // No event listeners that prevent zoom
     
     controls.update();
@@ -461,7 +463,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
-      composerRef.current?.render(); // ✅ FIXED: Use ref instead of direct variable
+      composerRef.current?.render(); // ? FIXED: Use ref instead of direct variable
     };
     animate();
 
@@ -488,7 +490,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       composerRef.current.setSize(newWidth, newHeight);
       ssaoPass.setSize(newWidth, newHeight);
       bloomPass.setSize(newWidth, newHeight);
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Resized to', { 
         from: { width: rawWidth, height: rawHeight },
@@ -507,26 +509,26 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     resizeObserver.observe(currentMount);
 
-    // ✅ CRITICAL: Mark Three.js as ready AFTER everything is initialized
+    // ? CRITICAL: Mark Three.js as ready AFTER everything is initialized
     setIsThreeJSReady(true);
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('🚀 Three.js initialization complete - ready for model loading');
+      console.log('?? Three.js initialization complete - ready for model loading');
     }
     }
 
     return () => {
-      // 🔧 OPTIMIZADO: Solo log en desarrollo
+      // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Cleaning up Three.js scene');
     }
     }
-      setIsThreeJSReady(false); // ✅ Mark as not ready during cleanup
-      isInitializedRef.current = false; // ✅ Reset initialization flag
+      setIsThreeJSReady(false); // ? Mark as not ready during cleanup
+      isInitializedRef.current = false; // ? Reset initialization flag
       resizeObserver.disconnect();
       if (currentMount && rendererRef.current?.domElement) {
         currentMount.removeChild(rendererRef.current.domElement);
@@ -561,23 +563,23 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   //   }
 
   //   if (changedCategories.length === 0 && !force) {
-  //         // 🔧 OPTIMIZADO: Solo log en desarrollo
+  //         // ?? OPTIMIZADO: Solo log en desarrollo
 
 
-  // ✅ SIMPLIFIED: Single async function for model loading (no useCallback issues)
+  // ? SIMPLIFIED: Single async function for model loading (no useCallback issues)
   const performModelLoad = async () => {
-    console.log('🎯 CharacterViewer: performModelLoad iniciado - TIMESTAMP:', new Date().toISOString());
-    console.log('🔐 Estado de autenticación:', { isAuthenticated });
-    console.log('📦 selectedParts recibidas:', {
+    console.log('?? CharacterViewer: performModelLoad iniciado - TIMESTAMP:', new Date().toISOString());
+    console.log('?? Estado de autenticaci�n:', { isAuthenticated });
+    console.log('?? selectedParts recibidas:', {
       count: Object.keys(selectedParts).length,
       parts: Object.entries(selectedParts).map(([category, part]) => `${category}: ${part?.id || 'undefined'}`),
       isEmpty: Object.keys(selectedParts).length === 0
     });
-    console.log('🔄 EXECUTION COUNT - Esta es la ejecución número:', (window as any).__modelLoadCount = ((window as any).__modelLoadCount || 0) + 1);
+    console.log('?? EXECUTION COUNT - Esta es la ejecuci�n n�mero:', (window as any).__modelLoadCount = ((window as any).__modelLoadCount || 0) + 1);
     
-    // ✅ SAFETY CHECK: Ensure Three.js is ready before loading
+    // ? SAFETY CHECK: Ensure Three.js is ready before loading
     if (!isThreeJSReady) {
-      console.log('⏳ Three.js not ready yet, skipping model load');
+      console.log('? Three.js not ready yet, skipping model load');
       return;
     }
 
@@ -590,57 +592,57 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       return;
     }
 
-    // ✅ FIXED: Always fall back to a complete default build when parts are missing.
+    // ? FIXED: Always fall back to a complete default build when parts are missing.
     const defaultBuild = getDefaultBuildForArchetype(selectedArchetype);
     const hasSelectedParts = Object.keys(selectedParts).length > 0;
     let partsToLoad = hasSelectedParts ? { ...defaultBuild, ...selectedParts } : { ...defaultBuild };
 
     if (!hasSelectedParts) {
-      console.log('🔄 selectedParts vacío, cargando build por defecto para el visor:', selectedArchetype);
+      console.log('?? selectedParts vac�o, cargando build por defecto para el visor:', selectedArchetype);
     } else {
-      console.log('🔄 Completando piezas faltantes con el build por defecto');
+      console.log('?? Completando piezas faltantes con el build por defecto');
     }
     
     const startTime = performance.now();
     setIsLoading(true);
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Loading models for Strong archetype with caching');
     }
     }
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Parts to load:', partsToLoad);
       console.log('CharacterViewer: Parts by category:', Object.entries(partsToLoad).map(([category, part]) => `${category}: ${part.id}`));
     }
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Using preview?', false);
     } // Always false now
     }
 
-    // Debug específico para cabezas
+    // Debug espec�fico para cabezas
     const currentHead = Object.values(partsToLoad).find(p => p.category === PartCategory.HEAD);
-    // Debug específico para buckles
+    // Debug espec�fico para buckles
     const currentBuckle = Object.values(partsToLoad).find(p => p.category === PartCategory.BUCKLE);
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 DEBUG - CharacterViewer cargando cabeza:', currentHead?.id || 'ninguna');
-      console.log('🔍 DEBUG - CharacterViewer cargando buckle:', currentBuckle?.id || 'ninguno');
+      console.log('?? DEBUG - CharacterViewer cargando cabeza:', currentHead?.id || 'ninguna');
+      console.log('?? DEBUG - CharacterViewer cargando buckle:', currentBuckle?.id || 'ninguno');
     }
     }
     
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🧹 CLEARING MODEL GROUP - Children before clear: ${modelGroup.children.length}`);
+      console.log(`?? CLEARING MODEL GROUP - Children before clear: ${modelGroup.children.length}`);
     }
     }
     
@@ -674,55 +676,55 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       disposeNode(child); // Dispose all resources of the child and its descendants
     });
     
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🧹 CLEARING MODEL GROUP - Children after manual clear: ${modelGroup.children.length}`);
+      console.log(`?? CLEARING MODEL GROUP - Children after manual clear: ${modelGroup.children.length}`);
     }
     }
 
     const selectedPartList = Object.values(partsToLoad).filter(Boolean);
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Filtered part list:', selectedPartList);
     }
     }
     const basePath = (import.meta as any).env.BASE_URL || '/';
-    // 🔧 OPTIMIZADO: Solo log en desarrollo
+    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Base path:', basePath);
     }
     }
     
-    // ✅ NUEVO: Cargar pedestal siempre (independientemente del estado de autenticación)
-    console.log('🔍 DEBUG: isAuthenticated =', isAuthenticated, '| selectedParts vacío =', Object.keys(selectedParts).length === 0);
+    // ? NUEVO: Cargar pedestal siempre (independientemente del estado de autenticaci�n)
+    console.log('?? DEBUG: isAuthenticated =', isAuthenticated, '| selectedParts vac�o =', Object.keys(selectedParts).length === 0);
     
-    // ✅ NUEVO: Cargar pedestal siempre
-    console.log('🔵 CARGANDO PEDESTAL - Siempre');
+    // ? NUEVO: Cargar pedestal siempre
+    console.log('?? CARGANDO PEDESTAL - Siempre');
     try {
       const baseModelPath = `${basePath}assets/strong/base/strong_base_01.glb`;
-      console.log('🔵 Cargando pedestal desde:', baseModelPath);
+      console.log('?? Cargando pedestal desde:', baseModelPath);
       const baseModel = await modelCache.getModel(baseModelPath);
       
       // Tag the base model
       baseModel.userData.category = 'BASE';
       baseModel.userData.partId = 'strong_base_01';
       
-      // ✅ NUEVO: Posicionar el pedestal correctamente
+      // ? NUEVO: Posicionar el pedestal correctamente
       baseModel.position.set(0, -0.5, 0); // Posicionar justo debajo del personaje
       baseModel.scale.set(1, 1, 1); // Escala normal
       
-      // ✅ NUEVO: Asegurar que el pedestal sea visible
+      // ? NUEVO: Asegurar que el pedestal sea visible
       baseModel.visible = true;
       baseModel.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           child.visible = true;
-          // ✅ NUEVO: Forzar material visible
+          // ? NUEVO: Forzar material visible
           if (child.material) {
             if (Array.isArray(child.material)) {
               child.material.forEach(mat => {
@@ -744,16 +746,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       });
       
       modelGroup.add(baseModel);
-      console.log('🔵 Pedestal cargado exitosamente. Children en modelGroup:', modelGroup.children.length);
+      console.log('?? Pedestal cargado exitosamente. Children en modelGroup:', modelGroup.children.length);
       
-      // ✅ NUEVO: Debug del pedestal
-      console.log('🔍 DEBUG PEDESTAL:');
-      console.log('  - Posición:', baseModel.position);
+      // ? NUEVO: Debug del pedestal
+      console.log('?? DEBUG PEDESTAL:');
+      console.log('  - Posici�n:', baseModel.position);
       console.log('  - Escala:', baseModel.scale);
       console.log('  - Visible:', baseModel.visible);
       console.log('  - Children del modelo:', baseModel.children.length);
       
-      // Verificar si el modelo tiene geometría visible
+      // Verificar si el modelo tiene geometr�a visible
       if (baseModel.children.length > 0) {
         baseModel.children.forEach((child, index) => {
           console.log(`  - Child ${index}:`, {
@@ -768,22 +770,22 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       console.error('CharacterViewer: Error loading pedestal:', error);
     }
     
-    // ✅ NUEVO: Limpieza de partes básicas solo para usuarios autenticados
+    // ? NUEVO: Limpieza de partes b�sicas solo para usuarios autenticados
     if (isAuthenticated) {
-      console.log('🧹 LIMPIEZA - Eliminando partes básicas del personaje (no el pedestal)');
+      console.log('?? LIMPIEZA - Eliminando partes b�sicas del personaje (no el pedestal)');
       const basicPartsToRemove = modelGroup.children.filter(child => {
-        // NO eliminar el pedestal, solo partes básicas del personaje
+        // NO eliminar el pedestal, solo partes b�sicas del personaje
         const isBasicPersonPart = child.userData.isDefaultPart === true && 
                                  child.userData.category !== 'BASE';
         
         if (isBasicPersonPart) {
-          console.log('🧹 Encontrada parte básica del personaje para eliminar:', child.name, child.userData);
+          console.log('?? Encontrada parte b�sica del personaje para eliminar:', child.name, child.userData);
         }
         return isBasicPersonPart;
       });
       
       basicPartsToRemove.forEach(part => {
-        console.log('🧹 Eliminando parte básica del personaje:', part.name);
+        console.log('?? Eliminando parte b�sica del personaje:', part.name);
         modelGroup.remove(part);
         if (part instanceof THREE.Mesh) {
           if (part.geometry) part.geometry.dispose();
@@ -798,7 +800,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       });
       
       if (basicPartsToRemove.length > 0) {
-        console.log('✅ Partes básicas del personaje eliminadas. Children restantes en modelGroup:', modelGroup.children.length);
+        console.log('? Partes b�sicas del personaje eliminadas. Children restantes en modelGroup:', modelGroup.children.length);
       }
     }
 
@@ -815,11 +817,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // Verificar compatibilidad de manos con el torso actual
     const activeTorso = suit || torso;
     if (activeTorso) {
-      // 🔧 OPTIMIZADO: Solo log en desarrollo
+      // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 Checking hand compatibility with torso:', activeTorso.id);
+      console.log('?? Checking hand compatibility with torso:', activeTorso.id);
     }
     }
       
@@ -831,11 +833,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (suitMatch) {
           const torsoNumber = suitMatch[1];
           baseTorsoId = `strong_torso_${torsoNumber}`;
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Suit detected, using base torso: ${baseTorsoId}`);
+      console.log(`?? Suit detected, using base torso: ${baseTorsoId}`);
     }
     }
         }
@@ -846,37 +848,37 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (part.category === PartCategory.HAND_LEFT || part.category === PartCategory.HAND_RIGHT) {
           const isCompatible = part.compatible.includes(baseTorsoId);
           if (!isCompatible) {
-            console.log(`🚫 Removing incompatible hand: ${part.id} (not compatible with base torso ${baseTorsoId})`);
+            console.log(`?? Removing incompatible hand: ${part.id} (not compatible with base torso ${baseTorsoId})`);
           } else {
-            console.log(`✅ Keeping compatible hand: ${part.id} (compatible with base torso ${baseTorsoId})`);
+            console.log(`? Keeping compatible hand: ${part.id} (compatible with base torso ${baseTorsoId})`);
           }
           return isCompatible;
         }
-        return true; // Mantener todas las demás partes
+        return true; // Mantener todas las dem�s partes
       });
       
-      console.log('🔍 DEBUG - filteredPartList after hand filtering:', filteredPartList.map((p:any) => p.id));
+      console.log('?? DEBUG - filteredPartList after hand filtering:', filteredPartList.map((p:any) => p.id));
       
       // Filtrar cabeza compatible
       filteredPartList = filteredPartList.filter((part: any) => {
         if (part.category === PartCategory.HEAD) {
           // Si no hay torso base, permitir todas las cabezas (fallback)
           if (!baseTorsoId) {
-                // 🔧 OPTIMIZADO: Solo log en desarrollo
+                // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`⚠️ No torso base found, keeping head: ${part.id}`);
+      console.log(`?? No torso base found, keeping head: ${part.id}`);
     }
             return true;
           }
           const isCompatible = part.compatible.includes(baseTorsoId);
           if (!isCompatible) {
-            console.log(`🚫 Removing incompatible head: ${part.id} (not compatible with base torso ${baseTorsoId})`);
+            console.log(`?? Removing incompatible head: ${part.id} (not compatible with base torso ${baseTorsoId})`);
           } else {
-            console.log(`✅ Keeping compatible head: ${part.id} (compatible with base torso ${baseTorsoId})`);
+            console.log(`? Keeping compatible head: ${part.id} (compatible with base torso ${baseTorsoId})`);
           }
           return isCompatible;
         }
-        return true; // Mantener todas las demás partes
+        return true; // Mantener todas las dem�s partes
       });
     }
 
@@ -885,9 +887,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       .map(async (part: any) => {
         const modelPath = `${basePath}${part.gltfPath.startsWith('/') ? part.gltfPath.slice(1) : part.gltfPath}`;
         
-        // ✅ NUEVO: Debug específico para capas
+        // ? NUEVO: Debug espec�fico para capas
         if (part.category === PartCategory.CAPE) {
-          console.log('🔍 DEBUG CAPA:', {
+          console.log('?? DEBUG CAPA:', {
             partId: part.id,
             category: part.category,
             gltfPath: part.gltfPath,
@@ -897,18 +899,18 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }
         
         try {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log(`CharacterViewer: Loading [${part.category}] from cache: ${modelPath}`);
     }
     }
           const model = await modelCache.getModel(modelPath);
           
-          // ✅ NUEVO: Debug específico para capas
+          // ? NUEVO: Debug espec�fico para capas
           if (part.category === PartCategory.CAPE) {
-            console.log('🔍 DEBUG CAPA - Modelo cargado:', {
+            console.log('?? DEBUG CAPA - Modelo cargado:', {
               modelName: model.name,
               modelUuid: model.uuid,
               modelChildren: model.children.length,
@@ -917,13 +919,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }
           
           // Tag the model with category for future removal (CRITICAL for hover preview)
-          console.log(`🔍 DEBUG: Assigning category '${part.category}' and partId '${part.id}' to model. Model name: ${model.name}`);
+          console.log(`?? DEBUG: Assigning category '${part.category}' and partId '${part.id}' to model. Model name: ${model.name}`);
           model.userData.category = part.category;
           model.userData.partId = part.id;
           
-              // 🔧 OPTIMIZADO: Solo log en desarrollo
+              // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🏷️ CharacterViewer: Tagging model for ${part.category}`, {
+      console.log(`??? CharacterViewer: Tagging model for ${part.category}`, {
             modelName: model.name,
             modelUuid: model.uuid,
             category: part.category,
@@ -938,38 +940,38 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               child.userData.category = part.category;
               child.userData.partId = part.id;
               meshCount++;
-                  // 🔧 OPTIMIZADO: Solo log en desarrollo
+                  // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🏷️ CharacterViewer: Tagged mesh ${meshCount}: ${child.name}. Assigning category: ${part.category}, Current child.userData.category: ${child.userData.category}`);
+      console.log(`??? CharacterViewer: Tagged mesh ${meshCount}: ${child.name}. Assigning category: ${part.category}, Current child.userData.category: ${child.userData.category}`);
     }
             }
           });
           
-              // 🔧 OPTIMIZADO: Solo log en desarrollo
+              // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🏷️ CharacterViewer: Total meshes tagged for ${part.category}: ${meshCount}`);
+      console.log(`??? CharacterViewer: Total meshes tagged for ${part.category}: ${meshCount}`);
     }
           
           modelGroup.add(model);
           
-          // ✅ NUEVO: Debug específico para capas
+          // ? NUEVO: Debug espec�fico para capas
           if (part.category === PartCategory.CAPE) {
-            console.log('🔍 DEBUG CAPA - Añadida al modelGroup:', {
+            console.log('?? DEBUG CAPA - A�adida al modelGroup:', {
               modelGroupChildren: modelGroup.children.length,
               capeInGroup: modelGroup.children.some(child => child.userData.category === PartCategory.CAPE)
             });
           }
           
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log(`CharacterViewer: Successfully loaded [${part.category}]`);
     }
     }
           if (process.env.NODE_ENV === 'development') {
-            console.log(`✅ CharacterViewer: Added model to group: ${model.name} (Category: ${model.userData.category}, PartId: ${model.userData.partId}, isPreview: ${!!model.userData.isPreview})`);
-            console.log('📊 CharacterViewer: Current modelGroup children AFTER ADDITION:',
+            console.log(`? CharacterViewer: Added model to group: ${model.name} (Category: ${model.userData.category}, PartId: ${model.userData.partId}, isPreview: ${!!model.userData.isPreview})`);
+            console.log('?? CharacterViewer: Current modelGroup children AFTER ADDITION:',
               modelGroup.children.map(child => ({
                 name: child.name,
                 category: child.userData.category,
@@ -991,18 +993,18 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const endTime = performance.now();
       const loadTime = Math.round(endTime - startTime);
       setIsLoading(false);
-      // 🔧 OPTIMIZADO: Solo log en desarrollo
+      // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log(`CharacterViewer: All models loaded in ${loadTime}ms. Cache size: ${modelCache.getCacheSize()}`);
     }
       
-            // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA CÁMARA
+            // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA C�MARA
       modelGroup.rotation.y = Math.PI;
 
-      // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA CÁMARA
+      // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA C�MARA
       modelGroup.rotation.y = Math.PI;
 
-      // ✅ AUTO-FRAMING: Frame character when no user interaction and models are loaded
+      // ? AUTO-FRAMING: Frame character when no user interaction and models are loaded
       const shouldAutoFrame = !isHoverPreviewActive && modelGroup.children.length > 0 && !hasUserInteractedWithCamera.current;
       
       if (shouldAutoFrame) {
@@ -1062,7 +1064,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         console.log('CharacterViewer: Skipping auto-frame (user has interacted with camera)');
         console.log('CharacterViewer: hasUserInteracted:', hasUserInteractedWithCamera.current);
         
-        // Solo centrar el modelo sin tocar la cámara
+        // Solo centrar el modelo sin tocar la c�mara
         if (modelGroup.children.length > 0) {
           const box = new THREE.Box3().setFromObject(modelGroup);
           const center = box.getCenter(new THREE.Vector3());
@@ -1071,7 +1073,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       } else if (isHoverPreviewActive) {
         console.log('CharacterViewer: Skipping auto-frame (hover preview active)');
         
-        // Solo centrar el modelo sin tocar la cámara
+        // Solo centrar el modelo sin tocar la c�mara
         if (modelGroup.children.length > 0) {
           const box = new THREE.Box3().setFromObject(modelGroup);
           const center = box.getCenter(new THREE.Vector3());
@@ -1113,8 +1115,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       }
     }
     
-    console.log('✅ CharacterViewer: performModelLoad completado - TIMESTAMP:', new Date().toISOString());
-    console.log('📊 Estado final del modelGroup:', {
+    console.log('? CharacterViewer: performModelLoad completado - TIMESTAMP:', new Date().toISOString());
+    console.log('?? Estado final del modelGroup:', {
       childrenCount: modelGroup.children.length,
       children: modelGroup.children.map(child => ({
         name: child.name,
@@ -1127,23 +1129,23 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     });
   };
 
-  // ✅ SMART LOADING: Only execute when Three.js is ready
+  // ? SMART LOADING: Only execute when Three.js is ready
   useEffect(() => {
-    // ✅ CRITICAL: Don't run if Three.js is not ready
+    // ? CRITICAL: Don't run if Three.js is not ready
     if (!isThreeJSReady) {
-      console.log('🚫 CharacterViewer useEffect: Three.js not ready, skipping.');
+      console.log('?? CharacterViewer useEffect: Three.js not ready, skipping.');
       return;
     }
 
-    // ✅ CRITICAL: Don't run if we're in preview mode (hover)
+    // ? CRITICAL: Don't run if we're in preview mode (hover)
     // The preview logic should be handled by handlePreviewPartsChange directly
     if (isHoverPreviewActive) {
-      console.log('🚫 CharacterViewer useEffect: In hover preview, skipping.');
+      console.log('?? CharacterViewer useEffect: In hover preview, skipping.');
       return;
     }
 
-    // ✅ NUEVOS LOGS: Depurar las dependencias para entender los re-renders
-    console.log('🔍 CharacterViewer useEffect: Evaluando dependencias:', {
+    // ? NUEVOS LOGS: Depurar las dependencias para entender los re-renders
+    console.log('?? CharacterViewer useEffect: Evaluando dependencias:', {
       isThreeJSReady,
       isHoverPreviewActive,
       selectedPartsCount: Object.keys(selectedParts).length,
@@ -1157,29 +1159,29 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     const isFirstLoad = Object.keys(lastSelectedParts).length === 0;
     const archetypeChanged = selectedArchetype !== lastSelectedArchetype;
 
-    console.log('🔍 CharacterViewer useEffect: Decision de carga:', {
+    console.log('?? CharacterViewer useEffect: Decision de carga:', {
       isFirstLoad,
       archetypeChanged,
       selectedPartsEqualsLast: JSON.stringify(selectedParts) === JSON.stringify(lastSelectedParts),
       archetypeEqualsLast: selectedArchetype === lastSelectedArchetype
     });
     
-    // ✅ FIXED: Solo actualizar si realmente cambiaron las partes o el arquetipo
+    // ? FIXED: Solo actualizar si realmente cambiaron las partes o el arquetipo
     if (isFirstLoad || archetypeChanged || !areSelectedPartsEqual(selectedParts, lastSelectedParts)) {
       setLastSelectedParts(selectedParts);
       setLastSelectedArchetype(selectedArchetype);
       
-      // ✅ Execute model loading without useCallback issues
+      // ? Execute model loading without useCallback issues
       performModelLoad().catch(error => {
         console.error('CharacterViewer: Error in performModelLoad:', error);
         setIsLoading(false);
       });
       return;
     } else {
-      console.log('ℹ️ CharacterViewer useEffect: No hay cambios significativos, saltando performModelLoad.');
+      console.log('?? CharacterViewer useEffect: No hay cambios significativos, saltando performModelLoad.');
     }
     
-    // Cuando no hay cambios, asegurar que el CharacterViewer está listo
+    // Cuando no hay cambios, asegurar que el CharacterViewer est� listo
     setIsLoading(false);
 
   }, [isThreeJSReady, isHoverPreviewActive, selectedParts, selectedArchetype, lastSelectedParts, lastSelectedArchetype]);
@@ -1263,17 +1265,17 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     handlePreviewPartsChange: async (changedParts: SelectedParts) => {
       if (!sceneRef.current || !cameraRef.current || !rendererRef.current || !controlsRef.current || !modelGroupRef.current) return;
       
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Preview parts changed:', changedParts);
     }
       
-      // 🚀 MARCAR QUE ESTAMOS EN HOVER PREVIEW
+      // ?? MARCAR QUE ESTAMOS EN HOVER PREVIEW
       setIsHoverPreviewActive(true);
       
 
       
-      // ✅ ENABLE ZOOM: Keep zoom enabled during preview
+      // ? ENABLE ZOOM: Keep zoom enabled during preview
       // No need to disable zoom during preview
       
       // Check if this is a "clear preview" call
@@ -1291,12 +1293,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       })();
       
       if (isClearPreview) {
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('🧹 CLEAR HOVER PREVIEW: Restoring original state');
+      console.log('?? CLEAR HOVER PREVIEW: Restoring original state');
     }
         setPreviewParts(null);
-        setIsHoverPreviewActive(false); // 🚀 DESMARCAR INMEDIATAMENTE
+        setIsHoverPreviewActive(false); // ?? DESMARCAR INMEDIATAMENTE
         
         // Remove all preview models and restore original models visibility
         const modelGroup = modelGroupRef.current;
@@ -1305,7 +1307,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         const previewModelsToRemove: THREE.Object3D[] = [];
 
         // Debug: Log all children before clearing
-        console.log('🔍 CLEAR PREVIEW DEBUG: All models in scene before clear:', 
+        console.log('?? CLEAR PREVIEW DEBUG: All models in scene before clear:', 
           modelGroup.children.map(child => ({
             name: child.name,
             category: child.userData.category,
@@ -1323,7 +1325,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           if (child.userData.isPreview) {
             previewModelsToRemove.push(child);
             if (process.env.NODE_ENV === 'development') {
-              console.log(`🗑️ CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
+              console.log(`??? CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
             }
           }
 
@@ -1335,11 +1337,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             if (isCurrentlySelected) {
               child.visible = true;
               if (process.env.NODE_ENV === 'development') {
-                console.log(`👁️ CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
+                console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
               }
             } else {
               if (process.env.NODE_ENV === 'development') {
-                console.log(`🚫 CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
+                console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
               }
             }
           }
@@ -1349,14 +1351,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           modelGroup.remove(model);
         });
         
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🧹 CLEAR: Removed ${previewModelsToRemove.length} preview models`);
+      console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
     }
         
 
         
-        // ✅ ZOOM REMAINS ENABLED: No need to restore zoom
+        // ? ZOOM REMAINS ENABLED: No need to restore zoom
         
         return;
       }
@@ -1378,14 +1380,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const basePath = (import.meta as any).env.BASE_URL || '/';
       const changedCategories = Object.keys(changedParts) as PartCategory[];
       
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('🚀 HOVER PREVIEW: Loading only changed categories:', changedCategories);
+      console.log('?? HOVER PREVIEW: Loading only changed categories:', changedCategories);
     }
       
-      // Debug específico para cinturones
+      // Debug espec�fico para cinturones
       if (changedCategories.includes(PartCategory.BELT)) {
-        console.log('🔍 BELT HOVER DEBUG - CharacterViewer:', {
+        console.log('?? BELT HOVER DEBUG - CharacterViewer:', {
           changedCategories,
           beltPart: changedParts[PartCategory.BELT],
           allChangedParts: Object.keys(changedParts).reduce((acc, key) => {
@@ -1399,7 +1401,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const modelsToRemove: THREE.Object3D[] = [];
       
       // Debug: Log all children before any modifications
-      console.log('🔍 HOVER DEBUG: All models in scene before modification:', 
+      console.log('?? HOVER DEBUG: All models in scene before modification:', 
         modelGroup.children.map(child => ({
           name: child.name,
           category: child.userData.category,
@@ -1418,7 +1420,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         // Hide original models of the categories being previewed
         if (!child.userData.isPreview && childCategory && changedParts[childCategory] && child.visible) {
           if (process.env.NODE_ENV === 'development') {
-            console.log(`👁️ HOVER: Hiding original model for category ${childCategory}: ${childPartId || child.name || 'unknown'}`);
+            console.log(`??? HOVER: Hiding original model for category ${childCategory}: ${childPartId || child.name || 'unknown'}`);
           }
           child.visible = false; // Hide the currently active part of this category
         }
@@ -1427,22 +1429,22 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (child.userData.isPreview && childCategory && changedParts[childCategory]) {
           modelsToRemove.push(child);
           if (process.env.NODE_ENV === 'development') {
-            console.log(`🗑️ HOVER: Marking existing preview model for removal: ${childPartId || child.name || 'unknown'}`);
+            console.log(`??? HOVER: Marking existing preview model for removal: ${childPartId || child.name || 'unknown'}`);
           }
         }
       });
       
       modelsToRemove.forEach(model => {
         modelGroup.remove(model);
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🗑️ HOVER: Removed preview model: ${model.userData.partId || model.name || 'unknown'}`);
+      console.log(`??? HOVER: Removed preview model: ${model.userData.partId || model.name || 'unknown'}`);
     }
       });
       
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🧹 HOVER: Removed ${modelsToRemove.length} preview models`);
+      console.log(`?? HOVER: Removed ${modelsToRemove.length} preview models`);
     }
 
       // Load new models for changed categories
@@ -1454,9 +1456,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         const modelPath = `${basePath}${part.gltfPath.startsWith('/') ? part.gltfPath.slice(1) : part.gltfPath}`;
         try {
-              // 🔧 OPTIMIZADO: Solo log en desarrollo
+              // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🚀 HOVER: Loading [${category}] incrementally: ${modelPath}`);
+      console.log(`?? HOVER: Loading [${category}] incrementally: ${modelPath}`);
     }
           const model = await modelCache.getModel(modelPath);
           
@@ -1474,23 +1476,23 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           model.userData.isPreview = true;
           
           modelGroup.add(model);
-              // 🔧 OPTIMIZADO: Solo log en desarrollo
+              // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ HOVER: Successfully loaded [${category}] incrementally`);
+      console.log(`? HOVER: Successfully loaded [${category}] incrementally`);
     }
         } catch (error) {
-          console.error(`❌ HOVER: Error loading model ${part.name} (${part.id})`, error);
+          console.error(`? HOVER: Error loading model ${part.name} (${part.id})`, error);
         }
       });
       
-      // 🚀 DESMARCAR HOVER PREVIEW DESPUÉS DEL DELAY
+      // ?? DESMARCAR HOVER PREVIEW DESPU�S DEL DELAY
       setTimeout(() => {
         setIsHoverPreviewActive(false);
       }, 150); // 150ms es suficiente para completar la carga
     },
     clearPreview: () => {
       setPreviewParts(null);
-      setIsHoverPreviewActive(false); // 🚀 DESMARCAR HOVER PREVIEW
+      setIsHoverPreviewActive(false); // ?? DESMARCAR HOVER PREVIEW
       
       // Helper to recursively dispose of resources (re-defined or imported from a common utility)
       const disposeNode = (node: THREE.Object3D) => {
@@ -1521,7 +1523,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const previewModelsToRemove: THREE.Object3D[] = [];
 
       // Debug: Log all children before clearing
-      console.log('🔍 CLEAR PREVIEW DEBUG: All models in scene before clear:', 
+      console.log('?? CLEAR PREVIEW DEBUG: All models in scene before clear:', 
         modelGroup.children.map(child => ({
           name: child.name,
           category: child.userData.category,
@@ -1539,7 +1541,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (child.userData.isPreview) {
           previewModelsToRemove.push(child);
           if (process.env.NODE_ENV === 'development') {
-            console.log(`🗑️ CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
+            console.log(`??? CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
           }
         }
 
@@ -1551,11 +1553,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           if (isCurrentlySelected) {
             child.visible = true;
             if (process.env.NODE_ENV === 'development') {
-              console.log(`👁️ CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
+              console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
             }
           } else {
             if (process.env.NODE_ENV === 'development') {
-              console.log(`🚫 CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
+              console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
             }
           }
         }
@@ -1566,14 +1568,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         disposeNode(model); // Dispose resources of the removed preview model
       });
       
-          // 🔧 OPTIMIZADO: Solo log en desarrollo
+          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🧹 CLEAR: Removed ${previewModelsToRemove.length} preview models`);
+      console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
     }
         
 
       
-      // ✅ RESTORE ZOOM: Re-enable zoom when preview is cleared
+      // ? RESTORE ZOOM: Re-enable zoom when preview is cleared
       if (controlsRef.current) {
         controlsRef.current.enableZoom = true;
       }
@@ -1619,8 +1621,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
     takeTokenScreenshot: async () => {
       return new Promise<string>((resolve) => {
-        console.log('🔍 TokenScreenshot: Starting token screenshot...');
-        console.log('🔍 TokenScreenshot: Components available:', {
+        console.log('?? TokenScreenshot: Starting token screenshot...');
+        console.log('?? TokenScreenshot: Components available:', {
           renderer: !!rendererRef.current,
           camera: !!cameraRef.current,
           controls: !!controlsRef.current,
@@ -1629,7 +1631,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         });
         
         if (!rendererRef.current || !cameraRef.current || !controlsRef.current) {
-          console.log('❌ TokenScreenshot: Missing required components');
+          console.log('? TokenScreenshot: Missing required components');
           resolve('');
           return;
         }
@@ -1637,10 +1639,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         // Check if models are loaded
         const modelGroup = modelGroupRef.current;
         const modelCount = modelGroup?.children?.length || 0;
-        console.log('🔍 TokenScreenshot: Model count in scene:', modelCount);
+        console.log('?? TokenScreenshot: Model count in scene:', modelCount);
         
         if (modelCount === 0) {
-          console.log('❌ TokenScreenshot: No models loaded in scene');
+          console.log('? TokenScreenshot: No models loaded in scene');
           resolve('');
           return;
         }
@@ -1676,7 +1678,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           resolve(dataUrl);
 
         } catch (error) {
-          console.error('❌ TokenScreenshot: Error taking token screenshot:', error);
+          console.error('? TokenScreenshot: Error taking token screenshot:', error);
           resolve('');
         } finally {
           // Restore original camera state
@@ -1693,32 +1695,32 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     takeScreenshotWithZoom: async (zoom: number, position: { x: number; y: number }) => {
       return new Promise<string>((resolve) => {
         if (!rendererRef.current || !cameraRef.current || !controlsRef.current) {
-          console.log('❌ Componentes no disponibles para zoom');
+          console.log('? Componentes no disponibles para zoom');
           resolve('');
           return;
         }
 
-        console.log('📸 Aplicando zoom antes de captura:', { zoom, position });
+        console.log('?? Aplicando zoom antes de captura:', { zoom, position });
 
-        // Guardar estado actual de la cámara
+        // Guardar estado actual de la c�mara
         const originalPosition = cameraRef.current.position.clone();
         const originalTarget = controlsRef.current.target.clone();
         const originalFOV = cameraRef.current.fov;
 
         try {
-          // Obtener la dirección actual de la cámara
+          // Obtener la direcci�n actual de la c�mara
           const currentDirection = cameraRef.current.position.clone().sub(controlsRef.current.target).normalize();
           
           // Calcular la distancia actual
           const currentDistance = cameraRef.current.position.distanceTo(controlsRef.current.target);
           
-          // Aplicar zoom manteniendo la dirección actual
+          // Aplicar zoom manteniendo la direcci�n actual
           const newDistance = currentDistance / zoom;
           
-          // Calcular nueva posición manteniendo la misma dirección
+          // Calcular nueva posici�n manteniendo la misma direcci�n
           const newPosition = controlsRef.current.target.clone().add(currentDirection.multiplyScalar(newDistance));
 
-          // Aplicar offset de posición en el plano perpendicular a la dirección de la cámara
+          // Aplicar offset de posici�n en el plano perpendicular a la direcci�n de la c�mara
           const up = new THREE.Vector3(0, 1, 0);
           const right = new THREE.Vector3().crossVectors(currentDirection, up).normalize();
           const upPerpendicular = new THREE.Vector3().crossVectors(right, currentDirection).normalize();
@@ -1730,7 +1732,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
           newPosition.add(offset3D);
 
-          console.log('📐 Cálculos de zoom:', {
+          console.log('?? C�lculos de zoom:', {
             currentDistance,
             newDistance,
             currentDirection: { x: currentDirection.x, y: currentDirection.y, z: currentDirection.z },
@@ -1738,7 +1740,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             offset3D: { x: offset3D.x, y: offset3D.y, z: offset3D.z }
           });
 
-          // Actualizar cámara
+          // Actualizar c�mara
           cameraRef.current.position.copy(newPosition);
           controlsRef.current.update();
 
@@ -1749,26 +1751,26 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           const canvas = rendererRef.current.domElement;
           const dataUrl = canvas.toDataURL('image/png');
 
-          console.log('✅ Captura con zoom completada');
+          console.log('? Captura con zoom completada');
           resolve(dataUrl);
 
         } catch (error) {
-          console.error('❌ Error al aplicar zoom:', error);
+          console.error('? Error al aplicar zoom:', error);
           resolve('');
         } finally {
-          // Restaurar posición original de la cámara
+          // Restaurar posici�n original de la c�mara
           cameraRef.current.position.copy(originalPosition);
           controlsRef.current.target.copy(originalTarget);
           cameraRef.current.fov = originalFOV;
           controlsRef.current.update();
           
-          // Re-renderizar con posición original
+          // Re-renderizar con posici�n original
           rendererRef.current.render(sceneRef.current!, cameraRef.current!);
         }
       });
     },
     applyMaterialToPart: (material: THREE.Material, partType: string) => {
-      console.log(`🎨 CharacterViewer: Applying material to part: ${partType}`, {
+      console.log(`?? CharacterViewer: Applying material to part: ${partType}`, {
         partType,
         modelGroupExists: !!modelGroupRef.current,
         modelGroupChildrenCount: modelGroupRef.current?.children.length || 0
@@ -1778,12 +1780,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         let foundMeshes = 0;
         let materializedMeshes = 0;
         
-        // 🔧 DEBUG: Log all meshes and their categories
+        // ?? DEBUG: Log all meshes and their categories
         if (process.env.NODE_ENV === 'development') {
-          console.log(`🔍 CharacterViewer: Scanning all meshes for partType: ${partType}`);
+          console.log(`?? CharacterViewer: Scanning all meshes for partType: ${partType}`);
           modelGroupRef.current.traverse((child) => {
             if (child instanceof THREE.Mesh) {
-              console.log(`🔍 Mesh: ${child.name || 'unnamed'}`, {
+              console.log(`?? Mesh: ${child.name || 'unnamed'}`, {
                 userDataCategory: child.userData.category,
                 partType,
                 categoryMatch: child.userData.category === partType,
@@ -1797,11 +1799,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           if (child instanceof THREE.Mesh) {
             foundMeshes++;
             
-            // 🔧 MEJORADO: Mapeo flexible de categorías para piernas
+            // ?? MEJORADO: Mapeo flexible de categor�as para piernas
             let categoryMatch = false;
             
             if (partType === 'LOWER_BODY') {
-              // Para piernas, aceptar múltiples variaciones
+              // Para piernas, aceptar m�ltiples variaciones
               const meshCategory = child.userData.category;
               const meshName = child.name.toLowerCase();
               
@@ -1814,7 +1816,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                 meshName.includes('trousers');
                 
               if (categoryMatch) {
-                console.log(`🎯 LOWER_BODY match found: ${child.name} (category: ${meshCategory})`);
+                console.log(`?? LOWER_BODY match found: ${child.name} (category: ${meshCategory})`);
               }
             } else {
               // Para otras partes, usar matching exacto
@@ -1824,12 +1826,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             if (categoryMatch) {
               child.material = material.clone();
               materializedMeshes++;
-              console.log(`✅ Applied material to ${partType}: ${child.name || 'unnamed'}`);
+              console.log(`? Applied material to ${partType}: ${child.name || 'unnamed'}`);
             }
           }
         });
         
-        console.log(`🎨 CharacterViewer: Material application complete for ${partType}`, {
+        console.log(`?? CharacterViewer: Material application complete for ${partType}`, {
           totalMeshes: foundMeshes,
           materializedMeshes,
           success: materializedMeshes > 0
@@ -1876,7 +1878,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       currentScene.add(rimLight);
     },
     applyColorToPart: (color: number, partType: string) => {
-      console.log(`🎨 CharacterViewer: Applying color ${color.toString(16)} to part: ${partType}`, {
+      console.log(`?? CharacterViewer: Applying color ${color.toString(16)} to part: ${partType}`, {
         partType,
         partTypeType: typeof partType,
         modelGroupExists: !!modelGroupRef.current,
@@ -1888,16 +1890,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         let foundMeshes = 0;
         let coloredMeshes = 0;
         
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 CharacterViewer: Model group has ${modelGroupRef.current.children.length} children`);
+      console.log(`?? CharacterViewer: Model group has ${modelGroupRef.current.children.length} children`);
     }
         
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh) {
-                // 🔧 OPTIMIZADO: Solo log en desarrollo
+                // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Checking mesh: ${child.name || 'unnamed'}`, {
+      console.log(`?? Checking mesh: ${child.name || 'unnamed'}`, {
               userDataCategory: child.userData.category,
               partType,
               categoryMatch: child.userData.category === partType,
@@ -1914,28 +1916,28 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               if (child.material instanceof THREE.MeshPhysicalMaterial) {
                 child.material.color.setHex(color);
                 coloredMeshes++;
-                    // 🔧 OPTIMIZADO: Solo log en desarrollo
+                    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ Applied color to ${partType}: ${child.name || 'unnamed'}`);
+      console.log(`? Applied color to ${partType}: ${child.name || 'unnamed'}`);
     }
               } else {
-                    // 🔧 OPTIMIZADO: Solo log en desarrollo
+                    // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`⚠️ Material not MeshPhysicalMaterial for ${partType}: ${child.name || 'unnamed'}`);
+      console.log(`?? Material not MeshPhysicalMaterial for ${partType}: ${child.name || 'unnamed'}`);
     }
               }
             }
           }
         });
         
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🎨 Summary for ${partType}: Found ${foundMeshes} meshes, colored ${coloredMeshes}`);
+      console.log(`?? Summary for ${partType}: Found ${foundMeshes} meshes, colored ${coloredMeshes}`);
     }
       } else {
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('❌ Model group not available');
+      console.log('? Model group not available');
     }
       }
     },
@@ -2041,7 +2043,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                    child.add(wireframe);
                    newEdgeLines.push(wireframe);
                  } catch (error) {
-                   console.error(`❌ Error applying wireframe to mesh: ${child.name || 'unnamed'}`, error);
+                   console.error(`? Error applying wireframe to mesh: ${child.name || 'unnamed'}`, error);
                  }
                }
              }
@@ -2050,9 +2052,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
            edgeLinesRef.current = newEdgeLines;
            setEdgeDetectionActive(true);
          } else {
-               // 🔧 OPTIMIZADO: Solo log en desarrollo
+               // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('❌ Model group or scene not available');
+      console.log('? Model group or scene not available');
     }
          }
        }
@@ -2062,17 +2064,17 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
      },
     debugMeshes: () => {
       if (modelGroupRef.current) {
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 DEBUG: All meshes in model group:');
+      console.log('?? DEBUG: All meshes in model group:');
     }
         let meshCount = 0;
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             meshCount++;
-                // 🔧 OPTIMIZADO: Solo log en desarrollo
+                // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Mesh ${meshCount}:`, {
+      console.log(`?? Mesh ${meshCount}:`, {
               name: child.name,
               userData: child.userData,
               materialType: child.material?.constructor?.name,
@@ -2082,20 +2084,20 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     }
           }
         });
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Total meshes found: ${meshCount}`);
+      console.log(`?? Total meshes found: ${meshCount}`);
     }
       } else {
-            // 🔧 OPTIMIZADO: Solo log en desarrollo
+            // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-      console.log('❌ DEBUG: Model group not available');
+      console.log('? DEBUG: Model group not available');
     }
       }
     },
     debugAvailableParts: () => {
       if (modelGroupRef.current) {
-        console.log('🔍 CharacterViewer: Debugging available parts');
+        console.log('?? CharacterViewer: Debugging available parts');
         const categories = new Set<string>();
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh && child.userData.category) {
@@ -2104,7 +2106,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         });
         console.log('Available categories:', Array.from(categories));
       } else {
-        console.log('❌ Model group not available for debugging');
+        console.log('? Model group not available for debugging');
       }
     },
     preloadParts: (parts: Part[]) => {
@@ -2170,7 +2172,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               <div className="absolute inset-3 bg-gradient-to-r from-orange-400/20 to-cyan-400/20 rounded-full animate-pulse"></div>
               {/* 3D Icon */}
               <div className="absolute inset-0 flex items-center justify-center text-3xl animate-bounce">
-                🦸‍♂️
+                ?????
               </div>
             </div>
             <div className="text-xl font-black text-orange-400 mb-2 animate-pulse uppercase tracking-wider"
@@ -2188,7 +2190,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         </div>
       )}
 
-      {/* ✨ Cache Loading Status Indicator */}
+      {/* ? Cache Loading Status Indicator */}
       {/* Removed: not used */}
 
       {/* Precision Controls - Bottom Center, above the fixed bottom bar (56px) */}
@@ -2220,9 +2222,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Rotate left (15°)"
+          title="Rotate left (15�)"
         >
-          ↶
+          ?
         </button>
 
         {/* Zoom Out */}
@@ -2243,7 +2245,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
           title="Zoom out"
         >
-          −
+          -
         </button>
 
         {/* Reset Camera */}
@@ -2266,7 +2268,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(245, 158, 11, 0.1)'; }}
           title="Reset view"
         >
-          ↺
+          ?
         </button>
 
         {/* Zoom In */}
@@ -2306,9 +2308,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Rotate right (15°)"
+          title="Rotate right (15�)"
         >
-          ↷
+          ?
         </button>
         </div>
       </div>
@@ -2323,6 +2325,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onSelectPose={onSelectPose || (() => {})}
           onRenamePose={onRenamePose}
           onSaveAsNew={onSaveAsNew}
+          onDeletePose={onDeletePose}
         />
       )}
 

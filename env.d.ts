@@ -11,4 +11,14 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
+declare const gtag:
+  | ((command: 'event', event: string, data?: Record<string, any>) => void)
+  | undefined;
+declare const mixpanel:
+  | { track: (event: string, data?: Record<string, any>) => void }
+  | undefined;
+declare const amplitude:
+  | { getInstance: () => { logEvent: (event: string, data?: Record<string, any>) => void } }
+  | undefined;
+
 declare module "*.png"; 

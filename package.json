@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --port 5177",
     "build": "vite build",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "verify-supabase": "node -e \"const ok=Boolean(process.env.VITE_SUPABASE_URL)&&Boolean(process.env.VITE_SUPABASE_ANON_KEY); console.log(ok ? 'Supabase env vars found.' : 'Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY.'); process.exit(ok ? 0 : 1)\"",
     "test": "vitest",

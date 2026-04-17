@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 
 export interface ToonShaderUniforms {
-  uBaseMap: { value: THREE.Texture | null };
-  uPaperMap: { value: THREE.Texture | null };
-  uPaperIntensity: { value: number };
-  uSaturation: { value: number };
-  uContrast: { value: number };
-  uLightDir: { value: THREE.Vector3 };
-  uToonLevels: { value: number };
-  uOutlineThickness: { value: number };
-  uTime: { value: number };
+  [key: string]: THREE.IUniform<any>;
+  uBaseMap: THREE.IUniform<THREE.Texture | null>;
+  uPaperMap: THREE.IUniform<THREE.Texture | null>;
+  uPaperIntensity: THREE.IUniform<number>;
+  uSaturation: THREE.IUniform<number>;
+  uContrast: THREE.IUniform<number>;
+  uLightDir: THREE.IUniform<THREE.Vector3>;
+  uToonLevels: THREE.IUniform<number>;
+  uOutlineThickness: THREE.IUniform<number>;
+  uTime: THREE.IUniform<number>;
 }
 
 export const toonShaderUniforms: ToonShaderUniforms = {
@@ -207,4 +208,3 @@ export const moebiusPresets = {
     uPaperIntensity: { value: 0.2 }
   }
 };
-

@@ -216,7 +216,6 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     try {
       // First apply the configuration
       const result = await PurchaseHistoryService.loadConfigurationFromPurchase(
-        user.id,
         purchaseId,
         item.id
       );

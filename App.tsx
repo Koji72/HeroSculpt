@@ -11,7 +11,6 @@ import PartCategoryToolbar from './components/PartCategoryToolbar';
 import AuthModal from './components/AuthModal';
 import WelcomeScreen from './components/WelcomeScreen';
 import SimpleSignUpModal from './components/SimpleSignUpModal';
-import TestSignUpModal from './components/TestSignUpModal';
 import UserProfile from './components/UserProfile';
 import TorsoSubmenu from './components/TorsoSubmenu';
 import BeltSubmenu from './components/BeltSubmenu';
@@ -57,7 +56,6 @@ import { STRONG_HANDS_PARTS } from './src/parts/strongHandsParts';
 import PartsDebugPanel from './components/PartsDebugPanel';
 
 // Hacer disponible para debugging en consola
-(window as any).ResendEmailService = ResendEmailService;
 
 // ✅ FIXED: Import from constants.ts to avoid duplication
 // HEAD, CAPE, MANOS ya no se eliminan aquí - se preservan explícitamente
@@ -108,16 +106,7 @@ const AppContent: React.FC = () => {
   
   // ✅ ACTIVE STATE based on authentication
   const selectedParts = isAuthenticated ? userSelectedParts : guestSelectedParts;
-  
-  // Debug log for state changes
-  useEffect(() => {
-    console.log('🔄 SELECTED PARTS STATE CHANGED:', {
-      isAuthenticated,
-      selectedPartsKeys: Object.keys(selectedParts),
-      selectedParts: Object.entries(selectedParts).map(([key, part]) => `${key}: ${part?.id}`)
-    });
-  }, [selectedParts, isAuthenticated]);
-  
+
   // ✅ CRITICAL FIX: Función que usa el estado correcto según autenticación
   const setSelectedParts = useCallback((newParts: SelectedParts | ((prev: SelectedParts) => SelectedParts)) => {
     if (isAuthenticated) {
@@ -729,7 +718,7 @@ const AppContent: React.FC = () => {
               
               // Removed debug log
 
-              await UserConfigService.updateConfiguration(configId, { name: newPoses[currentPoseIndex].name, selected_parts: selectedParts });
+              await UserConfigService.updateConfiguration(configId, { name: currentPose.name, selected_parts: selectedParts });
                     } catch (error) {
           // Removed debug log
         }
@@ -914,11 +903,6 @@ const AppContent: React.FC = () => {
   };
 
   const handleSelectPart = useCallback((newSelectedParts: SelectedParts) => {
-    console.log('🎯 handleSelectPart called with new selected parts:', { 
-      newSelectedPartsKeys: Object.keys(newSelectedParts),
-      newSelectedParts: Object.entries(newSelectedParts).map(([key, part]) => `${key}: ${part?.id}`)
-    });
-    
     setSelectedParts(newSelectedParts);
     
     // Close submenus - this logic can be simplified as it's not directly related to part selection anymore
@@ -1131,10 +1115,11 @@ const AppContent: React.FC = () => {
   // };
 
   // Funciones del carrito de compras - VERSIÓN MEJORADA
-  const handleAddToCart = (configuration: SelectedParts, archetype: string, name: string) => {
+  const handleAddToCart = (configuration: SelectedParts, archetype?: string, name?: string) => {
     if (Object.keys(configuration).length === 0) return;
 
     const configPrice = Object.values(configuration).reduce((sum, part) => sum + (part?.priceUSD || 0), 0);
+    const effectiveArchetype = archetype || selectedArchetype || ArchetypeId.STRONG;
     const configName = name || `Superhéroe ${archetype} - ${new Date().toLocaleDateString('es-ES')}`;
     const configThumbnail = Object.values(configuration)[0]?.thumbnail || '';
     
@@ -1146,14 +1131,14 @@ const AppContent: React.FC = () => {
       thumbnail: configThumbnail,
       quantity: 1,
       configuration: { ...configuration },
-      archetype: archetype
+      archetype: effectiveArchetype
     };
 
     setCartItems(prev => {
       // Verificar si ya existe una configuración igual
       const existingIndex = prev.findIndex(item => 
         JSON.stringify(item.configuration) === JSON.stringify(configuration) &&
-        item.archetype === archetype
+        item.archetype === effectiveArchetype
       );
 
       if (existingIndex >= 0) {
@@ -1464,6 +1449,26 @@ const AppContent: React.FC = () => {
     updateSavedPoseName(index, newName); // Actualizar en la base de datos
   };
 
+  const handleDeletePose = async (index: number) => {
+    const pose = savedPoses[index];
+    if (!pose || pose.source !== 'saved') return;
+
+    const success = await UserConfigService.deleteConfiguration(pose.id);
+    if (!success) return;
+
+    const newPoses = savedPoses.filter((_, i) => i !== index);
+    const newIndex = newPoses.length === 0 ? 0 : index > 0 ? index - 1 : 0;
+
+    setSavedPoses(newPoses);
+    setCurrentPoseIndex(newIndex);
+
+    if (newPoses.length === 0) {
+      setUserSelectedParts({});
+    } else {
+      setUserSelectedParts(newPoses[newIndex].configuration);
+    }
+  };
+
   // ✨ NUEVA FUNCIONALIDAD: Convertir pose de compra en pose guardada
   const handleSaveCurrentPoseAsNew = async () => {
     if (!user?.id) {
@@ -1678,8 +1683,7 @@ const AppContent: React.FC = () => {
             onSelectPose={handleSelectPose}
             onRenamePose={handleRenamePose}
             onSaveAsNew={handleSaveCurrentPoseAsNew}
-            onPartHover={handlePartHover}
-            onPartUnhover={handlePartUnhover}
+            onDeletePose={handleDeletePose}
           />
         </ErrorBoundary>
         {archetypeLoading && (
@@ -2085,7 +2089,7 @@ const AppContent: React.FC = () => {
         <SimpleSignUpModal 
           isOpen={isSignUpModalOpen} 
           onClose={handleCloseSignUpModal}
-          onSignUpSuccess={handleSignInSuccess}
+          onSignInSuccess={handleSignInSuccess}
         />
       )}
 
@@ -2109,6 +2113,7 @@ const AppContent: React.FC = () => {
         onSelectCategory={handleEditCategory}
         activeCategory={activeCategory}
         isExpanded={torsoSubmenuExpanded}
+        onToggle={handleTorsoSubmenuToggle}
         submenuPosition={submenuPosition} // Pasar la posición calculada
       />
 
@@ -2387,3 +2392,8 @@ const App: React.FC = () => (
 );
 
 export default App;
+
+
+
+
+

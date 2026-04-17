@@ -16,7 +16,7 @@ export interface LightingPreset {
   keyLight: { color: number; intensity: number; position: THREE.Vector3 };
   fillLight: { color: number; intensity: number; position: THREE.Vector3 };
   rimLight: { color: number; intensity: number; position: THREE.Vector3 };
-  icon: string;
+  icon?: string;
 }
 
 // Colorable parts configuration by category

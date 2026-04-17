@@ -6,6 +6,7 @@ import {
   Moon, 
   Sun, 
   Bell, 
+  User,
   Shield, 
   CreditCard, 
   Globe, 

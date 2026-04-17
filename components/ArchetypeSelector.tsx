@@ -31,7 +31,6 @@ const ArchetypeSelector: React.FC<ArchetypeSelectorProps> = ({ selectedArchetype
   return (
     <>
       {/* Expanded Selection Panel */}
-      {console.log('🔍 Renderizando panel, isExpanded:', isOpen)}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[100] min-w-[900px] max-w-[95vw] max-h-[80vh] overflow-y-auto">
         <div className="from-slate-900/98 backdrop-blur will-change-transform-xl shadow-2xl shadow-cyan-400/20 p-6 relative overflow-hidden bg-gradient-to-b via-slate-800/98 to-slate-900/98 border-2 border-cyan-400/50 rounded-lg">
           {/* Background effects */}
@@ -44,7 +43,6 @@ const ArchetypeSelector: React.FC<ArchetypeSelectorProps> = ({ selectedArchetype
             </h3>
             
                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {console.log('🔍 ARCHETYPE_DATA:', Object.keys(ARCHETYPE_DATA))}
               {Object.entries(ARCHETYPE_DATA).map(([archetypeId, data]) => {
                 const isSelected = selectedArchetype === archetypeId;
                 

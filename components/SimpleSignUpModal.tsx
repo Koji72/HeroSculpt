@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { getSignUpConfig, logEmailRedirectInfo } from '../lib/emailRedirectConfig';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-);
+import { supabase } from '../lib/supabase';
 
 interface SimpleSignUpModalProps {
   isOpen: boolean;
@@ -16,7 +11,7 @@ interface SimpleSignUpModalProps {
 const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
   isOpen,
   onClose,
-  onSignInSuccess
+  onSignInSuccess,
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,28 +25,26 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
     setError(null);
 
     try {
-      // Log de información de debug
+      if (!supabase) {
+        setError('Supabase no esta configurado.');
+        return;
+      }
+
       logEmailRedirectInfo();
 
-      // TEMPORAL: Deshabilitar confirmación de email mientras solucionamos el problema
-      const { data, error } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          ...getSignUpConfig(),
-          emailConfirm: false // TEMPORAL: No requerir confirmación de email
-        }
+        options: getSignUpConfig(),
       });
 
-      if (error) {
-        setError(error.message);
+      if (signUpError) {
+        setError(signUpError.message);
       } else {
         setSuccess(true);
-        if (onSignInSuccess) {
-          onSignInSuccess();
-        }
+        onSignInSuccess?.();
       }
-    } catch (err) {
+    } catch {
       setError('Unexpected error. Please try again.');
     } finally {
       setLoading(false);
@@ -68,16 +61,13 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
       <div className="panel-box" style={{ width: 420, maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div className="panel-header">
           <span style={{ fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 3 }}>CREATE ACCOUNT</span>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}>X</button>
         </div>
         <div style={{ padding: '16px', overflowY: 'auto', flex: 1, background: 'var(--color-surface)' }}>
           {success ? (
             <div style={{ textAlign: 'center' }}>
-              <div style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border-strong)', borderRadius: 'var(--radius)', padding: '10px 12px', marginBottom: 12, color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontSize: 13 }}>
-                ⚠️ TEMPORAL: Email confirmation disabled
-              </div>
               <p style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)', marginBottom: 16, fontSize: 15 }}>
-                Account created successfully! You can now sign in.
+                Account created successfully. Check your email if confirmation is required.
               </p>
               <button
                 onClick={onClose}
@@ -89,10 +79,6 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
             </div>
           ) : (
             <form onSubmit={handleSignUp}>
-              <div style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border-strong)', borderRadius: 'var(--radius)', padding: '10px 12px', marginBottom: 12, color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontSize: 13 }}>
-                ⚠️ TEMPORAL: Email confirmation is disabled due to email service issues.
-              </div>
-
               {error && (
                 <div style={{ background: 'var(--color-surface-2)', border: '1.5px solid #ef4444', borderRadius: 'var(--radius)', padding: '10px 12px', marginBottom: 12, color: '#ef4444', fontFamily: 'var(--font-body)', fontSize: 13 }}>
                   {error}

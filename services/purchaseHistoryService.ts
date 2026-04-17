@@ -10,6 +10,7 @@ export interface Purchase {
   purchase_date: string;
   items_count: number;
   status: 'completed' | 'pending' | 'failed';
+  purchase_items?: PurchaseItem[];
 }
 
 export interface PurchaseItem {

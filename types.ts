@@ -363,6 +363,24 @@ export interface HeroIdea {
   };
 }
 
+export interface HQStats {
+  totalCharacters: number;
+  totalPowerLevel: number;
+  averageCompatibility: number;
+  totalValue: number;
+  recentActivity: number;
+  achievements: number;
+}
+
+export interface HQCharacter {
+  id: string;
+  name: string;
+  archetype: ArchetypeId;
+  powerLevel: number;
+  compatibility: number;
+  lastModified: string;
+}
+
 export interface Mission {
   id: string;
   title: string;

@@ -13,7 +13,7 @@ export interface PowerEffect {
   id: string;
   type: PowerType;
   mesh: THREE.Mesh;
-  material: THREE.ShaderMaterial;
+  material: THREE.Material;
   attachPoint: string;
   intensity: number;
   isActive: boolean;
@@ -162,7 +162,7 @@ export class PowerEffectsSystem {
     }
 
     // Cleanup
-    effect.geometry?.dispose();
+    effect.mesh.geometry?.dispose();
     effect.material?.dispose();
     
     this.activeEffects.delete(effectId);
@@ -311,7 +311,7 @@ export class PowerEffectsSystem {
   }
 
   // 🎨 MATERIAL CREATORS
-  private createMaterial(type: PowerType): THREE.ShaderMaterial {
+  private createMaterial(type: PowerType): THREE.Material {
     switch (type) {
       case 'fire':
         return new FireEffectMaterial();

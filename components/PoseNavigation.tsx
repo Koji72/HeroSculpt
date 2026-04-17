@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface PoseNavigationProps {
   savedPoses: Array<{
@@ -14,6 +14,7 @@ interface PoseNavigationProps {
   onSelectPose: (index: number) => void;
   onRenamePose?: (index: number, newName: string) => void;
   onSaveAsNew?: () => void;
+  onDeletePose?: (index: number) => void;
 }
 
 const PoseNavigation: React.FC<PoseNavigationProps> = ({
@@ -23,12 +24,16 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
   onNextPose,
   onSelectPose,
   onRenamePose,
-  onSaveAsNew
+  onSaveAsNew,
+  onDeletePose,
 }) => {
   const [showPoseSelector, setShowPoseSelector] = useState(false);
   const [editingPoseIndex, setEditingPoseIndex] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+
+  useEffect(() => { setConfirmingDelete(false); }, [currentPoseIndex]);
 
   if (!savedPoses || savedPoses.length === 0) {
     return (
@@ -42,6 +47,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
 
   const handleCounterClick = () => {
     setShowPoseSelector(!showPoseSelector);
+    setConfirmingDelete(false);
   };
 
   const handlePoseSelect = (index: number) => {
@@ -110,6 +116,34 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
       >
         ▶
       </button>
+
+      {/* Botón Borrar (solo para poses guardadas) */}
+      {savedPoses[currentPoseIndex]?.source === 'saved' && onDeletePose && (
+        confirmingDelete ? (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => { onDeletePose(currentPoseIndex); setConfirmingDelete(false); }}
+              className="px-2 py-1 backdrop-blur-sm shadow-lg bg-red-700/90 hover:bg-red-600 text-white text-xs border-red-400/40 rounded-full transition-colors duration-200 border font-medium"
+            >
+              Borrar
+            </button>
+            <button
+              onClick={() => setConfirmingDelete(false)}
+              className="px-2 py-1 backdrop-blur-sm shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-slate-300 text-xs border-slate-600/50 rounded-full transition-colors duration-200 border font-medium"
+            >
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmingDelete(true)}
+            className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-red-700/80 text-red-400 hover:text-white border-red-400/20 hover:border-red-400/40 rounded-full transition-colors duration-200 will-change-transform border items-center justify-center"
+            title="Borrar esta pose"
+          >
+            🗑
+          </button>
+        )
+      )}
 
       {/* Botón Save como Nueva (solo para poses de compra) */}
       {savedPoses[currentPoseIndex]?.source === 'purchase' && onSaveAsNew && (

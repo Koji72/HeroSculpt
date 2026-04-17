@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface PBRMaterial {
   name: string;
@@ -45,7 +46,7 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
         url,
         (texture) => {
           // Configuración optimizada para PBR
-          texture.encoding = THREE.sRGBEncoding;
+          texture.colorSpace = THREE.SRGBColorSpace;
           texture.flipY = false;
           texture.anisotropy = materialData.maxAnisotropy || 4;
           texture.generateMipmaps = true;
@@ -159,7 +160,7 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
       setError(null);
       
       // Cargar modelo GLB
-      const gltf = await new Promise<THREE.GLTF>((resolve, reject) => {
+      const gltf = await new Promise<GLTF>((resolve, reject) => {
         gltfLoader.current.load(
           modelUrl,
           resolve,

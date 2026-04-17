@@ -96,7 +96,7 @@ const createMoebiusToonSkin = (api: CharacterViewerRef) => {
 };
 
 // Función helper para crear gradiente toon con estilo cómic granulado
-function createToonGradient(): THREE.DataTexture {
+function createToonGradient(): THREE.Texture {
   const canvas = document.createElement('canvas');
   canvas.width = 8; // Más resolución para mejor control
   canvas.height = 1;
@@ -125,7 +125,7 @@ function createToonGradient(): THREE.DataTexture {
 }
 
 // Gradiente manga con alto contraste
-function createMangaGradient(): THREE.DataTexture {
+function createMangaGradient(): THREE.Texture {
   const canvas = document.createElement('canvas');
   canvas.width = 4;
   canvas.height = 1;
@@ -149,7 +149,7 @@ function createMangaGradient(): THREE.DataTexture {
 }
 
 // Gradiente cartoon suave con 6 bandas
-function createCartoonGradient(): THREE.DataTexture {
+function createCartoonGradient(): THREE.Texture {
   const canvas = document.createElement('canvas');
   canvas.width = 6;
   canvas.height = 1;
@@ -233,7 +233,7 @@ const createComicGrainSkin = (api: CharacterViewerRef) => {
 };
 
 // Función para crear gradiente con efecto de granulado cómic
-function createComicGrainGradient(): THREE.DataTexture {
+function createComicGrainGradient(): THREE.Texture {
   const canvas = document.createElement('canvas');
   canvas.width = 10; // Alta resolución para granulado
   canvas.height = 1;
