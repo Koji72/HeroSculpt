@@ -37,13 +37,14 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
 
   const [previewParts, setPreviewParts] = useState<SelectedParts>(selectedParts);
   const [hasChanges, setHasChanges] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const ref = useRef<HTMLDivElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
 
   const handleCancelChanges = useCallback(() => {
-    // console.log('?? [CANCEL CHANGES] Reiniciando cámara...');
+    // console.log('?? [CANCEL CHANGES] Reiniciando cï¿½mara...');
     setPreviewParts(selectedParts);
     setHasChanges(false);
     if (onPreviewChange) {
@@ -219,7 +220,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     else {
       // console.log(`?? ${activeCategory} SELECT: Using complete state pattern for:`, part.id);
       
-      // IMPLEMENTADO - Patrón genérico para todas las categorías según documentación
+      // IMPLEMENTADO - Patrï¿½n genï¿½rico para todas las categorï¿½as segï¿½n documentaciï¿½n
       const categoriesWithCompleteState = [
         PartCategory.HEAD, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT,
         PartCategory.BACKPACK, PartCategory.CHEST_BELT, PartCategory.BELT,
@@ -269,16 +270,16 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
 
 
 
-    // Lógica de preview para los modelos: asegurar que hoverPreviewParts siempre tiene Part o se elimina la clave.
+    // Lï¿½gica de preview para los modelos: asegurar que hoverPreviewParts siempre tiene Part o se elimina la clave.
     if (partToDisplay) {
       hoverPreviewParts[activeCategory] = partToDisplay;
     } else {
       delete hoverPreviewParts[activeCategory];
     }
 
-    // ??? PROTEGIDO: SPECIAL CASE - NO MODIFICAR ESTA LÓGICA
+    // ??? PROTEGIDO: SPECIAL CASE - NO MODIFICAR ESTA Lï¿½GICA
     // ? Si se hace hover sobre un torso, recalcular partes compatibles
-    // ? NO CAMBIAR - Sistema de eliminación y compatibilidad crítico
+    // ? NO CAMBIAR - Sistema de eliminaciï¿½n y compatibilidad crï¿½tico
     if (activeCategory === PartCategory.TORSO || activeCategory === PartCategory.SUIT_TORSO) {
       // console.log('?? TORSO HOVER: Recalculando partes compatibles para torso:', partToDisplay?.id || 'none');
 
@@ -293,10 +294,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       // Si hay una parte de torso para mostrar, la usamos para la compatibilidad
       if (partToDisplay) {
         // ? FIXED: Preservar manos existentes antes de aplicar compatibilidad
-        // El problema era que partsWithoutCurrentTorso no contenía las manos
+        // El problema era que partsWithoutCurrentTorso no contenï¿½a las manos
         const partsWithHands = { ...partsWithoutCurrentTorso };
         
-        // ? APLICAR FUNCIONES DE COMPATIBILIDAD EN ORDEN - SIGUIENDO REGLAS CRÍTICAS
+        // ? APLICAR FUNCIONES DE COMPATIBILIDAD EN ORDEN - SIGUIENDO REGLAS CRï¿½TICAS
         const fullCompatibleParts = assignDefaultHandsForTorso(partToDisplay, partsWithHands);
         const finalCompatibleParts = assignAdaptiveHeadForTorso(partToDisplay, fullCompatibleParts);
         
@@ -315,7 +316,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         if (currentSuit) partsWithSuit[PartCategory.SUIT_TORSO] = currentSuit;
         const finalPartsWithSuit = assignAdaptiveSuitTorsoForTorso(partToDisplay, finalCompatibleParts, partsWithSuit);
         
-        // ? COMBINAR TODOS LOS RESULTADOS - SIGUIENDO REGLAS CRÍTICAS
+        // ? COMBINAR TODOS LOS RESULTADOS - SIGUIENDO REGLAS CRï¿½TICAS
         hoverPreviewParts = { 
           ...partsWithoutCurrentTorso,
           ...finalCompatibleParts, 
@@ -325,7 +326,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           [activeCategory]: partToDisplay 
         };
       } else {
-        // Si es "none" torso, asegurar que las dependencias también se eliminan del preview
+        // Si es "none" torso, asegurar que las dependencias tambiï¿½n se eliminan del preview
         delete hoverPreviewParts[PartCategory.TORSO];
         delete hoverPreviewParts[PartCategory.SUIT_TORSO];
         delete hoverPreviewParts[PartCategory.HEAD];
@@ -335,7 +336,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         delete hoverPreviewParts[PartCategory.CAPE];
       }
 
-      // console.log('? TORSO HOVER: Enviando estado de preview (siguiendo reglas críticas):', {
+      // console.log('? TORSO HOVER: Enviando estado de preview (siguiendo reglas crï¿½ticas):', {
       //   allParts: Object.keys(hoverPreviewParts),
       //   torso: hoverPreviewParts[PartCategory.TORSO]?.id || 'removed',
       //   suitTorso: hoverPreviewParts[PartCategory.SUIT_TORSO]?.id || 'removed',
@@ -351,7 +352,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       console.log('?? ENTRANDO AL BLOQUE LOWER_BODY HOVER');
       console.log('?? LEGS HOVER: Recalculando botas compatibles para piernas:', partToDisplay?.id || 'none');
       
-      // ? COPIAR LÓGICA DEL TORSO: Crear copia sin la parte actual
+      // ? COPIAR Lï¿½GICA DEL TORSO: Crear copia sin la parte actual
       const partsWithoutCurrentLegs = { ...selectedParts };
       delete partsWithoutCurrentLegs[PartCategory.LOWER_BODY];
 
@@ -360,10 +361,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         // ? FIXED: Preservar partes existentes antes de aplicar compatibilidad
         const partsWithLegs = { ...partsWithoutCurrentLegs };
         
-        // ? APLICAR FUNCIONES DE COMPATIBILIDAD EN ORDEN - SIGUIENDO REGLAS CRÍTICAS
+        // ? APLICAR FUNCIONES DE COMPATIBILIDAD EN ORDEN - SIGUIENDO REGLAS CRï¿½TICAS
         const fullCompatibleParts = assignAdaptiveBootsForTorso(partToDisplay, partsWithLegs);
         
-        // ? COMBINAR TODOS LOS RESULTADOS - SIGUIENDO REGLAS CRÍTICAS
+        // ? COMBINAR TODOS LOS RESULTADOS - SIGUIENDO REGLAS CRï¿½TICAS
         hoverPreviewParts = { 
           ...partsWithoutCurrentLegs,
           ...fullCompatibleParts, 
@@ -376,15 +377,15 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         delete hoverPreviewParts[PartCategory.BOOTS];
       }
 
-      console.log('? LEGS HOVER: Enviando estado de preview (siguiendo reglas críticas):', {
+      console.log('? LEGS HOVER: Enviando estado de preview (siguiendo reglas crï¿½ticas):', {
         allParts: Object.keys(hoverPreviewParts),
         legs: hoverPreviewParts[PartCategory.LOWER_BODY]?.id || 'removed',
         boots: hoverPreviewParts[PartCategory.BOOTS]?.id || 'removed'
       });
     }
-    // CASO GENÉRICO: Para todas las demás categorías que usan el patrón de estado completo
+    // CASO GENï¿½RICO: Para todas las demï¿½s categorï¿½as que usan el patrï¿½n de estado completo
     else {
-      // console.log(`?? ${activeCategory} HOVER: Usando patrón de estado completo para:`, partToDisplay?.id || 'none');
+      // console.log(`?? ${activeCategory} HOVER: Usando patrï¿½n de estado completo para:`, partToDisplay?.id || 'none');
       const categoriesWithCompleteState = [
         PartCategory.HEAD, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT,
         PartCategory.BACKPACK, PartCategory.CHEST_BELT, PartCategory.BELT,
@@ -397,14 +398,14 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         } else {
           delete hoverPreviewParts[activeCategory];
         }
-        // console.log(`? ${activeCategory} HOVER: Patrón de estado completo aplicado:`, {
+        // console.log(`? ${activeCategory} HOVER: Patrï¿½n de estado completo aplicado:`, {
         //   allParts: Object.keys(hoverPreviewParts),
         //   changedPart: `${activeCategory}: ${hoverPreviewParts[activeCategory]?.id || 'removed'}`
         // });
       }
     }
     
-    // Debug específico para cinturones
+    // Debug especï¿½fico para cinturones
     if (activeCategory === PartCategory.BELT) {
       // console.log('?? BELT DEBUG - Enviando preview parts:', hoverPreviewParts);
     }
@@ -423,6 +424,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   useEffect(() => {
     registerElement(id, ref.current);
   }, [id, registerElement]);
+
+  useEffect(() => {
+    setSearchQuery('');
+  }, [activeCategory]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -452,8 +457,8 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     return null; 
   }
   
-  // Debug básico para verificar datos
-  // console.log('?? PartSelectorPanel DEBUG - Datos básicos:', {
+  // Debug bï¿½sico para verificar datos
+  // console.log('?? PartSelectorPanel DEBUG - Datos bï¿½sicos:', {
   //   selectedArchetype,
   //   activeCategory,
   //   totalPartsInALL_PARTS: ALL_PARTS.length,
@@ -469,7 +474,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   //   firstPart: ALL_PARTS[0] ? { id: ALL_PARTS[0].id, category: ALL_PARTS[0].category, archetype: ALL_PARTS[0].archetype } : 'none'
   // });
 
-  // Debug específico para arquetipos (comentado)
+  // Debug especï¿½fico para arquetipos (comentado)
   // const strongParts = ALL_PARTS.filter(p => p.archetype === ArchetypeId.STRONG);
   // console.log('?? STRONG archetype debug:', {
   //   totalStrongParts: strongParts.length,
@@ -477,7 +482,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   // });
 
   const availableParts = ALL_PARTS.filter(part => {
-    // Debug específico para cabezas de torso 04
+    // Debug especï¿½fico para cabezas de torso 04
     // if (activeCategory === PartCategory.HEAD && part.id.includes('t04')) {
     //   console.log(`?? Debugging ${part.id}:`, {
     //     category: part.category,
@@ -489,7 +494,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     //   });
     // }
     
-    // Debug específico para cinturones
+    // Debug especï¿½fico para cinturones
     // if (activeCategory === PartCategory.BELT && part.category === PartCategory.BELT) {
     //   console.log(`?? BELT DEBUG - Filtering ${part.id}:`, {
     //     category: part.category,
@@ -503,7 +508,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     //   });
     // }
     
-    // Debug específico para botas
+    // Debug especï¿½fico para botas
     // if (activeCategory === PartCategory.BOOTS && part.category === PartCategory.BOOTS) {
     //   const selectedLegs = selectedParts[PartCategory.LOWER_BODY];
     //   console.log(`?? BOOTS DEBUG - Filtering ${part.id}:`, {
@@ -521,7 +526,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     
 
     
-    // Verificación básica de categoría y arquetipo
+    // Verificaciï¿½n bï¿½sica de categorï¿½a y arquetipo
     if (part.category !== activeCategory || part.archetype !== selectedArchetype) {
       return false;
     }
@@ -580,7 +585,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       return part.compatible.includes(selectedTorso.id);
     }
     
-    // Caso especial para CHEST_BELT - usar lógica de nombres
+    // Caso especial para CHEST_BELT - usar lï¿½gica de nombres
     if (part.category === PartCategory.CHEST_BELT) {
       const selectedTorso = selectedParts[PartCategory.TORSO];
       const selectedSuit = selectedParts[PartCategory.SUIT_TORSO];
@@ -590,7 +595,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         return true;
       }
       
-      // Extraer el número del torso activo
+      // Extraer el nï¿½mero del torso activo
       let torsoNumber = null;
       if (selectedSuit) {
         const suitMatch = selectedSuit.id.match(/strong_suit_torso_\d+_t(\d+)/);
@@ -608,9 +613,9 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         return true;
       }
       
-      // Para chest belt, verificar si es específico para el torso o genérico
-      // Genérico: strong_beltchest_01_np (compatible con todos los torsos)
-      // Específico: strong_beltchest_01_t01, strong_beltchest_01_t01_np, etc.
+      // Para chest belt, verificar si es especï¿½fico para el torso o genï¿½rico
+      // Genï¿½rico: strong_beltchest_01_np (compatible con todos los torsos)
+      // Especï¿½fico: strong_beltchest_01_t01, strong_beltchest_01_t01_np, etc.
       const isGeneric = part.id === 'strong_beltchest_01_np';
       const isSpecificForTorso = part.id.includes(`_t${torsoNumber}`);
       
@@ -625,7 +630,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       const selectedSuit = selectedParts[PartCategory.SUIT_TORSO];
       const activeTorso = selectedSuit || selectedTorso;
       
-      // ? SOLUCIÓN ROBUSTA: Si no hay torso, usar torso por defecto
+      // ? SOLUCIï¿½N ROBUSTA: Si no hay torso, usar torso por defecto
       if (!activeTorso) {
         console.log('?? No hay torso seleccionado, usando torso por defecto para filtrar manos');
         // Usar strong_torso_01 como fallback para usuarios no logueados
@@ -645,7 +650,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       return part.compatible.includes(baseTorsoId);
     }
     
-    // Para todas las demás categorías, usar lógica de compatibilidad estándar
+    // Para todas las demï¿½s categorï¿½as, usar lï¿½gica de compatibilidad estï¿½ndar
     const selectedTorso = selectedParts[PartCategory.TORSO];
     const selectedSuit = selectedParts[PartCategory.SUIT_TORSO];
     const activeTorso = selectedSuit || selectedTorso;
@@ -672,7 +677,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   
 
   
-  // Debug específico para chest belt
+  // Debug especï¿½fico para chest belt
   if (activeCategory === PartCategory.CHEST_BELT) {
     // console.log('?? DEBUG CHEST_BELT - PartSelectorPanel:');
     // console.log('   - Torso activo:', Object.values(selectedParts).find(p => p.category === PartCategory.TORSO)?.id || 'ninguno');
@@ -681,7 +686,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     // console.log('   - Total chest belts en ALL_PARTS:', ALL_PARTS.filter(p => p.category === PartCategory.CHEST_BELT).length);
   }
   
-  // Debug específico para buckles
+  // Debug especï¿½fico para buckles
   if (activeCategory === PartCategory.BUCKLE) {
     console.log('?? DEBUG BUCKLES - PartSelectorPanel:');
     console.log('   - Buckles disponibles:', availableParts.map(p => p.id));
@@ -701,16 +706,16 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     availableParts: availableParts.map(p => p.id)
   });
   
-  // Debug específico para cabezas
+  // Debug especï¿½fico para cabezas
   if (activeCategory === PartCategory.HEAD) {
     // console.log('?? DEBUG CABEZAS - PartSelectorPanel:');
     // console.log('   - Cabeza actualmente seleccionada:', selectedParts.HEAD?.id || 'ninguna');
     // console.log('   - Cabeza en preview:', previewParts.HEAD?.id || 'ninguna');
     // console.log('   - Todas las cabezas disponibles:', availableParts.map(p => p.id));
     
-    // Verificar si la cabeza seleccionada está en las disponibles
+    // Verificar si la cabeza seleccionada estï¿½ en las disponibles
     // const selectedHeadInAvailable = availableParts.find(p => p.id === selectedParts.HEAD?.id); // Removed: not used
-    // console.log('   - ¿Cabeza seleccionada está disponible?', selectedHeadInAvailable ? 'SÍ' : 'NO');
+    // console.log('   - ï¿½Cabeza seleccionada estï¿½ disponible?', selectedHeadInAvailable ? 'Sï¿½' : 'NO');
     
     // Verificar compatibilidad
     // const selectedTorso = Object.values(selectedParts).find(p => p.category === PartCategory.TORSO); // Removed: not used
@@ -720,7 +725,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     
     if (selectedParts.HEAD) {
       // const isCompatible = selectedParts.HEAD.compatible.includes(activeTorso?.id || ''); // Removed: not used
-      // console.log('   - ¿Cabeza seleccionada es compatible?', isCompatible);
+      // console.log('   - ï¿½Cabeza seleccionada es compatible?', isCompatible);
     }
   }
   
@@ -733,7 +738,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     return previewParts[activeCategory]?.id === part.id;
   };
 
-  const partsToShow = (nonePart ? [nonePart] : []).concat(availableParts).filter(part => part && typeof part === 'object' && part.id);
+  const allPartsToShow = (nonePart ? [nonePart] : []).concat(availableParts).filter(part => part && typeof part === 'object' && part.id);
+  const partsToShow = searchQuery.trim()
+    ? allPartsToShow.filter(p => p.attributes?.none || p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : allPartsToShow;
 
   return (
     <div id="part-selector-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }} ref={ref}>
@@ -745,6 +753,24 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
         >?</button>
       </div>
+
+      {/* Search bar */}
+      {allPartsToShow.length > 6 && (
+        <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--color-border)', flexShrink: 0 }}>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              background: 'var(--color-surface)', border: '1px solid var(--color-border)',
+              color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontSize: 11,
+              padding: '5px 8px', outline: 'none', borderRadius: 'var(--radius)',
+            }}
+          />
+        </div>
+      )}
 
       {/* Content */}
       {partsToShow.length <= 1 && availableParts.length === 0 ? (

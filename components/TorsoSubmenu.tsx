@@ -16,12 +16,6 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
   onToggle,
   submenuPosition
 }) => {
-  console.log('🎯 TorsoSubmenu Render:', {
-    isExpanded,
-    activeCategory,
-    submenuPosition: { top: submenuPosition.top, left: submenuPosition.left }
-  });
-
   const submenuCategories = [
     { category: PartCategory.TORSO, label: 'TORSO', icon: '🦾' },
     { category: PartCategory.HEAD, label: 'HEAD', icon: '👤' },

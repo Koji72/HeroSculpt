@@ -124,6 +124,40 @@ const AppContent: React.FC = () => {
     }
   }, [isAuthenticated]);
   const [activeCategory, setActiveCategory] = useState<PartCategory | null>(null);
+
+  // Undo/redo history for part selections
+  const partsHistoryRef = useRef<SelectedParts[]>([]);
+  const historyIndexRef = useRef<number>(-1);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+
+  const pushPartsHistory = useCallback((parts: SelectedParts) => {
+    const newHistory = partsHistoryRef.current.slice(0, historyIndexRef.current + 1);
+    newHistory.push(parts);
+    if (newHistory.length > 50) newHistory.shift();
+    partsHistoryRef.current = newHistory;
+    historyIndexRef.current = newHistory.length - 1;
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(false);
+  }, []);
+
+  const handleUndo = useCallback(() => {
+    if (historyIndexRef.current <= 0) return;
+    historyIndexRef.current -= 1;
+    const prev = partsHistoryRef.current[historyIndexRef.current];
+    setSelectedParts(prev);
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(true);
+  }, [setSelectedParts]);
+
+  const handleRedo = useCallback(() => {
+    if (historyIndexRef.current >= partsHistoryRef.current.length - 1) return;
+    historyIndexRef.current += 1;
+    const next = partsHistoryRef.current[historyIndexRef.current];
+    setSelectedParts(next);
+    setCanUndo(true);
+    setCanRedo(historyIndexRef.current < partsHistoryRef.current.length - 1);
+  }, [setSelectedParts]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signup');
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(() => {
@@ -241,74 +275,39 @@ const AppContent: React.FC = () => {
   );
   const [activePanelPart, setActivePanelPart] = useState('torso');
 
-  // ✨ EFECTO PARA CALCULAR LA POSICIÓN DEL SUBMENÚ
-  useEffect(() => {
-    if (torsoSubmenuExpanded && torsoButtonRef.current) {
-      const rect = torsoButtonRef.current.getBoundingClientRect();
-      setSubmenuPosition({
-        top: rect.top,
-        left: rect.right + 8 // 8px de margen
-      });
-    }
-  }, [torsoSubmenuExpanded]);
-
-  // ✨ EFECTO PARA CALCULAR LA POSICIÓN DEL SUBMENÚ DEL BELT
-  useEffect(() => {
-    if (beltSubmenuExpanded && beltButtonRef.current) {
-      const rect = beltButtonRef.current.getBoundingClientRect();
-      setBeltSubmenuPosition({
-        top: rect.top,
-        left: rect.right + 8 // 8px de margen
-      });
-    }
-  }, [beltSubmenuExpanded]);
-
-  // ✨ EFECTO PARA CALCULAR LA POSICIÓN DEL SUBMENÚ DEL LOWER BODY
-  useEffect(() => {
-    if (lowerBodySubmenuExpanded && lowerBodyButtonRef.current) {
-      const rect = lowerBodyButtonRef.current.getBoundingClientRect();
-      setLowerBodySubmenuPosition({
-        top: rect.top,
-        left: rect.right + 8 // 8px de margen
-      });
-    }
-  }, [lowerBodySubmenuExpanded]);
+  // Submenu positions are calculated inline in toggle handlers to avoid flicker
 
 
 
   // ✨ MANEJADOR DEL TOGGLE DEL SUBMENÚ DEL UPPER BODY
   const handleTorsoSubmenuToggle = useCallback(() => {
+    if (torsoButtonRef.current) {
+      const rect = torsoButtonRef.current.getBoundingClientRect();
+      setSubmenuPosition({ top: rect.top, left: rect.right + 8 });
+    }
     setTorsoSubmenuExpanded(prev => !prev);
-    // Close otros submenus si están abiertos
-    if (beltSubmenuExpanded) {
-      setBeltSubmenuExpanded(false);
-    }
-    if (lowerBodySubmenuExpanded) {
-      setLowerBodySubmenuExpanded(false);
-    }
-    // Si se cierra el submenú, deseleccionar HEAD, SUIT, HANDS para que TORSO se muestre como activo
-    if (activeCategory === PartCategory.HEAD || activeCategory === PartCategory.SUIT_TORSO || 
+    setBeltSubmenuExpanded(false);
+    setLowerBodySubmenuExpanded(false);
+    if (activeCategory === PartCategory.HEAD || activeCategory === PartCategory.SUIT_TORSO ||
         activeCategory === PartCategory.HAND_LEFT || activeCategory === PartCategory.HAND_RIGHT) {
-      setActiveCategory(PartCategory.TORSO); // O simplemente null, dependiendo del UX deseado
+      setActiveCategory(PartCategory.TORSO);
     }
-  }, [activeCategory, torsoSubmenuExpanded, beltSubmenuExpanded, lowerBodySubmenuExpanded]); // Agregar torsoSubmenuExpanded a las dependencias
+  }, [activeCategory]);
 
   // Función para obtener la referencia del botón Upper Body desde el PartCategoryToolbar
   const getTorsoButtonRef = useCallback((ref: HTMLButtonElement | null) => {
     torsoButtonRef.current = ref;
   }, []);
 
-  // ✨ MANEJADOR DEL TOGGLE DEL SUBMENÚ DEL BELT
   const handleBeltSubmenuToggle = useCallback(() => {
+    if (beltButtonRef.current) {
+      const rect = beltButtonRef.current.getBoundingClientRect();
+      setBeltSubmenuPosition({ top: rect.top, left: rect.right + 8 });
+    }
     setBeltSubmenuExpanded(prev => !prev);
-    // Close otros submenus si están abiertos
-    if (torsoSubmenuExpanded) {
-      setTorsoSubmenuExpanded(false);
-    }
-    if (lowerBodySubmenuExpanded) {
-      setLowerBodySubmenuExpanded(false);
-    }
-  }, [beltSubmenuExpanded, torsoSubmenuExpanded, lowerBodySubmenuExpanded]);
+    setTorsoSubmenuExpanded(false);
+    setLowerBodySubmenuExpanded(false);
+  }, []);
 
   // Función para obtener la referencia del botón Belt desde el PartCategoryToolbar
   const getBeltButtonRef = useCallback((ref: HTMLButtonElement | null) => {
@@ -317,15 +316,14 @@ const AppContent: React.FC = () => {
 
   // ✨ MANEJADOR DEL TOGGLE DEL SUBMENÚ DEL LOWER BODY
   const handleLowerBodySubmenuToggle = useCallback(() => {
+    if (lowerBodyButtonRef.current) {
+      const rect = lowerBodyButtonRef.current.getBoundingClientRect();
+      setLowerBodySubmenuPosition({ top: rect.top, left: rect.right + 8 });
+    }
     setLowerBodySubmenuExpanded(prev => !prev);
-    // Close otros submenus si están abiertos
-    if (torsoSubmenuExpanded) {
-      setTorsoSubmenuExpanded(false);
-    }
-    if (beltSubmenuExpanded) {
-      setBeltSubmenuExpanded(false);
-    }
-  }, [lowerBodySubmenuExpanded, torsoSubmenuExpanded, beltSubmenuExpanded]);
+    setTorsoSubmenuExpanded(false);
+    setBeltSubmenuExpanded(false);
+  }, []);
 
   // Función para obtener la referencia del botón Legs desde el PartCategoryToolbar
   const getLowerBodyButtonRef = useCallback((ref: HTMLButtonElement | null) => {
@@ -537,20 +535,32 @@ const AppContent: React.FC = () => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      // Reset camera with 'R' key (only if not typing in an input)
-      if (event.key.toLowerCase() === 'r' && !['INPUT', 'TEXTAREA'].includes((event.target as HTMLElement)?.tagName)) {
+      const inInput = ['INPUT', 'TEXTAREA'].includes((event.target as HTMLElement)?.tagName);
+      if (inInput) return;
+
+      // Undo: Ctrl+Z
+      if (event.key === 'z' && (event.ctrlKey || event.metaKey) && !event.shiftKey) {
+        event.preventDefault();
+        handleUndo();
+        return;
+      }
+      // Redo: Ctrl+Shift+Z or Ctrl+Y
+      if ((event.key === 'z' && (event.ctrlKey || event.metaKey) && event.shiftKey) ||
+          (event.key === 'y' && (event.ctrlKey || event.metaKey))) {
+        event.preventDefault();
+        handleRedo();
+        return;
+      }
+      // Reset camera with 'C' key
+      if (event.key.toLowerCase() === 'c') {
         event.preventDefault();
         handleResetCamera();
-    
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, []);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleUndo, handleRedo]);
 
   // Save última pose cuando el usuario salga de la página
   useEffect(() => {
@@ -904,13 +914,10 @@ const AppContent: React.FC = () => {
   };
 
   const handleSelectPart = useCallback((newSelectedParts: SelectedParts) => {
+    pushPartsHistory(newSelectedParts);
     setSelectedParts(newSelectedParts);
-    
-    // Close submenus - this logic can be simplified as it's not directly related to part selection anymore
-    // The PartSelectorPanel now handles closing itself
-    // setTorsoSubmenuExpanded(false);
     return true;
-  }, [setSelectedParts]);
+  }, [setSelectedParts, pushPartsHistory]);
 
   const handleEditCategory = (category: PartCategory) => {
     setActiveCategory(category);
@@ -1761,6 +1768,20 @@ const AppContent: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', gap: '8px', flexShrink: 0 }}>
           <button
             className="btn-comic btn-outline"
+            title="Undo (Ctrl+Z)"
+            disabled={!canUndo}
+            style={{ fontSize: '13px', padding: '5px 9px', opacity: canUndo ? 1 : 0.35, cursor: canUndo ? 'pointer' : 'default' }}
+            onClick={handleUndo}
+          >↩</button>
+          <button
+            className="btn-comic btn-outline"
+            title="Redo (Ctrl+Shift+Z)"
+            disabled={!canRedo}
+            style={{ fontSize: '13px', padding: '5px 9px', opacity: canRedo ? 1 : 0.35, cursor: canRedo ? 'pointer' : 'default' }}
+            onClick={handleRedo}
+          >↪</button>
+          <button
+            className="btn-comic btn-outline"
             title="Randomize parts for this archetype"
             style={{ fontSize: '13px', padding: '5px 12px' }}
             onClick={handleRandomize}
@@ -2009,11 +2030,11 @@ const AppContent: React.FC = () => {
           ) : (
             <button
               type="button"
-              style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.04)', border: '1px dashed rgba(216, 162, 58, 0.26)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'not-allowed', fontFamily: 'var(--font-body)', opacity: 0.5 }}
+              style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px dashed rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
               onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
-              title="🔒 POSES · CREATE FREE ACCOUNT"
+              title="Sign in to save poses"
             >
-              🔒 POSES
+              💾 POSES
             </button>
           )}
         </div>
@@ -2304,9 +2325,9 @@ const AppContent: React.FC = () => {
               userSelect: 'none',
               opacity: !user ? 0.7 : 1,
             }}
-            title={!user ? '🔒 LIBRARY · CREATE FREE ACCOUNT' : 'Library'}
+            title={!user ? 'Sign in to access your Library' : 'Library'}
           >
-            {!user ? '🔒' : 'LIBRARY'}
+            LIBRARY
           </button>
         </div>
       </div>
