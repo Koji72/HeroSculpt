@@ -42,6 +42,7 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
 
   return (
     <div
+      data-submenu="lower"
       style={{
         position: 'fixed',
         top: submenuPosition.top,
@@ -50,7 +51,7 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
         border: '2px solid var(--color-accent)',
         borderRadius: 'var(--radius)',
         padding: '8px',
-        zIndex: 150, /* --z-submenu */
+        zIndex: 150,
         minWidth: 140,
         animation: 'submenuAppear 150ms ease',
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',

@@ -34,6 +34,7 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
 
   return (
     <div
+      data-submenu="belt"
       style={{
         position: 'fixed',
         top: submenuPosition.top,
@@ -42,7 +43,7 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
         border: '2px solid var(--color-accent)',
         borderRadius: 'var(--radius)',
         padding: '8px',
-        zIndex: 150, /* --z-submenu */
+        zIndex: 150,
         minWidth: 140,
         animation: 'submenuAppear 150ms ease',
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',

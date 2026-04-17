@@ -593,17 +593,23 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [handleUndo, handleRedo]);
 
-  // Close submenus when clicking outside the sidebar
+  // Close submenus when clicking outside the sidebar or submenus
   useEffect(() => {
-    const handleMouseDown = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as Node;
       const sidebar = document.getElementById('category-toolbar')?.closest('.app-sidebar');
-      if (sidebar && sidebar.contains(e.target as Node)) return;
+      if (sidebar && sidebar.contains(target)) return;
+      // Don't close if click is inside a submenu panel itself
+      const submenus = document.querySelectorAll('[data-submenu]');
+      for (const sm of Array.from(submenus)) {
+        if (sm.contains(target)) return;
+      }
       setTorsoSubmenuExpanded(false);
       setBeltSubmenuExpanded(false);
       setLowerBodySubmenuExpanded(false);
     };
-    document.addEventListener('mousedown', handleMouseDown);
-    return () => document.removeEventListener('mousedown', handleMouseDown);
+    document.addEventListener('click', handleClick, true);
+    return () => document.removeEventListener('click', handleClick, true);
   }, []);
 
   // Load build from URL ?build= param on mount
