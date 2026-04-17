@@ -1707,6 +1707,50 @@ const AppContent: React.FC = () => {
           />
         </div>
 
+        {/* 3-step flow indicator */}
+        {(() => {
+          const activeStep = Object.keys(selectedParts).length > 0 ? 3 : 2;
+          const steps: Array<{ n: number; label: string }> = [
+            { n: 1, label: 'ARCHETYPE' },
+            { n: 2, label: 'BUILD' },
+            { n: 3, label: 'EXPORT' },
+          ];
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0, padding: '0 16px' }}>
+              {steps.map((step, i) => (
+                <React.Fragment key={step.n}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <div style={{
+                      width: 20, height: 20, borderRadius: '50%',
+                      background: step.n <= activeStep ? 'var(--color-accent, #f59e0b)' : 'rgba(71,85,105,0.5)',
+                      color: step.n <= activeStep ? '#09090f' : 'rgba(148,163,184,0.6)',
+                      fontSize: 10, fontWeight: 900,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: 'var(--font-body)',
+                      flexShrink: 0,
+                    }}>
+                      {step.n < activeStep ? '✓' : step.n}
+                    </div>
+                    <span style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 9,
+                      fontWeight: 800,
+                      letterSpacing: 1,
+                      color: step.n === activeStep ? 'var(--color-accent, #f59e0b)' : step.n < activeStep ? 'rgba(148,163,184,0.7)' : 'rgba(71,85,105,0.6)',
+                      textTransform: 'uppercase' as const,
+                    }}>
+                      {step.label}
+                    </span>
+                  </div>
+                  {i < steps.length - 1 && (
+                    <div style={{ width: 20, height: 1, background: 'rgba(71,85,105,0.5)', margin: '0 4px' }} />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        })()}
+
         {/* Right actions */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', gap: '8px', flexShrink: 0 }}>
           <button
