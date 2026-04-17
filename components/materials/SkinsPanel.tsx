@@ -1763,15 +1763,15 @@ const SkinsPanel: React.FC<SkinsPanelProps> = ({ apiRef, onClose }) => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Header */}
       <div className="panel-header">
-        <span>SKINS</span>
+        <span>✨ SKINS</span>
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}>✕</button>
       </div>
 
       {/* Active skin indicator */}
       <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface-2)', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-        <span style={{ fontSize: 10, color: 'var(--color-text-faint)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>ACTIVE:</span>
+        <span style={{ fontSize: 10, color: 'var(--color-text-faint)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>ACTIVO:</span>
         <span style={{ fontSize: 12, color: activeSkin ? 'var(--color-accent)' : 'var(--color-text-muted)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>
-          {activeSkin ? activeSkin.name : 'NONE'}
+          {activeSkin ? activeSkin.name : 'NINGUNO'}
         </span>
       </div>
 
@@ -1811,7 +1811,7 @@ const SkinsPanel: React.FC<SkinsPanelProps> = ({ apiRef, onClose }) => {
                       className={isActive ? 'btn-comic btn-primary' : 'btn-comic btn-outline'}
                       style={{ fontSize: 10, padding: '4px 10px', flexShrink: 0 }}
                     >
-                      {isActive ? 'ON' : 'APPLY'}
+                      {isActive ? '✓ ACTIVO' : 'APLICAR'}
                     </button>
                   </div>
                 );

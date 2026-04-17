@@ -56,7 +56,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Header */}
       <div className="panel-header">
-        <span>LIGHTING</span>
+        <span>💡 ILUMINACIÓN</span>
         <button
           onClick={onClose}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
@@ -70,7 +70,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
         background: 'var(--color-surface-2)',
         display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0,
       }}>
-        <span style={{ fontSize: 10, color: 'var(--color-text-faint)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>ACTIVE:</span>
+        <span style={{ fontSize: 10, color: 'var(--color-text-faint)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>ACTIVO:</span>
         {activePreset ? (
           <>
             <span style={{ fontSize: 11, color: 'var(--color-accent)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>
@@ -79,7 +79,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
             <LightDots preset={activePreset} />
           </>
         ) : (
-          <span style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>NONE</span>
+          <span style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>NINGUNO</span>
         )}
       </div>
 
