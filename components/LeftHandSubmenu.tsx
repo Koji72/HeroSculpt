@@ -16,12 +16,6 @@ const LeftHandSubmenu: React.FC<LeftHandSubmenuProps> = ({
   onToggle,
   submenuPosition
 }) => {
-  console.log('🎯 LeftHandSubmenu Render:', {
-    isExpanded,
-    activeCategory,
-    submenuPosition: { top: submenuPosition.top, left: submenuPosition.left }
-  });
-
   const submenuCategories = [
     { category: PartCategory.HAND_LEFT, label: 'LEFT HAND', icon: '✋' },
   ];

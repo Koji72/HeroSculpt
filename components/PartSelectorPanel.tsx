@@ -167,7 +167,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     }
     // SPECIAL CASE: If selecting a symbol, verify compatibility with current torso
     else if (activeCategory === PartCategory.SYMBOL) {
-      console.log('?? SYMBOL SELECT: Verifying compatibility for symbol:', part.id);
       
       if (part.attributes?.none) {
         delete newPreviewParts[activeCategory];
@@ -175,17 +174,14 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         const currentTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
         
         if (!currentTorso) {
-          console.log('?? SYMBOL SELECT: No torso selected, using symbol as-is');
           newPreviewParts[activeCategory] = part;
         } else {
           // Check if the selected symbol is compatible with current torso
           const isCompatible = part.compatible.includes(currentTorso.id);
           
           if (isCompatible) {
-            console.log('? SYMBOL SELECT: Symbol is compatible with current torso');
             newPreviewParts[activeCategory] = part;
           } else {
-            console.log('?? SYMBOL SELECT: Symbol not compatible, finding compatible alternative');
             
             // Find compatible symbol of the same type
             const currentType = part.id.match(/strong_symbol_(\d+)_t\d+/)?.[1];
@@ -201,7 +197,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
             }
             
             if (compatibleSymbol) {
-              console.log('? SYMBOL SELECT: Found compatible symbol of same type:', compatibleSymbol.id);
               newPreviewParts[activeCategory] = compatibleSymbol;
             } else {
               // Use first compatible symbol
@@ -212,10 +207,8 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
               );
               
               if (firstCompatible) {
-                console.log('? SYMBOL SELECT: Using first compatible symbol:', firstCompatible.id);
                 newPreviewParts[activeCategory] = firstCompatible;
               } else {
-                console.log('? SYMBOL SELECT: No compatible symbols found for torso:', currentTorso.id);
                 delete newPreviewParts[activeCategory];
               }
             }
@@ -356,8 +349,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     }
     // SPECIAL CASE: Si se hace hover sobre las piernas, recalcular las botas compatibles
     else if (activeCategory === PartCategory.LOWER_BODY) {
-      console.log('?? ENTRANDO AL BLOQUE LOWER_BODY HOVER');
-      console.log('?? LEGS HOVER: Recalculando botas compatibles para piernas:', partToDisplay?.id || 'none');
       
       // ? COPIAR L�GICA DEL TORSO: Crear copia sin la parte actual
       const partsWithoutCurrentLegs = { ...selectedParts };
@@ -383,12 +374,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         delete hoverPreviewParts[PartCategory.LOWER_BODY];
         delete hoverPreviewParts[PartCategory.BOOTS];
       }
-
-      console.log('? LEGS HOVER: Enviando estado de preview (siguiendo reglas cr�ticas):', {
-        allParts: Object.keys(hoverPreviewParts),
-        legs: hoverPreviewParts[PartCategory.LOWER_BODY]?.id || 'removed',
-        boots: hoverPreviewParts[PartCategory.BOOTS]?.id || 'removed'
-      });
     }
     // CASO GEN�RICO: Para todas las dem�s categor�as que usan el patr�n de estado completo
     else {
@@ -417,13 +402,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       // console.log('?? BELT DEBUG - Enviando preview parts:', hoverPreviewParts);
     }
     
-    // Enviar el estado de preview completo
-    console.log('?? ENVIANDO PREVIEW:', {
-      activeCategory,
-      hoverPreviewParts: Object.keys(hoverPreviewParts),
-      legs: hoverPreviewParts[PartCategory.LOWER_BODY]?.id || 'removed',
-      boots: hoverPreviewParts[PartCategory.BOOTS]?.id || 'removed'
-    });
     onPreviewChange(hoverPreviewParts);
     }, 150);
   }, [activeCategory, selectedParts, onPreviewChange, characterViewerRef]);
@@ -566,7 +544,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     if (part.category === PartCategory.CAPE) {
       const selectedTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
       if (!selectedTorso) {
-        console.log('?? CAPE: No hay torso seleccionado, usando torso por defecto para filtrar:', part.id);
         return part.compatible.includes('strong_torso_01');
       }
       return part.compatible.includes(selectedTorso.id);
@@ -576,7 +553,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     if (part.category === PartCategory.HEAD) {
       const selectedTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
       if (!selectedTorso) {
-        console.log('?? HEAD: No hay torso seleccionado, usando torso por defecto para filtrar:', part.id);
         return part.compatible.includes('strong_torso_01');
       }
       return part.compatible.includes(selectedTorso.id);
@@ -586,7 +562,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     if (part.category === PartCategory.SYMBOL) {
       const selectedTorso = selectedParts[PartCategory.TORSO] || selectedParts[PartCategory.SUIT_TORSO];
       if (!selectedTorso) {
-        console.log('?? SYMBOL: No hay torso seleccionado, usando torso por defecto para filtrar:', part.id);
         return part.compatible.includes('strong_torso_01');
       }
       return part.compatible.includes(selectedTorso.id);
@@ -639,7 +614,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       
       // ? SOLUCI�N ROBUSTA: Si no hay torso, usar torso por defecto
       if (!activeTorso) {
-        console.log('?? No hay torso seleccionado, usando torso por defecto para filtrar manos');
         // Usar strong_torso_01 como fallback para usuarios no logueados
         return part.compatible.includes('strong_torso_01');
       }
@@ -664,7 +638,6 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     
     // ? FIXED: Para guest users, usar torso por defecto si no hay torso seleccionado
     if (!activeTorso) {
-      console.log('?? No hay torso seleccionado, usando torso por defecto para filtrar:', part.id);
       // Usar strong_torso_01 como fallback para usuarios no logueados
       return part.compatible.includes('strong_torso_01');
     }
@@ -695,23 +668,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   
   // Debug espec�fico para buckles
   if (activeCategory === PartCategory.BUCKLE) {
-    console.log('?? DEBUG BUCKLES - PartSelectorPanel:');
-    console.log('   - Buckles disponibles:', availableParts.map(p => p.id));
-    console.log('   - Total buckles en ALL_PARTS:', ALL_PARTS.filter(p => p.category === PartCategory.BUCKLE).length);
-    console.log('   - Arquetipo seleccionado:', selectedArchetype);
-    console.log('   - Todos los buckles en ALL_PARTS:', ALL_PARTS.filter(p => p.category === PartCategory.BUCKLE).map(p => ({ id: p.id, archetype: p.archetype })));
   }
-  
-  // Debug general para verificar filtrado
-  console.log('?? DEBUG FILTRADO - PartSelectorPanel:', {
-    activeCategory,
-    selectedArchetype,
-    totalPartsInCategory: ALL_PARTS.filter(p => p.category === activeCategory).length,
-    availablePartsCount: availableParts.length,
-    selectedTorso: selectedParts[PartCategory.TORSO]?.id || 'ninguno',
-    selectedSuit: selectedParts[PartCategory.SUIT_TORSO]?.id || 'ninguno',
-    availableParts: availableParts.map(p => p.id)
-  });
   
   // Debug espec�fico para cabezas
   if (activeCategory === PartCategory.HEAD) {

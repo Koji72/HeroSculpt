@@ -24,12 +24,6 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
   onPartHover,       // Destructure new prop
   onPartUnhover      // Destructure new prop
 }) => {
-  console.log('🎯 LowerBodySubmenu Render:', {
-    isExpanded,
-    activeCategory,
-    submenuPosition: { top: submenuPosition.top, left: submenuPosition.left }
-  });
-
   const submenuCategories = [
     { category: PartCategory.LOWER_BODY, label: 'LEGS', icon: '🦵' },
     { category: PartCategory.BOOTS, label: 'BOOTS', icon: '👢' },
