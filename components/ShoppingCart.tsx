@@ -150,9 +150,19 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
           {activeTab === 'config' ? (
             <>
               {configParts.length === 0 ? (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>
-                  No hay partes seleccionadas
-                </p>
+                <div style={{ textAlign: 'center', padding: '32px 12px' }}>
+                  <div style={{ fontSize: 32, marginBottom: 10 }}>🦸</div>
+                  <p style={{ color: 'var(--color-text-muted)', fontSize: 12, fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>
+                    ¡CONSTRUYE TU HÉROE!
+                  </p>
+                  <p style={{ color: 'var(--color-text-faint)', fontSize: 11, lineHeight: 1.5, margin: 0 }}>
+                    Selecciona partes desde el panel izquierdo para comenzar tu personaje.
+                  </p>
+                  <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                    <span style={{ fontSize: 16 }}>←</span>
+                    <span style={{ color: 'var(--color-accent)', fontSize: 10, fontFamily: 'var(--font-body)', fontWeight: 800, letterSpacing: 1.2 }}>PANEL DE PARTES</span>
+                  </div>
+                </div>
               ) : (
                 configParts.map((part) => {
                   const isOwned = part.priceUSD > 0 && ownedPartIds.has(part.id);
@@ -245,9 +255,15 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
             /* Cart tab */
             <>
               {cartItems.length === 0 ? (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>
-                  El carrito está vacío
-                </p>
+                <div style={{ textAlign: 'center', padding: '32px 12px' }}>
+                  <div style={{ fontSize: 28, marginBottom: 10 }}>🛒</div>
+                  <p style={{ color: 'var(--color-text-muted)', fontSize: 11, fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 1, margin: '0 0 6px' }}>
+                    CARRITO VACÍO
+                  </p>
+                  <p style={{ color: 'var(--color-text-faint)', fontSize: 10, lineHeight: 1.5, margin: 0 }}>
+                    Añade partes premium desde el panel de configuración.
+                  </p>
+                </div>
               ) : (
                 cartItems.map((item) => (
                   <div key={item.id} style={{
@@ -292,7 +308,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 marginBottom: 6,
               }}
             >
-              {isProcessing ? 'GUARDANDO...' : '⬇ GUARDAR EN BIBLIOTECA'}
+              {isProcessing ? 'GUARDANDO...' : '✓ GUARDAR CONFIGURACIÓN'}
             </button>
           ) : (
             <button

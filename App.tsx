@@ -1756,12 +1756,14 @@ const AppContent: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                     <div style={{
                       width: 20, height: 20, borderRadius: '50%',
-                      background: step.n <= activeStep ? 'var(--color-accent, #f59e0b)' : 'rgba(71,85,105,0.5)',
+                      background: step.n <= activeStep ? 'var(--color-accent)' : 'rgba(71,85,105,0.5)',
                       color: step.n <= activeStep ? '#09090f' : 'rgba(148,163,184,0.6)',
                       fontSize: 10, fontWeight: 900,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontFamily: 'var(--font-body)',
                       flexShrink: 0,
+                      boxShadow: step.n === activeStep ? '0 0 8px rgba(216,162,58,0.6)' : 'none',
+                      animation: step.n === activeStep ? 'stepPulse 2s ease-in-out infinite' : 'none',
                     }}>
                       {step.n < activeStep ? '✓' : step.n}
                     </div>
@@ -1770,7 +1772,7 @@ const AppContent: React.FC = () => {
                       fontSize: 9,
                       fontWeight: 800,
                       letterSpacing: 1,
-                      color: step.n === activeStep ? 'var(--color-accent, #f59e0b)' : step.n < activeStep ? 'rgba(148,163,184,0.7)' : 'rgba(71,85,105,0.6)',
+                      color: step.n === activeStep ? 'var(--color-accent)' : step.n < activeStep ? 'rgba(148,163,184,0.7)' : 'rgba(71,85,105,0.6)',
                       textTransform: 'uppercase' as const,
                     }}>
                       {step.label}

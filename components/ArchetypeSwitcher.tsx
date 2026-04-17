@@ -180,18 +180,18 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
           whiteSpace: 'nowrap',
           boxShadow: '0 8px 32px rgba(0,0,0,0.8)',
         }}>
-          <span style={{ fontSize: 11, color: '#e2e8f0' }}>Changing archetype will clear selected parts. Continue?</span>
+          <span style={{ fontSize: 11, color: '#e2e8f0' }}>Cambiar arquetipo reiniciará las partes seleccionadas. ¿Continuar?</span>
           <button
             onClick={handleConfirm}
             style={{ padding: '3px 10px', background: 'var(--color-accent)', color: '#000', border: 'none', borderRadius: 'var(--radius)', fontSize: 10, fontWeight: 'bold', cursor: 'pointer' }}
           >
-            CONFIRM
+            CONFIRMAR
           </button>
           <button
             onClick={() => setPendingId(null)}
             style={{ padding: '3px 10px', background: 'transparent', color: '#9ca3af', border: '1px solid var(--color-border)', borderRadius: 'var(--radius)', fontSize: 10, cursor: 'pointer' }}
           >
-            CANCEL
+            CANCELAR
           </button>
         </div>
       )}
