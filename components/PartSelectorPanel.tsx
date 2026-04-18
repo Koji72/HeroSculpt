@@ -48,6 +48,16 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Freeze sort order when the category opens — never reorder mid-session.
+  // Without this, selecting a part calls recordUsed → recentIds[0] changes → list
+  // reorders in-place → cursor hovers over a different part (wrong preview).
+  const frozenRecentIdsRef = useRef<string[]>([]);
+  const lastFrozenCategoryRef = useRef<string | null>(null);
+  if (lastFrozenCategoryRef.current !== activeCategory) {
+    lastFrozenCategoryRef.current = activeCategory;
+    frozenRecentIdsRef.current = activeCategory && getRecentParts ? getRecentParts(activeCategory) : [];
+  }
+
   // Keep previewParts in sync when the external selectedParts changes (pose navigation, archetype switch, etc.)
   useEffect(() => {
     setPreviewParts(selectedParts);
@@ -704,11 +714,11 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     return previewParts[activeCategory]?.id === part.id;
   };
 
-  const recentIds = activeCategory && getRecentParts ? getRecentParts(activeCategory) : [];
-  const sortedAvailable = recentIds.length
+  const frozenIds = frozenRecentIdsRef.current;
+  const sortedAvailable = frozenIds.length
     ? [...availableParts].sort((a, b) => {
-        const ai = recentIds.indexOf(a.id);
-        const bi = recentIds.indexOf(b.id);
+        const ai = frozenIds.indexOf(a.id);
+        const bi = frozenIds.indexOf(b.id);
         if (ai === -1 && bi === -1) return 0;
         if (ai === -1) return 1;
         if (bi === -1) return -1;
