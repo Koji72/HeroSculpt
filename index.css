@@ -96,7 +96,7 @@ html, body {
 .app-topbar {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 52px;
+  height: 80px;
   z-index: var(--z-topbar);
   background: linear-gradient(180deg, rgba(10,10,15,0.98), rgba(10,10,15,0.92));
   border-bottom: 1px solid rgba(216, 162, 58, 0.35);
@@ -108,7 +108,7 @@ html, body {
 /* Left sidebar */
 .app-sidebar {
   position: fixed;
-  top: 52px; left: 0; bottom: 56px;
+  top: 80px; left: 0; bottom: 56px;
   width: 72px;
   z-index: var(--z-sidebar);
   background: linear-gradient(180deg, rgba(10,10,15,0.94), rgba(12,12,20,0.92));
@@ -124,7 +124,7 @@ html, body {
 /* Left parts panel — slides in from left, after the category toolbar */
 .app-panel {
   position: fixed;
-  top: 52px; left: 0; bottom: 56px;
+  top: 80px; left: 0; bottom: 56px;
   width: 300px;
   z-index: 50;
   background: linear-gradient(180deg, rgba(12,12,20,0.98), rgba(12,12,20,0.94));

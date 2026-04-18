@@ -24,7 +24,7 @@ import GuestEmailModal from './components/GuestEmailModal';
 import { useAuth } from './hooks/useAuth';
 import { useFavorites } from './hooks/useFavorites';
 import { useRecentParts } from './hooks/useRecentParts';
-import { assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveCapeForTorso, assignAdaptiveBootsForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso } from './lib/utils';
+import { assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveCapeForTorso, assignAdaptiveBootsForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso, getCategoryName } from './lib/utils';
 import { ARCHETYPE_DATA, ARCHETYPES_LIST } from './lib/archetypeData';
 import ArchetypeSwitcher from './components/ArchetypeSwitcher';
 import STLScaleModal from './components/STLScaleModal';
@@ -181,7 +181,7 @@ const AppContent: React.FC = () => {
   const [sessionInfo, setSessionInfo] = useState<{ hasSession: boolean; lastSaved?: string; source?: 'supabase' | 'localStorage' }>({ hasSession: false });
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isSavingLastPose, setIsSavingLastPose] = useState(false);
-  const [characterName, setCharacterName] = useState<string>("");
+  const [characterName, setCharacterName] = useState<string>("My Hero");
   const [rpgCharacter, setRpgCharacter] = useState<RPGCharacterSync | null>(null);
 
   // Estados del carrito de compras
@@ -1792,16 +1792,17 @@ const AppContent: React.FC = () => {
       <header className="app-topbar">
         {/* Logo block */}
         <div style={{
-          background: 'linear-gradient(180deg, rgba(216, 162, 58, 0.98), rgba(184, 131, 31, 0.96))',
-          padding: '0 18px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
           flexShrink: 0,
+          borderRight: '1px solid rgba(216,162,58,0.25)',
+          width: 200,
+          height: 80,
+          overflow: 'hidden',
         }}>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '18px', fontWeight: 900, letterSpacing: '1.8px', color: '#09090f', lineHeight: 1 }}>
-            HERO BUILDER
-          </span>
+          <img
+            src="/logo.png"
+            alt="What If Superheroes"
+            style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center', display: 'block' }}
+          />
         </div>
 
         {/* Archetype Switcher */}
@@ -1862,30 +1863,35 @@ const AppContent: React.FC = () => {
         })()}
 
         {/* Hero name — inline editable */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, padding: '0 8px' }}>
-          <input
-            type="text"
-            value={characterName}
-            onChange={e => setCharacterName(e.target.value)}
-            onBlur={e => { if (!e.target.value.trim()) setCharacterName(t('topbar.heroplaceholder', lang)); }}
-            maxLength={28}
-            placeholder={t('topbar.heroplaceholder', lang)}
-            style={{
-              background: 'rgba(19,19,31,0.7)',
-              border: '1px solid rgba(216,162,58,0.28)',
-              borderRadius: 6,
-              color: 'var(--color-accent)',
-              fontFamily: 'var(--font-comic)',
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: 1.2,
-              padding: '4px 10px',
-              outline: 'none',
-              width: 160,
-              textAlign: 'center',
-            }}
-            onFocus={e => e.target.select()}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, padding: '0 12px', borderLeft: '1px solid rgba(71,85,105,0.35)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 800, letterSpacing: 1.5, color: 'rgba(148,163,184,0.6)', textTransform: 'uppercase' }}>
+              {t('topbar.heroplaceholder', lang)}
+            </span>
+            <input
+              type="text"
+              value={characterName}
+              onChange={e => setCharacterName(e.target.value)}
+              onBlur={e => { if (!e.target.value.trim()) setCharacterName(t('topbar.heroplaceholder', lang)); }}
+              maxLength={28}
+              placeholder="..."
+              style={{
+                background: 'transparent',
+                border: 'none',
+                borderBottom: '1px solid rgba(216,162,58,0.5)',
+                borderRadius: 0,
+                color: 'var(--color-accent)',
+                fontFamily: 'var(--font-comic)',
+                fontSize: 16,
+                fontWeight: 700,
+                letterSpacing: 1.5,
+                padding: '0 2px 2px',
+                outline: 'none',
+                width: 180,
+              }}
+              onFocus={e => e.target.select()}
+            />
+          </div>
         </div>
 
         {/* Right actions */}
@@ -2038,40 +2044,46 @@ const AppContent: React.FC = () => {
 
         <div className="app-panel-shell">
           <div className="app-panel-top">
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 800, letterSpacing: 1.4, color: 'var(--color-accent)', textTransform: 'uppercase', marginBottom: 4 }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 800, letterSpacing: 1.4, color: 'var(--color-accent)', textTransform: 'uppercase', marginBottom: 2 }}>
                 {t('panel.title', lang)}
               </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 18, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
-                {{ parts: t('panel.parts', lang), style: t('panel.style', lang), skins: t('panel.skins', lang), lights: t('panel.lights', lang) }[activePanelMode]}
-              </div>
-              <div style={{ marginTop: 6, fontFamily: 'var(--font-body)', fontSize: 12, lineHeight: 1.35, color: 'var(--color-text-muted)', maxWidth: 230 }}>
-                {{
-                  parts: t('panel.parts.desc', lang),
-                  style: t('panel.style.desc', lang),
-                  skins: t('panel.skins.desc', lang),
-                  lights: t('panel.lights.desc', lang),
-                }[activePanelMode]}
-              </div>
+              {activePanelMode === 'parts' && activeCategory ? (
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
+                  {getCategoryName(activeCategory)}
+                </div>
+              ) : (
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 18, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
+                  {{ parts: t('panel.parts', lang), style: t('panel.style', lang), skins: t('panel.skins', lang), lights: t('panel.lights', lang) }[activePanelMode]}
+                </div>
+              )}
             </div>
-            <button
-              onClick={() => { setIsPanelOpen(false); setActiveSidePanel(null); setActiveCategory(null); }}
-              style={{
-                width: 32,
-                height: 32,
-                flexShrink: 0,
-                background: 'rgba(19, 19, 31, 0.92)',
-                border: '1px solid rgba(71, 85, 105, 0.55)',
-                borderRadius: 8,
-                cursor: 'pointer',
-                color: 'var(--color-text-muted)',
-                fontSize: 16,
-                lineHeight: 1,
-              }}
-              title={t('panel.close', lang)}
-            >
-              ×
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              {activePanelMode === 'parts' && activeCategory && (
+                <button
+                  onClick={() => characterViewerRef.current?.focusOnCategory(activeCategory)}
+                  title="Centrar cámara en esta parte"
+                  style={{
+                    width: 32, height: 32,
+                    background: 'rgba(216,162,58,0.12)',
+                    border: '1px solid rgba(216,162,58,0.4)',
+                    borderRadius: 8, cursor: 'pointer', fontSize: 15, lineHeight: 1,
+                    color: 'var(--color-accent)',
+                  }}
+                >🎯</button>
+              )}
+              <button
+                onClick={() => { setIsPanelOpen(false); setActiveSidePanel(null); setActiveCategory(null); }}
+                style={{
+                  width: 32, height: 32, flexShrink: 0,
+                  background: 'rgba(19, 19, 31, 0.92)',
+                  border: '1px solid rgba(71, 85, 105, 0.55)',
+                  borderRadius: 8, cursor: 'pointer',
+                  color: 'var(--color-text-muted)', fontSize: 16, lineHeight: 1,
+                }}
+                title={t('panel.close', lang)}
+              >×</button>
+            </div>
           </div>
 
           <div className="app-panel-tabs">
@@ -2159,7 +2171,7 @@ const AppContent: React.FC = () => {
         {/* View presets */}
         <div style={{ display: 'flex', gap: 4 }}>
           {([t('bottom.front', lang), t('bottom.side', lang), '3/4', t('bottom.back', lang)] as const).map((label, i) => {
-            const angles = [0.5, 0.25, 0.375, 0];
+            const angles = [0, 0.25, 0.125, 0.5];
             return (
               <button
                 key={label}

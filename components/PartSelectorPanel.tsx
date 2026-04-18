@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Part, PartCategory, ArchetypeId, SelectedParts } from '../types';
 import { ALL_PARTS, createNonePart } from '../constants';
 import PartItemCard from './PartItemCard';
-import { getCategoryName, assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveBootsForTorso, assignAdaptiveCapeForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso } from '../lib/utils'; 
+import { getCategoryName, assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveBootsForTorso, assignAdaptiveCapeForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso } from '../lib/utils';
 import { XMarkIcon /*, CheckIcon, RotateCcwIcon*/ } from './icons';
+import { useLang, t } from '../lib/i18n';
 
 // import { GamingButton } from './ui/gaming-button'; // Removed: no longer used
 // import { GlassPanel } from './ui/glass-panel'; // Removed: no longer used
@@ -28,26 +29,26 @@ interface PartSelectorPanelProps {
 
 // Sibling category groups for in-panel navigation
 const UPPER_GROUP = [
-  { cat: PartCategory.TORSO, short: 'TORSO' },
-  { cat: PartCategory.HEAD, short: 'HEAD' },
-  { cat: PartCategory.SUIT_TORSO, short: 'SUIT' },
-  { cat: PartCategory.CAPE, short: 'CAPE' },
-  { cat: PartCategory.SYMBOL, short: 'SYMBOL' },
-  { cat: PartCategory.CHEST_BELT, short: 'CHEST' },
-  { cat: PartCategory.SHOULDERS, short: 'SHLD' },
-  { cat: PartCategory.FOREARMS, short: 'FORE' },
-  { cat: PartCategory.HAND_LEFT, short: 'L.HAND' },
-  { cat: PartCategory.HAND_RIGHT, short: 'R.HAND' },
-];
+  { cat: PartCategory.TORSO,       key: 'sub.torso' },
+  { cat: PartCategory.HEAD,        key: 'sub.head' },
+  { cat: PartCategory.SUIT_TORSO,  key: 'sub.suit' },
+  { cat: PartCategory.CAPE,        key: 'sub.cape' },
+  { cat: PartCategory.SYMBOL,      key: 'sub.symbol' },
+  { cat: PartCategory.CHEST_BELT,  key: 'sub.chest' },
+  { cat: PartCategory.SHOULDERS,   key: 'sub.shoulders' },
+  { cat: PartCategory.FOREARMS,    key: 'sub.forearms' },
+  { cat: PartCategory.HAND_LEFT,   key: 'sub.hand_left' },
+  { cat: PartCategory.HAND_RIGHT,  key: 'sub.hand_right' },
+] as const;
 const BELT_GROUP = [
-  { cat: PartCategory.BELT, short: 'BELT' },
-  { cat: PartCategory.POUCH, short: 'POUCH' },
-  { cat: PartCategory.BUCKLE, short: 'BUCKLE' },
-];
+  { cat: PartCategory.BELT,   key: 'sub.belt' },
+  { cat: PartCategory.POUCH,  key: 'sub.pouch' },
+  { cat: PartCategory.BUCKLE, key: 'sub.buckle' },
+] as const;
 const LOWER_GROUP = [
-  { cat: PartCategory.LOWER_BODY, short: 'LEGS' },
-  { cat: PartCategory.BOOTS, short: 'BOOTS' },
-];
+  { cat: PartCategory.LOWER_BODY, key: 'sub.legs' },
+  { cat: PartCategory.BOOTS,      key: 'sub.boots' },
+] as const;
 const ALL_GROUPS = [UPPER_GROUP, BELT_GROUP, LOWER_GROUP];
 
 const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
@@ -69,6 +70,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
 
   const [previewParts, setPreviewParts] = useState<SelectedParts>(selectedParts);
   const [hasChanges, setHasChanges] = useState(false);
+  const { lang } = useLang();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -790,6 +792,18 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
               }}
             >♥</button>
           )}
+          {characterViewerRef && activeCategory && (
+            <button
+              onClick={() => characterViewerRef.current?.focusOnCategory(activeCategory)}
+              title="Centrar cámara en esta parte"
+              style={{
+                background: 'rgba(216,162,58,0.1)',
+                border: '1px solid rgba(216,162,58,0.35)',
+                borderRadius: 4, cursor: 'pointer', fontSize: 12, padding: '1px 6px',
+                color: 'var(--color-accent)', lineHeight: 1,
+              }}
+            >🎯</button>
+          )}
           <button
             onClick={handleCancelChanges}
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
@@ -805,11 +819,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         if (!onSwitchCategory || siblings.length < 2) return null;
         return (
           <div style={{
-            display: 'flex', overflowX: 'auto', gap: 4, padding: '6px 10px',
+            display: 'flex', flexWrap: 'wrap', gap: 4, padding: '6px 10px',
             borderBottom: '1px solid var(--color-border)', flexShrink: 0,
-            scrollbarWidth: 'none',
           }}>
-            {siblings.map(({ cat, short }) => {
+            {siblings.map(({ cat, key }) => {
               const isActive = cat === activeCategory;
               return (
                 <button
@@ -817,18 +830,18 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
                   type="button"
                   onClick={() => onSwitchCategory(cat)}
                   style={{
-                    padding: '3px 8px', flexShrink: 0,
-                    background: isActive ? 'rgba(216,162,58,0.15)' : 'transparent',
-                    border: `1px solid ${isActive ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                    borderRadius: 'var(--radius)',
+                    padding: '4px 10px',
+                    background: isActive ? 'rgba(216,162,58,0.15)' : 'rgba(19,19,31,0.6)',
+                    border: `1px solid ${isActive ? 'var(--color-accent)' : 'rgba(71,85,105,0.4)'}`,
+                    borderRadius: 6,
                     color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
-                    fontSize: 9, fontWeight: 'bold', letterSpacing: 1,
+                    fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
                     cursor: 'pointer', outline: 'none',
-                    fontFamily: 'var(--font-comic)',
-                    transition: 'border-color 0.1s, color 0.1s',
+                    fontFamily: 'var(--font-body)',
+                    transition: 'border-color 0.1s, color 0.1s, background 0.1s',
                   }}
                 >
-                  {short}
+                  {t(key, lang)}
                 </button>
               );
             })}
@@ -836,21 +849,34 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         );
       })()}
 
-      {/* Search bar */}
+      {/* Search bar + favorites filter */}
       {allPartsToShow.length > 6 && (
-        <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--color-border)', flexShrink: 0 }}>
+        <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--color-border)', flexShrink: 0, display: 'flex', gap: 6, alignItems: 'center' }}>
           <input
             type="text"
             placeholder="Buscar parte..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             style={{
-              width: '100%', boxSizing: 'border-box',
+              flex: 1, boxSizing: 'border-box',
               background: 'var(--color-surface)', border: '1px solid var(--color-border)',
               color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontSize: 11,
               padding: '5px 8px', outline: 'none', borderRadius: 'var(--radius)',
             }}
           />
+          {hasFavorites && (
+            <button
+              onClick={() => setShowFavoritesOnly(v => !v)}
+              title={showFavoritesOnly ? 'Mostrar todas' : 'Solo favoritos'}
+              style={{
+                flexShrink: 0,
+                background: showFavoritesOnly ? 'rgba(244,63,94,0.15)' : 'rgba(30,41,59,0.8)',
+                border: `1px solid ${showFavoritesOnly ? 'rgba(244,63,94,0.5)' : 'rgba(71,85,105,0.4)'}`,
+                borderRadius: 6, cursor: 'pointer', fontSize: 14, padding: '3px 7px',
+                color: showFavoritesOnly ? '#f43f5e' : 'rgba(100,116,139,0.7)',
+              }}
+            >♥</button>
+          )}
         </div>
       )}
 

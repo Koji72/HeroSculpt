@@ -49,6 +49,7 @@ export interface CharacterViewerRef {
   clearPreview: () => void;
   resetState: () => void;
   resetCamera: () => void;
+  focusOnCategory: (category: PartCategory) => void;
   setViewAngle: (azimuthPercentage: number) => void;
   takeScreenshot: () => Promise<string>;
   takeTokenScreenshot: () => Promise<string>;
@@ -117,6 +118,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   const isInitializedRef = useRef(false);
 
   const hasUserInteractedWithCamera = useRef(false); // NEW: Track if user has moved camera
+  const cameraFocusTargetRef = useRef<THREE.Vector3 | null>(null);
 
   // ? NEW: Camera Constants for Consistency
   const CAMERA_CONSTANTS = {
@@ -465,6 +467,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     let rafId: number;
     const animate = () => {
       rafId = requestAnimationFrame(animate);
+      if (cameraFocusTargetRef.current) {
+        controls.target.lerp(cameraFocusTargetRef.current, 0.08);
+        if (controls.target.distanceTo(cameraFocusTargetRef.current) < 0.01) {
+          controls.target.copy(cameraFocusTargetRef.current);
+          cameraFocusTargetRef.current = null;
+        }
+      }
       controls.update();
       composerRef.current?.render();
     };
@@ -1530,9 +1539,18 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       handleResetCamera();
       hasUserInteractedWithCamera.current = false; // Reset interaction flag on manual reset
     },
+    focusOnCategory: (category: PartCategory) => {
+      const targetY = (
+        [PartCategory.HEAD, PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT].includes(category) ? 2.0 :
+        [PartCategory.TORSO, PartCategory.SUIT_TORSO, PartCategory.CAPE, PartCategory.SYMBOL, PartCategory.CHEST_BELT].includes(category) ? 1.5 :
+        [PartCategory.BELT, PartCategory.POUCH, PartCategory.BUCKLE].includes(category) ? 1.0 :
+        0.4
+      );
+      cameraFocusTargetRef.current = new THREE.Vector3(0, targetY, 0);
+    },
     setViewAngle: (azimuthPercentage: number) => {
       if (cameraRef.current && controlsRef.current) {
-        const targetAzimuth = (azimuthPercentage / 100) * 2 * Math.PI;
+        const targetAzimuth = azimuthPercentage * 2 * Math.PI;
         controlsRef.current.target.set(CAMERA_CONSTANTS.DEFAULT_TARGET.x, CAMERA_CONSTANTS.DEFAULT_TARGET.y, CAMERA_CONSTANTS.DEFAULT_TARGET.z);
         
         const spherical = new THREE.Spherical();
@@ -2080,32 +2098,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         msUserSelect: 'none'
       }}
     >
-      {/* Nombre del personaje editable en recuadro */}
-      {displayName && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 select-none" style={{minWidth: 220, maxWidth: 400}}>
-          {editingName ? (
-            <input
-              className="w-full text-center text-2xl font-bold text-orange-400 bg-slate-900/90 border-2 border-orange-400 rounded-lg px-3 py-1 outline-none shadow-lg"
-              style={{letterSpacing: '0.04em'}}
-              value={tempName}
-              autoFocus
-              onChange={handleNameChange}
-              onBlur={handleNameBlur}
-              onKeyDown={handleNameKeyDown}
-              maxLength={32}
-            />
-          ) : (
-            <div
-              className="w-full shadow-lg text-center text-2xl text-orange-400 bg-slate-900/90 border-2 border-orange-400 hover:bg-orange-400/10 rounded-lg font-bold px-3 py-1 cursor-pointer transition"
-              style={{letterSpacing: '0.04em'}}
-              onClick={handleNameClick}
-              title="Click to edit name"
-            >
-              {displayName}
-            </div>
-          )}
-        </div>
-      )}
+      {/* Hero name is shown in the topbar header input — no overlay needed here */}
 
       {/* Loading Overlay */}
       {isLoading && (
@@ -2170,9 +2163,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Rotate left (15�)"
+          title="Rotate left 15°"
         >
-          ?
+          ↺
         </button>
 
         {/* Zoom Out */}
@@ -2216,7 +2209,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(245, 158, 11, 0.1)'; }}
           title="Reset view"
         >
-          ?
+          ⟳
         </button>
 
         {/* Zoom In */}
@@ -2256,9 +2249,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Rotate right (15�)"
+          title="Rotate right 15°"
         >
-          ?
+          ↻
         </button>
         </div>
       </div>
