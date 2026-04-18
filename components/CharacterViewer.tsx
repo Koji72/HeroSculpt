@@ -124,14 +124,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   const CAMERA_CONSTANTS = {
     DEFAULT_TARGET: new THREE.Vector3(0, 1.5, 0),
     AUTO_FRAME_TARGET: new THREE.Vector3(0, 1.5, 0), // Orbit around mid-body (chest), not feet
-    DEFAULT_DISTANCE: 150,
+    DEFAULT_DISTANCE: 90,
     MIN_ZOOM_DISTANCE: 25,
-    MAX_ZOOM_DISTANCE: 210,
+    MAX_ZOOM_DISTANCE: 160,
     DEFAULT_AZIMUTH: Math.PI / 5,
     AUTO_FRAME_AZIMUTH: Math.PI / 10,
     DEFAULT_POLAR: Math.PI / 2.5,
     RESET_POLAR: Math.PI / 2.8,
-    AUTO_FRAME_MULTIPLIER: 1.4, // More breathing room around model
+    AUTO_FRAME_MULTIPLIER: 1.25,
   };
 
   // Handlers for name editing
