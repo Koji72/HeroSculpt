@@ -98,7 +98,7 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
               }
             }}
           >
-            {label}
+            <span style={{ marginRight: 6 }}>{icon}</span>{label}
           </button>
         );
       })}

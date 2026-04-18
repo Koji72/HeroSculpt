@@ -23,7 +23,32 @@ interface PartSelectorPanelProps {
   favoriteIds?: Set<string>;
   onToggleFavorite?: (partId: string) => void;
   getRecentParts?: (category: string) => string[];
+  onSwitchCategory?: (category: PartCategory) => void;
 }
+
+// Sibling category groups for in-panel navigation
+const UPPER_GROUP = [
+  { cat: PartCategory.TORSO, short: 'TORSO' },
+  { cat: PartCategory.HEAD, short: 'HEAD' },
+  { cat: PartCategory.SUIT_TORSO, short: 'SUIT' },
+  { cat: PartCategory.CAPE, short: 'CAPE' },
+  { cat: PartCategory.SYMBOL, short: 'SYMBOL' },
+  { cat: PartCategory.CHEST_BELT, short: 'CHEST' },
+  { cat: PartCategory.SHOULDERS, short: 'SHLD' },
+  { cat: PartCategory.FOREARMS, short: 'FORE' },
+  { cat: PartCategory.HAND_LEFT, short: 'L.HAND' },
+  { cat: PartCategory.HAND_RIGHT, short: 'R.HAND' },
+];
+const BELT_GROUP = [
+  { cat: PartCategory.BELT, short: 'BELT' },
+  { cat: PartCategory.POUCH, short: 'POUCH' },
+  { cat: PartCategory.BUCKLE, short: 'BUCKLE' },
+];
+const LOWER_GROUP = [
+  { cat: PartCategory.LOWER_BODY, short: 'LEGS' },
+  { cat: PartCategory.BOOTS, short: 'BOOTS' },
+];
+const ALL_GROUPS = [UPPER_GROUP, BELT_GROUP, LOWER_GROUP];
 
 const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   activeCategory,
@@ -39,6 +64,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
   favoriteIds = new Set(),
   onToggleFavorite,
   getRecentParts,
+  onSwitchCategory,
 }) => {
 
   const [previewParts, setPreviewParts] = useState<SelectedParts>(selectedParts);
@@ -770,6 +796,45 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           >✕</button>
         </div>
       </div>
+
+      {/* Sibling category navigation */}
+      {(() => {
+        const siblings = activeCategory
+          ? ALL_GROUPS.find(g => g.some(i => i.cat === activeCategory)) ?? []
+          : [];
+        if (!onSwitchCategory || siblings.length < 2) return null;
+        return (
+          <div style={{
+            display: 'flex', overflowX: 'auto', gap: 4, padding: '6px 10px',
+            borderBottom: '1px solid var(--color-border)', flexShrink: 0,
+            scrollbarWidth: 'none',
+          }}>
+            {siblings.map(({ cat, short }) => {
+              const isActive = cat === activeCategory;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => onSwitchCategory(cat)}
+                  style={{
+                    padding: '3px 8px', flexShrink: 0,
+                    background: isActive ? 'rgba(216,162,58,0.15)' : 'transparent',
+                    border: `1px solid ${isActive ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                    borderRadius: 'var(--radius)',
+                    color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                    fontSize: 9, fontWeight: 'bold', letterSpacing: 1,
+                    cursor: 'pointer', outline: 'none',
+                    fontFamily: 'var(--font-comic)',
+                    transition: 'border-color 0.1s, color 0.1s',
+                  }}
+                >
+                  {short}
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Search bar */}
       {allPartsToShow.length > 6 && (

@@ -909,6 +909,7 @@ const AppContent: React.FC = () => {
   };
 
   const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins') => {
+    characterViewerRef.current?.clearPreview();
     setIsPanelOpen(true);
     if (mode === 'parts') {
       setActiveSidePanel(null);
@@ -2046,7 +2047,7 @@ const AppContent: React.FC = () => {
               </div>
             </div>
             <button
-              onClick={() => { setIsPanelOpen(false); setActiveSidePanel(null); }}
+              onClick={() => { setIsPanelOpen(false); setActiveSidePanel(null); setActiveCategory(null); }}
               style={{
                 width: 32,
                 height: 32,
@@ -2098,6 +2099,7 @@ const AppContent: React.FC = () => {
                 favoriteIds={favoriteIds}
                 onToggleFavorite={toggleFavorite}
                 getRecentParts={getRecent}
+                onSwitchCategory={handleEditCategory}
               />
             )}
 

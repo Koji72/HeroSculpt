@@ -90,7 +90,7 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
               }
             }}
           >
-            {label}
+            <span style={{ marginRight: 6 }}>{icon}</span>{label}
           </button>
         );
       })}

@@ -95,7 +95,7 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
               }
             }}
           >
-            {label}
+            <span style={{ marginRight: 6 }}>{icon}</span>{label}
           </button>
         );
       })}
