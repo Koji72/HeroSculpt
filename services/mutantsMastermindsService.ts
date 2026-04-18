@@ -349,10 +349,14 @@ class MutantsMastermindsService {
 
     let result;
     if (campaign.id) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Unauthorized');
+
       const { data, error } = await supabase
         .from('mnm_campaigns')
         .update(campaignData)
         .eq('id', campaign.id)
+        .eq('gmId', user.id)
         .select()
         .single();
 

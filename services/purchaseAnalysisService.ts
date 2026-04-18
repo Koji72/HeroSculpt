@@ -30,6 +30,9 @@ export class PurchaseAnalysisService {
    */
   static async getUserPurchaseHistory(userId: string): Promise<UserPurchaseHistory> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || user.id !== userId) throw new Error('Unauthorized');
+
       const { data, error } = await supabase
         .from('purchases')
         .select(`

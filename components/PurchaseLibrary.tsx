@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import { Purchase, PurchaseHistoryService } from '../services/purchaseHistoryService';
 import { SelectedParts } from '../types';
 import { XMarkIcon, BookOpenIcon, ArrowDownTrayIcon, DocumentArrowDownIcon, PencilIcon, CheckIcon } from './icons';
@@ -117,20 +118,11 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     }
 
     setUpdatingName(itemId);
-    
+
     try {
-      // Importar supabase dinámicamente
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error('Variables de entorno de Supabase no configuradas');
-      }
-      
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      
-      // Actualizar el nombre del item
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No autenticado');
+
       const { error } = await supabase
         .from('purchase_items')
         .update({ item_name: editingName.trim() })

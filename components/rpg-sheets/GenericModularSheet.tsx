@@ -94,7 +94,7 @@ const GenericModularSheet: React.FC<CharacterSheetProps> = ({ character, isEditi
                 <div className="flex gap-2 items-center w-full md:w-auto">
                   <input type="text" className="key w-14 text-center font-bold text-blue-400 bg-[#0d111a] border border-blue-400 rounded disabled:opacity-50 disabled:cursor-not-allowed" value={ab.key} onChange={e => handleAbilityChange(idx, 'key', e.target.value)} placeholder="Key" disabled={!isEditing} />
                   <input type="text" className="icon-url w-40 bg-[#0d111a] border border-blue-400 rounded p-1 text-white disabled:opacity-50 disabled:cursor-not-allowed" value={ab.icon} onChange={e => handleAbilityChange(idx, 'icon', e.target.value)} placeholder="Icon URL" disabled={!isEditing} />
-                  <img src={ab.icon} alt="Ability Icon" className="w-10 h-10 object-cover rounded border-2 border-blue-400" />
+                  <img src={ab.icon} alt="Ability Icon" className="w-10 h-10 object-cover rounded border-2 border-blue-400" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 </div>
                 <input type="text" className="name flex-1 uppercase font-bold bg-[#0d111a] border border-blue-400 rounded p-2 text-white disabled:opacity-50 disabled:cursor-not-allowed" value={ab.name} onChange={e => handleAbilityChange(idx, 'name', e.target.value)} placeholder="Ability Name" disabled={!isEditing} />
                 {isEditing && (

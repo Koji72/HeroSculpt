@@ -210,7 +210,11 @@ class MAndMCommunityService {
     };
   }
 
-  async likePost(postId: string, userId: string): Promise<void> {
+  async likePost(postId: string, _userId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+    const userId = user.id;
+
     const { error } = await supabase
       .from('mnm_post_likes')
       .upsert({
@@ -225,7 +229,11 @@ class MAndMCommunityService {
     if (rpcError) throw new Error(`Error incrementing post likes: ${rpcError.message}`);
   }
 
-  async unlikePost(postId: string, userId: string): Promise<void> {
+  async unlikePost(postId: string, _userId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+    const userId = user.id;
+
     const { error } = await supabase
       .from('mnm_post_likes')
       .delete()
@@ -371,7 +379,11 @@ class MAndMCommunityService {
     return challenges;
   }
 
-  async joinEvent(eventId: string, userId: string): Promise<void> {
+  async joinEvent(eventId: string, _userId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+    const userId = user.id;
+
     const { data: event, error: fetchError } = await supabase
       .from('mnm_events')
       .select('participants')
@@ -392,7 +404,10 @@ class MAndMCommunityService {
     this.clearCache('active_events');
   }
 
-  async joinChallenge(challengeId: string, userId: string, userName: string): Promise<void> {
+  async joinChallenge(challengeId: string, _userId: string, userName: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+    const userId = user.id;
     const { data: challenge, error: fetchError } = await supabase
       .from('mnm_challenges')
       .select('participants')
