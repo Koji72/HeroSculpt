@@ -312,19 +312,10 @@ const AppContent: React.FC = () => {
       const rect = torsoButtonRef.current.getBoundingClientRect();
       setSubmenuPosition({ top: rect.top, left: rect.right + 8 });
     }
-    const willExpand = !torsoSubmenuExpanded;
-    setTorsoSubmenuExpanded(willExpand);
+    setTorsoSubmenuExpanded(v => !v);
     setBeltSubmenuExpanded(false);
     setLowerBodySubmenuExpanded(false);
-    if (willExpand) {
-      const upperCategories = [PartCategory.TORSO, PartCategory.SUIT_TORSO, PartCategory.HEAD, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT];
-      if (!upperCategories.includes(activeCategory as PartCategory)) {
-        setActiveCategory(PartCategory.TORSO);
-        setIsPanelOpen(true);
-        setActiveSidePanel(null);
-      }
-    }
-  }, [torsoSubmenuExpanded, activeCategory]);
+  }, []);
 
   // Función para obtener la referencia del botón Upper Body desde el PartCategoryToolbar
   const getTorsoButtonRef = useCallback((ref: HTMLButtonElement | null) => {
@@ -336,19 +327,10 @@ const AppContent: React.FC = () => {
       const rect = beltButtonRef.current.getBoundingClientRect();
       setBeltSubmenuPosition({ top: rect.top, left: rect.right + 8 });
     }
-    const willExpand = !beltSubmenuExpanded;
-    setBeltSubmenuExpanded(willExpand);
+    setBeltSubmenuExpanded(v => !v);
     setTorsoSubmenuExpanded(false);
     setLowerBodySubmenuExpanded(false);
-    if (willExpand) {
-      const beltCategories = [PartCategory.BELT, PartCategory.POUCH, PartCategory.BUCKLE, PartCategory.CHEST_BELT];
-      if (!beltCategories.includes(activeCategory as PartCategory)) {
-        setActiveCategory(PartCategory.BELT);
-        setIsPanelOpen(true);
-        setActiveSidePanel(null);
-      }
-    }
-  }, [beltSubmenuExpanded, activeCategory]);
+  }, []);
 
   // Función para obtener la referencia del botón Belt desde el PartCategoryToolbar
   const getBeltButtonRef = useCallback((ref: HTMLButtonElement | null) => {
@@ -361,19 +343,10 @@ const AppContent: React.FC = () => {
       const rect = lowerBodyButtonRef.current.getBoundingClientRect();
       setLowerBodySubmenuPosition({ top: rect.top, left: rect.right + 8 });
     }
-    const willExpand = !lowerBodySubmenuExpanded;
-    setLowerBodySubmenuExpanded(willExpand);
+    setLowerBodySubmenuExpanded(v => !v);
     setTorsoSubmenuExpanded(false);
     setBeltSubmenuExpanded(false);
-    if (willExpand) {
-      const lowerCategories = [PartCategory.LOWER_BODY, PartCategory.BOOTS];
-      if (!lowerCategories.includes(activeCategory as PartCategory)) {
-        setActiveCategory(PartCategory.LOWER_BODY);
-        setIsPanelOpen(true);
-        setActiveSidePanel(null);
-      }
-    }
-  }, [lowerBodySubmenuExpanded, activeCategory]);
+  }, []);
 
   // Función para obtener la referencia del botón Legs desde el PartCategoryToolbar
   const getLowerBodyButtonRef = useCallback((ref: HTMLButtonElement | null) => {
