@@ -308,14 +308,18 @@ const AppContent: React.FC = () => {
 
   // ✨ MANEJADOR DEL TOGGLE DEL SUBMENÚ DEL UPPER BODY
   const handleTorsoSubmenuToggle = useCallback(() => {
-    if (torsoButtonRef.current) {
-      const rect = torsoButtonRef.current.getBoundingClientRect();
-      setSubmenuPosition({ top: rect.top, left: rect.right + 8 });
-    }
-    setTorsoSubmenuExpanded(v => !v);
+    const upperCats = [PartCategory.TORSO, PartCategory.SUIT_TORSO, PartCategory.HEAD,
+      PartCategory.CAPE, PartCategory.SYMBOL, PartCategory.CHEST_BELT,
+      PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT];
     setBeltSubmenuExpanded(false);
     setLowerBodySubmenuExpanded(false);
-  }, []);
+    setTorsoSubmenuExpanded(false);
+    const cat = upperCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.TORSO;
+    setActiveCategory(cat);
+    setActiveTab('parts');
+    setIsPanelOpen(true);
+    setActiveSidePanel(null);
+  }, [activeCategory]);
 
   // Función para obtener la referencia del botón Upper Body desde el PartCategoryToolbar
   const getTorsoButtonRef = useCallback((ref: HTMLButtonElement | null) => {
@@ -323,14 +327,16 @@ const AppContent: React.FC = () => {
   }, []);
 
   const handleBeltSubmenuToggle = useCallback(() => {
-    if (beltButtonRef.current) {
-      const rect = beltButtonRef.current.getBoundingClientRect();
-      setBeltSubmenuPosition({ top: rect.top, left: rect.right + 8 });
-    }
-    setBeltSubmenuExpanded(v => !v);
+    const beltCats = [PartCategory.BELT, PartCategory.POUCH, PartCategory.BUCKLE];
     setTorsoSubmenuExpanded(false);
+    setBeltSubmenuExpanded(false);
     setLowerBodySubmenuExpanded(false);
-  }, []);
+    const cat = beltCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.BELT;
+    setActiveCategory(cat);
+    setActiveTab('parts');
+    setIsPanelOpen(true);
+    setActiveSidePanel(null);
+  }, [activeCategory]);
 
   // Función para obtener la referencia del botón Belt desde el PartCategoryToolbar
   const getBeltButtonRef = useCallback((ref: HTMLButtonElement | null) => {
@@ -339,14 +345,16 @@ const AppContent: React.FC = () => {
 
   // ✨ MANEJADOR DEL TOGGLE DEL SUBMENÚ DEL LOWER BODY
   const handleLowerBodySubmenuToggle = useCallback(() => {
-    if (lowerBodyButtonRef.current) {
-      const rect = lowerBodyButtonRef.current.getBoundingClientRect();
-      setLowerBodySubmenuPosition({ top: rect.top, left: rect.right + 8 });
-    }
-    setLowerBodySubmenuExpanded(v => !v);
+    const lowerCats = [PartCategory.LOWER_BODY, PartCategory.BOOTS];
     setTorsoSubmenuExpanded(false);
     setBeltSubmenuExpanded(false);
-  }, []);
+    setLowerBodySubmenuExpanded(false);
+    const cat = lowerCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.LOWER_BODY;
+    setActiveCategory(cat);
+    setActiveTab('parts');
+    setIsPanelOpen(true);
+    setActiveSidePanel(null);
+  }, [activeCategory]);
 
   // Función para obtener la referencia del botón Legs desde el PartCategoryToolbar
   const getLowerBodyButtonRef = useCallback((ref: HTMLButtonElement | null) => {
