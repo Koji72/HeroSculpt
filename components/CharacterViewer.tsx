@@ -649,7 +649,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     if (import.meta.env.DEV) {
       if (import.meta.env.DEV) console.log('CharacterViewer: Filtered part list:', selectedPartList);
     }
-    const basePath = (import.meta as any).env.BASE_URL || '/';
+    const basePath = import.meta.env.BASE_URL || '/';
     if (import.meta.env.DEV) {
       if (import.meta.env.DEV) console.log('CharacterViewer: Base path:', basePath);
     }
@@ -1310,7 +1310,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const modelGroup = modelGroupRef.current;
       if (!modelGroup) return;
 
-      const basePath = (import.meta as any).env.BASE_URL || '/';
+      const basePath = import.meta.env.BASE_URL || '/';
       const changedCategories = Object.keys(changedParts) as PartCategory[];
 
           // ?? OPTIMIZADO: Solo log en desarrollo
@@ -1326,7 +1326,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           allChangedParts: Object.keys(changedParts).reduce((acc, key) => {
             acc[key] = changedParts[key]?.id || 'none';
             return acc;
-          }, {} as any)
+          }, {} as Record<string, string>)
         });
       }
 

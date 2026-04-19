@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { Purchase, PurchaseHistoryService } from '../services/purchaseHistoryService';
+import { Purchase, PurchaseItem, PurchaseHistoryService } from '../services/purchaseHistoryService';
 import { SelectedParts } from '../types';
 import { XMarkIcon, BookOpenIcon, ArrowDownTrayIcon, DocumentArrowDownIcon, PencilIcon, CheckIcon } from './icons';
 import { RefreshCw, Calendar, DollarSign, Package } from 'lucide-react';
@@ -180,7 +180,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     }
   };
 
-  const handleDownloadModel = async (purchaseId: string, item: any, format: 'STL' | 'GLB') => {
+  const handleDownloadModel = async (purchaseId: string, item: PurchaseItem, format: 'STL' | 'GLB') => {
     try {
       // First apply the configuration
       const result = await PurchaseHistoryService.loadConfigurationFromPurchase(
@@ -361,7 +361,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                 </div>
 
                 <div className="grid gap-4">
-                  {filteredPurchases.map((purchase: any) => (
+                  {filteredPurchases.map((purchase: Purchase) => (
                   <div key={purchase.id} className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-4 hover:border-blue-400/30 transition-colors">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                         <div className="flex-1">
@@ -402,7 +402,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                             {t('library.configurations', lang)}
                           </h5>
                           <div className="grid gap-3">
-                          {purchase.purchase_items.map((item: any) => (
+                          {purchase.purchase_items.map((item: PurchaseItem) => (
                               <div key={item.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-800/50 p-4 rounded border border-slate-600/30 gap-3">
                               <div className="flex-1">
                                 {/* ✅ NUEVO: Nombre editable */}

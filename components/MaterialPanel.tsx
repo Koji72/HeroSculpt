@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as THREE from 'three';
+import { LightingPreset } from '../lib/lightingPresets';
 import MaterialConfigurator from './MaterialConfigurator';
 import AdvancedEffects from './AdvancedEffects';
 import { SelectedParts, PartCategory } from '../types';
@@ -67,7 +68,7 @@ const MaterialPanel = React.memo(({
     }
   };
 
-  const handleLightingChange = (preset: any) => {
+  const handleLightingChange = (preset: LightingPreset) => {
     if (characterViewerRef.current) {
       characterViewerRef.current.applyLightingPreset(preset);
     }

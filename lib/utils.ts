@@ -612,9 +612,9 @@ export async function exportModel(scene: THREE.Object3D, options: ModelExportOpt
 
     // Export the scene
     const result: { data: ArrayBuffer | string } = await new Promise<{ data: ArrayBuffer | string }>((resolve, reject) => {
-      exporter.parse(scene, (gltf: any) => {
+      exporter.parse(scene, (gltf: ArrayBuffer | string) => {
         resolve({ data: gltf });
-      }, (error: any) => {
+      }, (error: Error) => {
         reject(error);
       }, exportOptions);
     });

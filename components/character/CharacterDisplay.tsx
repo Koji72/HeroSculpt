@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useEffect, useState, forwardRef, useImperat
 import * as THREE from 'three';
 import { SelectedParts, ArchetypeId } from '../../types';
 import Canvas3D, { Canvas3DRef } from '../3d/Canvas3D';
+import { LightingPreset } from '../../lib/lightingPresets';
 import ModelLoader, { ModelLoaderRef } from '../3d/ModelLoader';
 import HeroMenu from './HeroMenu';
 import PoseNavigation from '../PoseNavigation';
@@ -19,7 +20,7 @@ export interface CharacterDisplayRef {
   setViewAngle: (azimuthPercentage: number) => void;
   takeScreenshot: () => Promise<string>;
   applyMaterialToPart: (material: THREE.Material, partType: string) => void;
-  applyLightingPreset: (preset: any) => void;
+  applyLightingPreset: (preset: LightingPreset) => void;
   applyColorToPart: (color: number, partType: string) => void;
   applyColorToAllParts: (color: number) => void;
   applyTextureToPart: (textureType: string, partType: string) => void;
@@ -117,7 +118,7 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
     modelLoaderRef.current?.applyMaterialToPart(material, partType);
   }, []);
 
-  const applyLightingPreset = useCallback((preset: any) => {
+  const applyLightingPreset = useCallback((preset: LightingPreset) => {
     canvas3DRef.current?.applyLightingPreset(preset);
   }, []);
 

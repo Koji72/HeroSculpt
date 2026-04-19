@@ -2199,7 +2199,7 @@ const AppContent: React.FC = () => {
                 key={label}
                 className="btn-comic btn-ghost"
                 style={{ fontSize: 11, padding: '3px 10px', letterSpacing: 0.6, fontFamily: 'var(--font-body)', fontWeight: 700 }}
-                onClick={() => (characterViewerRef.current as any)?.setViewAngle(angles[i])}
+                onClick={() => characterViewerRef.current?.setViewAngle(angles[i])}
               >
                 {label}
               </button>

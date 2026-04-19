@@ -180,9 +180,9 @@ export class ResendEmailService {
 
       const result = await response.json();
       return result.success ? { success: true } : { success: false, error: result.error || 'Unknown backend error' };
-    } catch (error: any) {
+    } catch (error) {
       if (import.meta.env.DEV) console.error('Error sending test email:', error);
-      return { success: false, error: `Error de conexion: ${error.message}` };
+      return { success: false, error: `Error de conexion: ${error instanceof Error ? error.message : String(error)}` };
     }
   }
 }

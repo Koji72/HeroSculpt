@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
+import { LightingPreset } from '../../lib/lightingPresets';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -14,7 +15,7 @@ export interface Canvas3DRef {
   resetCamera: () => void;
   setViewAngle: (azimuthPercentage: number) => void;
   takeScreenshot: () => Promise<string>;
-  applyLightingPreset: (preset: any) => void;
+  applyLightingPreset: (preset: LightingPreset) => void;
   toggleEdgeDetection: (selectedPart?: string) => void;
 }
 
@@ -227,7 +228,7 @@ const Canvas3D = forwardRef<Canvas3DRef, Canvas3DProps>(({ onSceneReady, onRende
     });
   }, []);
 
-  const applyLightingPreset = useCallback((preset: any) => {
+  const applyLightingPreset = useCallback((preset: LightingPreset) => {
     if (!sceneRef.current) return;
 
     // Clear existing lights
