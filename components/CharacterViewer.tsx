@@ -197,7 +197,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const maxDim = Math.max(size.x, size.y, size.z);
       const fov = currentCamera.fov * (Math.PI / 180);
       // Use auto-frame multiplier from constants
-      const distance = (maxDim / (2 * Math.tan(fov / 2))) * CAMERA_CONSTANTS.AUTO_FRAME_MULTIPLIER;
+      const tanHalfFov = Math.tan(fov / 2);
+      const distance = tanHalfFov > 0 ? (maxDim / (2 * tanHalfFov)) * CAMERA_CONSTANTS.AUTO_FRAME_MULTIPLIER : CAMERA_CONSTANTS.DEFAULT_DISTANCE;
       currentControls.target.set(CAMERA_CONSTANTS.AUTO_FRAME_TARGET.x, CAMERA_CONSTANTS.AUTO_FRAME_TARGET.y, CAMERA_CONSTANTS.AUTO_FRAME_TARGET.z);
       const spherical = new THREE.Spherical();
       spherical.radius = distance;
@@ -269,7 +270,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   // ? Reset camera interaction when user authentication changes
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('CharacterViewer: User authenticated, resetting camera interaction flag');
+      if (import.meta.env.DEV) console.log('CharacterViewer: User authenticated, resetting camera interaction flag');
       hasUserInteractedWithCamera.current = false;
     }
   }, [isAuthenticated]);
@@ -582,9 +583,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   // ? SIMPLIFIED: Single async function for model loading (no useCallback issues)
   const performModelLoad = async () => {
     const generation = ++loadGenerationRef.current;
-    console.log('?? CharacterViewer: performModelLoad iniciado - TIMESTAMP:', new Date().toISOString());
-    console.log('?? Estado de autenticaci�n:', { isAuthenticated });
-    console.log('?? selectedParts recibidas:', {
+    if (import.meta.env.DEV) console.log('?? CharacterViewer: performModelLoad iniciado - TIMESTAMP:', new Date().toISOString());
+    if (import.meta.env.DEV) console.log('?? Estado de autenticaci�n:', { isAuthenticated });
+    if (import.meta.env.DEV) console.log('?? selectedParts recibidas:', {
       count: Object.keys(selectedParts).length,
       parts: Object.entries(selectedParts).map(([category, part]) => `${category}: ${part?.id || 'undefined'}`),
       isEmpty: Object.keys(selectedParts).length === 0
@@ -592,7 +593,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     
     // ? SAFETY CHECK: Ensure Three.js is ready before loading
     if (!isThreeJSReady) {
-      console.log('? Three.js not ready yet, skipping model load');
+      if (import.meta.env.DEV) console.log('? Three.js not ready yet, skipping model load');
       return;
     }
 
@@ -611,9 +612,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     let partsToLoad = hasSelectedParts ? { ...defaultBuild, ...selectedParts } : { ...defaultBuild };
 
     if (!hasSelectedParts) {
-      console.log('?? selectedParts vac�o, cargando build por defecto para el visor:', selectedArchetype);
+      if (import.meta.env.DEV) console.log('?? selectedParts vac�o, cargando build por defecto para el visor:', selectedArchetype);
     } else {
-      console.log('?? Completando piezas faltantes con el build por defecto');
+      if (import.meta.env.DEV) console.log('?? Completando piezas faltantes con el build por defecto');
     }
     
     const startTime = performance.now();
@@ -694,13 +695,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     }
     
     // ? NUEVO: Cargar pedestal siempre (independientemente del estado de autenticaci�n)
-    console.log('?? DEBUG: isAuthenticated =', isAuthenticated, '| selectedParts vac�o =', Object.keys(selectedParts).length === 0);
-    
+    if (import.meta.env.DEV) console.log('?? DEBUG: isAuthenticated =', isAuthenticated, '| selectedParts vac�o =', Object.keys(selectedParts).length === 0);
+
     // ? NUEVO: Cargar pedestal siempre
-    console.log('?? CARGANDO PEDESTAL - Siempre');
+    if (import.meta.env.DEV) console.log('?? CARGANDO PEDESTAL - Siempre');
     try {
       const baseModelPath = `${basePath}assets/strong/base/strong_base_01.glb`;
-      console.log('?? Cargando pedestal desde:', baseModelPath);
+      if (import.meta.env.DEV) console.log('?? Cargando pedestal desde:', baseModelPath);
       const baseModel = await modelCache.getModel(baseModelPath);
       
       // Tag the base model
@@ -739,19 +740,19 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       
       if (generation !== loadGenerationRef.current) { setIsLoading(false); return; }
       modelGroup.add(baseModel);
-      console.log('?? Pedestal cargado exitosamente. Children en modelGroup:', modelGroup.children.length);
-      
+      if (import.meta.env.DEV) console.log('?? Pedestal cargado exitosamente. Children en modelGroup:', modelGroup.children.length);
+
       // ? NUEVO: Debug del pedestal
-      console.log('?? DEBUG PEDESTAL:');
-      console.log('  - Posici�n:', baseModel.position);
-      console.log('  - Escala:', baseModel.scale);
-      console.log('  - Visible:', baseModel.visible);
-      console.log('  - Children del modelo:', baseModel.children.length);
-      
+      if (import.meta.env.DEV) console.log('?? DEBUG PEDESTAL:');
+      if (import.meta.env.DEV) console.log('  - Posici�n:', baseModel.position);
+      if (import.meta.env.DEV) console.log('  - Escala:', baseModel.scale);
+      if (import.meta.env.DEV) console.log('  - Visible:', baseModel.visible);
+      if (import.meta.env.DEV) console.log('  - Children del modelo:', baseModel.children.length);
+
       // Verificar si el modelo tiene geometr�a visible
       if (baseModel.children.length > 0) {
         baseModel.children.forEach((child, index) => {
-          console.log(`  - Child ${index}:`, {
+          if (import.meta.env.DEV) console.log(`  - Child ${index}:`, {
             name: child.name,
             visible: child.visible,
             position: child.position.toArray(),
@@ -767,26 +768,26 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     // ? NUEVO: Limpieza de partes b�sicas solo para usuarios autenticados
     if (isAuthenticated) {
-      console.log('?? LIMPIEZA - Eliminando partes b�sicas del personaje (no el pedestal)');
+      if (import.meta.env.DEV) console.log('?? LIMPIEZA - Eliminando partes b�sicas del personaje (no el pedestal)');
       const basicPartsToRemove = modelGroup.children.filter(child => {
         // NO eliminar el pedestal, solo partes b�sicas del personaje
-        const isBasicPersonPart = child.userData.isDefaultPart === true && 
+        const isBasicPersonPart = child.userData.isDefaultPart === true &&
                                  child.userData.category !== 'BASE';
-        
+
         if (isBasicPersonPart) {
-          console.log('?? Encontrada parte b�sica del personaje para eliminar:', child.name, child.userData);
+          if (import.meta.env.DEV) console.log('?? Encontrada parte b�sica del personaje para eliminar:', child.name, child.userData);
         }
         return isBasicPersonPart;
       });
-      
+
       basicPartsToRemove.forEach(part => {
-        console.log('?? Eliminando parte b�sica del personaje:', part.name);
+        if (import.meta.env.DEV) console.log('?? Eliminando parte b�sica del personaje:', part.name);
         modelGroup.remove(part);
         // Do NOT dispose — geometry/materials are shared with cache clones.
       });
-      
+
       if (basicPartsToRemove.length > 0) {
-        console.log('? Partes b�sicas del personaje eliminadas. Children restantes en modelGroup:', modelGroup.children.length);
+        if (import.meta.env.DEV) console.log('? Partes b�sicas del personaje eliminadas. Children restantes en modelGroup:', modelGroup.children.length);
       }
     }
 
@@ -834,17 +835,17 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (part.category === PartCategory.HAND_LEFT || part.category === PartCategory.HAND_RIGHT) {
           const isCompatible = part.compatible.includes(baseTorsoId);
           if (!isCompatible) {
-            console.log(`?? Removing incompatible hand: ${part.id} (not compatible with base torso ${baseTorsoId})`);
+            if (import.meta.env.DEV) console.log(`?? Removing incompatible hand: ${part.id} (not compatible with base torso ${baseTorsoId})`);
           } else {
-            console.log(`? Keeping compatible hand: ${part.id} (compatible with base torso ${baseTorsoId})`);
+            if (import.meta.env.DEV) console.log(`? Keeping compatible hand: ${part.id} (compatible with base torso ${baseTorsoId})`);
           }
           return isCompatible;
         }
         return true; // Mantener todas las dem�s partes
       });
-      
-      console.log('?? DEBUG - filteredPartList after hand filtering:', filteredPartList.map((p:any) => p.id));
-      
+
+      if (import.meta.env.DEV) console.log('?? DEBUG - filteredPartList after hand filtering:', filteredPartList.map((p:any) => p.id));
+
       // Filtrar cabeza compatible
       filteredPartList = filteredPartList.filter((part: any) => {
         if (part.category === PartCategory.HEAD) {
@@ -858,9 +859,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }
           const isCompatible = part.compatible.includes(baseTorsoId);
           if (!isCompatible) {
-            console.log(`?? Removing incompatible head: ${part.id} (not compatible with base torso ${baseTorsoId})`);
+            if (import.meta.env.DEV) console.log(`?? Removing incompatible head: ${part.id} (not compatible with base torso ${baseTorsoId})`);
           } else {
-            console.log(`? Keeping compatible head: ${part.id} (compatible with base torso ${baseTorsoId})`);
+            if (import.meta.env.DEV) console.log(`? Keeping compatible head: ${part.id} (compatible with base torso ${baseTorsoId})`);
           }
           return isCompatible;
         }
@@ -875,7 +876,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         
         // ? NUEVO: Debug espec�fico para capas
         if (part.category === PartCategory.CAPE) {
-          console.log('?? DEBUG CAPA:', {
+          if (import.meta.env.DEV) console.log('?? DEBUG CAPA:', {
             partId: part.id,
             category: part.category,
             gltfPath: part.gltfPath,
@@ -896,16 +897,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           
           // ? NUEVO: Debug espec�fico para capas
           if (part.category === PartCategory.CAPE) {
-            console.log('?? DEBUG CAPA - Modelo cargado:', {
+            if (import.meta.env.DEV) console.log('?? DEBUG CAPA - Modelo cargado:', {
               modelName: model.name,
               modelUuid: model.uuid,
               modelChildren: model.children.length,
               modelVisible: model.visible
             });
           }
-          
+
           // Tag the model with category for future removal (CRITICAL for hover preview)
-          console.log(`?? DEBUG: Assigning category '${part.category}' and partId '${part.id}' to model. Model name: ${model.name}`);
+          if (import.meta.env.DEV) console.log(`?? DEBUG: Assigning category '${part.category}' and partId '${part.id}' to model. Model name: ${model.name}`);
           model.userData.category = part.category;
           model.userData.partId = part.id;
           
@@ -943,7 +944,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
           // ? NUEVO: Debug espec�fico para capas
           if (part.category === PartCategory.CAPE) {
-            console.log('?? DEBUG CAPA - A�adida al modelGroup:', {
+            if (import.meta.env.DEV) console.log('?? DEBUG CAPA - A�adida al modelGroup:', {
               modelGroupChildren: modelGroup.children.length,
               capeInGroup: modelGroup.children.some(child => child.userData.category === PartCategory.CAPE)
             });
@@ -995,51 +996,52 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const shouldAutoFrame = !isHoverPreviewActive && modelGroup.children.length > 0 && !hasUserInteractedWithCamera.current;
       
       if (shouldAutoFrame) {
-        console.log('CharacterViewer: Auto-framing character (no user interaction detected)');
-        console.log('CharacterViewer: hasUserInteracted:', hasUserInteractedWithCamera.current, 'modelCount:', modelGroup.children.length);
-        
+        if (import.meta.env.DEV) console.log('CharacterViewer: Auto-framing character (no user interaction detected)');
+        if (import.meta.env.DEV) console.log('CharacterViewer: hasUserInteracted:', hasUserInteractedWithCamera.current, 'modelCount:', modelGroup.children.length);
+
         // Calculate bounding box and center
         const box = new THREE.Box3().setFromObject(modelGroup);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
-        
-        console.log('CharacterViewer: Model bounding box:', {
+
+        if (import.meta.env.DEV) console.log('CharacterViewer: Model bounding box:', {
           center: center.toArray(),
           size: size.toArray(),
           min: box.min.toArray(),
           max: box.max.toArray()
         });
-        
+
         // Center the model
         modelGroup.position.sub(center);
-        
+
         // Frame the character
         const maxDim = Math.max(size.x, size.y, size.z);
         const fov = camera.fov * (Math.PI / 180);
-        const cameraDistance = maxDim / (2 * Math.tan(fov / 2));
-        
-        console.log('CharacterViewer: Camera positioning:', JSON.stringify({
+        const tanHalfFov2 = Math.tan(fov / 2);
+        const cameraDistance = tanHalfFov2 > 0 ? maxDim / (2 * tanHalfFov2) : CAMERA_CONSTANTS.DEFAULT_DISTANCE;
+
+        if (import.meta.env.DEV) console.log('CharacterViewer: Camera positioning:', JSON.stringify({
             maxDim,
             fov: camera.fov,
             cameraDistance,
             finalDistance: cameraDistance * CAMERA_CONSTANTS.AUTO_FRAME_MULTIPLIER
           }, null, 2));
-        
+
         // Maintain azimuthal rotation when framing character using spherical coordinates
         const targetAzimuth = CAMERA_CONSTANTS.AUTO_FRAME_AZIMUTH; // Use auto-frame azimuth
         const finalDistance = cameraDistance * CAMERA_CONSTANTS.AUTO_FRAME_MULTIPLIER; // Use auto-frame multiplier
-        
+
         controls.target.set(CAMERA_CONSTANTS.AUTO_FRAME_TARGET.x, CAMERA_CONSTANTS.AUTO_FRAME_TARGET.y, CAMERA_CONSTANTS.AUTO_FRAME_TARGET.z);
-        
+
         // Use spherical coordinates for proper azimuthal positioning
         const spherical = new THREE.Spherical();
         spherical.radius = finalDistance;
         spherical.phi = CAMERA_CONSTANTS.DEFAULT_POLAR; // Use default polar for auto-framing
         spherical.theta = targetAzimuth; // Set azimuthal angle
-        
+
         camera.position.setFromSpherical(spherical).add(controls.target);
-        
-        console.log('CharacterViewer: Auto-frame applied.', JSON.stringify({
+
+        if (import.meta.env.DEV) console.log('CharacterViewer: Auto-frame applied.', JSON.stringify({
           finalDistance,
           currentCameraPosition: camera.position.toArray(),
           controlsTarget: controls.target.toArray(),
@@ -1048,9 +1050,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           sphericalTheta: spherical.theta
         }, null, 2));
       } else if (!isHoverPreviewActive && modelGroup.children.length > 0) {
-        console.log('CharacterViewer: Skipping auto-frame (user has interacted with camera)');
-        console.log('CharacterViewer: hasUserInteracted:', hasUserInteractedWithCamera.current);
-        
+        if (import.meta.env.DEV) console.log('CharacterViewer: Skipping auto-frame (user has interacted with camera)');
+        if (import.meta.env.DEV) console.log('CharacterViewer: hasUserInteracted:', hasUserInteractedWithCamera.current);
+
         // Solo centrar el modelo sin tocar la c�mara
         if (modelGroup.children.length > 0) {
           const box = new THREE.Box3().setFromObject(modelGroup);
@@ -1058,8 +1060,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           modelGroup.position.sub(center);
         }
       } else if (isHoverPreviewActive) {
-        console.log('CharacterViewer: Skipping auto-frame (hover preview active)');
-        
+        if (import.meta.env.DEV) console.log('CharacterViewer: Skipping auto-frame (hover preview active)');
+
         // Solo centrar el modelo sin tocar la c�mara
         if (modelGroup.children.length > 0) {
           const box = new THREE.Box3().setFromObject(modelGroup);
@@ -1067,7 +1069,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           modelGroup.position.sub(center);
         }
       } else {
-        console.log('CharacterViewer: No models to frame, using default camera position');
+        if (import.meta.env.DEV) console.log('CharacterViewer: No models to frame, using default camera position');
         
         // Apply same azimuthal rotation for consistency using spherical coordinates
         const targetAzimuth = CAMERA_CONSTANTS.DEFAULT_AZIMUTH; // Use default azimuth
@@ -1091,7 +1093,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       console.error('CharacterViewer: Error during model loading:', error);
     } finally {
       if (cameraRef.current && controlsRef.current) {
-        console.log('CharacterViewer: IMMEDIATE Post-load Camera State:', JSON.stringify({
+        if (import.meta.env.DEV) console.log('CharacterViewer: IMMEDIATE Post-load Camera State:', JSON.stringify({
           position: cameraRef.current.position.toArray(),
           target: controlsRef.current.target.toArray(),
           distance: controlsRef.current.getDistance(),
@@ -1101,9 +1103,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }));
       }
     }
-    
-    console.log('? CharacterViewer: performModelLoad completado - TIMESTAMP:', new Date().toISOString());
-    console.log('?? Estado final del modelGroup:', {
+
+    if (import.meta.env.DEV) console.log('? CharacterViewer: performModelLoad completado - TIMESTAMP:', new Date().toISOString());
+    if (import.meta.env.DEV) console.log('?? Estado final del modelGroup:', {
       childrenCount: modelGroup.children.length,
       children: modelGroup.children.map(child => ({
         name: child.name,
@@ -1120,7 +1122,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   useEffect(() => {
     // ? CRITICAL: Don't run if Three.js is not ready
     if (!isThreeJSReady) {
-      console.log('?? CharacterViewer useEffect: Three.js not ready, skipping.');
+      if (import.meta.env.DEV) console.log('?? CharacterViewer useEffect: Three.js not ready, skipping.');
       return;
     }
 
@@ -1283,7 +1285,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         const previewModelsToRemove: THREE.Object3D[] = [];
 
         // Debug: Log all children before clearing
-        console.log('?? CLEAR PREVIEW DEBUG: All models in scene before clear:', 
+        if (import.meta.env.DEV) console.log('?? CLEAR PREVIEW DEBUG: All models in scene before clear:',
           modelGroup.children.map(child => ({
             name: child.name,
             category: child.userData.category,
@@ -1293,7 +1295,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             visible: child.visible // Add visibility state
           }))
         );
-        
+
         modelGroup.traverse((child) => {
           const childCategory = child.userData.category;
           const childPartId = child.userData.partId;
@@ -1322,7 +1324,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             }
           }
         });
-        
+
         previewModelsToRemove.forEach(model => {
           model.parent?.remove(model);
         });
@@ -1331,39 +1333,38 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     if (process.env.NODE_ENV === 'development') {
       console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
     }
-        
 
-        
+
         // ? ZOOM REMAINS ENABLED: No need to restore zoom
-        
+
         return;
       }
-      
+
       // Normal preview change
       const combinedParts = { ...selectedParts, ...changedParts };
       setPreviewParts(combinedParts);
-      
-      console.log('CharacterViewer: Combined preview parts:', {
+
+      if (import.meta.env.DEV) console.log('CharacterViewer: Combined preview parts:', {
         selectedParts: Object.keys(selectedParts),
         changedParts: Object.keys(changedParts),
         combinedParts: Object.keys(combinedParts)
       });
-      
+
       // For hover preview, directly load only the changed parts
       const modelGroup = modelGroupRef.current;
       if (!modelGroup) return;
-      
+
       const basePath = (import.meta as any).env.BASE_URL || '/';
       const changedCategories = Object.keys(changedParts) as PartCategory[];
-      
+
           // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('?? HOVER PREVIEW: Loading only changed categories:', changedCategories);
     }
-      
+
       // Debug espec�fico para cinturones
       if (changedCategories.includes(PartCategory.BELT)) {
-        console.log('?? BELT HOVER DEBUG - CharacterViewer:', {
+        if (import.meta.env.DEV) console.log('?? BELT HOVER DEBUG - CharacterViewer:', {
           changedCategories,
           beltPart: changedParts[PartCategory.BELT],
           allChangedParts: Object.keys(changedParts).reduce((acc, key) => {
@@ -1372,12 +1373,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }, {} as any)
         });
       }
-      
+
       // HOVER PREVIEW: Only remove existing preview models, never original models
       const modelsToRemove: THREE.Object3D[] = [];
-      
+
       // Debug: Log all children before any modifications
-      console.log('?? HOVER DEBUG: All models in scene before modification:', 
+      if (import.meta.env.DEV) console.log('?? HOVER DEBUG: All models in scene before modification:',
         modelGroup.children.map(child => ({
           name: child.name,
           category: child.userData.category,
@@ -1473,7 +1474,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const previewModelsToRemove: THREE.Object3D[] = [];
 
       // Debug: Log all children before clearing
-      console.log('?? CLEAR PREVIEW DEBUG: All models in scene before clear:', 
+      if (import.meta.env.DEV) console.log('?? CLEAR PREVIEW DEBUG: All models in scene before clear:',
         modelGroup.children.map(child => ({
           name: child.name,
           category: child.userData.category,
@@ -1483,7 +1484,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           visible: child.visible // Add visibility state
         }))
       );
-      
+
       modelGroup.traverse((child) => {
         const childCategory = child.userData.category;
         const childPartId = child.userData.partId;
@@ -1578,17 +1579,17 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
     takeTokenScreenshot: async () => {
       return new Promise<string>((resolve) => {
-        console.log('?? TokenScreenshot: Starting token screenshot...');
-        console.log('?? TokenScreenshot: Components available:', {
+        if (import.meta.env.DEV) console.log('?? TokenScreenshot: Starting token screenshot...');
+        if (import.meta.env.DEV) console.log('?? TokenScreenshot: Components available:', {
           renderer: !!rendererRef.current,
           camera: !!cameraRef.current,
           controls: !!controlsRef.current,
           scene: !!sceneRef.current,
           modelGroup: !!modelGroupRef.current
         });
-        
+
         if (!rendererRef.current || !cameraRef.current || !controlsRef.current) {
-          console.log('? TokenScreenshot: Missing required components');
+          if (import.meta.env.DEV) console.log('? TokenScreenshot: Missing required components');
           resolve('');
           return;
         }
@@ -1596,10 +1597,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         // Check if models are loaded
         const modelGroup = modelGroupRef.current;
         const modelCount = modelGroup?.children?.length || 0;
-        console.log('?? TokenScreenshot: Model count in scene:', modelCount);
-        
+        if (import.meta.env.DEV) console.log('?? TokenScreenshot: Model count in scene:', modelCount);
+
         if (modelCount === 0) {
-          console.log('? TokenScreenshot: No models loaded in scene');
+          if (import.meta.env.DEV) console.log('? TokenScreenshot: No models loaded in scene');
           resolve('');
           return;
         }
@@ -1653,12 +1654,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     takeScreenshotWithZoom: async (zoom: number, position: { x: number; y: number }) => {
       return new Promise<string>((resolve) => {
         if (!rendererRef.current || !cameraRef.current || !controlsRef.current) {
-          console.log('? Componentes no disponibles para zoom');
+          if (import.meta.env.DEV) console.log('? Componentes no disponibles para zoom');
           resolve('');
           return;
         }
 
-        console.log('?? Aplicando zoom antes de captura:', { zoom, position });
+        if (import.meta.env.DEV) console.log('?? Aplicando zoom antes de captura:', { zoom, position });
 
         // Guardar estado actual de la c�mara
         const originalPosition = cameraRef.current.position.clone();
@@ -1690,7 +1691,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
           newPosition.add(offset3D);
 
-          console.log('?? C�lculos de zoom:', {
+          if (import.meta.env.DEV) console.log('?? C�lculos de zoom:', {
             currentDistance,
             newDistance,
             currentDirection: { x: currentDirection.x, y: currentDirection.y, z: currentDirection.z },
@@ -1709,7 +1710,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           const canvas = rendererRef.current.domElement;
           const dataUrl = canvas.toDataURL('image/png');
 
-          console.log('? Captura con zoom completada');
+          if (import.meta.env.DEV) console.log('? Captura con zoom completada');
           resolve(dataUrl);
 
         } catch (error) {
@@ -1728,7 +1729,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       });
     },
     applyMaterialToPart: (material: THREE.Material, partType: string) => {
-      console.log(`?? CharacterViewer: Applying material to part: ${partType}`, {
+      if (import.meta.env.DEV) console.log(`?? CharacterViewer: Applying material to part: ${partType}`, {
         partType,
         modelGroupExists: !!modelGroupRef.current,
         modelGroupChildrenCount: modelGroupRef.current?.children.length || 0
@@ -1774,22 +1775,22 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                 meshName.includes('trousers');
                 
               if (categoryMatch) {
-                console.log(`?? LOWER_BODY match found: ${child.name} (category: ${meshCategory})`);
+                if (import.meta.env.DEV) console.log(`?? LOWER_BODY match found: ${child.name} (category: ${meshCategory})`);
               }
             } else {
               // Para otras partes, usar matching exacto
               categoryMatch = child.userData.category === partType;
             }
-            
+
             if (categoryMatch && !child.userData.isPreview) {
               child.material = material.clone();
               materializedMeshes++;
-              console.log(`? Applied material to ${partType}: ${child.name || 'unnamed'}`);
+              if (import.meta.env.DEV) console.log(`? Applied material to ${partType}: ${child.name || 'unnamed'}`);
             }
           }
         });
-        
-        console.log(`?? CharacterViewer: Material application complete for ${partType}`, {
+
+        if (import.meta.env.DEV) console.log(`?? CharacterViewer: Material application complete for ${partType}`, {
           totalMeshes: foundMeshes,
           materializedMeshes,
           success: materializedMeshes > 0
@@ -1841,7 +1842,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       currentScene.add(rimLight);
     },
     applyColorToPart: (color: number, partType: string) => {
-      console.log(`?? CharacterViewer: Applying color ${color.toString(16)} to part: ${partType}`, {
+      if (import.meta.env.DEV) console.log(`?? CharacterViewer: Applying color ${color.toString(16)} to part: ${partType}`, {
         partType,
         partTypeType: typeof partType,
         modelGroupExists: !!modelGroupRef.current,
@@ -2062,16 +2063,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
     debugAvailableParts: () => {
       if (modelGroupRef.current) {
-        console.log('?? CharacterViewer: Debugging available parts');
+        if (import.meta.env.DEV) console.log('?? CharacterViewer: Debugging available parts');
         const categories = new Set<string>();
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh && child.userData.category) {
             categories.add(child.userData.category);
           }
         });
-        console.log('Available categories:', Array.from(categories));
+        if (import.meta.env.DEV) console.log('Available categories:', Array.from(categories));
       } else {
-        console.log('? Model group not available for debugging');
+        if (import.meta.env.DEV) console.log('? Model group not available for debugging');
       }
     },
     preloadParts: (parts: Part[]) => {

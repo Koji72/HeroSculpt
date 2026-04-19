@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SelectedParts, Part, PartCategory, CartItem } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
   ownedPartIds = new Set(),
   ownedPartIdsLoading = false,
 }) => {
+  const { lang } = useLang();
   const [activeTab, setActiveTab] = useState<'config' | 'cart'>('config');
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -77,7 +79,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
       }];
       await onCheckout(items);
     } catch (error) {
-      alert(`Error al procesar el pago. Por favor intenta de nuevo.`);
+      alert(t('cart.checkout_error', lang));
     } finally {
       setIsProcessing(false);
     }
@@ -106,7 +108,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
         {/* Header */}
         <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: 'var(--font-comic)', fontSize: 16, letterSpacing: 2 }}>
-            🛒 MI HÉROE
+            {t('cart.title', lang)}
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{
@@ -114,7 +116,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
               background: 'rgba(0,0,0,0.3)', color: '#111',
               padding: '2px 6px', borderRadius: 'var(--radius)',
             }}>
-              {configParts.length} PARTES
+              {configParts.length} {t('cart.parts', lang)}
             </span>
             <button
               onClick={onClose}
@@ -140,8 +142,8 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 cursor: 'pointer',
               }}
             >
-              {tab === 'config' ? 'CONFIGURACIÓN' : (
-                <>CARRITO {cartItems.length > 0 && <span style={{ color: 'var(--color-accent)' }}>●</span>}</>
+              {tab === 'config' ? t('cart.tab.config', lang) : (
+                <>{t('cart.tab.cart', lang)} {cartItems.length > 0 && <span style={{ color: 'var(--color-accent)' }}>●</span>}</>
               )}
             </button>
           ))}
@@ -155,14 +157,14 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 <div style={{ textAlign: 'center', padding: '32px 12px' }}>
                   <div style={{ fontSize: 32, marginBottom: 10 }}>🦸</div>
                   <p style={{ color: 'var(--color-text-muted)', fontSize: 12, fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>
-                    ¡CONSTRUYE TU HÉROE!
+                    {t('cart.empty.title', lang)}
                   </p>
                   <p style={{ color: 'var(--color-text-faint)', fontSize: 11, lineHeight: 1.5, margin: 0 }}>
-                    Selecciona partes desde el panel izquierdo para comenzar tu personaje.
+                    {t('cart.empty.hint', lang)}
                   </p>
                   <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                     <span style={{ fontSize: 16 }}>←</span>
-                    <span style={{ color: 'var(--color-accent)', fontSize: 10, fontFamily: 'var(--font-body)', fontWeight: 800, letterSpacing: 1.2 }}>PANEL DE PARTES</span>
+                    <span style={{ color: 'var(--color-accent)', fontSize: 10, fontFamily: 'var(--font-body)', fontWeight: 800, letterSpacing: 1.2 }}>{t('cart.parts_panel', lang)}</span>
                   </div>
                 </div>
               ) : (
@@ -211,7 +213,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                       {/* Price status */}
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
                         {isOwned && (
-                          <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 700 }}>✓ YA TIENES</span>
+                          <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 700 }}>{t('cart.owned', lang)}</span>
                         )}
                         {isNew && (
                           <>
@@ -219,7 +221,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                               ${part.priceUSD.toFixed(2)}
                             </div>
                             <div style={{ fontSize: 9, color: 'var(--color-text-faint)', textTransform: 'uppercase' }}>
-                              NUEVO
+                              {t('cart.new_badge', lang)}
                             </div>
                           </>
                         )}
@@ -234,20 +236,20 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 10, marginTop: 4 }}>
                   {ownedCount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>En biblioteca</span>
-                      <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 700 }}>{ownedCount} {ownedCount === 1 ? 'parte' : 'partes'}</span>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{t('cart.in_library', lang)}</span>
+                      <span style={{ fontSize: 12, color: '#22c55e', fontWeight: 700 }}>{ownedCount} {ownedCount === 1 ? t('cart.part_singular', lang) : t('cart.part_plural', lang)}</span>
                     </div>
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>Total nuevas</span>
+                    <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{t('cart.total_new', lang)}</span>
                     <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: 'var(--color-accent)', letterSpacing: 1 }}>
                       TOTAL ${newTotal.toFixed(2)}
                     </span>
                   </div>
                   {isAuthenticated && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>Descuento registro</span>
-                      <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: '#22c55e', letterSpacing: 1 }}>GRATIS</span>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{t('cart.discount', lang)}</span>
+                      <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: '#22c55e', letterSpacing: 1 }}>{t('cart.free', lang)}</span>
                     </div>
                   )}
                 </div>
@@ -260,10 +262,10 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 <div style={{ textAlign: 'center', padding: '32px 12px' }}>
                   <div style={{ fontSize: 28, marginBottom: 10 }}>🛒</div>
                   <p style={{ color: 'var(--color-text-muted)', fontSize: 11, fontFamily: 'var(--font-body)', fontWeight: 700, letterSpacing: 1, margin: '0 0 6px' }}>
-                    CARRITO VACÍO
+                    {t('cart.empty_cart', lang)}
                   </p>
                   <p style={{ color: 'var(--color-text-faint)', fontSize: 10, lineHeight: 1.5, margin: 0 }}>
-                    Añade partes premium desde el panel de configuración.
+                    {t('cart.empty_cart_hint', lang)}
                   </p>
                 </div>
               ) : (
@@ -310,7 +312,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 marginBottom: 6,
               }}
             >
-              {isProcessing ? 'GUARDANDO...' : '✓ GUARDAR CONFIGURACIÓN'}
+              {isProcessing ? t('cart.saving', lang) : t('cart.save', lang)}
             </button>
           ) : (
             <button
@@ -324,7 +326,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 marginBottom: 6,
               }}
             >
-              🔑 REGISTRARSE PARA GUARDAR
+              {t('cart.register_save', lang)}
             </button>
           )}
           <button
@@ -338,7 +340,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
               cursor: 'pointer',
             }}
           >
-            Volver a editar
+            {t('cart.back_edit', lang)}
           </button>
         </div>
       </div>

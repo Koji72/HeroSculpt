@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useLang, t } from '../lib/i18n';
 
 interface ResetPasswordModalProps {
   onClose: () => void;
 }
 
 const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
+  const { lang } = useLang();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -14,8 +16,8 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirm) { setError('Las contraseñas no coinciden'); return; }
-    if (password.length < 6) { setError('Mínimo 6 caracteres'); return; }
+    if (password !== confirm) { setError(t('reset.err.mismatch', lang)); return; }
+    if (password.length < 6) { setError(t('reset.err.min_length', lang)); return; }
     if (!supabase) { setError('Servicio no disponible'); return; }
     setError(null);
     setLoading(true);
@@ -55,30 +57,30 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
         >✕</button>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>
-            NUEVA CONTRASEÑA
+            {t('reset.title', lang)}
           </div>
         </div>
 
         {done ? (
           <>
             <p style={{ color: 'var(--color-text, #e2e8f0)', fontSize: 13, textAlign: 'center', marginBottom: 20 }}>
-              Contraseña actualizada. Ya puedes iniciar sesión.
+              {t('reset.success', lang)}
             </p>
             <button
               onClick={() => { window.location.hash = ''; onClose(); }}
               style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: 'pointer' }}
             >
-              ENTRAR →
+              {t('reset.done', lang)}
             </button>
           </>
         ) : (
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: 14 }}>
-              <label style={labelStyle}>Nueva contraseña</label>
+              <label style={labelStyle}>{t('reset.new_password', lang)}</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} required autoComplete="new-password" />
             </div>
             <div style={{ marginBottom: 20 }}>
-              <label style={labelStyle}>Confirmar contraseña</label>
+              <label style={labelStyle}>{t('reset.confirm_password', lang)}</label>
               <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} style={inputStyle} required autoComplete="new-password" />
             </div>
             <button
@@ -86,7 +88,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
               disabled={loading}
               style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
             >
-              {loading ? '...' : 'GUARDAR →'}
+              {loading ? '...' : t('reset.submit', lang)}
             </button>
             {error && <div style={{ marginTop: 10, fontSize: 12, color: 'var(--color-accent, #f59e0b)', textAlign: 'center' }}>{error}</div>}
           </form>

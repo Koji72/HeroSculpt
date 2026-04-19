@@ -176,6 +176,73 @@ const dict = {
 
   // PurchaseLibrary
   'library.title': { en: '📚 MY BUILDS', es: '📚 MIS BUILDS' },
+
+  // AuthModal
+  'auth.email_sent': { en: 'EMAIL SENT', es: 'EMAIL ENVIADO' },
+  'auth.email_sent_body': { en: 'Check your email and follow the link to create a new password.', es: 'Revisa tu correo y sigue el enlace para crear una nueva contraseña.' },
+  'auth.account_created': { en: 'ACCOUNT CREATED!', es: '¡CUENTA CREADA!' },
+  'auth.account_created_body': { en: 'Check your email to confirm your account, then sign in.', es: 'Revisa tu email para confirmar la cuenta y luego inicia sesión.' },
+  'auth.close_btn': { en: 'CLOSE', es: 'CERRAR' },
+  'auth.title.signup': { en: 'JOIN THE SQUAD', es: 'ÚNETE AL ESCUADRÓN' },
+  'auth.title.forgot': { en: 'RECOVER ACCESS', es: 'RECUPERAR ACCESO' },
+  'auth.title.signin': { en: 'WELCOME BACK', es: 'BIENVENIDO DE VUELTA' },
+  'auth.submit.signup': { en: 'CREATE ACCOUNT →', es: 'CREAR CUENTA →' },
+  'auth.submit.forgot': { en: 'SEND LINK →', es: 'ENVIAR ENLACE →' },
+  'auth.submit.signin': { en: 'SIGN IN →', es: 'ENTRAR →' },
+  'auth.have_account': { en: 'Already have an account?', es: '¿Ya tienes cuenta?' },
+  'auth.signin_link': { en: 'SIGN IN', es: 'INICIAR SESIÓN' },
+  'auth.back': { en: '← BACK', es: '← VOLVER' },
+  'auth.new_here': { en: 'New here?', es: '¿Nuevo aquí?' },
+  'auth.join_free': { en: 'JOIN FREE', es: 'ÚNETE GRATIS' },
+  'auth.forgot_link': { en: 'Forgot your password?', es: '¿Olvidaste tu contraseña?' },
+  'auth.password_label': { en: 'Password', es: 'Contraseña' },
+  'auth.password_placeholder': { en: 'password', es: 'contraseña' },
+  'auth.signup_subtitle': { en: 'CREATE YOUR FREE ACCOUNT', es: 'CREA TU CUENTA GRATUITA' },
+
+  // SimpleSignUpModal
+  'signup.title': { en: 'CREATE ACCOUNT', es: 'CREAR CUENTA' },
+  'signup.success': { en: 'Account created successfully. Check your email if confirmation is required.', es: 'Cuenta creada con éxito. Revisa tu email si se requiere confirmación.' },
+  'signup.close': { en: 'CLOSE', es: 'CERRAR' },
+  'signup.submitting': { en: 'Creating account...', es: 'Creando cuenta...' },
+  'signup.submit': { en: 'CREATE ACCOUNT', es: 'CREAR CUENTA' },
+  'signup.password_label': { en: 'Password', es: 'Contraseña' },
+  'signup.password_hint': { en: 'Minimum 6 characters', es: 'Mínimo 6 caracteres' },
+  'signup.terms': { en: 'By creating an account, you agree to our terms of service.', es: 'Al crear una cuenta, aceptas nuestros términos de servicio.' },
+  'signup.email_placeholder': { en: 'your@email.com', es: 'tu@correo.com' },
+
+  // ResetPasswordModal
+  'reset.title': { en: 'NEW PASSWORD', es: 'NUEVA CONTRASEÑA' },
+  'reset.success': { en: 'Password updated. You can now sign in.', es: 'Contraseña actualizada. Ya puedes iniciar sesión.' },
+  'reset.done': { en: 'SIGN IN →', es: 'ENTRAR →' },
+  'reset.new_password': { en: 'New password', es: 'Nueva contraseña' },
+  'reset.confirm_password': { en: 'Confirm password', es: 'Confirmar contraseña' },
+  'reset.submit': { en: 'SAVE →', es: 'GUARDAR →' },
+  'reset.err.mismatch': { en: 'Passwords do not match', es: 'Las contraseñas no coinciden' },
+  'reset.err.min_length': { en: 'Minimum 6 characters', es: 'Mínimo 6 caracteres' },
+
+  // ShoppingCart
+  'cart.title': { en: '🛒 MY HERO', es: '🛒 MI HÉROE' },
+  'cart.parts': { en: 'PARTS', es: 'PARTES' },
+  'cart.tab.config': { en: 'CONFIGURATION', es: 'CONFIGURACIÓN' },
+  'cart.tab.cart': { en: 'CART', es: 'CARRITO' },
+  'cart.empty.title': { en: 'BUILD YOUR HERO!', es: '¡CONSTRUYE TU HÉROE!' },
+  'cart.empty.hint': { en: 'Select parts from the left panel to start.', es: 'Selecciona partes desde el panel izquierdo para comenzar tu personaje.' },
+  'cart.parts_panel': { en: 'PARTS PANEL', es: 'PANEL DE PARTES' },
+  'cart.owned': { en: '✓ OWNED', es: '✓ YA TIENES' },
+  'cart.new_badge': { en: 'NEW', es: 'NUEVO' },
+  'cart.in_library': { en: 'In library', es: 'En biblioteca' },
+  'cart.part_singular': { en: 'part', es: 'parte' },
+  'cart.part_plural': { en: 'parts', es: 'partes' },
+  'cart.total_new': { en: 'New total', es: 'Total nuevas' },
+  'cart.discount': { en: 'Signup discount', es: 'Descuento registro' },
+  'cart.free': { en: 'FREE', es: 'GRATIS' },
+  'cart.empty_cart': { en: 'EMPTY CART', es: 'CARRITO VACÍO' },
+  'cart.empty_cart_hint': { en: 'Add premium parts from the configuration panel.', es: 'Añade partes premium desde el panel de configuración.' },
+  'cart.saving': { en: 'SAVING...', es: 'GUARDANDO...' },
+  'cart.save': { en: '✓ SAVE CONFIGURATION', es: '✓ GUARDAR CONFIGURACIÓN' },
+  'cart.register_save': { en: '🔑 REGISTER TO SAVE', es: '🔑 REGISTRARSE PARA GUARDAR' },
+  'cart.back_edit': { en: 'Back to edit', es: 'Volver a editar' },
+  'cart.checkout_error': { en: 'Error processing payment. Please try again.', es: 'Error al procesar el pago. Por favor intenta de nuevo.' },
 } as const;
 
 export type TransKey = keyof typeof dict;

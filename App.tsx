@@ -1158,6 +1158,7 @@ const AppContent: React.FC = () => {
       ...([PartCategory.HEAD, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT,
            PartCategory.CAPE, PartCategory.BELT, PartCategory.SYMBOL,
            PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.CHEST_BELT,
+           PartCategory.SUIT_TORSO,
         ] as PartCategory[]).reduce((acc, cat) => {
           const p = pick(cat, torsoId);
           if (p) acc[cat] = p;
@@ -1169,6 +1170,10 @@ const AppContent: React.FC = () => {
           return boots ? { [PartCategory.BOOTS]: boots } : {};
         })()),
       // Unconstrained extras (50% chance each to avoid overloading the model)
+      ...(Math.random() > 0.5 ? (() => {
+          const p = pick(PartCategory.POUCH);
+          return p ? { [PartCategory.POUCH]: p } : {};
+        })() : {}),
       ...(Math.random() > 0.5 ? (() => {
           const p = pick(PartCategory.BUCKLE);
           return p ? { [PartCategory.BUCKLE]: p } : {};
@@ -2141,7 +2146,7 @@ const AppContent: React.FC = () => {
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handlePreviousPose}>◀</button>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: 0.8, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
-            POSE {(currentPoseIndex ?? 0) + 1} / {savedPoses?.length ?? 1}
+            {t('bottom.pose', lang)} {(currentPoseIndex ?? 0) + 1} / {Math.max(savedPoses?.length ?? 0, 1)}
           </span>
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handleNextPose}>▶</button>
