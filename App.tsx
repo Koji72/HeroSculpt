@@ -224,12 +224,8 @@ const AppContent: React.FC = () => {
 
   // Estado para hojas de personaje RPG
   const [isRPGSheetOpen, setIsRPGSheetOpen] = useState(false);
-  const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'style' | 'library' | null>('stats');
-  const toggleRightPanel = (panel: 'stats' | 'style' | 'library') => {
-    if (panel === 'style' && activeCategory) {
-      const mapped = CATEGORY_TO_STYLE_PART[activeCategory];
-      if (mapped) setActivePanelPart(mapped);
-    }
+  const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'library' | null>('stats');
+  const toggleRightPanel = (panel: 'stats' | 'library') => {
     setActiveRightPanel(p => p === panel ? null : panel);
   };
 
@@ -2497,17 +2493,6 @@ const AppContent: React.FC = () => {
                 />
               </Card>
             )}
-            {activeRightPanel === 'style' && (
-              <StylePanel
-                parts={stylePanelParts}
-                activePart={activePanelPart}
-                onPartSelect={setActivePanelPart}
-                onColorChange={handleStylePanelColorChange}
-                onMaterialChange={handleStylePanelMaterialChange}
-                onApplyToAll={handleApplyToAll}
-                onClose={() => setActiveRightPanel(null)}
-              />
-            )}
             {activeRightPanel === 'library' && (
               <PurchaseLibrary
                 isOpen={true}
@@ -2523,7 +2508,6 @@ const AppContent: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {([
             { key: 'stats', icon: '📊', label: t('rtab.stats', lang) },
-            { key: 'style', icon: '🎨', label: t('rtab.style', lang) },
           ] as const).map(({ key, icon, label }) => (
             <button
               key={key}

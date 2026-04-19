@@ -1881,8 +1881,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             
             if (child.userData.category === partType && !child.userData.isPreview) {
               foundMeshes++;
-              if (child.material instanceof THREE.MeshPhysicalMaterial) {
+              if (child.material instanceof THREE.MeshStandardMaterial) {
                 child.material.color.setHex(color);
+                child.material.needsUpdate = true;
                 coloredMeshes++;
                     // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
