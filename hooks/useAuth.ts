@@ -29,58 +29,59 @@ export function useAuth() {
     setLoading(false);
   }, []);
 
-  // 🔧 OPTIMIZADO: Usar useCallback para la función de logout
   const clearPasswordRecovery = useCallback(() => setIsPasswordRecovery(false), []);
 
   const signOut = useCallback(async () => {
     if (!supabase) {
-      console.warn('useAuth: Supabase not available for sign out');
-      setError('No se puede cerrar sesión - Supabase no disponible');
+      setError('Sign out unavailable — Supabase not configured');
       return;
     }
-    
+
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('useAuth: Error signing out:', error.message);
         setError(error.message);
-        // ✅ CRITICAL FIX: FORZAR LIMPIEZA LOCAL SIEMPRE
-        console.log('useAuth: Forzando limpieza local después de error en signOut');
+        // Force local cleanup even if the server call failed
         setUser(null);
         setSession(null);
       } else {
         setError(null);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('useAuth: User signed out successfully');
-        }
       }
     } catch (err) {
       console.error('useAuth: Unexpected error during sign out:', err);
-      setError('Error inesperado al cerrar sesión');
-      // ✅ CRITICAL FIX: FORZAR LIMPIEZA LOCAL SIEMPRE
-      console.log('useAuth: Forzando limpieza local después de error inesperado');
+      setError('Unexpected error during sign out');
+      // Force local cleanup even on exception
       setUser(null);
       setSession(null);
     }
   }, []);
 
   useEffect(() => {
-    // Si Supabase no está disponible, marcar como no autenticado
     if (!supabase) {
       console.warn('useAuth: Supabase client is not available');
-      setError('Supabase no está configurado');
       setLoading(false);
       return;
     }
 
-    // onAuthStateChange fires INITIAL_SESSION immediately on registration in Supabase v2,
+    // onAuthStateChange fires INITIAL_SESSION immediately in Supabase v2,
     // so getSession() is redundant and creates a double-write race.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
+    // Safety net: if INITIAL_SESSION never fires (e.g. network error at startup),
+    // clear the loading spinner after 8 seconds so the UI is not blocked forever.
+    const fallbackTimer = setTimeout(() => {
+      setLoading((prev) => {
+        if (prev) console.warn('useAuth: INITIAL_SESSION never fired — clearing loading state');
+        return false;
+      });
+    }, 8000);
+
     return () => {
       subscription.unsubscribe();
+      clearTimeout(fallbackTimer);
     };
   }, [handleAuthStateChange]);
 
@@ -94,4 +95,4 @@ export function useAuth() {
     isPasswordRecovery,
     clearPasswordRecovery,
   }), [user, session, loading, error, signOut, isAuthenticated, isPasswordRecovery, clearPasswordRecovery]);
-} 
+}

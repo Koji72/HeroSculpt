@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getSignUpConfig, logEmailRedirectInfo } from '../lib/emailRedirectConfig';
+import { getSignUpConfig } from '../lib/emailRedirectConfig';
 import { supabase } from '../lib/supabase';
 import { useLang, t } from '../lib/i18n';
 
@@ -32,8 +32,6 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
         return;
       }
 
-      logEmailRedirectInfo();
-
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -43,8 +41,11 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
       if (signUpError) {
         setError(signUpError.message);
       } else {
+        // Show success — email confirmation may be required before the user
+        // is actually signed in, so we do NOT call onSignInSuccess here.
+        // onAuthStateChange in useAuth will handle the SIGNED_IN event when
+        // the session becomes active (either immediately or after confirmation).
         setSuccess(true);
-        onSignInSuccess?.();
       }
     } catch {
       setError(t('common.service_unavailable', lang));

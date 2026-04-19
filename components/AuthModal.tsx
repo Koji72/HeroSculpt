@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { getSignUpConfig } from '../lib/emailRedirectConfig';
 import { useLang, t } from '../lib/i18n';
 
 interface AuthModalProps {
@@ -42,7 +43,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
         if (err) { setError(err.message); return; }
         setForgotSent(true);
       } else if (mode === 'signup') {
-        const { error: err } = await supabase.auth.signUp({ email, password });
+        const { error: err } = await supabase.auth.signUp({ email, password, options: getSignUpConfig() });
         if (err) { setError(err.message); return; }
         sessionStorage.setItem('just_registered', '1');
         setSignupSuccess(true);
