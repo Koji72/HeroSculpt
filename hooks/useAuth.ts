@@ -98,7 +98,7 @@ export function useAuth() {
     // clear the loading spinner after 8 seconds so the UI is not blocked forever.
     const fallbackTimer = setTimeout(() => {
       setLoading((prev) => {
-        if (prev) console.warn('useAuth: INITIAL_SESSION never fired — clearing loading state');
+        if (prev && import.meta.env.DEV) console.warn('useAuth: INITIAL_SESSION never fired — clearing loading state');
         return false;
       });
     }, 8000);

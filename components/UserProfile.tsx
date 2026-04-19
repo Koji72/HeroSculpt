@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { UserConfigService } from '../services/userConfigService';
-import { UserConfiguration } from '../lib/supabase';
+import { UserConfiguration, User as SupabaseUser } from '../lib/supabase';
 import { SelectedParts } from '../types';
 import { useLang, t } from '../lib/i18n';
 import { Button } from './ui/button';
@@ -49,7 +49,7 @@ interface UserProfileProps {
   onSignOut: () => Promise<void>;
   onOpenPurchaseLibrary?: () => void;
   isAuthenticated: boolean;
-  user: any;
+  user: SupabaseUser | null;
   id: string;
   registerElement: (id: string, element: HTMLElement | null) => void;
 }

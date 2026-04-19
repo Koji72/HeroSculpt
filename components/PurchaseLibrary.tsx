@@ -173,7 +173,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
         const modelName = currentItem?.item_name || t('library.item.unnamed', lang);
         onLoadConfiguration(currentItem.configuration_data, modelName);
       } else {
-        alert(t('library.err.load_config', lang));
+        setError(t('library.err.load_config', lang));
       }
     } finally {
       setLoadingConfigId(null);

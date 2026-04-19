@@ -757,12 +757,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     // Load selected parts with caching
     let filteredPartList = selectedPartList;
-    const suit = selectedPartList.find((p: any) => p.category === PartCategory.SUIT_TORSO);
-    const torso = selectedPartList.find((p: any) => p.category === PartCategory.TORSO);
+    const suit = selectedPartList.find(p => p.category === PartCategory.SUIT_TORSO);
+    const torso = selectedPartList.find(p => p.category === PartCategory.TORSO);
     if (suit) {
-      filteredPartList = selectedPartList.filter((p: any) => p.category !== PartCategory.TORSO);
+      filteredPartList = selectedPartList.filter(p => p.category !== PartCategory.TORSO);
     } else if (torso) {
-      filteredPartList = selectedPartList.filter((p: any) => p.category !== PartCategory.SUIT_TORSO);
+      filteredPartList = selectedPartList.filter(p => p.category !== PartCategory.SUIT_TORSO);
     }
 
     // Verificar compatibilidad de manos con el torso actual
@@ -787,7 +787,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       }
       
       // Filtrar manos incompatibles
-      filteredPartList = filteredPartList.filter((part: any) => {
+      filteredPartList = filteredPartList.filter(part => {
         if (part.category === PartCategory.HAND_LEFT || part.category === PartCategory.HAND_RIGHT) {
           const isCompatible = part.compatible.includes(baseTorsoId);
           if (!isCompatible) {
@@ -800,10 +800,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         return true; // Mantener todas las dem�s partes
       });
 
-      if (import.meta.env.DEV) console.log('?? DEBUG - filteredPartList after hand filtering:', filteredPartList.map((p:any) => p.id));
+      if (import.meta.env.DEV) console.log('?? DEBUG - filteredPartList after hand filtering:', filteredPartList.map(p => p.id));
 
       // Filtrar cabeza compatible
-      filteredPartList = filteredPartList.filter((part: any) => {
+      filteredPartList = filteredPartList.filter(part => {
         if (part.category === PartCategory.HEAD) {
           // Si no hay torso base, permitir todas las cabezas (fallback)
           if (!baseTorsoId) {
@@ -826,8 +826,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     }
 
     const loadPromises = filteredPartList
-      .filter((part: any) => part && part.gltfPath && !part.attributes?.hidden)
-      .map(async (part: any) => {
+      .filter(part => part && part.gltfPath && !part.attributes?.hidden)
+      .map(async (part) => {
         const modelPath = `${basePath}${part.gltfPath.startsWith('/') ? part.gltfPath.slice(1) : part.gltfPath}`;
         
         // ? NUEVO: Debug espec�fico para capas

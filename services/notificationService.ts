@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { RealtimeChannel } from '@supabase/supabase-js';
+import type { RealtimeChannel, RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 
 export interface Notification {
   id: string;
@@ -42,7 +42,7 @@ export class NotificationService {
   // 🎵 INICIALIZAR CONTEXTO DE AUDIO
   private initializeAudioContext(): void {
     try {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.audioContext = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
     } catch (error) {
       if (import.meta.env.DEV) console.warn('Audio context not supported');
     }
@@ -73,7 +73,7 @@ export class NotificationService {
   }
 
   // 🎯 MANEJAR NOTIFICACIÓN EN TIEMPO REAL
-  private handleRealtimeNotification(payload: any): void {
+  private handleRealtimeNotification(payload: RealtimePostgresInsertPayload<Notification>): void {
     if (payload.eventType === 'INSERT') {
       const notification = payload.new as Notification;
       this.showNotification(notification);

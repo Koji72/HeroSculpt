@@ -16,7 +16,7 @@ export interface HeadquartersData {
 
 export class HeadquartersService {
   private static instance: HeadquartersService;
-  private cache: Map<string, any> = new Map();
+  private cache: Map<string, HeadquartersData> = new Map();
 
   static getInstance(): HeadquartersService {
     if (!HeadquartersService.instance) {

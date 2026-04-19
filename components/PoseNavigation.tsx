@@ -5,7 +5,7 @@ interface PoseNavigationProps {
   savedPoses: Array<{
     id: string;
     name: string;
-    configuration: any;
+    configuration: Record<string, unknown>;
     source: 'purchase' | 'saved';
     date: string;
   }>;

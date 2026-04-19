@@ -1,11 +1,16 @@
 import * as THREE from 'three';
-import { 
-  FireEffectMaterial, 
-  IceEffectMaterial, 
-  LightningEffectMaterial, 
+import {
+  FireEffectMaterial,
+  IceEffectMaterial,
+  LightningEffectMaterial,
   MagicAuraEffectMaterial,
-  powerEffectPresets 
+  powerEffectPresets
 } from './shaders/powerEffectsShaders';
+
+interface AnimatedMaterial extends THREE.Material {
+  updateTime?(time: number): void;
+  setIntensity?(intensity: number): void;
+}
 
 export type PowerType = 'fire' | 'ice' | 'lightning' | 'magic';
 
@@ -134,7 +139,7 @@ export class PowerEffectsSystem {
     
     // Update material uniforms
     if ('setIntensity' in effect.material) {
-      (effect.material as any).setIntensity(intensity);
+      (effect.material as AnimatedMaterial).setIntensity?.(intensity);
     }
 
     return true;
@@ -336,7 +341,7 @@ export class PowerEffectsSystem {
       // Update all active effects
       for (const effect of this.activeEffects.values()) {
         if (effect.isActive && 'updateTime' in effect.material) {
-          (effect.material as any).updateTime(this.time);
+          (effect.material as AnimatedMaterial).updateTime?.(this.time);
         }
       }
       

@@ -35,9 +35,10 @@ import { useLang, t } from './lib/i18n';
 import { modelCache } from './lib/modelCache';
 import ErrorBoundary from './components/ErrorBoundary';
 
-import { PurchaseHistoryService } from './services/purchaseHistoryService';
+import { PurchaseHistoryService, Purchase, PurchaseItem } from './services/purchaseHistoryService';
 import { ResendEmailService } from './services/resendEmailService';
 import { UserConfigService } from './services/userConfigService';
+import { UserConfiguration } from './lib/supabase';
 import { notificationService } from './services/notificationService';
 import { Card } from "./components/ui/card";
 import HeaderDropdown from './components/HeaderDropdown';
@@ -381,9 +382,9 @@ const AppContent: React.FC = () => {
 
       const allPoses = [];
 
-      purchases.forEach((purchase: any) => {
+      purchases.forEach((purchase: Purchase) => {
         if (purchase.purchase_items) {
-          purchase.purchase_items.forEach((item: any) => {
+          purchase.purchase_items.forEach((item: PurchaseItem) => {
             if (item.configuration_data) {
               allPoses.push({
                 id: `purchase-${purchase.id}-${item.id}`,
@@ -397,7 +398,7 @@ const AppContent: React.FC = () => {
         }
       });
 
-      configurations.forEach((config: any) => {
+      configurations.forEach((config: UserConfiguration) => {
         if (config.selected_parts && Object.keys(config.selected_parts).length > 0) {
           allPoses.push({
             id: `saved-${config.id}`,
@@ -1629,7 +1630,7 @@ const AppContent: React.FC = () => {
     if (stat <= 8) return 'strong_legs_03';
     return 'strong_legs_04';
   };
-  const handleLoadRPGCharacterToCustomizer = useCallback((character: any) => {
+  const handleLoadRPGCharacterToCustomizer = useCallback((character: RPGCharacterSync) => {
     setSelectedArchetype(prevArchetype => character.archetypeId || prevArchetype || ArchetypeId.STRONG);
     setCharacterName(character.name || "");
     
@@ -1751,7 +1752,11 @@ const AppContent: React.FC = () => {
         <img
           src="/logo.png"
           alt="HeroSculpt"
-          style={{ width: 180, marginBottom: 32, animation: 'float 3s ease-in-out infinite' }}
+          style={{
+            width: 220, marginBottom: 32,
+            animation: 'float 3s ease-in-out infinite',
+            filter: 'drop-shadow(0 0 20px rgba(249,115,22,0.7))',
+          }}
         />
         <div style={{
           width: 48, height: 48,
@@ -1760,7 +1765,10 @@ const AppContent: React.FC = () => {
           borderRadius: '50%',
           animation: 'spin 0.8s linear infinite',
         }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        `}</style>
       </div>
     );
   }

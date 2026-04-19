@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -6,6 +6,7 @@ import { BookOpen, Users, Download, Save, Plus, Upload } from 'lucide-react';
 import { BaseCharacterData } from './BaseCharacterSheet';
 import { createDefaultCharacter, getSheetComponent, getSystemInfo, validateCharacterData, RPG_SYSTEMS } from './RPGSheetRegistry';
 import { SelectedParts, ArchetypeId } from '../../types';
+import { useLang, t } from '../../lib/i18n';
 
 interface RPGCharacterSheetManagerProps {
   isOpen: boolean;
@@ -22,11 +23,15 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
   currentSelectedParts,
   currentArchetype
 }) => {
+  const { lang } = useLang();
   const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
   const [currentCharacter, setCurrentCharacter] = useState<BaseCharacterData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [savedCharacters, setSavedCharacters] = useState<BaseCharacterData[]>([]);
   const [showSystemSelector, setShowSystemSelector] = useState(true);
+  const [actionMessage, setActionMessage] = useState<string>('');
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Cargar personajes guardados al iniciar
   useEffect(() => {
@@ -39,6 +44,10 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
         if (import.meta.env.DEV) console.error('Error loading saved characters:', error);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    return () => { if (closeTimerRef.current) clearTimeout(closeTimerRef.current); };
   }, []);
 
   // Save personajes
@@ -74,16 +83,18 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
   // Save personaje actual
   const saveCurrentCharacter = () => {
     if (!currentCharacter || !validateCharacterData(currentCharacter)) {
-      alert('Please fill in all required fields');
+      setActionMessage(t('rpgmgr.err.required_fields', lang));
       return;
     }
 
+    setActionMessage('');
     const updatedCharacters = savedCharacters.filter(c => c.id !== currentCharacter.id);
     updatedCharacters.push(currentCharacter);
     saveCharacters(updatedCharacters);
     setIsEditing(false);
     // Close automáticamente al guardar
-    setTimeout(() => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
       setShowSystemSelector(true);
       setSelectedSystem(null);
       setCurrentCharacter(null);
@@ -93,10 +104,19 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
 
   // Delete personaje
   const deleteCharacter = (characterId: string) => {
-    if (confirm('Are you sure you want to delete this character?')) {
-      const updatedCharacters = savedCharacters.filter(c => c.id !== characterId);
+    setPendingDeleteId(characterId);
+  };
+
+  const confirmDelete = () => {
+    if (pendingDeleteId) {
+      const updatedCharacters = savedCharacters.filter(c => c.id !== pendingDeleteId);
       saveCharacters(updatedCharacters);
+      setPendingDeleteId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setPendingDeleteId(null);
   };
 
   // Exportar personaje
@@ -123,12 +143,12 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
         if (validateCharacterData(character)) {
           const updatedCharacters = [...savedCharacters, character];
           saveCharacters(updatedCharacters);
-          alert('Character imported successfully!');
+          setActionMessage(t('rpgmgr.import.success', lang));
         } else {
-          alert('Invalid character file');
+          setActionMessage(t('rpgmgr.import.err.invalid', lang));
         }
       } catch (error) {
-        alert('Error importing character file');
+        setActionMessage(t('rpgmgr.import.err.parse', lang));
       }
     };
     reader.readAsText(file);
@@ -163,6 +183,28 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
 
         {showSystemSelector ? (
           <div className="space-y-6">
+            {/* Inline action message */}
+            {actionMessage && (
+              <div className="px-3 py-2 rounded bg-blue-50 border border-blue-200 text-sm text-blue-800">
+                {actionMessage}
+              </div>
+            )}
+
+            {/* Inline delete confirmation */}
+            {pendingDeleteId && (
+              <div className="px-3 py-2 rounded bg-red-50 border border-red-300 text-sm text-red-800 flex items-center justify-between gap-3">
+                <span>{t('rpgmgr.delete.confirm', lang)}</span>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={cancelDelete}>
+                    {t('rpgmgr.delete.cancel', lang)}
+                  </Button>
+                  <Button size="sm" onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
+                    {t('rpgmgr.delete.yes', lang)}
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* Header con acciones */}
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Select RPG System</h2>
@@ -286,11 +328,16 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                 ← Back to Systems
               </Button>
               {currentCharacter && (
-                <div className="flex space-x-2">
-                  <Button onClick={saveCurrentCharacter} disabled={!isEditing}>
-                    <Save size={16} className="mr-2" />
-                    Save Character
-                  </Button>
+                <div className="flex flex-col items-end gap-1">
+                  {actionMessage && (
+                    <span className="text-sm text-red-600">{actionMessage}</span>
+                  )}
+                  <div className="flex space-x-2">
+                    <Button onClick={saveCurrentCharacter} disabled={!isEditing}>
+                      <Save size={16} className="mr-2" />
+                      Save Character
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

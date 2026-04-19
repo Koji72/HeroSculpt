@@ -2,9 +2,14 @@ import { useState, useEffect, forwardRef } from 'react';
 import { Download, Printer, FileDown, AlertCircle } from 'lucide-react';
 import { useLang, t } from '../lib/i18n';
 
+interface ExportResult {
+  success: boolean;
+  error?: string;
+}
+
 interface ExportButtonProps {
-  onExportGLB?: () => Promise<any>;
-  onExportSTL?: () => Promise<any>;
+  onExportGLB?: () => Promise<ExportResult>;
+  onExportSTL?: () => Promise<ExportResult>;
   disabled?: boolean;
   className?: string;
   id: string;
@@ -38,18 +43,18 @@ const ExportButton = forwardRef<HTMLButtonElement, ExportButtonProps>(({ onExpor
       if (result.success) {
         setLastExportResult({
           success: true,
-          message: `${exportType.toUpperCase()} exported successfully!`
+          message: `${exportType.toUpperCase()} ${t('export.success', lang)}`
         });
       } else {
         setLastExportResult({
           success: false,
-          message: `Error exporting ${exportType.toUpperCase()}: ${result.error}`
+          message: `${t('export.error_prefix', lang)} ${exportType.toUpperCase()}: ${result.error}`
         });
       }
     } catch (error) {
       setLastExportResult({
         success: false,
-        message: `Unexpected error exporting ${exportType.toUpperCase()}`
+        message: `${t('export.error_unexpected', lang)} ${exportType.toUpperCase()}`
       });
     } finally {
       setIsExporting(false);

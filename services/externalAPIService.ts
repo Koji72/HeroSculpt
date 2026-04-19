@@ -28,7 +28,7 @@ export interface APIIntegration {
   id: string;
   name: string;
   type: 'discord' | 'twitter' | 'storage' | 'analytics';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isActive: boolean;
   lastUsed?: Date;
 }
@@ -86,7 +86,7 @@ export class ExternalAPIService {
         throw new Error('Discord webhook not found or inactive');
       }
 
-      const payload: any = {
+      const payload: { content: string; embeds: unknown[] } = {
         content,
         embeds: []
       };
@@ -266,7 +266,7 @@ export class ExternalAPIService {
   // 📊 ANALÍTICAS EXTERNAS
   async sendAnalytics(
     event: string,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     provider: 'google' | 'mixpanel' | 'amplitude' = 'google'
   ): Promise<void> {
     try {
@@ -287,7 +287,7 @@ export class ExternalAPIService {
   }
 
   // 📈 GOOGLE ANALYTICS
-  private async sendGoogleAnalytics(event: string, data: Record<string, any>): Promise<void> {
+  private async sendGoogleAnalytics(event: string, data: Record<string, unknown>): Promise<void> {
     // Implementación de Google Analytics 4
     if (typeof gtag !== 'undefined') {
       gtag('event', event, data);
@@ -295,7 +295,7 @@ export class ExternalAPIService {
   }
 
   // 📊 MIXPANEL
-  private async sendMixpanelAnalytics(event: string, data: Record<string, any>): Promise<void> {
+  private async sendMixpanelAnalytics(event: string, data: Record<string, unknown>): Promise<void> {
     // Implementación de Mixpanel
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track(event, data);
@@ -303,7 +303,7 @@ export class ExternalAPIService {
   }
 
   // 📈 AMPLITUDE
-  private async sendAmplitudeAnalytics(event: string, data: Record<string, any>): Promise<void> {
+  private async sendAmplitudeAnalytics(event: string, data: Record<string, unknown>): Promise<void> {
     // Implementación de Amplitude
     if (typeof amplitude !== 'undefined') {
       amplitude.getInstance().logEvent(event, data);
@@ -447,7 +447,7 @@ export class ExternalAPIService {
   async configureIntegration(
     name: string,
     type: APIIntegration['type'],
-    config: Record<string, any>
+    config: Record<string, unknown>
   ): Promise<APIIntegration> {
     try {
       const { data, error } = await supabase

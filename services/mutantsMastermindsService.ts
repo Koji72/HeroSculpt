@@ -191,14 +191,14 @@ export interface MAndMStats {
 }
 
 class MutantsMastermindsService {
-  private cache = new Map<string, any>();
+  private cache = new Map<string, { data: unknown; timestamp: number }>();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutos
 
   // ===== GESTIÓN DE PERSONAJES =====
   
   async getCharacters(userId: string): Promise<MAndMCharacter[]> {
     const cacheKey = `characters_${userId}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMCharacter[]>(cacheKey);
     if (cached) return cached;
 
     const { data, error } = await supabase
@@ -222,7 +222,7 @@ class MutantsMastermindsService {
 
   async getCharacter(id: string, userId: string): Promise<MAndMCharacter | null> {
     const cacheKey = `character_${id}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMCharacter>(cacheKey);
     if (cached) return cached;
 
     const { data, error } = await supabase
@@ -313,7 +313,7 @@ class MutantsMastermindsService {
 
   async getCampaigns(userId: string): Promise<MAndMCampaign[]> {
     const cacheKey = `campaigns_${userId}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMCampaign[]>(cacheKey);
     if (cached) return cached;
 
     const { data, error } = await supabase
@@ -393,7 +393,7 @@ class MutantsMastermindsService {
 
   async getPowers(archetype?: string, faction?: string): Promise<MAndMPower[]> {
     const cacheKey = `powers_${archetype || 'all'}_${faction || 'all'}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMPower[]>(cacheKey);
     if (cached) return cached;
 
     let query = supabase.from('mnm_powers').select('*');
@@ -418,7 +418,7 @@ class MutantsMastermindsService {
 
   async getAchievements(userId: string): Promise<MAndMAchievement[]> {
     const cacheKey = `achievements_${userId}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMAchievement[]>(cacheKey);
     if (cached) return cached;
 
     const { data, error } = await supabase
@@ -460,7 +460,7 @@ class MutantsMastermindsService {
 
   async getUserStats(userId: string): Promise<MAndMStats> {
     const cacheKey = `stats_${userId}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMStats>(cacheKey);
     if (cached) return cached;
 
     // Obtener datos básicos
@@ -496,15 +496,15 @@ class MutantsMastermindsService {
 
   // ===== UTILIDADES =====
 
-  private getFromCache(key: string): any {
+  private getFromCache<T>(key: string): T | null {
     const cached = this.cache.get(key);
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-      return cached.data;
+      return cached.data as T;
     }
     return null;
   }
 
-  private setCache(key: string, data: any): void {
+  private setCache(key: string, data: unknown): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now()

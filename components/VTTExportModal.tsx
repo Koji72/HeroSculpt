@@ -63,8 +63,8 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
         shot = await ref.takeTokenScreenshot();
       }
       // Fallback to generic screenshot if token screenshot returns empty
-      if ((!shot || shot.length <= 1000) && (ref as any).takeScreenshot) {
-        shot = await (ref as any).takeScreenshot();
+      if ((!shot || shot.length <= 1000) && (ref as unknown as { takeScreenshot: () => Promise<string> }).takeScreenshot) {
+        shot = await (ref as unknown as { takeScreenshot: () => Promise<string> }).takeScreenshot();
       }
       if (shot && shot.length > 1000 && !shot.includes('data:image/svg+xml')) {
         setScreenshot(shot);
@@ -193,7 +193,7 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
   );
 
   // --- Step 3: Settings + Download ---
-  const RadioGroup = ({ label, options, value, onChange }: { label: string; options: { v: string | number; l: string }[]; value: string | number; onChange: (v: any) => void }) => (
+  const RadioGroup = ({ label, options, value, onChange }: { label: string; options: { v: string | number; l: string }[]; value: string | number; onChange: (v: string | number) => void }) => (
     <div style={{ marginBottom: 10 }}>
       <div style={comicLabel({ fontSize: 9, color: 'var(--color-text-faint)', marginBottom: 4 })}>{label}</div>
       <div style={{ display: 'flex', gap: 4 }}>

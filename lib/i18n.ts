@@ -589,6 +589,9 @@ const dict = {
   'export.glb_desc': { en: 'For 3D visualization', es: 'Para visualización 3D' },
   'export.stl_label': { en: 'STL (3D Print)', es: 'STL (Impresión 3D)' },
   'export.stl_desc': { en: 'For 3D printing', es: 'Para impresión 3D' },
+  'export.success': { en: 'exported successfully!', es: '¡exportado correctamente!' },
+  'export.error_prefix': { en: 'Error exporting', es: 'Error al exportar' },
+  'export.error_unexpected': { en: 'Unexpected error exporting', es: 'Error inesperado al exportar' },
 
   // ExtendedAssetsPanel
   'assets.title': { en: 'Extended Assets', es: 'Assets Extendidos' },
@@ -604,6 +607,15 @@ const dict = {
   'assets.weather': { en: 'Weather:', es: 'Clima:' },
   'assets.color': { en: 'Color:', es: 'Color:' },
   'assets.total': { en: 'Total:', es: 'Total:' },
+
+  // RPGCharacterSheetManager
+  'rpgmgr.err.required_fields': { en: 'Please fill in all required fields', es: 'Por favor completa todos los campos requeridos' },
+  'rpgmgr.import.success': { en: 'Character imported successfully!', es: '¡Personaje importado con éxito!' },
+  'rpgmgr.import.err.invalid': { en: 'Invalid character file', es: 'Archivo de personaje inválido' },
+  'rpgmgr.import.err.parse': { en: 'Error importing character file', es: 'Error al importar el archivo de personaje' },
+  'rpgmgr.delete.confirm': { en: 'Are you sure you want to delete this character?', es: '¿Estás seguro de que quieres eliminar este personaje?' },
+  'rpgmgr.delete.yes': { en: 'Delete', es: 'Eliminar' },
+  'rpgmgr.delete.cancel': { en: 'Cancel', es: 'Cancelar' },
 
   // MutantsAndMastermindsSheet
   'mnm.title': { en: 'MUTANTS & MASTERMINDS', es: 'MUTANTS & MASTERMINDS' },
