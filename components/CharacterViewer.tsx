@@ -319,7 +319,15 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
     // Scene setup with Strong archetype theme
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#b6bec8');
+    const bgCanvas = document.createElement('canvas');
+    bgCanvas.width = 2; bgCanvas.height = 512;
+    const bgCtx = bgCanvas.getContext('2d')!;
+    const bgGrad = bgCtx.createLinearGradient(0, 0, 0, 512);
+    bgGrad.addColorStop(0, '#1e2d4a');
+    bgGrad.addColorStop(1, '#0a1020');
+    bgCtx.fillStyle = bgGrad;
+    bgCtx.fillRect(0, 0, 2, 512);
+    scene.background = new THREE.CanvasTexture(bgCanvas);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(
@@ -346,20 +354,16 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
-    renderer.setClearColor('#aeb7c2', 1);
+    renderer.setClearColor('#0a1020', 1);
     currentMount.appendChild(renderer.domElement);
     rendererRef.current = renderer;
   
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Renderer initialized with size:', {
         width: currentMount.clientWidth,
         height: currentMount.clientHeight,
         pixelRatio: window.devicePixelRatio
       });
-    }
     }
 
     const controls = new OrbitControls(camera, renderer.domElement);

@@ -1129,15 +1129,24 @@ const AppContent: React.FC = () => {
     const archetype = selectedArchetype ?? ArchetypeId.STRONG;
     const ap = ALL_PARTS.filter((p) => p.archetype === archetype);
 
-    const pick = (category: PartCategory, anchorId?: string, excludeId?: string): Part | undefined => {
+    const pick = (category: PartCategory, anchorId?: string, excludeId?: string, filter?: (p: Part) => boolean): Part | undefined => {
       const pool = ap.filter((p) => {
         if (p.category !== category) return false;
         if (excludeId && p.id === excludeId) return false;
+        if (filter && !filter(p)) return false;
         if (!anchorId) return true;
         return p.compatible.length === 0 || p.compatible.includes(anchorId);
       });
       if (pool.length === 0) return undefined;
       return pool[Math.floor(Math.random() * pool.length)];
+    };
+
+    // For random builds, avoid "blank" variants that look like missing parts.
+    // Falls back to full pool if no non-blank variant exists for the torso.
+    const categoryFilters: Partial<Record<PartCategory, (p: Part) => boolean>> = {
+      [PartCategory.SYMBOL]: (p) => !p.id.endsWith('_ns'),
+      [PartCategory.HAND_LEFT]: (p) => !p.id.includes('noweapon'),
+      [PartCategory.HAND_RIGHT]: (p) => !p.id.includes('noweapon'),
     };
 
     // 1. TORSO is the root — everything else anchors to it
@@ -1160,7 +1169,8 @@ const AppContent: React.FC = () => {
            PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.CHEST_BELT,
            PartCategory.SUIT_TORSO,
         ] as PartCategory[]).reduce((acc, cat) => {
-          const p = pick(cat, torsoId);
+          const catFilter = categoryFilters[cat];
+          const p = (catFilter ? pick(cat, torsoId, undefined, catFilter) : undefined) ?? pick(cat, torsoId);
           if (p) acc[cat] = p;
           return acc;
         }, {} as SelectedParts),
