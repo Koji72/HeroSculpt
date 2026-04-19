@@ -13,6 +13,7 @@ import { exportModel, downloadBlob, generateModelName } from '../lib/utils';
 import { modelCache } from '../lib/modelCache';
 import PoseNavigation from './PoseNavigation';
 import { LightingPreset } from './materials/materials'; // Corrected import path
+import { useLang, t } from '../lib/i18n';
 import { areSelectedPartsEqual } from '../lib/utils'; // Import the new utility
 
 interface CharacterViewerProps {
@@ -81,6 +82,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   onSaveAsNew,
   onDeletePose,
 }, ref) => {
+  const { lang } = useLang();
   const getDefaultBuildForArchetype = useCallback((archetype: ArchetypeId | null): SelectedParts => {
     if (archetype === ArchetypeId.JUSTICIERO) {
       return DEFAULT_JUSTICIERO_BUILD;
@@ -279,13 +281,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   useLayoutEffect(() => {
     // ? PREVENT MULTIPLE INITIALIZATION
     if (isInitializedRef.current) {
-      // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log('CharacterViewer: Already initialized, skipping');
-    }
-    }
+      if (process.env.NODE_ENV === 'development') {
+        console.log('CharacterViewer: Already initialized, skipping');
+      }
       return;
     }
 
@@ -294,12 +292,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       return;
     }
 
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Starting Three.js initialization...');
-    }
     }
     isInitializedRef.current = true;
 
@@ -327,7 +321,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     bgGrad.addColorStop(1, '#0a1020');
     bgCtx.fillStyle = bgGrad;
     bgCtx.fillRect(0, 0, 2, 512);
-    scene.background = new THREE.CanvasTexture(bgCanvas);
+    const bgTexture = new THREE.CanvasTexture(bgCanvas);
+    scene.background = bgTexture;
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(
@@ -530,20 +525,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     setIsThreeJSReady(true);
     // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
       console.log('?? Three.js initialization complete - ready for model loading');
-    }
     }
 
     return () => {
-      // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log('CharacterViewer: Cleaning up Three.js scene');
-    }
-    }
+      if (process.env.NODE_ENV === 'development') {
+        console.log('CharacterViewer: Cleaning up Three.js scene');
+      }
       cancelAnimationFrame(rafId);
       setIsThreeJSReady(false);
       isInitializedRef.current = false;
@@ -551,6 +539,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       if (currentMount && rendererRef.current?.domElement) {
         currentMount.removeChild(rendererRef.current.domElement);
       }
+      bgTexture.dispose();
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
       modelCache.clearCache();
@@ -623,47 +612,26 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     
     const startTime = performance.now();
     setIsLoading(true);
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Loading models for Strong archetype with caching');
-    }
-    }
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Parts to load:', partsToLoad);
       console.log('CharacterViewer: Parts by category:', Object.entries(partsToLoad).map(([category, part]) => `${category}: ${part.id}`));
-    }
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log('CharacterViewer: Using preview?', false);
-    } // Always false now
+      console.log('CharacterViewer: Using preview?', false); // Always false now
     }
 
     // Debug espec�fico para cabezas
     const currentHead = Object.values(partsToLoad).find(p => p.category === PartCategory.HEAD);
     // Debug espec�fico para buckles
     const currentBuckle = Object.values(partsToLoad).find(p => p.category === PartCategory.BUCKLE);
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('?? DEBUG - CharacterViewer cargando cabeza:', currentHead?.id || 'ninguna');
       console.log('?? DEBUG - CharacterViewer cargando buckle:', currentBuckle?.id || 'ninguno');
     }
-    }
-    
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
+
     if (process.env.NODE_ENV === 'development') {
       console.log(`?? CLEARING MODEL GROUP - Children before clear: ${modelGroup.children.length}`);
     }
-    }
-    
+
     // Just remove models from the scene — do NOT dispose geometry/materials.
     // The modelCache holds the authoritative references; disposing clones here
     // would corrupt the cached originals (Three.js clone() shares geometry and
@@ -672,30 +640,18 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     childrenToRemove.forEach(child => {
       modelGroup.remove(child);
     });
-    
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
+
     if (process.env.NODE_ENV === 'development') {
       console.log(`?? CLEARING MODEL GROUP - Children after manual clear: ${modelGroup.children.length}`);
     }
-    }
 
     const selectedPartList = Object.values(partsToLoad).filter(Boolean);
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Filtered part list:', selectedPartList);
     }
-    }
     const basePath = (import.meta as any).env.BASE_URL || '/';
-    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
     if (process.env.NODE_ENV === 'development') {
       console.log('CharacterViewer: Base path:', basePath);
-    }
     }
     
     // ? NUEVO: Cargar pedestal siempre (independientemente del estado de autenticaci�n)
@@ -808,14 +764,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // Verificar compatibilidad de manos con el torso actual
     const activeTorso = suit || torso;
     if (activeTorso) {
-      // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log('?? Checking hand compatibility with torso:', activeTorso.id);
-    }
-    }
-      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('?? Checking hand compatibility with torso:', activeTorso.id);
+      }
+
       // Determinar el torso base para verificar compatibilidad
       let baseTorsoId = activeTorso.id;
       if (suit) {
@@ -824,13 +776,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (suitMatch) {
           const torsoNumber = suitMatch[1];
           baseTorsoId = `strong_torso_${torsoNumber}`;
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`?? Suit detected, using base torso: ${baseTorsoId}`);
-    }
-    }
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`?? Suit detected, using base torso: ${baseTorsoId}`);
+          }
         }
       }
       
@@ -890,13 +838,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }
         
         try {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`CharacterViewer: Loading [${part.category}] from cache: ${modelPath}`);
-    }
-    }
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`CharacterViewer: Loading [${part.category}] from cache: ${modelPath}`);
+          }
           const model = await modelCache.getModel(modelPath);
           
           // ? NUEVO: Debug espec�fico para capas
@@ -954,13 +898,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             });
           }
           
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-          // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`CharacterViewer: Successfully loaded [${part.category}]`);
-    }
-    }
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`CharacterViewer: Successfully loaded [${part.category}]`);
+          }
           if (process.env.NODE_ENV === 'development') {
             console.log(`? CharacterViewer: Added model to group: ${model.name} (Category: ${model.userData.category}, PartId: ${model.userData.partId}, isPreview: ${!!model.userData.isPreview})`);
             console.log('?? CharacterViewer: Current modelGroup children AFTER ADDITION:',
@@ -1005,6 +945,14 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         // Calculate bounding box and center
         const box = new THREE.Box3().setFromObject(modelGroup);
+
+        // Guard: if the box is degenerate (no mesh geometry), skip auto-frame
+        if (box.isEmpty()) {
+          if (import.meta.env.DEV) console.log('CharacterViewer: Bounding box is empty, skipping auto-frame');
+          controls.update();
+          return;
+        }
+
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
 
@@ -1881,19 +1829,25 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             
             if (child.userData.category === partType && !child.userData.isPreview) {
               foundMeshes++;
-              if (child.material instanceof THREE.MeshStandardMaterial) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(mat => {
+                  if (mat instanceof THREE.MeshStandardMaterial) {
+                    mat.color.setHex(color);
+                    mat.needsUpdate = true;
+                    coloredMeshes++;
+                  }
+                });
+              } else if (child.material instanceof THREE.MeshStandardMaterial) {
                 child.material.color.setHex(color);
                 child.material.needsUpdate = true;
                 coloredMeshes++;
-                    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`? Applied color to ${partType}: ${child.name || 'unnamed'}`);
-    }
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`? Applied color to ${partType}: ${child.name || 'unnamed'}`);
+                }
               } else {
-                    // ?? OPTIMIZADO: Solo log en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`?? Material not MeshPhysicalMaterial for ${partType}: ${child.name || 'unnamed'}`);
-    }
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`?? Material not MeshStandardMaterial for ${partType}: ${child.name || 'unnamed'}`);
+                }
               }
             }
           }
@@ -1912,14 +1866,20 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
      applyColorToAllParts: (color: number) => {
        if (modelGroupRef.current) {
-         let coloredCount = 0;
          modelGroupRef.current.traverse((child) => {
            if (child instanceof THREE.Mesh && child.userData.category) {
              const category = child.userData.category;
              if (category !== PartCategory.HEAD) {
-               if (child.material instanceof THREE.MeshPhysicalMaterial) {
+               if (Array.isArray(child.material)) {
+                 child.material.forEach(mat => {
+                   if (mat instanceof THREE.MeshStandardMaterial) {
+                     mat.color.setHex(color);
+                     mat.needsUpdate = true;
+                   }
+                 });
+               } else if (child.material instanceof THREE.MeshStandardMaterial) {
                  child.material.color.setHex(color);
-                 coloredCount++;
+                 child.material.needsUpdate = true;
                }
              }
            }
@@ -2168,7 +2128,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Rotate left 15°"
+          title={t('viewer.rotate_left', lang)}
         >
           ↺
         </button>
@@ -2189,7 +2149,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Zoom out"
+          title={t('viewer.zoom_out', lang)}
         >
           -
         </button>
@@ -2212,7 +2172,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(245, 158, 11, 0.16)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(245, 158, 11, 0.1)'; }}
-          title="Reset view"
+          title={t('viewer.reset_view', lang)}
         >
           ⟳
         </button>
@@ -2233,7 +2193,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Zoom in"
+          title={t('viewer.zoom_in', lang)}
         >
           +
         </button>
@@ -2254,7 +2214,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border-strong)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)'; }}
-          title="Rotate right 15°"
+          title={t('viewer.rotate_right', lang)}
         >
           ↻
         </button>

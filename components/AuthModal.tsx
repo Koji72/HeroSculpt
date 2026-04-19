@@ -31,7 +31,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) { setError('Servicio no disponible'); return; }
+    if (!supabase) { setError(t('common.service_unavailable', lang)); return; }
     setError(null);
     setLoading(true);
     try {
@@ -88,7 +88,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
         <button
           onClick={onClose}
           style={{ position: 'absolute', top: 12, right: 14, background: 'none', border: 'none', color: 'var(--color-text-muted, #64748b)', fontSize: 18, cursor: 'pointer', lineHeight: 1 }}
-          aria-label="Cerrar"
+          aria-label={t('common.close', lang)}
         >✕</button>
 
         {forgotSent ? (
@@ -142,7 +142,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             {/* Form */}
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: mode === 'forgot' ? 20 : 14 }}>
-                <label style={labelStyle}>Email</label>
+                <label style={labelStyle}>{t('common.email_label', lang)}</label>
                 <input
                   type="email"
                   name="email"

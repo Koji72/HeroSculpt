@@ -94,7 +94,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         onClick={onPreviousPose}
         disabled={savedPoses.length <= 1}
         className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-green-400 hover:text-green-300 border-green-400/20 hover:border-green-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 will-change-transform border items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-        title={`Pose anterior: ${savedPoses[currentPoseIndex > 0 ? currentPoseIndex - 1 : savedPoses.length - 1]?.name}`}
+        title={savedPoses[currentPoseIndex > 0 ? currentPoseIndex - 1 : savedPoses.length - 1]?.name}
       >
         ◀
       </button>
@@ -104,7 +104,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         <button
           onClick={handleCounterClick}
           className="backdrop-blur-sm shadow-lg bg-slate-800/80 hover:bg-slate-700/90 border-slate-600/50 hover:border-slate-500/60 text-white text-sm rounded-full transition-colors transition-transform transition-shadow duration-200 px-3 py-1 will-change-transform border font-medium cursor-pointer"
-          title="Click para seleccionar pose"
+          title={savedPoses[currentPoseIndex]?.name}
         >
           {currentIndex}/{totalPoses}
         </button>
@@ -116,7 +116,7 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         onClick={onNextPose}
         disabled={savedPoses.length <= 1}
         className="w-10 h-10 backdrop-blur-sm flex shadow-lg bg-slate-800/80 hover:bg-slate-700/90 text-green-400 hover:text-green-300 border-green-400/20 hover:border-green-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 will-change-transform border items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-        title={`Siguiente pose: ${savedPoses[currentPoseIndex < savedPoses.length - 1 ? currentPoseIndex + 1 : 0]?.name}`}
+        title={savedPoses[currentPoseIndex < savedPoses.length - 1 ? currentPoseIndex + 1 : 0]?.name}
       >
         ▶
       </button>

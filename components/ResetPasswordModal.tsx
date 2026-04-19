@@ -18,7 +18,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
     e.preventDefault();
     if (password !== confirm) { setError(t('reset.err.mismatch', lang)); return; }
     if (password.length < 6) { setError(t('reset.err.min_length', lang)); return; }
-    if (!supabase) { setError('Servicio no disponible'); return; }
+    if (!supabase) { setError(t('common.service_unavailable', lang)); return; }
     setError(null);
     setLoading(true);
     try {
@@ -53,7 +53,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
         <button
           onClick={onClose}
           style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--color-text-muted, #64748b)', lineHeight: 1 }}
-          aria-label="Cerrar"
+          aria-label={t('common.close', lang)}
         >✕</button>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <div style={{ fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 22, letterSpacing: 3, color: 'var(--color-accent, #f59e0b)' }}>

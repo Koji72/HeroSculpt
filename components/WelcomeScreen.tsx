@@ -75,7 +75,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             color: 'var(--color-accent)', marginBottom: 6,
             textTransform: 'uppercase',
           }}>
-            HERO BUILDER
+            {t('welcome.title', lang)}
           </div>
           <div style={{
             fontFamily: 'var(--font-comic, Bangers, sans-serif)',
@@ -83,7 +83,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             color: '#fff', lineHeight: 1,
             textShadow: '0 0 40px rgba(216,162,58,0.4)',
           }}>
-            ¡BIENVENIDO!
+            {t('welcome.greeting', lang)}
           </div>
           {userEmail && (
             <div style={{ fontSize: 10, color: 'rgba(148,163,184,0.6)', marginTop: 6 }}>
@@ -173,7 +173,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 {t('welcome.library', lang)}
               </div>
               <div style={{ fontSize: 10, color: 'rgba(100,116,139,0.9)', marginTop: 2 }}>
-                {lang === 'en' ? 'Save and load unlimited builds' : 'Guarda y carga builds ilimitadas'}
+                {t('welcome.library.desc', lang)}
               </div>
             </div>
             <span style={{ color: 'var(--color-accent)', fontSize: 12, flexShrink: 0 }}>{t('welcome.library.open', lang)}</span>

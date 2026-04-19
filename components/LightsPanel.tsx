@@ -135,7 +135,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
                   <div style={{
                     position: 'absolute', top: 3, right: 4,
                     fontSize: 8, fontFamily: 'var(--font-comic)', color: '#000', letterSpacing: 1,
-                  }}>ON</div>
+                  }}>{t('lights.on', lang)}</div>
                 )}
               </button>
             );

@@ -28,7 +28,7 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
 
     try {
       if (!supabase) {
-        setError('Supabase no esta configurado.');
+        setError(t('common.service_unavailable', lang));
         return;
       }
 
@@ -47,7 +47,7 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
         onSignInSuccess?.();
       }
     } catch {
-      setError('Unexpected error. Please try again.');
+      setError(t('common.service_unavailable', lang));
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ const SimpleSignUpModal: React.FC<SimpleSignUpModalProps> = ({
 
               <div style={{ marginBottom: 12 }}>
                 <label htmlFor="signup-email" style={{ display: 'block', fontSize: 13, fontFamily: 'var(--font-body)', color: 'var(--color-text)', marginBottom: 6, fontWeight: 600 }}>
-                  Email
+                  {t('common.email_label', lang)}
                 </label>
                 <input
                   id="signup-email"

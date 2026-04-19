@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { UserIcon, BookOpenIcon, Cog6ToothIcon, SparklesIcon } from './icons';
+import { useLang, t } from '../lib/i18n';
 
 interface HeaderDropdownProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
   onSignOut,
   userEmail
 }) => {
+  const { lang } = useLang();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
@@ -130,7 +132,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         onMouseOut={handleMenuItemOut}
         onClick={onOpenUserProfile}
       >
-        <UserIcon className="h-5 w-5" /> Mi Perfil
+        <UserIcon className="h-5 w-5" /> {t('menu.profile', lang)}
       </button>
       <button
         style={menuItemStyle}
@@ -138,7 +140,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         onMouseOut={handleMenuItemOut}
         onClick={onOpenPurchaseLibrary}
       >
-        <BookOpenIcon className="h-5 w-5" /> Mis Héroes
+        <BookOpenIcon className="h-5 w-5" /> {t('menu.heroes', lang)}
       </button>
       <button
         style={menuItemStyle}
@@ -146,7 +148,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         onMouseOut={handleMenuItemOut}
         onClick={onOpenSettings}
       >
-        <Cog6ToothIcon className="h-5 w-5" /> Ajustes
+        <Cog6ToothIcon className="h-5 w-5" /> {t('menu.settings', lang)}
       </button>
       <button
         style={menuItemStyle}
@@ -154,7 +156,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         onMouseOut={handleMenuItemOut}
         onClick={onOpenHelp}
       >
-        <SparklesIcon className="h-5 w-5" /> Ayuda
+        <SparklesIcon className="h-5 w-5" /> {t('menu.help', lang)}
       </button>
       <button
         style={menuItemStyle}
@@ -162,7 +164,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         onMouseOut={handleMenuItemOut}
         onClick={onOpenVTTLibrary}
       >
-        <span style={{ width: 20, height: 20 }}>🎲</span> Tokens VTT
+        <span style={{ width: 20, height: 20 }}>🎲</span> {t('menu.vtt', lang)}
       </button>
       <button
         style={{
@@ -178,7 +180,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
         }}
         onClick={onSignOut}
       >
-        <span style={{ width: 20, height: 20 }}>🚪</span> Cerrar sesión
+        <span style={{ width: 20, height: 20 }}>🚪</span> {t('menu.signout', lang)}
       </button>
     </div>
   );

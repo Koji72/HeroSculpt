@@ -243,6 +243,50 @@ const dict = {
   'cart.register_save': { en: '🔑 REGISTER TO SAVE', es: '🔑 REGISTRARSE PARA GUARDAR' },
   'cart.back_edit': { en: 'Back to edit', es: 'Volver a editar' },
   'cart.checkout_error': { en: 'Error processing payment. Please try again.', es: 'Error al procesar el pago. Por favor intenta de nuevo.' },
+
+  // HeaderDropdown
+  'menu.profile': { en: 'My Profile', es: 'Mi Perfil' },
+  'menu.heroes': { en: 'My Heroes', es: 'Mis Héroes' },
+  'menu.help': { en: 'Help', es: 'Ayuda' },
+  'menu.vtt': { en: 'VTT Tokens', es: 'Tokens VTT' },
+
+  // StylePanel
+  'style.header': { en: '🎨 STYLE', es: '🎨 ESTILO' },
+  'style.color': { en: 'COLOR', es: 'COLOR' },
+  'style.material': { en: 'MATERIAL', es: 'MATERIAL' },
+  'style.material.fabric_desc': { en: 'Soft, matte', es: 'Suave, mate' },
+  'style.material.metal_desc': { en: 'Shiny metallic', es: 'Metálico brillante' },
+  'style.material.plastic_desc': { en: 'Smooth, hard', es: 'Liso, duro' },
+  'style.material.chrome_desc': { en: 'Mirror reflective', es: 'Espejo reflectante' },
+  'style.close': { en: 'Close', es: 'Cerrar' },
+
+  // LightsPanel
+  'lights.on': { en: 'ON', es: 'ON' },
+
+  // SkinsPanel
+  'skins.header': { en: '✨ SKINS', es: '✨ SKINS' },
+
+  // WelcomeScreen
+  'welcome.title': { en: 'HERO BUILDER', es: 'HERO BUILDER' },
+  'welcome.greeting': { en: 'WELCOME!', es: '¡BIENVENIDO!' },
+  'welcome.library.desc': { en: 'Save and load unlimited builds', es: 'Guarda y carga builds ilimitadas' },
+
+  // PartSelectorPanel
+  'panel.focus_camera': { en: 'Focus camera on part', es: 'Centrar cámara en esta parte' },
+  'panel.show_all_title': { en: 'Show all parts', es: 'Mostrar todas las partes' },
+  'panel.favorites_only_title': { en: 'Show favorites only', es: 'Mostrar solo favoritos' },
+
+  // AuthModal / ResetPasswordModal aria-labels
+  'common.close': { en: 'Close', es: 'Cerrar' },
+  'common.service_unavailable': { en: 'Service unavailable', es: 'Servicio no disponible' },
+  'common.email_label': { en: 'Email', es: 'Email' },
+
+  // CharacterViewer camera controls
+  'viewer.rotate_left': { en: 'Rotate left 15°', es: 'Girar izquierda 15°' },
+  'viewer.rotate_right': { en: 'Rotate right 15°', es: 'Girar derecha 15°' },
+  'viewer.zoom_in': { en: 'Zoom in', es: 'Acercar' },
+  'viewer.zoom_out': { en: 'Zoom out', es: 'Alejar' },
+  'viewer.reset_view': { en: 'Reset view', es: 'Restablecer vista' },
 } as const;
 
 export type TransKey = keyof typeof dict;

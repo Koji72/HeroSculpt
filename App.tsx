@@ -219,8 +219,10 @@ const AppContent: React.FC = () => {
     totalPrice: number;
   } | null>(null);
 
-  // ✅ NUEVO: Variable para detectar navegación entre poses
-  const [isNavigatingPoses, setIsNavigatingPoses] = useState(false);
+  // Ref (not state) so the updateCurrentPoseConfiguration effect can synchronously
+  // read the true current value. useState would batch true→false in one render,
+  // meaning the effect would never see the flag as true.
+  const isNavigatingPosesRef = useRef(false);
 
   // Estado para hojas de personaje RPG
   const [isRPGSheetOpen, setIsRPGSheetOpen] = useState(false);
@@ -290,6 +292,9 @@ const AppContent: React.FC = () => {
       material: 'FABRIC' as MaterialType,
     }))
   );
+  // Ref mirrors stylePanelParts so handlers always read the latest color/material
+  // without waiting for a React state flush (avoids stale-closure race on APPLY).
+  const stylePanelPartsRef = useRef<PartEntry[]>(stylePanelParts);
   const [activePanelPart, setActivePanelPart] = useState('torso');
 
   // Submenu positions are calculated inline in toggle handlers to avoid flicker
@@ -766,7 +771,7 @@ const AppContent: React.FC = () => {
   // ✨ NUEVA FUNCIONALIDAD: Actualizar la configuración de la pose actual cuando se modifica
   useEffect(() => {
     // ✅ NUEVO: NO ejecutar durante navegación entre poses
-    if (isNavigatingPoses) {
+    if (isNavigatingPosesRef.current) {
       return;
     }
 
@@ -801,7 +806,7 @@ const AppContent: React.FC = () => {
     // Actualizar con un delay para evitar demasiadas actualizaciones (delay aumentado)
     const timeoutId = setTimeout(updateCurrentPoseConfiguration, 800);
     return () => clearTimeout(timeoutId);
-  }, [selectedParts, currentPoseIndex, user?.id, isNavigatingPoses]);
+  }, [selectedParts, currentPoseIndex, user?.id]);
 
   // Cargar configuración desde URL si existe parámetro 'load'
   useEffect(() => {
@@ -922,7 +927,9 @@ const AppContent: React.FC = () => {
 
   // Task 7: StylePanel handlers
   const handleStylePanelColorChange = (partId: string, color: string) => {
-    setStylePanelParts((prev) => prev.map((p) => p.id === partId ? { ...p, color } : p));
+    const next = stylePanelPartsRef.current.map((p) => p.id === partId ? { ...p, color } : p);
+    stylePanelPartsRef.current = next;
+    setStylePanelParts(next);
     const category = STYLE_PART_TO_CATEGORY[partId];
     if (category && characterViewerRef.current) {
       characterViewerRef.current.applyColorToPart(parseInt(color.replace('#', ''), 16), category);
@@ -930,8 +937,12 @@ const AppContent: React.FC = () => {
   };
 
   const handleStylePanelMaterialChange = (partId: string, material: MaterialType) => {
-    const currentColor = stylePanelParts.find((p) => p.id === partId)?.color ?? '#9ca3af';
-    setStylePanelParts((prev) => prev.map((p) => p.id === partId ? { ...p, material } : p));
+    // Read from ref so we always get the latest color even when called synchronously
+    // after handleStylePanelColorChange (React state update may not have flushed yet).
+    const currentColor = stylePanelPartsRef.current.find((p) => p.id === partId)?.color ?? '#9ca3af';
+    const next = stylePanelPartsRef.current.map((p) => p.id === partId ? { ...p, material } : p);
+    stylePanelPartsRef.current = next;
+    setStylePanelParts(next);
     const category = STYLE_PART_TO_CATEGORY[partId];
     if (category && characterViewerRef.current) {
       const mat = buildThreeMaterial(material, parseInt(currentColor.replace('#', ''), 16));
@@ -940,7 +951,9 @@ const AppContent: React.FC = () => {
   };
 
   const handleApplyToAll = (color: string, material: MaterialType) => {
-    setStylePanelParts((prev) => prev.map((p) => ({ ...p, color, material })));
+    const next = stylePanelPartsRef.current.map((p) => ({ ...p, color, material }));
+    stylePanelPartsRef.current = next;
+    setStylePanelParts(next);
     if (characterViewerRef.current) {
       const colorNum = parseInt(color.replace('#', ''), 16);
       const mat = buildThreeMaterial(material, colorNum);
@@ -1491,20 +1504,19 @@ const AppContent: React.FC = () => {
     if (savedPoses.length === 0) {
       return;
     }
-    
-    // ✅ NUEVO: Activar bandera de navegación
-    setIsNavigatingPoses(true);
-    
+
+    isNavigatingPosesRef.current = true;
+
     const newIndex = currentPoseIndex > 0 ? currentPoseIndex - 1 : savedPoses.length - 1;
-    
+
     setCurrentPoseIndex(newIndex);
-    
+
     const newPose = savedPoses[newIndex];
 
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    setIsNavigatingPoses(false);
+    isNavigatingPosesRef.current = false;
   };
 
   const handleNextPose = () => {
@@ -1512,8 +1524,7 @@ const AppContent: React.FC = () => {
       return;
     }
 
-    // ✅ NUEVO: Activar bandera de navegación
-    setIsNavigatingPoses(true);
+    isNavigatingPosesRef.current = true;
 
     const newIndex = currentPoseIndex < savedPoses.length - 1 ? currentPoseIndex + 1 : 0;
 
@@ -1524,7 +1535,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    setIsNavigatingPoses(false);
+    isNavigatingPosesRef.current = false;
   };
 
   const handleSelectPose = (index: number) => {
@@ -1532,7 +1543,7 @@ const AppContent: React.FC = () => {
       return;
     }
 
-    setIsNavigatingPoses(true);
+    isNavigatingPosesRef.current = true;
 
     const newPose = savedPoses[index];
     setCurrentPoseIndex(index);
@@ -1542,7 +1553,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    setIsNavigatingPoses(false);
+    isNavigatingPosesRef.current = false;
   };
 
   const handleRenamePose = (index: number, newName: string) => {
@@ -1650,8 +1661,6 @@ const AppContent: React.FC = () => {
     if (stat <= 8) return 'strong_legs_03';
     return 'strong_legs_04';
   };
-  const [lastLoadedRPGCharacter, setLastLoadedRPGCharacter] = useState<any>(null);
-
   const handleLoadRPGCharacterToCustomizer = useCallback((character: any) => {
     setSelectedArchetype(prevArchetype => character.archetypeId || prevArchetype || ArchetypeId.STRONG);
     setCharacterName(character.name || "");
@@ -2445,26 +2454,6 @@ const AppContent: React.FC = () => {
         onClose={handleCloseRPGSheet}
         onLoadToCustomizer={handleLoadRPGCharacterToCustomizer}
       />
-      {isRPGSheetOpen && lastLoadedRPGCharacter && (
-        <>
-
-          <button
-            style={{ position: 'fixed', top: 180, right: 40, zIndex: 9999, background: '#e53935', color: '#fff', fontWeight: 'bold', padding: '12px 24px', borderRadius: 8, boxShadow: '0 2px 8px #0004', border: 'none', cursor: 'pointer' }}
-            onClick={() => {
-              const saved = localStorage.getItem('rpg-characters');
-              if (saved) {
-                const characters = JSON.parse(saved);
-                const filtered = characters.filter((c: any) => c.id !== lastLoadedRPGCharacter.id);
-                localStorage.setItem('rpg-characters', JSON.stringify(filtered));
-                setLastLoadedRPGCharacter(null);
-                window.location.reload(); // Refreshes the list
-              }
-            }}
-          >
-            Borrar Ficha
-          </button>
-        </>
-      )}
 
       {/* Modal VTT */}
       {isVTTModalOpen && rpgCharacter && (

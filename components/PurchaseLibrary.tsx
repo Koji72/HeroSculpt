@@ -4,6 +4,7 @@ import { Purchase, PurchaseHistoryService } from '../services/purchaseHistorySer
 import { SelectedParts } from '../types';
 import { XMarkIcon, BookOpenIcon, ArrowDownTrayIcon, DocumentArrowDownIcon, PencilIcon, CheckIcon } from './icons';
 import { RefreshCw, Calendar, DollarSign, Package } from 'lucide-react';
+import { useLang, t } from '../lib/i18n';
 // import ExportButton from './ExportButton'; // Removed: not used
 
 interface PurchaseLibraryProps {
@@ -25,6 +26,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
   onExportGLB,
   onExportSTL
 }) => {
+  const { lang } = useLang();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -286,7 +288,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     >
       <div className="panel-box" style={{ width: 520, maxWidth: '95vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div className="panel-header">
-          <span style={{ fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 3 }}>📚 MIS BUILDS</span>
+          <span style={{ fontFamily: 'var(--font-comic)', fontSize: 18, letterSpacing: 3 }}>{t('library.title', lang)}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button
               onClick={loadPurchases}

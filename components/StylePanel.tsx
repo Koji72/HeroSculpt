@@ -28,11 +28,11 @@ const COLOR_PRESETS = [
   '#16a34a', '#7c3aed', '#ec4899', '#e2e8f0',  // Green/Purple/Pink/White
   '#111827', '#1e293b', '#b45309', '#d4af37',  // Black/Dark/Bronze/Gold
 ];
-const MATERIAL_META: Record<MaterialType, { icon: string; desc: string }> = {
-  FABRIC:  { icon: '🧵', desc: 'Suave, mate' },
-  METAL:   { icon: '⚙️', desc: 'Metálico brillante' },
-  PLASTIC: { icon: '🔷', desc: 'Liso, duro' },
-  CHROME:  { icon: '✨', desc: 'Espejo reflectante' },
+const MATERIAL_META: Record<MaterialType, { icon: string; descKey: import('../lib/i18n').TransKey }> = {
+  FABRIC:  { icon: '🧵', descKey: 'style.material.fabric_desc' },
+  METAL:   { icon: '⚙️', descKey: 'style.material.metal_desc' },
+  PLASTIC: { icon: '🔷', descKey: 'style.material.plastic_desc' },
+  CHROME:  { icon: '✨', descKey: 'style.material.chrome_desc' },
 };
 const MATERIALS: MaterialType[] = ['FABRIC', 'METAL', 'PLASTIC', 'CHROME'];
 
@@ -77,10 +77,10 @@ const StylePanel: React.FC<StylePanelProps> = ({
         background: 'var(--color-surface-2)',
       }}>
         <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: 'var(--color-accent)', letterSpacing: 2 }}>
-          🎨 STYLE
+          {t('style.header', lang)}
         </span>
         <button
-          aria-label="close"
+          aria-label={t('style.close', lang)}
           onClick={onClose}
           style={{
             background: 'transparent',
@@ -155,7 +155,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
 
               {/* Color section */}
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 9, color: '#6b7280', letterSpacing: 1, marginBottom: 6 }}>COLOR</div>
+                <div style={{ fontSize: 9, color: '#6b7280', letterSpacing: 1, marginBottom: 6 }}>{t('style.color', lang)}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 4, marginBottom: 8 }}>
                   {COLOR_PRESETS.map((c) => (
                     <button
@@ -193,7 +193,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
 
               {/* Material section */}
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 9, color: '#6b7280', letterSpacing: 1, marginBottom: 6 }}>MATERIAL</div>
+                <div style={{ fontSize: 9, color: '#6b7280', letterSpacing: 1, marginBottom: 6 }}>{t('style.material', lang)}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
                   {MATERIALS.map((m) => {
                     const meta = MATERIAL_META[m];
@@ -214,7 +214,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                         }}
                       >
                         <div>{meta.icon} {m}</div>
-                        <div style={{ fontSize: 8, opacity: 0.7, fontWeight: 400, letterSpacing: 0 }}>{meta.desc}</div>
+                        <div style={{ fontSize: 8, opacity: 0.7, fontWeight: 400, letterSpacing: 0 }}>{t(meta.descKey, lang)}</div>
                       </button>
                     );
                   })}

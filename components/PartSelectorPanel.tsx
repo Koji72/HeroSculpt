@@ -783,7 +783,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           {hasFavorites && (
             <button
               onClick={() => setShowFavoritesOnly(v => !v)}
-              title={showFavoritesOnly ? 'Show all parts' : 'Show favorites only'}
+              title={showFavoritesOnly ? t('panel.show_all_title', lang) : t('panel.favorites_only_title', lang)}
               style={{
                 background: showFavoritesOnly ? 'rgba(244,63,94,0.15)' : 'none',
                 border: showFavoritesOnly ? '1px solid rgba(244,63,94,0.4)' : 'none',
@@ -795,7 +795,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           {characterViewerRef && activeCategory && (
             <button
               onClick={() => characterViewerRef.current?.focusOnCategory(activeCategory)}
-              title="Centrar cámara en esta parte"
+              title={t('panel.focus_camera', lang)}
               style={{
                 background: 'rgba(216,162,58,0.1)',
                 border: '1px solid rgba(216,162,58,0.35)',
