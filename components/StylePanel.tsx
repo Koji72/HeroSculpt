@@ -1,5 +1,6 @@
 // components/StylePanel.tsx
 import React, { useState, useEffect } from 'react';
+import { useLang, t } from '../lib/i18n';
 
 export type MaterialType = 'FABRIC' | 'METAL' | 'PLASTIC' | 'CHROME';
 
@@ -45,6 +46,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
   onClose,
   embedded = false,
 }) => {
+  const { lang } = useLang();
   const active = parts.find((p) => p.id === activePart) ?? parts[0];
   const [localColor, setLocalColor] = useState(active?.color ?? '#1d4ed8');
   const [localMaterial, setLocalMaterial] = useState<MaterialType>(active?.material ?? 'FABRIC');
@@ -238,7 +240,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                     outline: 'none',
                   }}
                 >
-                  ✓ APLICAR A ESTA PARTE
+                  {t('style.apply', lang)}
                 </button>
                 <button
                   type="button"
@@ -256,7 +258,7 @@ const StylePanel: React.FC<StylePanelProps> = ({
                     outline: 'none',
                   }}
                 >
-                  APLICAR A TODAS LAS PARTES
+                  {t('style.apply_all', lang)}
                 </button>
               </div>
             </>

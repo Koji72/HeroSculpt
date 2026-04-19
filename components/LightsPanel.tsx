@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CharacterViewerRef } from './CharacterViewer';
 import { LIGHTING_PRESETS, LightingPreset } from '../lib/lightingPresets';
+import { useLang, t } from '../lib/i18n';
 
 interface LightsPanelProps {
   apiRef: React.RefObject<CharacterViewerRef | null>;
@@ -39,6 +40,7 @@ function LightDots({ preset }: { preset: LightingPreset }) {
 }
 
 export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
+  const { lang } = useLang();
   const [activePresetName, setActivePresetName] = useState<string>(() => {
     try { return localStorage.getItem(ACTIVE_KEY) ?? ''; } catch { return ''; }
   });
@@ -56,7 +58,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Header */}
       <div className="panel-header">
-        <span>💡 ILUMINACIÓN</span>
+        <span>{t('lights.title', lang)}</span>
         <button
           onClick={onClose}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
@@ -70,7 +72,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
         background: 'var(--color-surface-2)',
         display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0,
       }}>
-        <span style={{ fontSize: 10, color: 'var(--color-text-faint)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>ACTIVO:</span>
+        <span style={{ fontSize: 10, color: 'var(--color-text-faint)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>{t('lights.active', lang)}</span>
         {activePreset ? (
           <>
             <span style={{ fontSize: 11, color: 'var(--color-accent)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>
@@ -79,7 +81,7 @@ export default function LightsPanel({ apiRef, onClose }: LightsPanelProps) {
             <LightDots preset={activePreset} />
           </>
         ) : (
-          <span style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>NINGUNO</span>
+          <span style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'var(--font-comic)', letterSpacing: 1 }}>{t('lights.none', lang)}</span>
         )}
       </div>
 

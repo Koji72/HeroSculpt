@@ -41,10 +41,7 @@ import { UserConfigService } from './services/userConfigService';
 import { notificationService } from './services/notificationService';
 import { Card } from "./components/ui/card";
 import HeaderDropdown from './components/HeaderDropdown';
-import MaterialPanel from './components/MaterialPanel';
 import SkinsPanel from './components/materials/SkinsPanel';
-import LightsPanel from './components/LightsPanel';
-import PowerEffectsPanel from './components/PowerEffectsPanel';
 import LastPoseIndicator from './components/LastPoseIndicator';
 import RPGCharacterSheetManager from './components/rpg-sheets/RPGCharacterSheetManager';
 import RPGCharacterSheet from './components/RPGCharacterSheet';
@@ -74,6 +71,11 @@ const CATEGORY_TO_STYLE_PART: Record<string, string> = {
   TORSO: 'torso', SUIT_TORSO: 'torso', LOWER_BODY: 'legs', HEAD: 'head',
   HAND_LEFT: 'hand_left', HAND_RIGHT: 'hand_right',
   CAPE: 'cape', BOOTS: 'boots', BELT: 'belt', CHEST_BELT: 'belt',
+};
+
+const STYLE_PART_LABELS: Record<string, string> = {
+  torso: 'TORSO', legs: 'LEGS', head: 'HEAD', hand_left: 'L.HAND',
+  hand_right: 'R.HAND', cape: 'CAPE', boots: 'BOOTS', belt: 'BELT',
 };
 
 const buildThreeMaterial = (type: MaterialType, color: number): THREE.MeshPhysicalMaterial => {
@@ -222,8 +224,8 @@ const AppContent: React.FC = () => {
 
   // Estado para hojas de personaje RPG
   const [isRPGSheetOpen, setIsRPGSheetOpen] = useState(false);
-  const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'style' | 'skins' | 'library' | null>('stats');
-  const toggleRightPanel = (panel: 'stats' | 'style' | 'skins' | 'library') => {
+  const [activeRightPanel, setActiveRightPanel] = useState<'stats' | 'style' | 'library' | null>('stats');
+  const toggleRightPanel = (panel: 'stats' | 'style' | 'library') => {
     if (panel === 'style' && activeCategory) {
       const mapped = CATEGORY_TO_STYLE_PART[activeCategory];
       if (mapped) setActivePanelPart(mapped);
@@ -234,9 +236,6 @@ const AppContent: React.FC = () => {
   const [showShortcutsOverlay, setShowShortcutsOverlay] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
-  // Estado para panel de materiales
-  const [isMaterialPanelOpen, setIsMaterialPanelOpen] = useState(false);
-  
   // Estado para modal VTT
   const [isVTTModalOpen, setIsVTTModalOpen] = useState(false);
 
@@ -286,11 +285,6 @@ const AppContent: React.FC = () => {
   // Task 7: side panel state
   const [activeSidePanel, setActiveSidePanel] = useState<'style' | 'skins' | null>(null);
   const activePanelMode: 'parts' | 'style' | 'skins' = activeSidePanel ?? 'parts';
-
-  const STYLE_PART_LABELS: Record<string, string> = {
-    torso: 'TORSO', legs: 'LEGS', head: 'HEAD', hand_left: 'L.HAND',
-    hand_right: 'R.HAND', cape: 'CAPE', boots: 'BOOTS', belt: 'BELT',
-  };
 
   const [stylePanelParts, setStylePanelParts] = useState<PartEntry[]>(
     Object.keys(STYLE_PART_LABELS).map((id) => ({
@@ -911,9 +905,8 @@ const AppContent: React.FC = () => {
     };
   }, []);
 
-  // Task 7: side panel toggle — wired to right panel system
   const handleSidePanelToggle = (panel: 'style' | 'skins') => {
-    toggleRightPanel(panel);
+    handlePanelModeChange(panel);
   };
 
   const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins') => {
@@ -1435,10 +1428,6 @@ const AppContent: React.FC = () => {
   const handleOpenSettings = () => {};
   const handleOpenHelp = () => {};
 
-  const handleToggleMaterialPanel = () => {
-    setIsMaterialPanelOpen(!isMaterialPanelOpen);
-  };
-
   const handleOpenVTTLibrary = () => {
     // Crear personaje RPG si no existe
     if (!rpgCharacter) {
@@ -1504,7 +1493,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    setTimeout(() => { setIsNavigatingPoses(false); }, 100);
+    setIsNavigatingPoses(false);
   };
 
   const handleNextPose = () => {
@@ -1524,7 +1513,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    setTimeout(() => { setIsNavigatingPoses(false); }, 100);
+    setIsNavigatingPoses(false);
   };
 
   const handleSelectPose = (index: number) => {
@@ -1542,7 +1531,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
 
-    setTimeout(() => { setIsNavigatingPoses(false); }, 100);
+    setIsNavigatingPoses(false);
   };
 
   const handleRenamePose = (index: number, newName: string) => {
@@ -2504,9 +2493,6 @@ const AppContent: React.FC = () => {
                 onClose={() => setActiveRightPanel(null)}
               />
             )}
-            {activeRightPanel === 'skins' && (
-              <SkinsPanel apiRef={characterViewerRef} onClose={() => setActiveRightPanel(null)} />
-            )}
             {activeRightPanel === 'library' && (
               <PurchaseLibrary
                 isOpen={true}
@@ -2523,7 +2509,6 @@ const AppContent: React.FC = () => {
           {([
             { key: 'stats', icon: '📊', label: t('rtab.stats', lang) },
             { key: 'style', icon: '🎨', label: t('rtab.style', lang) },
-            { key: 'skins', icon: '✨', label: t('rtab.skins', lang) },
           ] as const).map(({ key, icon, label }) => (
             <button
               key={key}

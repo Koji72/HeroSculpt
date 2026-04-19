@@ -126,9 +126,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     lineHeight: 1.15,
   });
 
-  const sidePanelButtons: Array<{ key: 'style' | 'skins'; label: string }> = [
-    { key: 'style', label: 'STYLE' },
-    { key: 'skins', label: 'SKINS' },
+  const sidePanelButtons: Array<{ key: 'style' | 'skins' }> = [
+    { key: 'style' },
+    { key: 'skins' },
   ];
 
   const showTooltip = (e: React.MouseEvent<HTMLButtonElement>, label: string) => {
@@ -189,7 +189,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
           </svg>
         </div>
         <span style={labelStyle(isTorsoOrSubActive)}>
-          UPPER{'\u00A0'}
+          {t('toolbar.upper.label', lang)}{'\u00A0'}
           <svg style={{ display: 'inline', verticalAlign: 'middle', transform: isTorsoSubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </span>
         {categoryCounts && categoryCounts.upper > 0 && (
@@ -213,7 +213,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
           </svg>
         </div>
         <span style={labelStyle(isBeltOrSubActive)}>
-          BELT{'\u00A0'}
+          {t('toolbar.belt.label', lang)}{'\u00A0'}
           <svg style={{ display: 'inline', verticalAlign: 'middle', transform: isBeltSubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </span>
         {categoryCounts && categoryCounts.belt > 0 && (
@@ -237,7 +237,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
           </svg>
         </div>
         <span style={labelStyle(isLowerBodyOrSubActive)}>
-          LOWER{'\u00A0'}
+          {t('toolbar.lower.label', lang)}{'\u00A0'}
           <svg style={{ display: 'inline', verticalAlign: 'middle', transform: isLowerBodySubmenuExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </span>
         {categoryCounts && categoryCounts.lower > 0 && (
@@ -277,14 +277,15 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       {onSidePanelToggle && (
         <>
           <div style={{ width: '70%', height: 1, background: 'rgba(71, 85, 105, 0.48)', margin: '10px 0 4px' }} />
-          {sidePanelButtons.map(({ key, label }) => {
+          {sidePanelButtons.map(({ key }) => {
             const isActive = activeSidePanel === key;
+            const labelText = key === 'style' ? t('rtab.style', lang) : t('rtab.skins', lang);
             return (
               <button
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
-                onMouseEnter={e => showTooltip(e, label === 'STYLE' ? t('toolbar.style', lang) : t('toolbar.skins', lang))}
+                onMouseEnter={e => showTooltip(e, key === 'style' ? t('toolbar.style', lang) : t('toolbar.skins', lang))}
                 onMouseLeave={() => setTooltip(null)}
                 style={sidebarBtnStyle(isActive)}
               >
@@ -298,10 +299,10 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
                       color: isActive ? 'var(--color-accent)' : 'var(--color-text-faint)',
                     }}
                   >
-                    {label.slice(0, 2)}
+                    {labelText.slice(0, 2)}
                   </span>
                 </div>
-                <span style={labelStyle(isActive)}>{label}</span>
+                <span style={labelStyle(isActive)}>{labelText}</span>
               </button>
             );
           })}

@@ -38,15 +38,12 @@ export const ViewportHoverOverlay: React.FC<ViewportHoverOverlayProps> = ({ view
       const camera = viewerRef.current?.getCamera() as THREE.PerspectiveCamera | null;
       const scene = viewerRef.current?.getScene();
       const canvas = renderer?.domElement;
-      console.log('[HoverOverlay] poll:', { hasRef: !!viewerRef.current, hasRenderer: !!renderer, hasCamera: !!camera, hasScene: !!scene, hasCanvas: !!canvas });
       if (!canvas || !camera || !scene) return;
-      console.log('[HoverOverlay] ATTACHED to canvas', canvas);
 
       attached = true;
       if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
 
       const handleMove = (evt: MouseEvent) => {
-        console.log('[HoverOverlay] mousemove detected');
         const rect = canvas.getBoundingClientRect();
         const x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
         const y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;

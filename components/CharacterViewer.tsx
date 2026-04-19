@@ -131,7 +131,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     AUTO_FRAME_AZIMUTH: Math.PI / 10,
     DEFAULT_POLAR: Math.PI / 2.5,
     RESET_POLAR: Math.PI / 2.8,
-    AUTO_FRAME_MULTIPLIER: 1.25,
+    AUTO_FRAME_MULTIPLIER: 1.35,
   };
 
   // Handlers for name editing
@@ -589,7 +589,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       parts: Object.entries(selectedParts).map(([category, part]) => `${category}: ${part?.id || 'undefined'}`),
       isEmpty: Object.keys(selectedParts).length === 0
     });
-    console.log('?? EXECUTION COUNT - Esta es la ejecuci�n n�mero:', (window as any).__modelLoadCount = ((window as any).__modelLoadCount || 0) + 1);
     
     // ? SAFETY CHECK: Ensure Three.js is ready before loading
     if (!isThreeJSReady) {

@@ -5,6 +5,7 @@ import { findLightingPresetByName } from '../../lib/lightingPresets';
 import { PartCategory } from '../../types';
 import { setMaterialOverride, setColorOverride, clearColorOverrides, clearMaterialOverrides } from '../../lib/materialOverrides';
 import { setAOIntensity } from '../../lib/aoController';
+import { useLang, t } from '../../lib/i18n';
 
 type SkinPreset = {
   id: string;
@@ -1743,6 +1744,7 @@ interface SkinsPanelProps {
 }
 
 const SkinsPanel: React.FC<SkinsPanelProps> = ({ apiRef, onClose }) => {
+  const { lang } = useLang();
   const [activeSkinId, setActiveSkinId] = React.useState<string>('');
 
   React.useEffect(() => {
@@ -1814,7 +1816,7 @@ const SkinsPanel: React.FC<SkinsPanelProps> = ({ apiRef, onClose }) => {
                       className={isActive ? 'btn-comic btn-primary' : 'btn-comic btn-outline'}
                       style={{ fontSize: 10, padding: '4px 10px', flexShrink: 0 }}
                     >
-                      {isActive ? '✓ ACTIVO' : 'APLICAR'}
+                      {isActive ? t('skins.active_btn', lang) : t('skins.apply', lang)}
                     </button>
                   </div>
                 );

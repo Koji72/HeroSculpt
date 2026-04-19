@@ -854,7 +854,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--color-border)', flexShrink: 0, display: 'flex', gap: 6, alignItems: 'center' }}>
           <input
             type="text"
-            placeholder="Buscar parte..."
+            placeholder={t('panel.search', lang)}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             style={{
@@ -867,7 +867,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           {hasFavorites && (
             <button
               onClick={() => setShowFavoritesOnly(v => !v)}
-              title={showFavoritesOnly ? 'Mostrar todas' : 'Solo favoritos'}
+              title={t(showFavoritesOnly ? 'panel.show_all' : 'panel.favorites_only', lang)}
               style={{
                 flexShrink: 0,
                 background: showFavoritesOnly ? 'rgba(244,63,94,0.15)' : 'rgba(30,41,59,0.8)',
@@ -885,7 +885,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px' }}>
           <div style={{ textAlign: 'center' }}>
             <XMarkIcon className="h-8 w-8" style={{ margin: '0 auto 8px' }} />
-            <p style={{ fontFamily: 'var(--font-comic)', fontSize: 13, color: 'var(--color-text-muted)' }}>Sin partes compatibles para esta combinación.</p>
+            <p style={{ fontFamily: 'var(--font-comic)', fontSize: 13, color: 'var(--color-text-muted)' }}>{t('panel.no_parts', lang)}</p>
           </div>
         </div>
       ) : (
@@ -933,7 +933,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
           style={{ width: '100%', padding: '10px', fontSize: 18, letterSpacing: 3 }}
           onClick={handleApplyChanges}
         >
-          ✓ APLICAR
+          {t('panel.apply', lang)}
         </button>
       </div>
     </div>

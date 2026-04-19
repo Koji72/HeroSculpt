@@ -87,6 +87,9 @@ const dict = {
   'bottom.save_pose': { en: '💾 POSE', es: '💾 POSE' },
 
   // Pose navigation
+  'pose.saving': { en: 'Saving last pose...', es: 'Guardando última pose...' },
+  'pose.last': { en: 'Last pose:', es: 'Última pose:' },
+  'pose.saved_at': { en: 'Saved:', es: 'Guardado:' },
   'pose.delete': { en: 'Delete', es: 'Borrar' },
   'pose.cancel': { en: 'Cancel', es: 'Cancelar' },
   'pose.rename': { en: 'Rename', es: 'Renombrar' },
@@ -155,9 +158,21 @@ const dict = {
   'skins.apply': { en: 'APPLY', es: 'APLICAR' },
   'skins.active_btn': { en: 'ON', es: '✓ ACTIVO' },
 
+  // PartSelectorPanel
+  'panel.apply': { en: '✓ APPLY', es: '✓ APLICAR' },
+  'panel.search': { en: 'Search part...', es: 'Buscar parte...' },
+  'panel.show_all': { en: 'Show all', es: 'Mostrar todas' },
+  'panel.favorites_only': { en: 'Favorites only', es: 'Solo favoritos' },
+  'panel.no_parts': { en: 'No compatible parts for this combination.', es: 'Sin partes compatibles para esta combinación.' },
+
+  // ArchetypeSwitcher
+  'archetype.confirm': { en: 'CONFIRM', es: 'CONFIRMAR' },
+  'archetype.cancel': { en: 'CANCEL', es: 'CANCELAR' },
+  'archetype.confirm_msg': { en: 'Switching archetype will reset selected parts. Continue?', es: 'Cambiar arquetipo reiniciará las partes seleccionadas. ¿Continuar?' },
+
   // StylePanel apply buttons
-  'style.apply': { en: 'APPLY', es: 'APLICAR' },
-  'style.apply_all': { en: 'APPLY TO ALL', es: 'APLICAR A TODO' },
+  'style.apply': { en: '✓ APPLY', es: '✓ APLICAR' },
+  'style.apply_all': { en: 'APPLY TO ALL PARTS', es: 'APLICAR A TODAS LAS PARTES' },
 
   // PurchaseLibrary
   'library.title': { en: '📚 MY BUILDS', es: '📚 MIS BUILDS' },
