@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLang, t, TransKey } from '../lib/i18n';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 import { 
   Settings, 
   Monitor, 
@@ -40,7 +41,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 interface UserSettingsProps {
   isOpen: boolean;
   onClose: () => void;
-  user: any;
+  user: SupabaseUser | null;
 }
 
 interface SettingOption {
@@ -48,8 +49,8 @@ interface SettingOption {
   label: TransKey;
   description: TransKey;
   type: 'toggle' | 'select' | 'input' | 'button';
-  value: any;
-  options?: { label: string; value: any }[];
+  value: string | boolean | number;
+  options?: { label: string; value: string | boolean | number }[];
   icon?: React.ReactNode;
   example?: TransKey;
 }
@@ -105,7 +106,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
     }));
   };
 
-  const updateSetting = (key: string, value: any) => {
+  const updateSetting = (key: string, value: string | boolean | number) => {
     setSettings(prev => ({
       ...prev,
       [key]: value

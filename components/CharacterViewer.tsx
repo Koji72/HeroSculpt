@@ -2058,7 +2058,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
   }));
 
-  const displayName = characterName || (selectedParts && (selectedParts as any).__characterName) || '';
+  const displayName = characterName || '';
   return (
     <div 
       ref={mountRef} 
