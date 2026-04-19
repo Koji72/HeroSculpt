@@ -9,8 +9,8 @@ const dict = {
   'topbar.random': { en: '🎲 RANDOM', es: '🎲 AZAR' },
   'topbar.share': { en: '🔗 SHARE', es: '🔗 COMPARTIR' },
   'topbar.copied': { en: '✓ COPIED', es: '✓ COPIADO' },
-  'topbar.checkout': { en: 'CHECKOUT →', es: 'PAGAR →' },
-  'topbar.mybuild': { en: 'MY BUILD →', es: 'MI BUILD →' },
+  'topbar.checkout': { en: '🛒 CHECKOUT →', es: '🛒 PAGAR →' },
+  'topbar.mybuild': { en: '🛒 CART', es: '🛒 CARRITO' },
   'topbar.savehero': { en: '💾 SAVE HERO', es: '💾 GUARDAR HÉROE' },
   'topbar.heroplaceholder': { en: 'My Hero', es: 'Mi Héroe' },
 
@@ -102,7 +102,7 @@ const dict = {
   'rtab.stats': { en: 'STATS', es: 'STATS' },
   'rtab.style': { en: 'STYLE', es: 'ESTILO' },
   'rtab.skins': { en: 'SKINS', es: 'SKINS' },
-  'rtab.builds': { en: '📚 BUILDS', es: '📚 BUILDS' },
+  'rtab.builds': { en: '📚 LIBRARY', es: '📚 BIBLIOTECA' },
   'rtab.library_locked': { en: 'Sign in to access your Library', es: 'Inicia sesión para acceder a tu biblioteca' },
 
   // Keyboard shortcuts overlay
