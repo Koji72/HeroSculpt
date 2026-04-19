@@ -10,8 +10,10 @@ const iconMap = {
 };
 
 const logHudMessage = (type: string, message: string) => {
-  const logger = type === 'error' ? console.error : console.log;
-  logger(`[hud:${type}] ${message}`);
+  if (import.meta.env.DEV) {
+    const logger = type === 'error' ? console.error : console.log;
+    logger(`[hud:${type}] ${message}`);
+  }
 };
 
 export const hudNotify = {

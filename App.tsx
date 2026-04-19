@@ -226,6 +226,8 @@ const AppContent: React.FC = () => {
   // read the true current value. useState would batch true→false in one render,
   // meaning the effect would never see the flag as true.
   const isNavigatingPosesRef = useRef(false);
+  // Guards handleSaveCurrentPoseAsNew against concurrent invocations (double-click, etc.)
+  const isSavingPoseRef = useRef(false);
   // Always holds the latest selectedParts so the 800ms pose-save callback reads fresh data.
   const selectedPartsRef = useRef(selectedParts);
 
@@ -749,14 +751,14 @@ const AppContent: React.FC = () => {
   // Clear navigation flag AFTER React has committed the new currentPoseIndex.
   useEffect(() => { isNavigatingPosesRef.current = false; }, [currentPoseIndex]);
 
-  // ✨ NUEVA FUNCIONALIDAD: Actualizar la configuración de la pose actual cuando se modifica
+  // Debounced DB sync: updates the current pose's stored configuration after 800ms of inactivity.
+  // Guard checks are inside the callback (not at setup time) because isNavigatingPosesRef is
+  // cleared by the effect on line 750 before this effect fires in the same commit cycle.
   useEffect(() => {
-    // ✅ NUEVO: NO ejecutar durante navegación entre poses
-    if (isNavigatingPosesRef.current) {
-      return;
-    }
+    const timeoutId = setTimeout(async () => {
+      // Skip if a navigation or save is in progress (checked at fire time, not setup time)
+      if (isNavigatingPosesRef.current || isSavingPoseRef.current) return;
 
-    const updateCurrentPoseConfiguration = async () => {
       let shouldUpdateDB = false;
       let poseId: string | undefined;
       let poseName: string | undefined;
@@ -764,7 +766,7 @@ const AppContent: React.FC = () => {
       setSavedPoses(prev => {
         if (prev.length === 0 || currentPoseIndex < 0 || currentPoseIndex >= prev.length) return prev;
         const currentPose = prev[currentPoseIndex];
-        const configChanged = JSON.stringify(currentPose.configuration) !== JSON.stringify(selectedParts);
+        const configChanged = JSON.stringify(currentPose.configuration) !== JSON.stringify(selectedPartsRef.current);
         if (!configChanged) return prev;
         shouldUpdateDB = currentPose.source === 'saved';
         poseId = currentPose.id;
@@ -777,15 +779,12 @@ const AppContent: React.FC = () => {
       if (shouldUpdateDB && user?.id && poseId && poseName) {
         try {
           const configId = poseId.replace('saved-', '');
-          await UserConfigService.updateConfiguration(configId, { name: poseName, selected_parts: selectedParts });
+          await UserConfigService.updateConfiguration(configId, { name: poseName, selected_parts: selectedPartsRef.current });
         } catch (error) {
-          // Removed debug log
+          if (import.meta.env.DEV) console.error('Error updating pose configuration:', error);
         }
       }
-    };
-
-    // Actualizar con un delay para evitar demasiadas actualizaciones (delay aumentado)
-    const timeoutId = setTimeout(updateCurrentPoseConfiguration, 800);
+    }, 800);
     return () => clearTimeout(timeoutId);
   }, [selectedParts, currentPoseIndex, user?.id]);
 
@@ -1562,33 +1561,31 @@ const AppContent: React.FC = () => {
 
   // ✨ NUEVA FUNCIONALIDAD: Convertir pose de compra en pose guardada
   const handleSaveCurrentPoseAsNew = async () => {
-    if (!user?.id) {
-      return;
-    }
+    if (!user?.id || isSavingPoseRef.current) return;
+
+    isSavingPoseRef.current = true;
+    // Block the debounced pose-update from firing against the old pose while we save
+    isNavigatingPosesRef.current = true;
 
     try {
-      // Crear nueva configuración guardada
+      const partsSnapshot = { ...selectedPartsRef.current };
       const configToSave = {
         name: `Copia de ${savedPoses[currentPoseIndex]?.name || 'Pose'}`,
         archetype: selectedArchetype || 'STRONG',
-        selected_parts: selectedParts,
-        total_price: 0 // Precio 0 para copias
+        selected_parts: partsSnapshot,
+        total_price: 0,
       };
-      
-          // Removed debug log
 
       const newConfig = await UserConfigService.saveConfiguration(configToSave);
-
       if (newConfig) {
-        // Removed debug log
-        
-        await loadUserPoses(); // loadUserPoses sets the index internally
-        
-        // Removed debug log
+        await loadUserPoses();
       }
-          } catch (error) {
-        // Removed debug log
-      }
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('Error saving pose as new:', error);
+    } finally {
+      isSavingPoseRef.current = false;
+      // isNavigatingPosesRef will be reset by the useEffect watching currentPoseIndex
+    }
   };
 
   const updateSavedPoseName = async (index: number, newName: string) => {

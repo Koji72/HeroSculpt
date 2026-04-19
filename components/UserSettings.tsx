@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLang, t } from '../lib/i18n';
+import { useLang, t, TransKey } from '../lib/i18n';
 import { 
   Settings, 
   Monitor, 
@@ -45,13 +45,13 @@ interface UserSettingsProps {
 
 interface SettingOption {
   id: string;
-  label: string;
-  description: string;
+  label: TransKey;
+  description: TransKey;
   type: 'toggle' | 'select' | 'input' | 'button';
   value: any;
   options?: { label: string; value: any }[];
   icon?: React.ReactNode;
-  example?: string;
+  example?: TransKey;
 }
 
 const UserSettings: React.FC<UserSettingsProps> = ({
@@ -125,146 +125,146 @@ const UserSettings: React.FC<UserSettingsProps> = ({
   const displaySettings: SettingOption[] = [
     {
       id: 'darkMode',
-      label: 'Dark Mode',
-      description: 'Use dark theme for better eye comfort',
+      label: 'settings.display.darkMode.label',
+      description: 'settings.display.darkMode.desc',
       type: 'toggle',
       value: settings.darkMode,
       icon: <Moon className="h-4 w-4" />,
-      example: 'Ideal for users with vision problems'
+      example: 'settings.display.darkMode.example'
     },
     {
       id: 'responsiveDesign',
-      label: 'Responsive Design',
-      description: 'Adapt interface to different screen sizes',
+      label: 'settings.display.responsiveDesign.label',
+      description: 'settings.display.responsiveDesign.desc',
       type: 'toggle',
       value: settings.responsiveDesign,
       icon: <Smartphone className="h-4 w-4" />,
-      example: 'Optimizes layout for mobile and tablet devices'
+      example: 'settings.display.responsiveDesign.example'
     },
     {
       id: 'animations',
-      label: 'Animations',
-      description: 'Enable smooth transitions and animations',
+      label: 'settings.display.animations.label',
+      description: 'settings.display.animations.desc',
       type: 'toggle',
       value: settings.animations,
       icon: <Zap className="h-4 w-4" />,
-      example: 'Adds fluid motion to interface elements'
+      example: 'settings.display.animations.example'
     },
     {
       id: 'highContrast',
-      label: 'High Contrast',
-      description: 'Increase contrast for better visibility',
+      label: 'settings.display.highContrast.label',
+      description: 'settings.display.highContrast.desc',
       type: 'toggle',
       value: settings.highContrast,
       icon: <Eye className="h-4 w-4" />,
-      example: 'Ideal for users with vision problems'
+      example: 'settings.display.highContrast.example'
     }
   ];
 
   const notificationSettings: SettingOption[] = [
     {
       id: 'newParts',
-      label: 'New Parts',
-      description: 'Notify when new parts are available',
+      label: 'settings.notifications.newParts.label',
+      description: 'settings.notifications.newParts.desc',
       type: 'toggle',
       value: settings.newParts,
       icon: <Bell className="h-4 w-4" />,
-      example: 'Stay updated with the latest additions'
+      example: 'settings.notifications.newParts.example'
     },
     {
       id: 'specialOffers',
-      label: 'Special Offers',
-      description: 'Receive notifications about discounts and promotions',
+      label: 'settings.notifications.specialOffers.label',
+      description: 'settings.notifications.specialOffers.desc',
       type: 'toggle',
       value: settings.specialOffers,
       icon: <Gift className="h-4 w-4" />,
-      example: 'Get notified about exclusive deals'
+      example: 'settings.notifications.specialOffers.example'
     },
     {
       id: 'systemUpdates',
-      label: 'System Updates',
-      description: 'Notify about important system updates',
+      label: 'settings.notifications.systemUpdates.label',
+      description: 'settings.notifications.systemUpdates.desc',
       type: 'toggle',
       value: settings.systemUpdates,
       icon: <RefreshCw className="h-4 w-4" />,
-      example: 'Stay informed about new features and improvements'
+      example: 'settings.notifications.systemUpdates.example'
     },
     {
       id: 'emailNotifications',
-      label: 'Email Notifications',
-      description: 'Receive notifications via email',
+      label: 'settings.notifications.emailNotifications.label',
+      description: 'settings.notifications.emailNotifications.desc',
       type: 'toggle',
       value: settings.emailNotifications,
       icon: <Mail className="h-4 w-4" />,
-      example: 'Get important updates in your inbox'
+      example: 'settings.notifications.emailNotifications.example'
     }
   ];
 
   const accountSettings: SettingOption[] = [
     {
       id: 'twoFactorAuth',
-      label: 'Two-Factor Authentication',
-      description: 'Add extra security to your account',
+      label: 'settings.account.twoFactorAuth.label',
+      description: 'settings.account.twoFactorAuth.desc',
       type: 'toggle',
       value: settings.twoFactorAuth,
       icon: <Shield className="h-4 w-4" />,
-      example: 'Requires a second verification step'
+      example: 'settings.account.twoFactorAuth.example'
     },
     {
       id: 'autoSave',
-      label: 'Auto Save',
-      description: 'Automatically save your configurations',
+      label: 'settings.account.autoSave.label',
+      description: 'settings.account.autoSave.desc',
       type: 'toggle',
       value: settings.autoSave,
       icon: <Save className="h-4 w-4" />,
-      example: 'Never lose your work again'
+      example: 'settings.account.autoSave.example'
     },
     {
       id: 'dataCollection',
-      label: 'Data Collection',
-      description: 'Help improve user experience anonymously',
+      label: 'settings.account.dataCollection.label',
+      description: 'settings.account.dataCollection.desc',
       type: 'toggle',
       value: settings.dataCollection,
       icon: <BarChart3 className="h-4 w-4" />,
-      example: 'Help improve user experience anonymously'
+      example: 'settings.account.dataCollection.example'
     }
   ];
 
   const performanceSettings: SettingOption[] = [
     {
       id: 'autoOptimization',
-      label: 'Auto Optimization',
-      description: 'Automatically optimize performance',
+      label: 'settings.performance.autoOptimization.label',
+      description: 'settings.performance.autoOptimization.desc',
       type: 'toggle',
       value: settings.autoOptimization,
       icon: <Zap className="h-4 w-4" />,
-      example: 'Optimizes performance for your device'
+      example: 'settings.performance.autoOptimization.example'
     },
     {
       id: 'cacheEnabled',
-      label: 'Cache Enabled',
-      description: 'Enable caching for faster loading',
+      label: 'settings.performance.cacheEnabled.label',
+      description: 'settings.performance.cacheEnabled.desc',
       type: 'toggle',
       value: settings.cacheEnabled,
       icon: <Database className="h-4 w-4" />,
-      example: 'Stores data locally for faster access'
+      example: 'settings.performance.cacheEnabled.example'
     },
     {
       id: 'compressionEnabled',
-      label: 'Compression Enabled',
-      description: 'Enable data compression',
+      label: 'settings.performance.compressionEnabled.label',
+      description: 'settings.performance.compressionEnabled.desc',
       type: 'toggle',
       value: settings.compressionEnabled,
       icon: <FileText className="h-4 w-4" />,
-      example: 'Reduces data usage and loading times'
+      example: 'settings.performance.compressionEnabled.example'
     }
   ];
 
   const languageSettings: SettingOption[] = [
     {
       id: 'language',
-      label: 'Language',
-      description: 'Select interface language',
+      label: 'settings.language.language.label',
+      description: 'settings.language.language.desc',
       type: 'select',
       value: settings.language,
       options: [
@@ -274,12 +274,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         { label: 'Deutsch', value: 'de' }
       ],
       icon: <Globe className="h-4 w-4" />,
-      example: 'Changes all interface text to the selected language'
+      example: 'settings.language.language.example'
     },
     {
       id: 'currency',
-      label: 'Currency',
-      description: 'Currency for prices and transactions',
+      label: 'settings.language.currency.label',
+      description: 'settings.language.currency.desc',
       type: 'select',
       value: settings.currency,
       options: [
@@ -289,12 +289,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         { label: 'JPY (¥)', value: 'JPY' }
       ],
       icon: <CreditCard className="h-4 w-4" />,
-      example: 'Prices are displayed in the selected currency'
+      example: 'settings.language.currency.example'
     },
     {
       id: 'timezone',
-      label: 'Time Zone',
-      description: 'Time zone for dates and times',
+      label: 'settings.language.timezone.label',
+      description: 'settings.language.timezone.desc',
       type: 'select',
       value: settings.timezone,
       options: [
@@ -304,46 +304,46 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         { label: 'Tokyo (JST)', value: 'Asia/Tokyo' }
       ],
       icon: <Calendar className="h-4 w-4" />,
-      example: 'Purchase dates are displayed in your local time zone'
+      example: 'settings.language.timezone.example'
     }
   ];
 
   const accessibilitySettings: SettingOption[] = [
     {
       id: 'screenReader',
-      label: 'Screen Reader',
-      description: 'Optimize for screen readers',
+      label: 'settings.accessibility.screenReader.label',
+      description: 'settings.accessibility.screenReader.desc',
       type: 'toggle',
       value: settings.screenReader,
       icon: <Volume2 className="h-4 w-4" />,
-      example: 'Adds ARIA labels for better compatibility'
+      example: 'settings.accessibility.screenReader.example'
     },
     {
       id: 'largeText',
-      label: 'Large Text',
-      description: 'Increase font size for better readability',
+      label: 'settings.accessibility.largeText.label',
+      description: 'settings.accessibility.largeText.desc',
       type: 'toggle',
       value: settings.largeText,
       icon: <Eye className="h-4 w-4" />,
-      example: 'Increases the size of all text by 20%'
+      example: 'settings.accessibility.largeText.example'
     },
     {
       id: 'reducedMotion',
-      label: 'Reduced Motion',
-      description: 'Reduce animations for sensitive users',
+      label: 'settings.accessibility.reducedMotion.label',
+      description: 'settings.accessibility.reducedMotion.desc',
       type: 'toggle',
       value: settings.reducedMotion,
       icon: <RotateCcw className="h-4 w-4" />,
-      example: 'Removes animations that may cause dizziness'
+      example: 'settings.accessibility.reducedMotion.example'
     },
     {
       id: 'colorBlindMode',
-      label: 'Color Blind Mode',
-      description: 'Optimize colors for color blind users',
+      label: 'settings.accessibility.colorBlindMode.label',
+      description: 'settings.accessibility.colorBlindMode.desc',
       type: 'toggle',
       value: settings.colorBlindMode,
       icon: <Palette className="h-4 w-4" />,
-      example: 'Uses patterns and contrasts instead of just colors'
+      example: 'settings.accessibility.colorBlindMode.example'
     }
   ];
 
@@ -352,9 +352,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({
       <div className="flex-1">
         <div className="flex items-center gap-3 mb-2">
           {setting.icon}
-          <h4 className="text-white font-medium">{setting.label}</h4>
+          <h4 className="text-white font-medium">{t(setting.label, lang)}</h4>
         </div>
-        <p className="text-slate-400 text-sm mb-2">{setting.description}</p>
+        <p className="text-slate-400 text-sm mb-2">{t(setting.description, lang)}</p>
         {setting.example && (
           <div className="mb-2">
             <button
@@ -366,7 +366,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             </button>
             {showExamples.has(setting.id) && (
               <p className="text-slate-300 text-xs mt-1 bg-slate-600/50 p-2 rounded">
-                💡 {setting.example}
+                💡 {t(setting.example, lang)}
               </p>
             )}
           </div>

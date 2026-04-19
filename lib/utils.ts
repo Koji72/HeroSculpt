@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import * as THREE from 'three';
 import { ALL_PARTS } from '../constants';
 import { PartCategory, SelectedParts, Part, RPGCharacterSync } from '../types';
 
@@ -584,7 +585,7 @@ export interface ExportResult {
 /**
  * Export a 3D scene as a downloadable file
  */
-export async function exportModel(scene: any, options: ModelExportOptions = { format: 'glb', includeTextures: true, compression: true }): Promise<ExportResult> {
+export async function exportModel(scene: THREE.Object3D, options: ModelExportOptions = { format: 'glb', includeTextures: true, compression: true }): Promise<ExportResult> {
   try {
     // Check if we're in a browser environment
     if (typeof window === 'undefined') {
@@ -633,7 +634,7 @@ export async function exportModel(scene: any, options: ModelExportOptions = { fo
     };
 
   } catch (error) {
-    console.error('Error exporting model:', error);
+    if (import.meta.env.DEV) console.error('Error exporting model:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during export'
@@ -641,7 +642,7 @@ export async function exportModel(scene: any, options: ModelExportOptions = { fo
   }
 }
 
-async function exportSTL(scene: any, options: STLExportOptions = { binary: true, includeMaterials: false, scale: 1 }): Promise<ExportResult> {
+async function exportSTL(scene: THREE.Object3D, options: STLExportOptions = { binary: true, includeMaterials: false, scale: 1 }): Promise<ExportResult> {
   try {
     // Import STLExporter dynamically for STL printing
     const { STLExporter } = await import('three/examples/jsm/exporters/STLExporter');
@@ -670,7 +671,7 @@ async function exportSTL(scene: any, options: STLExportOptions = { binary: true,
     };
 
   } catch (error) {
-    console.error('Error exporting STL:', error);
+    if (import.meta.env.DEV) console.error('Error exporting STL:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during STL export'
@@ -695,19 +696,19 @@ export function downloadBlob(blob: Blob, filename: string): void {
 /**
  * Generate a comprehensive model name based on selected parts
  */
-export function generateModelName(selectedParts: any, archetype: string): string {
-  const parts = Object.values(selectedParts).filter(Boolean);
+export function generateModelName(selectedParts: SelectedParts, archetype: string): string {
+  const parts = Object.values(selectedParts).filter(Boolean) as Part[];
   const archetypeName = archetype || 'custom';
 
   // Extract key parts for naming
-  const torso = parts.find((p: any) => p.category === PartCategory.TORSO || p.category === PartCategory.SUIT_TORSO);
-  const head = parts.find((p: any) => p.category === PartCategory.HEAD);
-  const cape = parts.find((p: any) => p.category === PartCategory.CAPE);
+  const torso = parts.find((p) => p.category === PartCategory.TORSO || p.category === PartCategory.SUIT_TORSO);
+  const head = parts.find((p) => p.category === PartCategory.HEAD);
+  const cape = parts.find((p) => p.category === PartCategory.CAPE);
 
   let name = `${archetypeName}`;
 
-  if (torso && typeof torso === 'object' && 'id' in torso) {
-    const torsoType = (torso as any).id.includes('suit') ? 'suit' : 'torso';
+  if (torso) {
+    const torsoType = torso.id.includes('suit') ? 'suit' : 'torso';
     name += `_${torsoType}`;
   }
 

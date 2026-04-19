@@ -662,8 +662,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
       materialPresets[category] && materialPresets[category].length > 0
     );
     
-    // 🔧 OPTIMIZADO: Solo log en desarrollo y cuando realmente cambie
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('🎨 MaterialConfigurator - Available categories:', categoriesWithMaterials);
       console.log('🎨 MaterialConfigurator - Selected parts:', Object.keys(selectedParts || {}));
     }

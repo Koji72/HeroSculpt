@@ -142,8 +142,13 @@ export interface MAndMCommunityStats {
   }>;
 }
 
+interface CacheEntry {
+  data: unknown;
+  timestamp: number;
+}
+
 class MAndMCommunityService {
-  private cache = new Map<string, any>();
+  private cache = new Map<string, CacheEntry>();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutos
 
   // ===== FEED Y PUBLICACIONES =====
@@ -152,7 +157,7 @@ class MAndMCommunityService {
     const { data: { user } } = await supabase.auth.getUser();
     const verifiedUserId = user?.id ?? '';
     const cacheKey = `feed_${verifiedUserId}_${page}_${limit}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMCommunityPost[]>(cacheKey);
     if (cached) return cached;
 
     const offset = (page - 1) * limit;
@@ -250,7 +255,7 @@ class MAndMCommunityService {
 
   async getLeaderboard(type: 'experience' | 'characters' | 'achievements' | 'community', limit = 50): Promise<MAndMLeaderboardEntry[]> {
     const cacheKey = `leaderboard_${type}_${limit}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMLeaderboardEntry[]>(cacheKey);
     if (cached) return cached;
 
     let query;
@@ -323,7 +328,7 @@ class MAndMCommunityService {
 
   async getActiveEvents(): Promise<MAndMEvent[]> {
     const cacheKey = 'active_events';
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMEvent[]>(cacheKey);
     if (cached) return cached;
 
     const now = new Date().toISOString();
@@ -351,7 +356,7 @@ class MAndMCommunityService {
 
   async getActiveChallenges(): Promise<MAndMChallenge[]> {
     const cacheKey = 'active_challenges';
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMChallenge[]>(cacheKey);
     if (cached) return cached;
 
     const now = new Date().toISOString();
@@ -415,8 +420,9 @@ class MAndMCommunityService {
       .single();
     if (fetchError) throw new Error(`Error fetching challenge: ${fetchError.message}`);
 
-    const participants: any[] = Array.isArray(challenge?.participants) ? challenge.participants : [];
-    const alreadyJoined = participants.some((p: any) => p.userId === userId);
+    type ChallengeParticipant = MAndMChallenge['participants'][number];
+    const participants: ChallengeParticipant[] = Array.isArray(challenge?.participants) ? challenge.participants : [];
+    const alreadyJoined = participants.some((p) => p.userId === userId);
     if (!alreadyJoined) {
       participants.push({ userId, userName, progress: 0, completed: false });
     }
@@ -435,7 +441,7 @@ class MAndMCommunityService {
 
   async getGalleryItems(type?: string, page = 1, limit = 20): Promise<MAndMGalleryItem[]> {
     const cacheKey = `gallery_${type || 'all'}_${page}_${limit}`;
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMGalleryItem[]>(cacheKey);
     if (cached) return cached;
 
     const offset = (page - 1) * limit;
@@ -500,7 +506,7 @@ class MAndMCommunityService {
 
   async getCommunityStats(): Promise<MAndMCommunityStats> {
     const cacheKey = 'community_stats';
-    const cached = this.getFromCache(cacheKey);
+    const cached = this.getFromCache<MAndMCommunityStats>(cacheKey);
     if (cached) return cached;
 
     // Obtener estadísticas básicas
@@ -595,15 +601,15 @@ class MAndMCommunityService {
     return data;
   }
 
-  private getFromCache(key: string): any {
+  private getFromCache<T>(key: string): T | null {
     const cached = this.cache.get(key);
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-      return cached.data;
+      return cached.data as T;
     }
     return null;
   }
 
-  private setCache(key: string, data: any): void {
+  private setCache(key: string, data: unknown): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now()

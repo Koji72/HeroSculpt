@@ -48,15 +48,11 @@ const MaterialPanel = React.memo(({
 
     if (characterViewerRef.current) {
       if (partCategory) {
-        if (import.meta.env.DEV) {
-          console.log(`MaterialPanel: Applying color to specific part: ${partCategory}`);
-        }
+        if (import.meta.env.DEV) console.log(`MaterialPanel: Applying color to specific part: ${partCategory}`);
         characterViewerRef.current.applyColorToPart(color, partCategory);
         setCurrentColors(prev => ({ ...prev, [partCategory]: color }));
       } else {
-        if (import.meta.env.DEV) {
-          console.log(`MaterialPanel: Applying color to all parts`);
-        }
+        if (import.meta.env.DEV) console.log(`MaterialPanel: Applying color to all parts`);
         characterViewerRef.current.applyColorToAllParts(color);
         setCurrentColors(prev => {
           const newColors = { ...prev };
@@ -67,9 +63,7 @@ const MaterialPanel = React.memo(({
         });
       }
     } else {
-      if (import.meta.env.DEV) {
-        console.log('MaterialPanel: characterViewerRef.current is null');
-      }
+      if (import.meta.env.DEV) console.log('MaterialPanel: characterViewerRef.current is null');
     }
   };
 

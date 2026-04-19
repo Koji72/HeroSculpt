@@ -75,11 +75,11 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
             }
           }
         } catch (err) {
-          console.warn('⚠️ Could not access state machine info:', err);
+          if (import.meta.env.DEV) console.warn('⚠️ Could not access state machine info:', err);
         }
       },
       onLoadError: (err) => {
-        console.error('❌ Strong button Rive load error:', err);
+        if (import.meta.env.DEV) console.error('❌ Strong button Rive load error:', err);
         setError(err.toString());
         setIsLoaded(false);
       },
@@ -119,7 +119,7 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
           });
         }
       } catch (err) {
-        console.warn('⚠️ Could not trigger hover state:', err);
+        if (import.meta.env.DEV) console.warn('⚠️ Could not trigger hover state:', err);
       }
     }
   };
@@ -132,19 +132,19 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
         const stateMachines = riveRef.current.stateMachineNames;
         if (stateMachines.length > 0) {
           const inputs = riveRef.current.stateMachineInputs(stateMachines[0]);
-          
+
           // Desactivar todos los inputs de hover
           inputs.forEach(input => {
-            if (input.name.toLowerCase().includes('hover') || 
+            if (input.name.toLowerCase().includes('hover') ||
                 input.name.toLowerCase().includes('mouse') ||
                 input.name.toLowerCase().includes('strong')) {
               input.value = false;
-  
+
             }
           });
         }
       } catch (err) {
-        console.warn('⚠️ Could not reset hover state:', err);
+        if (import.meta.env.DEV) console.warn('⚠️ Could not reset hover state:', err);
       }
     }
   };
@@ -156,14 +156,14 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
         const stateMachines = riveRef.current.stateMachineNames;
         if (stateMachines.length > 0) {
           const inputs = riveRef.current.stateMachineInputs(stateMachines[0]);
-          
+
           // Activar todos los inputs de click para el botón STRONG
           inputs.forEach(input => {
-            if (input.name.toLowerCase().includes('click') || 
+            if (input.name.toLowerCase().includes('click') ||
                 input.name.toLowerCase().includes('press') ||
                 input.name.toLowerCase().includes('strong')) {
               input.value = true;
-  
+
               // Reset después de un breve delay
               setTimeout(() => {
                 if (input) input.value = false;
@@ -172,7 +172,7 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
           });
         }
       } catch (err) {
-        console.warn('⚠️ Could not trigger click state:', err);
+        if (import.meta.env.DEV) console.warn('⚠️ Could not trigger click state:', err);
       }
     }
     onClick();

@@ -164,67 +164,15 @@ export class EmailService {
    */
   private static async sendSimulatedEmail(
     email: string,
-    configuration: SelectedParts,
-    totalPrice: number,
-    configId: string
+    _configuration: SelectedParts,
+    _totalPrice: number,
+    _configId: string
   ): Promise<{ success: boolean; error?: string }> {
     if (import.meta.env.DEV) console.log('\n🔶 MODO SIMULACIÓN - EmailJS no configurado');
     if (import.meta.env.DEV) console.log('══════════════════════════════════════════════');
     
     // Simular delay de envío
     await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // Generar contenido del email
-    const configName = `Superhéroe Custom ${new Date().toLocaleDateString()}`;
-    const partsList = Object.entries(configuration)
-      .filter(([_, part]) => part !== null)
-      .map(([category, part]) => `- ${category}: ${part?.name || 'Unknown'} ($${part?.priceUSD || 0})`)
-      .join('\n');
-
-    const baseUrl = window.location.origin;
-
-    const emailContent = `
-📧 EMAIL ENVIADO A: ${email}
-═══════════════════════════════════════════════════════════════
-
-¡Hola!
-
-Gracias por usar nuestro Superhero 3D Customizer. Tu configuración personalizada ha sido guardada exitosamente.
-
-📧 DETALLES DE TU CONFIGURACIÓN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🦸 Nombre: ${configName}
-💰 Precio Total: $${totalPrice.toFixed(2)} USD
-🗓️ Fecha: ${new Date().toLocaleDateString()}
-🆔 ID: ${configId}
-
-📋 PARTES SELECCIONADAS:
-${partsList}
-
-🔗 ENLACES DE ACCESO:
-- Ver configuración: ${baseUrl}?load=${configId}
-- Descargar modelo GLB: ${baseUrl}/download/${configId}/glb
-- Descargar modelo STL: ${baseUrl}/download/${configId}/stl
-
-⏰ IMPORTANTE: Estos enlaces estarán disponibles por 7 días.
-
-Para guardar permanentemente tus configuraciones y acceder a funciones adicionales, 
-te recomendamos crear una cuenta gratuita en nuestra plataforma.
-
-¡Gracias por personalizar con nosotros!
-
-El equipo de Superhero 3D Customizer
-
-═══════════════════════════════════════════════════════════════
-
-💡 PARA RECIBIR EMAILS REALES:
-1. Configura EmailJS en services/emailService.ts
-2. Añade tu SERVICE_ID, TEMPLATE_ID y PUBLIC_KEY
-3. ¡Los emails se enviarán automáticamente!
-
-═══════════════════════════════════════════════════════════════
-    `;
 
     // NO loggear contenido completo del email por seguridad
     if (import.meta.env.DEV) console.log(`📧 Email simulado enviado a: ${email.substring(0, 3)}***@${email.split('@')[1]}`);

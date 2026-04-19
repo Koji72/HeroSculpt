@@ -76,13 +76,14 @@ export class SessionStorageService {
         const supabaseSession = await SupabaseSessionService.getCurrentSession();
         if (supabaseSession) {
           // console.log('SessionStorageService: Session loaded from Supabase');
+          const s = supabaseSession as Record<string, unknown>;
           return {
-            selectedArchetype: (supabaseSession as any).selected_archetype,
-            selectedParts: (supabaseSession as any).selected_parts,
-            pose: (supabaseSession as any).pose || null,
-            lastPoseIndex: (supabaseSession as any).last_pose_index || 0,
-            savedPoses: (supabaseSession as any).saved_poses || [],
-            timestamp: new Date((supabaseSession as any).updated_at).getTime()
+            selectedArchetype: s.selected_archetype as ArchetypeId,
+            selectedParts: s.selected_parts as SelectedParts,
+            pose: (s.pose as string | null) || null,
+            lastPoseIndex: (s.last_pose_index as number) || 0,
+            savedPoses: (s.saved_poses as UserSession['savedPoses']) || [],
+            timestamp: new Date(s.updated_at as string).getTime()
           };
         }
       } catch (supabaseError) {
@@ -154,7 +155,7 @@ export class SessionStorageService {
       if (supabaseSession) {
         return {
           hasSession: true,
-          lastSaved: new Date((supabaseSession as any).updated_at).toLocaleString(),
+          lastSaved: new Date((supabaseSession as Record<string, unknown>).updated_at as string).toLocaleString(),
           source: 'supabase'
         };
       }

@@ -20,7 +20,7 @@ export interface AchievementRequirement {
   type: 'characters_created' | 'power_level' | 'archetype_mastery' | 'missions_completed' | 'gallery_shares' | 'consecutive_days';
   value: number;
   condition: 'equals' | 'greater_than' | 'less_than' | 'contains';
-  target?: any;
+  target?: unknown;
 }
 
 export interface UserStats {

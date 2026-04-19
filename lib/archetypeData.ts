@@ -804,7 +804,14 @@ export function isOptimalPartCombination(
 export function generateRPGCharacterFromCustomization(
   archetypeId: ArchetypeId,
   selectedParts: string[]
-): any {
+): {
+  archetype: ArchetypeId;
+  stats: ArchetypeStats;
+  physicalAttributes: PhysicalAttributes;
+  selectedParts: string[];
+  compatibility: { isOptimal: boolean; score: number; suggestions: string[] };
+  visualEffects: string[];
+} {
   const baseStats = ARCHETYPE_DATA[archetypeId].stats;
   const totalStats = calculateTotalStats(baseStats, selectedParts);
   const physicalAttrs = ARCHETYPE_PHYSICAL_ATTRIBUTES[archetypeId];
