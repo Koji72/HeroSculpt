@@ -5,7 +5,6 @@ export interface Purchase {
   id: string;
   user_id: string;
   configuration_name: string;
-  configuration_data: SelectedParts;
   total_price: number;
   purchase_date: string;
   items_count: number;
@@ -75,6 +74,8 @@ export class PurchaseHistoryService {
 
       if (itemsError) {
         if (import.meta.env.DEV) console.error('Error saving purchase items:', itemsError);
+        // Roll back the orphan purchases row so the user can retry cleanly.
+        await supabase.from('purchases').delete().eq('id', purchase.id).eq('user_id', user.id);
         return { success: false, error: itemsError.message };
       }
 
@@ -215,7 +216,7 @@ export class PurchaseHistoryService {
     if (!result.success) return new Set();
     const ids = new Set<string>();
     for (const purchase of result.purchases ?? []) {
-      const items: PurchaseItem[] = (purchase as any).purchase_items ?? [];
+      const items: PurchaseItem[] = purchase.purchase_items ?? [];
       for (const item of items) {
         if (!item.configuration_data) continue;
         for (const part of Object.values(item.configuration_data)) {

@@ -45,14 +45,11 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
       textureLoader.current.load(
         url,
         (texture) => {
-          // Configuración optimizada para PBR
-          texture.colorSpace = THREE.SRGBColorSpace;
           texture.flipY = false;
           texture.anisotropy = materialData.maxAnisotropy || 4;
           texture.generateMipmaps = true;
           texture.minFilter = THREE.LinearMipmapLinearFilter;
           texture.magFilter = THREE.LinearFilter;
-          
           resolve(texture);
         },
         undefined,
@@ -60,31 +57,14 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
       );
     });
   };
-  
+
   // Función para crear material PBR
   const createPBRMaterial = async (): Promise<THREE.MeshStandardMaterial> => {
     try {
       setIsLoading(true);
       setProgress(10);
-      
-      // Cargar texturas en paralelo
-      const texturePromises = [
-        loadTexture(materialData.map),
-        loadTexture(materialData.metalnessMap),
-        loadTexture(materialData.roughnessMap),
-        loadTexture(materialData.normalMap)
-      ];
-      
-      // Agregar texturas opcionales si existen
-      if (materialData.emissiveMap) {
-        texturePromises.push(loadTexture(materialData.emissiveMap));
-      }
-      if (materialData.aoMap) {
-        texturePromises.push(loadTexture(materialData.aoMap));
-      }
-      
-      setProgress(30);
-      
+
+      // Fixed-position promises — optional slots resolve to null so indices never shift
       const [
         albedoTexture,
         metalnessTexture,
@@ -92,8 +72,19 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
         normalTexture,
         emissiveTexture,
         aoTexture
-      ] = await Promise.all(texturePromises);
-      
+      ] = await Promise.all([
+        loadTexture(materialData.map),
+        loadTexture(materialData.metalnessMap),
+        loadTexture(materialData.roughnessMap),
+        loadTexture(materialData.normalMap),
+        materialData.emissiveMap ? loadTexture(materialData.emissiveMap) : Promise.resolve(null),
+        materialData.aoMap ? loadTexture(materialData.aoMap) : Promise.resolve(null),
+      ]);
+
+      // Only color maps get SRGB; linear data maps (normal, roughness, metalness, ao) stay linear
+      albedoTexture.colorSpace = THREE.SRGBColorSpace;
+      if (emissiveTexture) emissiveTexture.colorSpace = THREE.SRGBColorSpace;
+
       setProgress(70);
       
       // Crear material PBR
@@ -147,7 +138,7 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
             meshName.includes('mesh') || 
             meshName.includes('body')) {
           child.material = material;
-          console.log(`✅ Material aplicado a: ${child.name}`);
+          if (import.meta.env.DEV) console.log(`✅ Material aplicado a: ${child.name}`);
         }
       }
     });
@@ -181,7 +172,7 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
       // Notificar que el material está listo
       onMaterialLoaded?.(material);
       
-      console.log(`🎨 Material PBR cargado: ${materialData.name}`);
+      if (import.meta.env.DEV) console.log(`🎨 Material PBR cargado: ${materialData.name}`);
       
     } catch (error) {
       const errorMessage = `Error en carga completa: ${error}`;
@@ -195,7 +186,7 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
     if (modelUrl && materialData) {
       loadModelWithMaterial();
     }
-  }, [modelUrl, materialData.name]);
+  }, [modelUrl, materialData]);
   
   return (
     <div className="pbr-material-loader">

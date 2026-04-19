@@ -788,7 +788,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
 
     // 🔧 NUEVO: Aplicar el material inmediatamente al modelo 3D
     if (onMaterialChange) {
-      console.log(`🎨 MaterialConfigurator: Applying preset "${preset.name}" to ${selectedPart}`, {
+      if (import.meta.env.DEV) console.log(`🎨 MaterialConfigurator: Applying preset "${preset.name}" to ${selectedPart}`, {
         preset,
         selectedPart,
         materialProperties: {
@@ -798,7 +798,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
           clearcoat: material.clearcoat
         }
       });
-      onMaterialChange(material, selectedPart);
+      onMaterialChange(material.clone(), selectedPart);
     }
   };
 
@@ -850,7 +850,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
     if (onColorChange) {
       // Ensure selectedPart is a valid PartCategory
       const partCategory = selectedPart as PartCategory;
-      console.log(`🎨 MaterialConfigurator: handleColorSelect called`, {
+      if (import.meta.env.DEV) console.log(`🎨 MaterialConfigurator: handleColorSelect called`, {
         palette,
         colorType,
         color: color.toString(16),
@@ -861,10 +861,6 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
       onColorChange(palette, colorType, color, partCategory);
     }
   };
-
-  useEffect(() => {
-    updateMaterial();
-  }, [materialSettings, selectedPart, onMaterialChange]);
 
   const tabStyle = (tab: string): React.CSSProperties => ({
     flex: 1,

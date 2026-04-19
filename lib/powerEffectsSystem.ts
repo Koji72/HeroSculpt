@@ -33,6 +33,7 @@ export class PowerEffectsSystem {
   private activeEffects: Map<string, PowerEffect> = new Map();
   private time: number = 0;
   private animationId: number | null = null;
+  private disposed = false;
 
   constructor(scene: THREE.Scene) {
     this.scene = scene;
@@ -100,7 +101,7 @@ export class PowerEffectsSystem {
     this.scene.add(mesh);
     this.activeEffects.set(effectId, powerEffect);
 
-    console.log(`🔥 PowerEffectsSystem: Created ${config.type} effect on ${config.attachPoint}`);
+    if (import.meta.env.DEV) console.log(`🔥 PowerEffectsSystem: Created ${config.type} effect on ${config.attachPoint}`);
     
     return effectId;
   }
@@ -120,7 +121,7 @@ export class PowerEffectsSystem {
       effect.mesh.position.copy(offset);
     }
 
-    console.log(`🎯 PowerEffectsSystem: Attached effect ${effectId} to ${targetMesh.name}`);
+    if (import.meta.env.DEV) console.log(`🎯 PowerEffectsSystem: Attached effect ${effectId} to ${targetMesh.name}`);
     return true;
   }
 
@@ -146,7 +147,7 @@ export class PowerEffectsSystem {
     effect.isActive = !effect.isActive;
     effect.mesh.visible = effect.isActive;
 
-    console.log(`⚡ PowerEffectsSystem: Toggled effect ${effectId} - ${effect.isActive ? 'ON' : 'OFF'}`);
+    if (import.meta.env.DEV) console.log(`⚡ PowerEffectsSystem: Toggled effect ${effectId} - ${effect.isActive ? 'ON' : 'OFF'}`);
     return true;
   }
 
@@ -167,7 +168,7 @@ export class PowerEffectsSystem {
     
     this.activeEffects.delete(effectId);
 
-    console.log(`🗑️ PowerEffectsSystem: Removed effect ${effectId}`);
+    if (import.meta.env.DEV) console.log(`🗑️ PowerEffectsSystem: Removed effect ${effectId}`);
     return true;
   }
 
@@ -329,6 +330,7 @@ export class PowerEffectsSystem {
   // ⏰ ANIMATION LOOP
   private startAnimation(): void {
     const animate = () => {
+      if (this.disposed) return;
       this.time += 0.016; // ~60fps
       
       // Update all active effects
@@ -346,6 +348,7 @@ export class PowerEffectsSystem {
 
   // 🧹 CLEANUP
   dispose(): void {
+    this.disposed = true;
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
     }

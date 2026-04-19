@@ -231,6 +231,9 @@ const dict = {
   'price.btn.checkout_short': { en: 'Buy', es: 'Comprar' },
   'price.footer': { en: 'Download your custom 3D model as STL', es: 'Descarga tu modelo 3D personalizado en STL' },
   'price.download_unavailable': { en: 'Download functionality not available', es: 'Función de descarga no disponible' },
+  'price.download.success': { en: 'Downloaded', es: 'Descargado' },
+  'price.download.err_prefix': { en: 'Error', es: 'Error' },
+  'price.download.fail': { en: 'Download failed', es: 'Error al descargar' },
 
   // AuthModal
   'auth.email_sent': { en: 'EMAIL SENT', es: 'EMAIL ENVIADO' },
@@ -424,6 +427,9 @@ const dict = {
   'guest.err.required': { en: 'Please enter your email', es: 'Por favor ingresa tu email' },
   'guest.err.invalid': { en: 'Please enter a valid email', es: 'Por favor ingresa un email válido' },
   'guest.err.processing': { en: 'Error processing. Please try again.', es: 'Error al procesar. Por favor intenta de nuevo.' },
+  'guest.err.save_failed': { en: 'Error saving configuration. Please try again.', es: 'Error al guardar la configuración. Por favor intenta de nuevo.' },
+  'guest.err.email_failed': { en: 'Error sending email. Please try again.', es: 'Error al enviar el email. Por favor intenta de nuevo.' },
+  'guest.err.unexpected': { en: 'Unexpected error. Please try again.', es: 'Error inesperado. Por favor intenta de nuevo.' },
   'guest.receive_title': { en: "You'll receive by email:", es: 'Recibirás por email:' },
   'guest.receive_config': { en: 'Complete superhero configuration', es: 'Configuración completa del superhéroe' },
   'guest.receive_links': { en: 'Direct download links (GLB/STL)', es: 'Enlaces directos de descarga (GLB/STL)' },

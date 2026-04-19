@@ -79,10 +79,10 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
       if (result.success && result.data) {
         downloadBlob(result.data, `${modelName}.glb`);
       } else {
-        console.error('Export failed:', result.error);
+        if (import.meta.env.DEV) console.error('Export failed:', result.error);
       }
     } catch (error) {
-      console.error('Export error:', error);
+      if (import.meta.env.DEV) console.error('Export error:', error);
     } finally {
       setIsExporting(false);
     }
@@ -106,10 +106,10 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
       if (result.success && result.data) {
         downloadBlob(result.data, `${modelName}.stl`);
       } else {
-        console.error('Export failed:', result.error);
+        if (import.meta.env.DEV) console.error('Export failed:', result.error);
       }
     } catch (error) {
-      console.error('Export error:', error);
+      if (import.meta.env.DEV) console.error('Export error:', error);
     } finally {
       setIsExporting(false);
     }

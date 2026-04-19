@@ -36,7 +36,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
         const characters = JSON.parse(saved);
         setSavedCharacters(characters);
       } catch (error) {
-        console.error('Error loading saved characters:', error);
+        if (import.meta.env.DEV) console.error('Error loading saved characters:', error);
       }
     }
   }, []);
@@ -256,7 +256,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                                 if (onLoadToCustomizer) {
                                   onLoadToCustomizer(character);
                                 } else {
-                                  console.error('❌ onLoadToCustomizer function is not provided');
+                                  if (import.meta.env.DEV) console.error('❌ onLoadToCustomizer function is not provided');
                                 }
                               }}
                             >

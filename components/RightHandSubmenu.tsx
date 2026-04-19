@@ -1,5 +1,6 @@
 import React from 'react';
 import { PartCategory } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface RightHandSubmenuProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -16,14 +17,10 @@ const RightHandSubmenu: React.FC<RightHandSubmenuProps> = ({
   onToggle,
   submenuPosition
 }) => {
-  console.log('🎯 RightHandSubmenu Render:', {
-    isExpanded,
-    activeCategory,
-    submenuPosition: { top: submenuPosition.top, left: submenuPosition.left }
-  });
+  const { lang } = useLang();
 
   const submenuCategories = [
-    { category: PartCategory.HAND_RIGHT, label: 'RIGHT HAND', icon: '✋' },
+    { category: PartCategory.HAND_RIGHT, label: t('sub.hand_right', lang), icon: '✋' },
   ];
 
   const isRightHandActive = activeCategory === PartCategory.HAND_RIGHT ||

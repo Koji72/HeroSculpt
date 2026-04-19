@@ -216,6 +216,7 @@ const AppContent: React.FC = () => {
 
   // Estado para modal de email de invitado
   const [isGuestEmailModalOpen, setIsGuestEmailModalOpen] = useState(false);
+  const [guestEmailError, setGuestEmailError] = useState<string | null>(null);
   const [guestEmailData, setGuestEmailData] = useState<{
     cartItems: CartItem[];
     totalPrice: number;
@@ -225,6 +226,8 @@ const AppContent: React.FC = () => {
   // read the true current value. useState would batch true→false in one render,
   // meaning the effect would never see the flag as true.
   const isNavigatingPosesRef = useRef(false);
+  // Always holds the latest selectedParts so the 800ms pose-save callback reads fresh data.
+  const selectedPartsRef = useRef(selectedParts);
 
   // Estado para hojas de personaje RPG
   const [isRPGSheetOpen, setIsRPGSheetOpen] = useState(false);
@@ -356,36 +359,6 @@ const AppContent: React.FC = () => {
   // Función para obtener la referencia del botón Legs desde el PartCategoryToolbar
   const getLowerBodyButtonRef = useCallback((ref: HTMLButtonElement | null) => {
     lowerBodyButtonRef.current = ref;
-  }, []);
-
-  // ✨ NUEVA FUNCIONALIDAD: Precargar modelos de todas las poses
-  const preloadPoseModels = useCallback(async (poses: Array<{configuration: SelectedParts}>) => {
-    try {
-      
-      // Extraer todas las rutas de modelos únicas de todas las poses
-      const allModelPaths = new Set<string>();
-      const basePath = (import.meta as any).env.BASE_URL || '/';
-      
-      poses.forEach(pose => {
-        Object.values(pose.configuration).forEach(part => {
-          if (part && part.gltfPath && !part.attributes?.none && !part.attributes?.hidden) {
-            const modelPath = `${basePath}${part.gltfPath.startsWith('/') ? part.gltfPath.slice(1) : part.gltfPath}`;
-            allModelPaths.add(modelPath);
-          }
-        });
-      });
-
-      const uniquePaths = Array.from(allModelPaths);
-      
-      // Precargar todos los modelos únicos
-      if (uniquePaths.length > 0) {
-        await modelCache.preloadModels(uniquePaths);
-      }
-
-    } catch (error) {
-      // Removed debug log
-      // No bloquear la funcionalidad si falla el precarga
-    }
   }, []);
 
   // ✨ NUEVA FUNCIONALIDAD: Cargar poses guardadas del usuario
@@ -770,6 +743,12 @@ const AppContent: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses.length]); // ✅ FIXED: Usar savedPoses.length en lugar de savedPoses
 
+  // Keep selectedPartsRef current so the debounced pose-save always writes the latest parts.
+  useEffect(() => { selectedPartsRef.current = selectedParts; }, [selectedParts]);
+
+  // Clear navigation flag AFTER React has committed the new currentPoseIndex.
+  useEffect(() => { isNavigatingPosesRef.current = false; }, [currentPoseIndex]);
+
   // ✨ NUEVA FUNCIONALIDAD: Actualizar la configuración de la pose actual cuando se modifica
   useEffect(() => {
     // ✅ NUEVO: NO ejecutar durante navegación entre poses
@@ -791,7 +770,7 @@ const AppContent: React.FC = () => {
         poseId = currentPose.id;
         poseName = currentPose.name;
         const newPoses = [...prev];
-        newPoses[currentPoseIndex] = { ...newPoses[currentPoseIndex], configuration: selectedParts };
+        newPoses[currentPoseIndex] = { ...newPoses[currentPoseIndex], configuration: selectedPartsRef.current };
         return newPoses;
       });
 
@@ -841,7 +820,7 @@ const AppContent: React.FC = () => {
               // Esperar un poco para que se cargue la configuración
               const exportTid = setTimeout(() => {
                 handleExportGLB();
-                alert('Your 3D model is downloading! 📥');
+                if (import.meta.env.DEV) console.log('Auto-download triggered from URL param');
                 window.history.replaceState({}, document.title, window.location.pathname);
               }, 2000);
               return () => clearTimeout(exportTid);
@@ -1066,7 +1045,7 @@ const AppContent: React.FC = () => {
     
     // Limpiar localStorage/sessionStorage si es necesario
     try {
-      localStorage.removeItem('supabase.auth.token');
+      // Supabase v2 manages its own storage key — no manual removal needed
       sessionStorage.clear();
     } catch (error) {
       // Removed debug log
@@ -1280,10 +1259,10 @@ const AppContent: React.FC = () => {
       );
 
       if (existingIndex >= 0) {
-        // Si existe, incrementar cantidad
-        const updated = [...prev];
-        updated[existingIndex].quantity += 1;
-        return updated;
+        // Si existe, incrementar cantidad (must create new object — never mutate state)
+        return prev.map((item, i) =>
+          i === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
+        );
       } else {
         // Si no existe, agregar como nuevo item
         return [...prev, newItem];
@@ -1347,22 +1326,20 @@ const AppContent: React.FC = () => {
           archetypeId: selectedArchetype ?? ArchetypeId.STRONG,
         });
 
-        // Limpiar carrito
+        // Limpiar carrito y mostrar confirmación
         setCartItems([]);
         setIsCartOpen(false);
+        setIsPurchaseConfirmationOpen(true);
 
-        // ✅ CRITICAL FIX: Recargar poses después de la compra para mostrar flechas verdes
-        // Removed debug log
-        await loadUserPoses();
+        // Recargar datos en segundo plano (no crítico — si falla no afecta la compra ya guardada)
+        loadUserPoses().catch(err => {
+          if (import.meta.env.DEV) console.error('Error refreshing poses after purchase:', err);
+        });
         PurchaseHistoryService.getOwnedPartIds(user.id).then(setOwnedPartIds);
         setLibraryRefreshKey(prev => prev + 1);
 
-        // Mostrar confirmación de compra gratuita
-        setIsPurchaseConfirmationOpen(true);
-
-
       } catch (error) {
-        // Removed debug log
+        if (import.meta.env.DEV) console.error('Error processing order:', error);
         throw new Error(`Error processing order: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     } else {
@@ -1402,13 +1379,14 @@ const AppContent: React.FC = () => {
   const handleCloseGuestEmailModal = () => {
     setIsGuestEmailModalOpen(false);
     setGuestEmailData(null);
+    setGuestEmailError(null);
   };
 
   const handleGuestEmailSubmitted = async (email: string) => {
     if (!guestEmailData) return;
+    setGuestEmailError(null);
 
     try {
-      // Save configuración para usuario invitado
       const saveResult = await ResendEmailService.saveGuestConfiguration(
         email,
         guestEmailData.cartItems[0]?.configuration || {},
@@ -1417,11 +1395,10 @@ const AppContent: React.FC = () => {
       );
 
       if (!saveResult.success) {
-        alert('Error saving configuration. Please try again.');
+        setGuestEmailError(t('guest.err.save_failed', lang));
         return;
       }
 
-      // Enviar email con la configuración
       const emailResult = await ResendEmailService.sendConfigurationEmail(
         email,
         guestEmailData.cartItems[0]?.configuration || {},
@@ -1430,25 +1407,18 @@ const AppContent: React.FC = () => {
       );
 
       if (emailResult.success) {
-        // Limpiar datos temporales
+        // Close modal and clear cart — closing is the user-visible success confirmation
         setCartItems([]);
         setGuestEmailData(null);
         setIsGuestEmailModalOpen(false);
-
-        // Guest users do not see the purchase confirmation modal (spec: guest flow
-        // handled at cart level — unauthenticated users never reach that modal).
-
-        // Mostrar mensaje de éxito
-        alert(`✅ Configuration sent successfully to ${email}!\n\n` +
-              `Check your inbox for download links.\n` +
-              `Links will be available for 7 days.`);
+        setGuestEmailError(null);
       } else {
-        alert(`❌ Error sending email: ${emailResult.error}\n\nPlease try again.`);
+        setGuestEmailError(t('guest.err.email_failed', lang));
       }
 
     } catch (error) {
-      // Removed debug log
-      alert('Unexpected error. Please try again.');
+      if (import.meta.env.DEV) console.error('Error in handleGuestEmailSubmitted:', error);
+      setGuestEmailError(t('guest.err.unexpected', lang));
     }
   };
 
@@ -1518,15 +1488,12 @@ const AppContent: React.FC = () => {
     isNavigatingPosesRef.current = true;
 
     const newIndex = currentPoseIndex > 0 ? currentPoseIndex - 1 : savedPoses.length - 1;
-
-    setCurrentPoseIndex(newIndex);
-
     const newPose = savedPoses[newIndex];
 
+    setCurrentPoseIndex(newIndex);
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
-
-    isNavigatingPosesRef.current = false;
+    // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
   };
 
   const handleNextPose = () => {
@@ -1537,15 +1504,12 @@ const AppContent: React.FC = () => {
     isNavigatingPosesRef.current = true;
 
     const newIndex = currentPoseIndex < savedPoses.length - 1 ? currentPoseIndex + 1 : 0;
-
-    setCurrentPoseIndex(newIndex);
-
     const newPose = savedPoses[newIndex];
 
+    setCurrentPoseIndex(newIndex);
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
-
-    isNavigatingPosesRef.current = false;
+    // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
   };
 
   const handleSelectPose = (index: number) => {
@@ -1562,8 +1526,7 @@ const AppContent: React.FC = () => {
     characterViewerRef.current?.resetState();
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
-
-    isNavigatingPosesRef.current = false;
+    // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
   };
 
   const handleRenamePose = (index: number, newName: string) => {
@@ -1587,18 +1550,14 @@ const AppContent: React.FC = () => {
       if (!success) return;
     }
     // Purchase poses: just remove from the slider (purchase record stays in DB)
-
-    const newPoses = savedPoses.filter((_, i) => i !== index);
-    const newIndex = newPoses.length === 0 ? 0 : index > 0 ? index - 1 : 0;
-
-    setSavedPoses(newPoses);
-    setCurrentPoseIndex(newIndex);
-
-    if (newPoses.length === 0) {
-      setSelectedParts({});
-    } else {
-      setSelectedParts(newPoses[newIndex].configuration);
-    }
+    // Use the functional form to avoid stale closure after the async await above.
+    setSavedPoses(prev => {
+      const newPoses = prev.filter((_, i) => i !== index);
+      const newIndex = newPoses.length === 0 ? 0 : index > 0 ? index - 1 : 0;
+      setCurrentPoseIndex(newIndex);
+      setSelectedParts(newPoses.length === 0 ? {} : newPoses[newIndex].configuration);
+      return newPoses;
+    });
   };
 
   // ✨ NUEVA FUNCIONALIDAD: Convertir pose de compra en pose guardada
@@ -1623,8 +1582,7 @@ const AppContent: React.FC = () => {
       if (newConfig) {
         // Removed debug log
         
-        const newPoses = await loadUserPoses();
-        setCurrentPoseIndex((newPoses?.length ?? 1) - 1);
+        await loadUserPoses(); // loadUserPoses sets the index internally
         
         // Removed debug log
       }
@@ -1767,7 +1725,7 @@ const AppContent: React.FC = () => {
 
     setCharacterViewerKey(prev => prev + 1);
     setIsRPGSheetOpen(false);
-  }, []);
+  }, [setSelectedParts]);
 
   const handlePartHover = useCallback((part: Part) => {
     if (characterViewerRef.current?.handlePreviewPartsChange) {
@@ -1784,6 +1742,31 @@ const AppContent: React.FC = () => {
   }, []);
 
   
+
+  if (loading) {
+    return (
+      <div style={{
+        position: 'fixed', inset: 0,
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e1a2e 50%, #0f172a 100%)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        zIndex: 9999,
+      }}>
+        <img
+          src="/logo.png"
+          alt="HeroSculpt"
+          style={{ width: 180, marginBottom: 32, animation: 'float 3s ease-in-out infinite' }}
+        />
+        <div style={{
+          width: 48, height: 48,
+          border: '4px solid rgba(249,115,22,0.2)',
+          borderTopColor: '#f97316',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full" style={{ background: 'var(--color-bg)' }}>
@@ -2473,6 +2456,7 @@ const AppContent: React.FC = () => {
           onClose={handleCloseGuestEmailModal}
           onEmailSubmitted={handleGuestEmailSubmitted}
           totalPrice={guestEmailData.totalPrice}
+          error={guestEmailError}
         />
       )}
 

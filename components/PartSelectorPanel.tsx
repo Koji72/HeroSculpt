@@ -104,7 +104,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     }
     // ? REMOVED: No resetCamera() to avoid zoom
     onClose();
-  }, [selectedParts, onPreviewChange, onClose, characterViewerRef]);
+  }, [selectedParts, onPreviewChange, onClose]);
 
   const handleResetPreview = useCallback(() => {
     setPreviewParts(selectedParts);
@@ -379,17 +379,18 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         const currentChestBeltHover = selectedParts[PartCategory.CHEST_BELT];
         if (currentChestBeltHover) withChestBeltHover[PartCategory.CHEST_BELT] = currentChestBeltHover;
         const afterChestBelt = assignAdaptiveChestBeltForTorso(partToDisplay, suitAssigned, withChestBeltHover);
+        const cleanedChestBelt = { ...afterChestBelt };
 
         const hoverTorsoId = partToDisplay.id;
         ([PartCategory.BELT, PartCategory.FOREARMS,
           PartCategory.SHOULDERS, PartCategory.POUCH, PartCategory.BUCKLE,
           PartCategory.BACKPACK] as PartCategory[]).forEach(cat => {
-          const cur = afterChestBelt[cat];
+          const cur = cleanedChestBelt[cat];
           if (cur && cur.compatible.length > 0 && !cur.compatible.includes(hoverTorsoId)) {
-            delete afterChestBelt[cat];
+            delete cleanedChestBelt[cat];
           }
         });
-        hoverPreviewParts = { ...afterChestBelt, [activeCategory]: partToDisplay };
+        hoverPreviewParts = { ...cleanedChestBelt, [activeCategory]: partToDisplay };
       } else {
         // Si es "none" torso, asegurar que las dependencias tambi�n se eliminan del preview
         delete hoverPreviewParts[PartCategory.TORSO];
@@ -469,7 +470,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
     
     onPreviewChange(hoverPreviewParts);
     }, 150);
-  }, [activeCategory, selectedParts, previewParts, onPreviewChange, characterViewerRef]);
+  }, [activeCategory, selectedParts, previewParts, onPreviewChange]);
 
   useEffect(() => {
     return () => {
@@ -506,7 +507,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         Boolean(p.gltfPath)
     );
     characterViewerRef.current.preloadParts(partsToPreload);
-  }, [activeCategory, selectedArchetype]);
+  }, [activeCategory, selectedArchetype, characterViewerRef]);
 
   if (!selectedArchetype || !activeCategory) {
     // console.log('?? PartSelectorPanel not showing - missing:', { selectedArchetype, activeCategory });

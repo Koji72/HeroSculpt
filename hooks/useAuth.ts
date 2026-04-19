@@ -24,6 +24,16 @@ export function useAuth() {
       return;
     }
 
+    if (event === 'USER_UPDATED') {
+      // Password was updated — clear recovery state so the modal can close normally.
+      recoveryInProgress.current = false;
+      setIsPasswordRecovery(false);
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+      return;
+    }
+
     if (event === 'SIGNED_IN' && recoveryInProgress.current) {
       // This SIGNED_IN is the automatic sign-in from the recovery link — keep modal open.
       setSession(session);
@@ -54,7 +64,7 @@ export function useAuth() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error('useAuth: Error signing out:', error.message);
+        if (import.meta.env.DEV) console.error('useAuth: Error signing out:', error.message);
         setError(error.message);
         // Force local cleanup even if the server call failed
         setUser(null);
@@ -63,7 +73,7 @@ export function useAuth() {
         setError(null);
       }
     } catch (err) {
-      console.error('useAuth: Unexpected error during sign out:', err);
+      if (import.meta.env.DEV) console.error('useAuth: Unexpected error during sign out:', err);
       setError('Unexpected error during sign out');
       // Force local cleanup even on exception
       setUser(null);
@@ -73,7 +83,7 @@ export function useAuth() {
 
   useEffect(() => {
     if (!supabase) {
-      console.warn('useAuth: Supabase client is not available');
+      if (import.meta.env.DEV) console.warn('useAuth: Supabase client is not available');
       setLoading(false);
       return;
     }

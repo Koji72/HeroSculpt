@@ -92,15 +92,16 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const nextStep = useCallback((trigger?: string) => {
     if (!tutorialActive) return;
-    setCurrentStepIndex(prev => {
-      const step = TUTORIAL_STEPS[prev];
-      if (trigger && step?.trigger && step.trigger !== trigger) return prev;
-      if (prev < TUTORIAL_STEPS.length - 1) return prev + 1;
+    const step = currentStep;
+    if (trigger && step?.trigger && step.trigger !== trigger) return;
+    if (currentStepIndex < TUTORIAL_STEPS.length - 1) {
+      setCurrentStepIndex(prev => prev + 1);
+    } else {
       setTutorialActive(false);
       setHighlightedElement(null);
-      return -1;
-    });
-  }, [tutorialActive]);
+      setCurrentStepIndex(-1);
+    }
+  }, [tutorialActive, currentStepIndex, currentStep]);
 
   const prevStep = useCallback(() => {
     setCurrentStepIndex(prev => prev > 0 ? prev - 1 : prev);

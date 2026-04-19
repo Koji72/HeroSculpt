@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SelectedParts } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,11 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
   const { lang } = useLang();
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadMessage, setDownloadMessage] = useState<string>('');
+  const messageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => { if (messageTimerRef.current) clearTimeout(messageTimerRef.current); };
+  }, []);
 
   const totalPrice = Object.values(selectedParts).reduce((sum, part) => {
     if (part && !part.attributes?.none) {
@@ -24,7 +29,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
 
   const handleDownload = async () => {
     if (!onDownloadModel) {
-      alert(t('price.download_unavailable', lang));
+      setDownloadMessage(t('price.download_unavailable', lang));
       return;
     }
 
@@ -34,16 +39,18 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
     try {
       const result = await onDownloadModel();
       
+      if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
       if (result.success) {
-        setDownloadMessage(`✅ Downloaded: ${result.filename}`);
-        setTimeout(() => setDownloadMessage(''), 3000);
+        setDownloadMessage(`✅ ${t('price.download.success', lang)}: ${result.filename}`);
+        messageTimerRef.current = setTimeout(() => setDownloadMessage(''), 3000);
       } else {
-        setDownloadMessage(`❌ Error: ${result.error}`);
-        setTimeout(() => setDownloadMessage(''), 5000);
+        setDownloadMessage(`❌ ${t('price.download.err_prefix', lang)}: ${result.error}`);
+        messageTimerRef.current = setTimeout(() => setDownloadMessage(''), 5000);
       }
     } catch (error) {
-      setDownloadMessage(`❌ Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setTimeout(() => setDownloadMessage(''), 5000);
+      if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
+      setDownloadMessage(`❌ ${t('price.download.fail', lang)}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      messageTimerRef.current = setTimeout(() => setDownloadMessage(''), 5000);
     } finally {
       setIsDownloading(false);
     }
@@ -82,7 +89,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
         {/* Checkout Button */}
         <Button
           className="w-full text-xs md:text-sm py-1.5 md:py-2 h-8 md:h-9"
-          onClick={() => alert(`Checkout for $${totalPrice.toFixed(2)} USD (functionality not implemented)`)}
+          onClick={() => { if (import.meta.env.DEV) console.log('Checkout stub - not yet implemented'); }}
           disabled={totalPrice === 0}
         >
           <ShoppingCart className="h-3 w-3 md:h-4 md:w-4 mr-1.5" />

@@ -45,7 +45,7 @@ export class EnhancedPowerEffectsSystem extends PowerEffectsSystem {
     const shardEffectId = this.createIceShards();
     effectIds.push(shardEffectId);
     
-    console.log(`❄️ Created full Ice Armor with ${effectIds.length} effects`);
+    if (import.meta.env.DEV) console.log(`❄️ Created full Ice Armor with ${effectIds.length} effects`);
     return effectIds;
   }
   
@@ -82,7 +82,7 @@ export class EnhancedPowerEffectsSystem extends PowerEffectsSystem {
       effectIds.push(effectId);
     });
     
-    console.log(`✨ Created Magic Aura with ${effectIds.length} layers`);
+    if (import.meta.env.DEV) console.log(`✨ Created Magic Aura with ${effectIds.length} layers`);
     return effectIds;
   }
   
@@ -119,7 +119,7 @@ export class EnhancedPowerEffectsSystem extends PowerEffectsSystem {
       effectIds.push(effectId);
     });
     
-    console.log(`🔥 Created Fire Trail System with ${effectIds.length} effects`);
+    if (import.meta.env.DEV) console.log(`🔥 Created Fire Trail System with ${effectIds.length} effects`);
     return effectIds;
   }
   
@@ -156,7 +156,7 @@ export class EnhancedPowerEffectsSystem extends PowerEffectsSystem {
       effectIds.push(effectId);
     });
     
-    console.log(`⚡ Created Lightning Storm with ${effectIds.length} effects`);
+    if (import.meta.env.DEV) console.log(`⚡ Created Lightning Storm with ${effectIds.length} effects`);
     return effectIds;
   }
   

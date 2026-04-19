@@ -28,6 +28,9 @@ export class HeadquartersService {
   // 🎯 OBTENER DATOS DEL HEADQUARTERS
   async getHeadquartersData(userId: string): Promise<HeadquartersData> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || user.id !== userId) throw new Error('Unauthorized');
+
       // Verificar cache primero
       const cacheKey = `hq_data_${userId}`;
       if (this.cache.has(cacheKey)) {

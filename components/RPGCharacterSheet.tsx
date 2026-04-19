@@ -33,6 +33,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
   const [character, setCharacter] = useState<RPGCharacterSync | null>(null);
   const characterRef = useRef<RPGCharacterSync | null>(null);
   const lastPartsRef = useRef<SelectedParts>({});
+  const changesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [recentChanges, setRecentChanges] = useState<{
     statChanges: Partial<any>;
     newAbilities: string[];
@@ -46,7 +47,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
     try {
       newCharacter = syncRPGCharacterFromParts(selectedArchetype, selectedParts, characterRef.current);
     } catch (error) {
-      console.error('❌ Error in syncRPGCharacterFromParts:', error);
+      if (import.meta.env.DEV) console.error('❌ Error in syncRPGCharacterFromParts:', error);
       return;
     }
 
@@ -60,7 +61,8 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
       const changes = detectPartChanges(lastPartsRef.current, selectedParts, selectedArchetype);
       if (changes) {
         setRecentChanges(changes);
-        setTimeout(() => setRecentChanges(null), 3000);
+        if (changesTimerRef.current) clearTimeout(changesTimerRef.current);
+        changesTimerRef.current = setTimeout(() => setRecentChanges(null), 3000);
       }
     }
 
@@ -68,6 +70,10 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
       lastPartsRef.current = selectedParts;
     }
   }, [selectedArchetype, selectedParts, onCharacterUpdate]);
+
+  useEffect(() => {
+    return () => { if (changesTimerRef.current) clearTimeout(changesTimerRef.current); };
+  }, []);
 
   const detectPartChanges = (
     oldParts: SelectedParts,

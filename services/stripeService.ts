@@ -3,7 +3,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { supabase } from '../lib/supabase';
 
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_URL ?? '';
 
 let stripePromise: Promise<Stripe | null>;
 
@@ -17,6 +17,7 @@ export const getStripe = () => {
 // Call backend to create Stripe session
 export async function createStripeCheckoutSession(cartItems: unknown[], userEmail: string) {
   const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Not authenticated — cannot create checkout session');
   const response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
     method: 'POST',
     headers: {

@@ -224,23 +224,18 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
 
   // Load models when parts change
   useEffect(() => {
-    console.log('🔄 CharacterDisplay: useEffect triggered');
-
     if (!modelLoaderRef.current || !selectedArchetype || !scene) {
-      console.log('⚠️ CharacterDisplay: Missing dependencies');
       return;
     }
 
     const partsToLoad = previewParts || selectedParts;
-    
+
     // Only load if it's the first load or if parts actually changed
     if (isFirstLoad || JSON.stringify(partsToLoad) !== JSON.stringify(lastLoadedParts)) {
-      console.log('🔄 CharacterDisplay: Loading models for parts:', Object.keys(partsToLoad));
+      if (import.meta.env.DEV) console.log('🔄 CharacterDisplay: Loading models for parts:', Object.keys(partsToLoad));
       modelLoaderRef.current.loadModels(partsToLoad, selectedArchetype);
       setLastLoadedParts(partsToLoad);
       setIsFirstLoad(false);
-    } else {
-      console.log('🔄 CharacterDisplay: Parts unchanged, skipping load');
     }
   }, [selectedParts, selectedArchetype, scene, previewParts, isFirstLoad]);
 

@@ -60,12 +60,12 @@ const RiveButton: React.FC<RiveButtonProps> = ({
             const inputs = rive.stateMachineInputs(stateMachineName);
     
           } catch (err) {
-            console.warn('⚠️ No state machine inputs found');
+            if (import.meta.env.DEV) console.warn('⚠️ No state machine inputs found');
           }
         }
       },
       onLoadError: (err) => {
-        console.error('❌ Rive button load error:', err);
+        if (import.meta.env.DEV) console.error('❌ Rive button load error:', err);
         setError(err.toString());
         setIsLoaded(false);
       }
@@ -90,7 +90,7 @@ const RiveButton: React.FC<RiveButtonProps> = ({
           hoverInput.value = true;
         }
       } catch (err) {
-        console.warn('⚠️ Could not trigger hover state');
+        if (import.meta.env.DEV) console.warn('⚠️ Could not trigger hover state');
       }
     }
     onHover?.();
@@ -105,7 +105,7 @@ const RiveButton: React.FC<RiveButtonProps> = ({
           hoverInput.value = false;
         }
       } catch (err) {
-        console.warn('⚠️ Could not reset hover state');
+        if (import.meta.env.DEV) console.warn('⚠️ Could not reset hover state');
       }
     }
     onLeave?.();
@@ -124,7 +124,7 @@ const RiveButton: React.FC<RiveButtonProps> = ({
           }, 100);
         }
       } catch (err) {
-        console.warn('⚠️ Could not trigger click state');
+        if (import.meta.env.DEV) console.warn('⚠️ Could not trigger click state');
       }
     }
     onClick?.();

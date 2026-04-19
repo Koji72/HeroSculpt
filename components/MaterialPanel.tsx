@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import * as THREE from 'three';
 import MaterialConfigurator from './MaterialConfigurator';
 import AdvancedEffects from './AdvancedEffects';
@@ -24,11 +24,6 @@ const MaterialPanel = React.memo(({
 }: MaterialPanelProps) => {
   const [currentColors, setCurrentColors] = useState<{ [key: string]: number }>({});
 
-  // Debug: Verify that the component mounts
-  useEffect(() => {
-    // Component mounted successfully
-  }, []);
-
   // If Headquarters is open, don't render the MaterialPanel
   if (isHeadquartersOpen) {
     return null;
@@ -41,7 +36,7 @@ const MaterialPanel = React.memo(({
   };
 
   const handleColorChange = (palette: string, colorType: string, color: number, partCategory?: PartCategory) => {
-    console.log(`MaterialPanel: handleColorChange called`, {
+    if (import.meta.env.DEV) console.log(`MaterialPanel: handleColorChange called`, {
       palette,
       colorType,
       color: color.toString(16),
@@ -53,13 +48,13 @@ const MaterialPanel = React.memo(({
 
     if (characterViewerRef.current) {
       if (partCategory) {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log(`MaterialPanel: Applying color to specific part: ${partCategory}`);
         }
         characterViewerRef.current.applyColorToPart(color, partCategory);
         setCurrentColors(prev => ({ ...prev, [partCategory]: color }));
       } else {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log(`MaterialPanel: Applying color to all parts`);
         }
         characterViewerRef.current.applyColorToAllParts(color);
@@ -72,7 +67,7 @@ const MaterialPanel = React.memo(({
         });
       }
     } else {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('MaterialPanel: characterViewerRef.current is null');
       }
     }
@@ -113,19 +108,21 @@ const MaterialPanel = React.memo(({
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
         {/* Debug Button */}
-        <div style={{ marginBottom: 12 }}>
-          <button
-            onClick={() => {
-              if (characterViewerRef.current) {
-                characterViewerRef.current.debugAvailableParts();
-              }
-            }}
-            className="btn-comic"
-            style={{ width: '100%', fontSize: 12 }}
-          >
-            Debug Available Parts
-          </button>
-        </div>
+        {import.meta.env.DEV && (
+          <div style={{ marginBottom: 12 }}>
+            <button
+              onClick={() => {
+                if (characterViewerRef.current) {
+                  characterViewerRef.current.debugAvailableParts();
+                }
+              }}
+              className="btn-comic"
+              style={{ width: '100%', fontSize: 12 }}
+            >
+              Debug Available Parts
+            </button>
+          </div>
+        )}
 
         {/* Material Configurator */}
         <MaterialConfigurator
@@ -166,14 +163,6 @@ const MaterialPanel = React.memo(({
           />
         </div>
 
-        {/* Save & Load */}
-        <div style={{ marginTop: 16 }}>
-          <div style={{ fontFamily: 'var(--font-comic)', fontSize: 13, letterSpacing: 1, marginBottom: 8, color: 'var(--color-text-muted)' }}>SAVE & LOAD</div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="btn-comic" style={{ flex: 1, fontSize: 11 }}>Save Config</button>
-            <button className="btn-comic btn-ghost" style={{ flex: 1, fontSize: 11 }}>Load Config</button>
-          </div>
-        </div>
       </div>
     </div>
   );

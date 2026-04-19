@@ -47,22 +47,11 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
 
     // Remove existing model group
     scene.remove(modelGroupRef.current);
-    
-    // Dispose of geometries and materials
-    modelGroupRef.current.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        if (child.geometry) {
-          child.geometry.dispose();
-        }
-        if (child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach(material => material.dispose());
-          } else {
-            child.material.dispose();
-          }
-        }
-      }
-    });
+
+    // Do NOT dispose geometry — it is shared with modelCache (clone() shares BufferGeometry refs).
+    // Disposing here corrupts the cache and makes subsequent loads invisible.
+    // Materials are cloned by cloneWithMaterials so they are safe to dispose, but
+    // skipping is consistent with CharacterViewer's approach and harmless.
 
     modelGroupRef.current = null;
     loadedModelsRef.current.clear();
@@ -71,11 +60,11 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
   const loadModels = useCallback(async (parts: SelectedParts, archetype: ArchetypeId) => {
     if (!scene || !loaderRef.current) return;
 
-    console.log('🔄 ModelLoader: loadModels called with:', { parts, archetype });
+    if (import.meta.env.DEV) console.log('🔄 ModelLoader: loadModels called with:', { parts, archetype });
 
     // Check if parts have actually changed
     if (arePartsEqual(parts, lastLoadedPartsRef.current)) {
-      console.log('🔄 ModelLoader: Parts unchanged, skipping load');
+      if (import.meta.env.DEV) console.log('🔄 ModelLoader: Parts unchanged, skipping load');
       return;
     }
 
@@ -93,16 +82,16 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
       scene.add(modelGroup);
 
       const partEntries = Object.entries(parts);
-      console.log('🔄 ModelLoader: Loading', partEntries.length, 'parts:', partEntries.map(([cat, part]) => `${cat}: ${part?.id || 'null'}`));
+      if (import.meta.env.DEV) console.log('🔄 ModelLoader: Loading', partEntries.length, 'parts:', partEntries.map(([cat, part]) => `${cat}: ${part?.id || 'null'}`));
       let loadedCount = 0;
 
       for (const [category, part] of partEntries) {
         if (!part || !part.gltfPath) {
-          console.log('⚠️ ModelLoader: Skipping part without gltfPath:', category, part);
+          if (import.meta.env.DEV) console.log('⚠️ ModelLoader: Skipping part without gltfPath:', category, part);
           continue;
         }
 
-        console.log('🔄 ModelLoader: Loading part:', category, part.id, part.gltfPath);
+        if (import.meta.env.DEV) console.log('🔄 ModelLoader: Loading part:', category, part.id, part.gltfPath);
 
         try {
           // Load model from cache
@@ -138,27 +127,27 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
 
             modelGroup.add(model);
             loadedModelsRef.current.set(category, model);
-            console.log('✅ ModelLoader: Successfully loaded part:', category, part.id, 'with scale:', scale);
+            if (import.meta.env.DEV) console.log('✅ ModelLoader: Successfully loaded part:', category, part.id, 'with scale:', scale);
           } else {
-            console.error('❌ ModelLoader: Failed to load model for:', category, part.id, part.gltfPath);
+            if (import.meta.env.DEV) console.error('❌ ModelLoader: Failed to load model for:', category, part.id, part.gltfPath);
           }
 
           loadedCount++;
           onLoadingProgress?.(loadedCount / partEntries.length * 100);
 
         } catch (error) {
-          console.error(`❌ ModelLoader: Error loading model for ${category} (${part.id}):`, error);
+          if (import.meta.env.DEV) console.error(`❌ ModelLoader: Error loading model for ${category} (${part.id}):`, error);
         }
       }
 
-      console.log('✅ ModelLoader: Finished loading. Total loaded:', loadedModelsRef.current.size, 'out of', partEntries.length);
-      console.log('📊 ModelLoader: Loaded models:', Array.from(loadedModelsRef.current.keys()));
+      if (import.meta.env.DEV) console.log('✅ ModelLoader: Finished loading. Total loaded:', loadedModelsRef.current.size, 'out of', partEntries.length);
+      if (import.meta.env.DEV) console.log('📊 ModelLoader: Loaded models:', Array.from(loadedModelsRef.current.keys()));
 
       lastLoadedPartsRef.current = { ...parts };
-      console.log('✅ ModelLoader: Finished loading all parts');
+      if (import.meta.env.DEV) console.log('✅ ModelLoader: Finished loading all parts');
 
     } catch (error) {
-      console.error('❌ ModelLoader: Error loading models:', error);
+      if (import.meta.env.DEV) console.error('❌ ModelLoader: Error loading models:', error);
     } finally {
       onLoadingChange?.(false);
       onLoadingProgress?.(100);
@@ -181,9 +170,9 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
   }, []);
 
   const applyColorToPart = useCallback((color: number, partType: string) => {
-    console.log(`🎨 ModelLoader: Applying color ${color.toString(16)} to part: ${partType}`);
+    if (import.meta.env.DEV) console.log(`🎨 ModelLoader: Applying color ${color.toString(16)} to part: ${partType}`);
     if (!modelGroupRef.current) {
-      console.log('❌ ModelLoader: Model group not available');
+      if (import.meta.env.DEV) console.log('❌ ModelLoader: Model group not available');
       return;
     }
 
@@ -192,7 +181,7 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
 
     modelGroupRef.current.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        console.log(`🔍 ModelLoader: Checking mesh: ${child.name || 'unnamed'}`, {
+        if (import.meta.env.DEV) console.log(`🔍 ModelLoader: Checking mesh: ${child.name || 'unnamed'}`, {
           name: child.name,
           partType,
           materialType: child.material?.constructor?.name,
@@ -205,19 +194,19 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
           if (child.material instanceof THREE.MeshStandardMaterial) {
             child.material.color.setHex(color);
             coloredMeshes++;
-            console.log(`✅ ModelLoader: Applied color to ${partType}: ${child.name || 'unnamed'}`);
+            if (import.meta.env.DEV) console.log(`✅ ModelLoader: Applied color to ${partType}: ${child.name || 'unnamed'}`);
           } else if (child.material instanceof THREE.MeshPhysicalMaterial) {
             child.material.color.setHex(color);
             coloredMeshes++;
-            console.log(`✅ ModelLoader: Applied color to ${partType}: ${child.name || 'unnamed'}`);
+            if (import.meta.env.DEV) console.log(`✅ ModelLoader: Applied color to ${partType}: ${child.name || 'unnamed'}`);
           } else {
-            console.log(`⚠️ ModelLoader: Material not compatible for ${partType}: ${child.name || 'unnamed'}`);
+            if (import.meta.env.DEV) console.log(`⚠️ ModelLoader: Material not compatible for ${partType}: ${child.name || 'unnamed'}`);
           }
         }
       }
     });
     
-    console.log(`🎨 ModelLoader: Summary for ${partType}: Found ${foundMeshes} meshes, colored ${coloredMeshes}`);
+    if (import.meta.env.DEV) console.log(`🎨 ModelLoader: Summary for ${partType}: Found ${foundMeshes} meshes, colored ${coloredMeshes}`);
   }, []);
 
   const applyColorToAllParts = useCallback((color: number) => {
@@ -234,7 +223,7 @@ const ModelLoader = forwardRef<ModelLoaderRef, ModelLoaderProps>(({ scene, onLoa
     if (!modelGroupRef.current) return;
 
     // This would need to be implemented based on your texture system
-    console.log(`Applying texture ${textureType} to part ${partType}`);
+    if (import.meta.env.DEV) console.log(`Applying texture ${textureType} to part ${partType}`);
   }, []);
 
   useImperativeHandle(ref, () => ({

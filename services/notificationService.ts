@@ -198,6 +198,8 @@ export class NotificationService {
   ): Promise<Notification> {
     try {
       if (!supabase) throw new Error('Supabase not configured');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || user.id !== userId) throw new Error('Unauthorized');
       const notification: Omit<Notification, 'id'> = {
         type,
         title,

@@ -65,7 +65,7 @@ export const generateHeroIdea = async (): Promise<HeroIdea | null> => {
     return heroIdeas[randomIndex];
     
   } catch (error) {
-    console.error("Error generating hero idea:", error);
+    if (import.meta.env.DEV) console.error("Error generating hero idea:", error);
     return null;
   }
 }; 

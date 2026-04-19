@@ -40,6 +40,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
   const { lang } = useLang();
   const [activeTab, setActiveTab] = useState<'config' | 'cart'>('config');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -65,6 +66,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
 
   const handleCheckout = async () => {
     if (!isAuthenticated) { onAuthRequired?.(); return; }
+    setCheckoutError(null);
     setIsProcessing(true);
     try {
       const items: CartItem[] = cartItems.length > 0 ? cartItems : [{
@@ -79,7 +81,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
       }];
       await onCheckout(items);
     } catch (error) {
-      alert(t('cart.checkout_error', lang));
+      setCheckoutError(t('cart.checkout_error', lang));
     } finally {
       setIsProcessing(false);
     }
@@ -314,6 +316,11 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
             >
               {t('cart.add_build', lang)}
             </button>
+          )}
+          {checkoutError && (
+            <div style={{ marginBottom: 8, fontSize: 12, color: 'var(--color-error, #ef4444)', textAlign: 'center' }}>
+              {checkoutError}
+            </div>
           )}
           {isAuthenticated ? (
             <button

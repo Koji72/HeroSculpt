@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { Purchase, PurchaseHistoryService } from '../services/purchaseHistoryService';
 import { SelectedParts } from '../types';
@@ -11,7 +11,7 @@ interface PurchaseLibraryProps {
   isOpen: boolean;
   onClose: () => void;
   onLoadConfiguration: (configuration: SelectedParts, modelName?: string) => void;
-  user: any;
+  user: { id: string; email?: string } | null | undefined;
   // registerElement: (id: string, element: HTMLElement | null) => void; // Removed: not used
   onExportGLB?: () => Promise<any>;
   onExportSTL?: () => Promise<any>;
@@ -39,6 +39,12 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [updatingName, setUpdatingName] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const downloadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => { if (downloadTimerRef.current) clearTimeout(downloadTimerRef.current); };
+  }, []);
 
   useEffect(() => {
     if (isOpen && user?.id) {
@@ -65,61 +71,19 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     }
   };
 
-  // ✅ FUNCIÓN DE FALLBACK: Cargar configuración directamente desde purchase_items
-  const loadFallbackConfiguration = async (purchaseId: string, itemId: string) => {
-    if (import.meta.env.DEV) console.log('🔄 loadFallbackConfiguration: Intentando carga directa...');
-    
-    try {
-      // Importar supabase dinámicamente
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey) {
-        if (import.meta.env.DEV) console.error('❌ Variables de entorno de Supabase no configuradas');
-        return null;
-      }
-      
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      
-      // Consulta directa a purchase_items
-      const { data, error } = await supabase
-        .from('purchase_items')
-        .select('configuration_data')
-        .eq('id', itemId)
-        .eq('purchase_id', purchaseId)
-        .single();
-      
-      if (error) {
-        if (import.meta.env.DEV) console.error('❌ Error en fallback:', error);
-        return null;
-      }
-
-      if (!data || !data.configuration_data) {
-        if (import.meta.env.DEV) console.error('❌ No hay datos de configuración en fallback');
-        return null;
-      }
-      
-      if (import.meta.env.DEV) console.log('✅ Fallback exitoso, configuración encontrada');
-      return data.configuration_data;
-      
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('❌ Error inesperado en fallback:', error);
-      return null;
-    }
-  };
-
   // ✅ NUEVO: Funciones para edición de nombres
   const handleStartEditName = (itemId: string, currentName: string) => {
     setEditingItemId(itemId);
     setEditingName(currentName);
+    setNameError(null);
   };
 
   const handleSaveName = async (itemId: string) => {
     if (!editingName.trim()) {
-      alert(t('library.err.name_empty', lang));
+      setNameError(t('library.err.name_empty', lang));
       return;
     }
+    setNameError(null);
 
     setUpdatingName(itemId);
 
@@ -130,7 +94,8 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       const { error } = await supabase
         .from('purchase_items')
         .update({ item_name: editingName.trim() })
-        .eq('id', itemId);
+        .eq('id', itemId)
+        .eq('user_id', user.id);
       
       if (error) {
         throw error;
@@ -153,7 +118,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error updating name:', error);
-      alert(t('library.err.name_update', lang));
+      setNameError(t('library.err.name_update', lang));
     } finally {
       setUpdatingName(null);
     }
@@ -162,6 +127,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
   const handleCancelEdit = () => {
     setEditingItemId(null);
     setEditingName('');
+    setNameError(null);
   };
 
   const handleNameKeyPress = (e: React.KeyboardEvent, itemId: string) => {
@@ -193,7 +159,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
           onLoadConfiguration(currentItem.configuration_data, modelName);
         } else {
           if (import.meta.env.DEV) console.error('No configuration data found for purchase:', purchaseId, 'item:', itemId);
-          alert(t('library.err.load_config', lang));
+          setError(t('library.err.load_config', lang));
         }
       }
     } catch (error) {
@@ -227,7 +193,8 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
         onLoadConfiguration(result.configuration);
         
         // Give a moment for the configuration to apply and then export
-        setTimeout(() => {
+        if (downloadTimerRef.current) clearTimeout(downloadTimerRef.current);
+        downloadTimerRef.current = setTimeout(() => {
           if (format === 'STL' && onExportSTL) {
             onExportSTL();
           } else if (format === 'GLB' && onExportGLB) {
@@ -235,11 +202,11 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
           }
         }, 500);
       } else {
-        alert(result.error || t('library.err.download', lang));
+        setError(result.error || t('library.err.download', lang));
       }
     } catch (err) {
       if (import.meta.env.DEV) console.error('Error en descarga:', err);
-      alert(t('library.err.download', lang));
+      setError(t('library.err.download', lang));
     }
   };
 
@@ -407,7 +374,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
                                                         <div className="flex items-center gap-1">  
                               <Calendar className="w-4 h-4" />
-                              {new Date(purchase.purchase_date || purchase.created_at).toLocaleDateString('es-ES', {
+                              {new Date(purchase.purchase_date || purchase.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -441,34 +408,39 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                 {/* ✅ NUEVO: Nombre editable */}
                                 <div className="flex items-center gap-2">
                                   {editingItemId === item.id ? (
-                                    <div className="flex items-center gap-2 flex-1">
-                                      <input
-                                        type="text"
-                                        value={editingName}
-                                        onChange={(e) => setEditingName(e.target.value)}
-                                        onKeyDown={(e) => handleNameKeyPress(e, item.id)}
-                                        onBlur={(e) => {
-                                          // Avoid double-save when focus moves to the save button
-                                          if ((e.relatedTarget as HTMLElement)?.dataset?.saveBtn === item.id) return;
-                                          handleSaveName(item.id);
-                                        }}
-                                        className="flex-1 bg-slate-700 text-slate-200 px-3 py-1 rounded border border-blue-400 focus:outline-none focus:border-blue-300"
-                                        autoFocus
-                                        maxLength={50}
-                                      />
-                                      <button
-                                        data-save-btn={item.id}
-                                        onClick={() => handleSaveName(item.id)}
-                                        disabled={updatingName === item.id}
-                                        className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50"
-                                        title={t('library.name.save_title', lang)}
-                                      >
-                                        {updatingName === item.id ? (
-                                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-400"></div>
-                                        ) : (
-                                          <CheckIcon className="w-4 h-4" />
-                                        )}
-                                      </button>
+                                    <div className="flex flex-col gap-1 flex-1">
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          value={editingName}
+                                          onChange={(e) => setEditingName(e.target.value)}
+                                          onKeyDown={(e) => handleNameKeyPress(e, item.id)}
+                                          onBlur={(e) => {
+                                            // Avoid double-save when focus moves to the save button
+                                            if ((e.relatedTarget as HTMLElement)?.dataset?.saveBtn === item.id) return;
+                                            handleSaveName(item.id);
+                                          }}
+                                          className="flex-1 bg-slate-700 text-slate-200 px-3 py-1 rounded border border-blue-400 focus:outline-none focus:border-blue-300"
+                                          autoFocus
+                                          maxLength={50}
+                                        />
+                                        <button
+                                          data-save-btn={item.id}
+                                          onClick={() => handleSaveName(item.id)}
+                                          disabled={updatingName === item.id}
+                                          className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50"
+                                          title={t('library.name.save_title', lang)}
+                                        >
+                                          {updatingName === item.id ? (
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-400"></div>
+                                          ) : (
+                                            <CheckIcon className="w-4 h-4" />
+                                          )}
+                                        </button>
+                                      </div>
+                                      {nameError && (
+                                        <p className="text-red-400 text-xs mt-1">{nameError}</p>
+                                      )}
                                     </div>
                                   ) : (
                                     <>

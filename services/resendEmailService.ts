@@ -93,7 +93,7 @@ export class ResendEmailService {
       const result = await response.json();
       return result.success ? { success: true } : this.sendSimulatedEmail(email, configuration, totalPrice, configId);
     } catch (error) {
-      console.error('Error sending configuration email:', error);
+      if (import.meta.env.DEV) console.error('Error sending configuration email:', error);
       return this.sendSimulatedEmail(email, configuration, totalPrice, configId);
     }
   }
@@ -120,7 +120,7 @@ export class ResendEmailService {
       sessionStorage.setItem(`config_${configId}`, JSON.stringify(configData));
       return { success: true };
     } catch (error) {
-      console.error('Error saving simulated email payload:', error);
+      if (import.meta.env.DEV) console.error('Error saving simulated email payload:', error);
       return { success: false, error: 'Error al guardar la configuracion local.' };
     }
   }
@@ -149,7 +149,7 @@ export class ResendEmailService {
       sessionStorage.setItem(`config_${configId}`, JSON.stringify(configData));
       return { success: true, configId };
     } catch (error) {
-      console.error('Error saving guest configuration:', error);
+      if (import.meta.env.DEV) console.error('Error saving guest configuration:', error);
       return { success: false, error: 'Error al guardar la configuracion' };
     }
   }
@@ -181,7 +181,7 @@ export class ResendEmailService {
       const result = await response.json();
       return result.success ? { success: true } : { success: false, error: result.error || 'Unknown backend error' };
     } catch (error: any) {
-      console.error('Error sending test email:', error);
+      if (import.meta.env.DEV) console.error('Error sending test email:', error);
       return { success: false, error: `Error de conexion: ${error.message}` };
     }
   }

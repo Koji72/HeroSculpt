@@ -51,6 +51,8 @@ export class ExternalAPIService {
   // 🔧 CARGAR INTEGRACIONES
   private async loadIntegrations(): Promise<void> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
       const { data, error } = await supabase
         .from('api_integrations')
         .select('*')
@@ -62,7 +64,7 @@ export class ExternalAPIService {
         this.integrations.set(integration.id, integration);
       });
     } catch (error) {
-      console.error('Error loading integrations:', error);
+      if (import.meta.env.DEV) console.error('Error loading integrations:', error);
     }
   }
 
@@ -125,7 +127,7 @@ export class ExternalAPIService {
       await this.logAPICall(webhookId, 'discord', 'success');
       return true;
     } catch (error) {
-      console.error('Error sharing to Discord:', error);
+      if (import.meta.env.DEV) console.error('Error sharing to Discord:', error);
       await this.logAPICall(webhookId, 'discord', 'error', error instanceof Error ? error.message : String(error));
       return false;
     }
@@ -149,12 +151,12 @@ export class ExternalAPIService {
 
       // Aquí iría la lógica real de la API de Twitter
       // Por ahora simulamos la respuesta
-      console.log('Sharing to Twitter:', { content: fullContent, imageUrl });
+      if (import.meta.env.DEV) console.log('Sharing to Twitter:', { content: fullContent, imageUrl });
 
       await this.logAPICall(twitterIntegration.id, 'twitter', 'success');
       return true;
     } catch (error) {
-      console.error('Error sharing to Twitter:', error);
+      if (import.meta.env.DEV) console.error('Error sharing to Twitter:', error);
       return false;
     }
   }
@@ -189,7 +191,7 @@ export class ExternalAPIService {
       await this.saveCloudStorageRecord(uploadResult);
       return uploadResult;
     } catch (error) {
-      console.error('Error uploading to cloud:', error);
+      if (import.meta.env.DEV) console.error('Error uploading to cloud:', error);
       throw error;
     }
   }
@@ -280,7 +282,7 @@ export class ExternalAPIService {
           break;
       }
     } catch (error) {
-      console.error('Error sending analytics:', error);
+      if (import.meta.env.DEV) console.error('Error sending analytics:', error);
     }
   }
 
@@ -334,7 +336,7 @@ export class ExternalAPIService {
           throw new Error(`Unsupported platform: ${platform}`);
       }
     } catch (error) {
-      console.error(`Error sharing to ${platform}:`, error);
+      if (import.meta.env.DEV) console.error(`Error sharing to ${platform}:`, error);
       return false;
     }
   }
@@ -342,14 +344,14 @@ export class ExternalAPIService {
   // 📱 COMPARTIR EN REDDIT
   private async shareToReddit(content: string, imageUrl?: string, tags: string[] = []): Promise<boolean> {
     // Implementación de Reddit API
-    console.log('Sharing to Reddit:', { content, imageUrl, tags });
+    if (import.meta.env.DEV) console.log('Sharing to Reddit:', { content, imageUrl, tags });
     return true;
   }
 
   // 📸 COMPARTIR EN INSTAGRAM
   private async shareToInstagram(content: string, imageUrl?: string, tags: string[] = []): Promise<boolean> {
     // Implementación de Instagram API
-    console.log('Sharing to Instagram:', { content, imageUrl, tags });
+    if (import.meta.env.DEV) console.log('Sharing to Instagram:', { content, imageUrl, tags });
     return true;
   }
 
@@ -365,7 +367,7 @@ export class ExternalAPIService {
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Error fetching Discord webhook:', error);
+      if (import.meta.env.DEV) console.error('Error fetching Discord webhook:', error);
       return null;
     }
   }
@@ -412,7 +414,7 @@ export class ExternalAPIService {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error saving cloud storage record:', error);
+      if (import.meta.env.DEV) console.error('Error saving cloud storage record:', error);
       throw error;
     }
   }
@@ -437,7 +439,7 @@ export class ExternalAPIService {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error logging API call:', error);
+      if (import.meta.env.DEV) console.error('Error logging API call:', error);
     }
   }
 
@@ -465,7 +467,7 @@ export class ExternalAPIService {
       this.integrations.set(data.id, data);
       return data;
     } catch (error) {
-      console.error('Error configuring integration:', error);
+      if (import.meta.env.DEV) console.error('Error configuring integration:', error);
       throw error;
     }
   }
@@ -489,7 +491,7 @@ export class ExternalAPIService {
           throw new Error(`Unsupported integration type: ${integration.type}`);
       }
     } catch (error) {
-      console.error('Error testing integration:', error);
+      if (import.meta.env.DEV) console.error('Error testing integration:', error);
       return false;
     }
   }
@@ -524,7 +526,7 @@ export class ExternalAPIService {
       await this.uploadToCloud(testFile, 'test/test.txt', integration.config.provider);
       return true;
     } catch (error) {
-      console.error('Storage integration test failed:', error);
+      if (import.meta.env.DEV) console.error('Storage integration test failed:', error);
       return false;
     }
   }

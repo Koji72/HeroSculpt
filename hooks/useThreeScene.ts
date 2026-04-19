@@ -187,7 +187,7 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
       const newHeight = Math.max(rawHeight, 400);
 
       if (rawWidth === 0 || rawHeight === 0) {
-        console.warn('useThreeScene: Attempted resize with zero dimensions. Skipping.', { raw: { width: rawWidth, height: rawHeight }, adjusted: { width: newWidth, height: newHeight } });
+        if (import.meta.env.DEV) console.warn('useThreeScene: Attempted resize with zero dimensions. Skipping.', { raw: { width: rawWidth, height: rawHeight }, adjusted: { width: newWidth, height: newHeight } });
         return;
       }
       cameraRef.current.aspect = newWidth / newHeight;
@@ -217,6 +217,9 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
       if (rendererRef.current?.domElement) {
         rendererRef.current.domElement.removeEventListener('mouseenter', handleMouseEnter);
         rendererRef.current.domElement.removeEventListener('mouseleave', handleMouseLeave);
+        rendererRef.current.domElement.removeEventListener('wheel', preventWheelZoom);
+        (rendererRef.current.domElement as any).removeEventListener('mousewheel', preventWheelZoom);
+        (rendererRef.current.domElement as any).removeEventListener('DOMMouseScroll', preventWheelZoom);
         if (currentMount) currentMount.removeChild(rendererRef.current.domElement);
       }
       rendererRef.current?.dispose();

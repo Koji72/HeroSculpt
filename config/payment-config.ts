@@ -70,14 +70,14 @@ export const getPriceDisplay = (price: number) => {
 export const enablePaidMode = () => {
   PAYMENT_CONFIG.FREE_MODE.enabled = false;
   PAYMENT_CONFIG.PAID_MODE.enabled = true;
-  console.log('💳 Modo de pagos activado');
+  if (import.meta.env.DEV) console.log('💳 Modo de pagos activado');
 };
 
 // 🎯 Función para activar modo gratis
 export const enableFreeMode = () => {
   PAYMENT_CONFIG.FREE_MODE.enabled = true;
   PAYMENT_CONFIG.PAID_MODE.enabled = false;
-  console.log('🎁 Modo gratis activado');
+  if (import.meta.env.DEV) console.log('🎁 Modo gratis activado');
 };
 
 // 🎯 Función para verificar si Stripe está configurado

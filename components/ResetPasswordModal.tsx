@@ -67,7 +67,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
               {t('reset.success', lang)}
             </p>
             <button
-              onClick={() => { window.location.hash = ''; onClose(); }}
+              onClick={() => { window.history.replaceState(null, '', window.location.pathname); onClose(); }}
               style={{ width: '100%', padding: '10px', background: 'var(--color-accent, #f59e0b)', color: '#000', fontFamily: 'var(--font-comic, Bangers, sans-serif)', fontSize: 14, letterSpacing: 2, border: 'none', cursor: 'pointer' }}
             >
               {t('reset.done', lang)}

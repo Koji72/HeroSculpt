@@ -8,6 +8,7 @@ interface GuestEmailModalProps {
   onEmailSubmitted: (email: string) => void;
   totalPrice: number;
   isLoading?: boolean;
+  error?: string | null;
 }
 
 const GuestEmailModal: React.FC<GuestEmailModalProps> = ({
@@ -15,7 +16,8 @@ const GuestEmailModal: React.FC<GuestEmailModalProps> = ({
   onClose,
   onEmailSubmitted,
   totalPrice,
-  isLoading = false
+  isLoading = false,
+  error
 }) => {
   const { lang } = useLang();
   const [email, setEmail] = useState('');
@@ -130,6 +132,12 @@ const GuestEmailModal: React.FC<GuestEmailModalProps> = ({
                 <li>• {t('guest.receive_invite', lang)}</li>
               </ul>
             </div>
+
+            {error && (
+              <div style={{ marginBottom: 8, padding: '8px 12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', borderRadius: 'var(--radius)', fontSize: 12, color: '#ef4444', fontFamily: 'var(--font-body)' }}>
+                {error}
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>

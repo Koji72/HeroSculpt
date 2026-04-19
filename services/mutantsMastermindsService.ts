@@ -265,7 +265,7 @@ class MutantsMastermindsService {
         .from('mnm_characters')
         .update(characterData)
         .eq('id', character.id)
-        .eq('userId', character.userId)
+        .eq('userId', user.id)
         .select()
         .single();
 

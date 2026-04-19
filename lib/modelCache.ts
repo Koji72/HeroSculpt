@@ -8,6 +8,7 @@ class ModelCache {
   private loadingPromises = new Map<string, Promise<THREE.Group>>();
   private loader: GLTFLoader | null = null;
   private dracoLoader: DRACOLoader | null = null;
+  private generation = 0;
 
   public initializeLoaders(gltfLoader: GLTFLoader, dracoLoader: DRACOLoader) {
     this.loader = gltfLoader;
@@ -21,7 +22,7 @@ class ModelCache {
   async getModel(path: string): Promise<THREE.Group> {
     // console.log(`ModelCache: getModel called with path: ${path}`);
     if (!this.loader) {
-      console.error('ModelCache: GLTFLoader not initialized.');
+      if (import.meta.env.DEV) console.error('ModelCache: GLTFLoader not initialized.');
       throw new Error('GLTFLoader not initialized.');
     }
 
@@ -87,12 +88,15 @@ class ModelCache {
 
     // Load new model
     // console.log(`ModelCache: Loading new model for ${path}`);
+    const capturedGeneration = this.generation;
     const loadPromise = this.loadModel(path);
     this.loadingPromises.set(path, loadPromise);
 
     try {
       const model = await loadPromise;
-      this.cache.set(path, model);
+      if (this.generation === capturedGeneration) {
+        this.cache.set(path, model);
+      }
       this.loadingPromises.delete(path);
       // console.log(`ModelCache: Loaded and cached new model for ${path}. Model ID: ${model.name || model.uuid}`);
       
@@ -121,7 +125,7 @@ class ModelCache {
       return this.cloneWithMaterials(model);
     } catch (error) {
       this.loadingPromises.delete(path);
-      console.error(`ModelCache: Error in getModel for ${path}:`, error);
+      if (import.meta.env.DEV) console.error(`ModelCache: Error in getModel for ${path}:`, error);
       throw error;
     }
   }
@@ -169,19 +173,19 @@ class ModelCache {
               // console.log(`ModelCache: Model ${path} processed and ready`);
       return model;
     } catch (error) {
-      console.error(`ModelCache: Error loading model ${path}:`, error);
+      if (import.meta.env.DEV) console.error(`ModelCache: Error loading model ${path}:`, error);
       throw error;
     }
   }
 
   async preloadModels(paths: string[]): Promise<void> {
     if (!this.loader) {
-      console.error('ModelCache: GLTFLoader not initialized for preloading.');
+      if (import.meta.env.DEV) console.error('ModelCache: GLTFLoader not initialized for preloading.');
       return;
     }
     // console.log(`ModelCache: Starting preload of ${paths.length} models.`);
     const preloadPromises = paths.map(path => this.getModel(path).catch(error => {
-      console.error(`ModelCache: Failed to preload model ${path}:`, error);
+      if (import.meta.env.DEV) console.error(`ModelCache: Failed to preload model ${path}:`, error);
       return null; // Don't block if one preload fails
     }));
     await Promise.all(preloadPromises);
@@ -221,6 +225,7 @@ class ModelCache {
         }
       });
     });
+    this.generation++;
     this.cache.clear();
     this.loadingPromises.clear();
     // console.log('ModelCache: Cache cleared.');
