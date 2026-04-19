@@ -360,7 +360,7 @@ html, body {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(5px);
-  z-index: 40;
+  z-index: 1000;
 }
 
 .card-hover {

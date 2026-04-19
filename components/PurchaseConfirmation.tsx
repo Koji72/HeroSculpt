@@ -42,7 +42,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
     <div
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.7)', zIndex: 300,
+        background: 'rgba(0,0,0,0.7)', zIndex: 1000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}

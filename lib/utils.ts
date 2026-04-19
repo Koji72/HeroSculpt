@@ -433,6 +433,53 @@ export function assignAdaptiveSymbolForTorso(newTorso: Part, currentParts: Selec
   return newParts;
 } 
 
+export function assignAdaptiveChestBeltForTorso(newTorso: Part, currentParts: SelectedParts, originalParts?: SelectedParts): SelectedParts {
+  let newParts = { ...currentParts };
+
+  const effectiveTorsoId = newTorso.category === PartCategory.SUIT_TORSO && newTorso.compatible.length > 0
+    ? newTorso.compatible[0]
+    : newTorso.id;
+
+  const partsToCheck = originalParts || currentParts;
+  const currentChestBelt = Object.values(partsToCheck).find(p => p.category === PartCategory.CHEST_BELT);
+
+  // No chest belt selected — nothing to adjust
+  if (!currentChestBelt) return newParts;
+
+  // Keep it if it's already compatible with the new torso
+  if (currentChestBelt.compatible.includes(effectiveTorsoId)) return newParts;
+
+  // Incompatible — try to find a same-type variant for the new torso
+  const torsoMatch = effectiveTorsoId.match(/strong_torso_(\d+)/);
+  const torsoNumber = torsoMatch ? torsoMatch[1] : null;
+
+  const compatibleChestBelts = ALL_PARTS.filter(p =>
+    p.category === PartCategory.CHEST_BELT &&
+    p.archetype === newTorso.archetype &&
+    p.compatible.includes(effectiveTorsoId)
+  );
+
+  if (compatibleChestBelts.length === 0) {
+    delete newParts[PartCategory.CHEST_BELT];
+    return newParts;
+  }
+
+  // Try to match the same variant suffix (e.g. _np vs with-pouch)
+  if (torsoNumber) {
+    const isNp = currentChestBelt.id.endsWith('_np');
+    const matchingVariant = compatibleChestBelts.find(p =>
+      p.id.includes(`_t${torsoNumber}`) && (isNp ? p.id.endsWith('_np') : !p.id.endsWith('_np'))
+    );
+    if (matchingVariant) {
+      newParts[PartCategory.CHEST_BELT] = matchingVariant;
+      return newParts;
+    }
+  }
+
+  newParts[PartCategory.CHEST_BELT] = compatibleChestBelts[0];
+  return newParts;
+}
+
 // 🛡️ FUNCIÓN PROTEGIDA - assignAdaptiveSuitTorsoForTorso
 // ✅ Sistema de compatibilidad para suit_torso con torso
 // ❌ NO CAMBIAR - Copia exacta del patrón de manos - FUNCIONA PERFECTAMENTE

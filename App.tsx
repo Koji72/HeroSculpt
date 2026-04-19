@@ -53,6 +53,7 @@ import { STRONG_HEAD_PARTS } from './src/parts/strongHeadParts';
 import { STRONG_BOOTS_PARTS } from './src/parts/strongBootsParts';
 import { STRONG_CAPE_PARTS } from './src/parts/strongCapeParts';
 import { STRONG_BELT_PARTS } from './src/parts/strongBeltParts';
+import { STRONG_CHEST_BELT_PARTS } from './src/parts/strongChestBeltParts';
 import { STRONG_HANDS_PARTS } from './src/parts/strongHandsParts';
 import PartsDebugPanel from './components/PartsDebugPanel';
 
@@ -1724,6 +1725,18 @@ const AppContent: React.FC = () => {
           newParts[PartCategory.BELT] = STRONG_BELT_PARTS.find(b => b.compatible.includes(effectiveTorso.id)) || STRONG_BELT_PARTS[0];
         }
 
+        // Chest belt: preserve if compatible with the current torso, otherwise find matching variant
+        const currentChestBelt = prevParts[PartCategory.CHEST_BELT];
+        if (currentChestBelt && currentChestBelt.compatible.length > 0 && !currentChestBelt.compatible.includes(effectiveTorso.id)) {
+          const compatible = STRONG_CHEST_BELT_PARTS.filter(b => b.compatible.includes(effectiveTorso.id));
+          if (compatible.length > 0) {
+            const isNp = currentChestBelt.id.endsWith('_np');
+            newParts[PartCategory.CHEST_BELT] = compatible.find(b => isNp ? b.id.endsWith('_np') : !b.id.endsWith('_np')) || compatible[0];
+          } else {
+            delete newParts[PartCategory.CHEST_BELT];
+          }
+        }
+
         // Botas: adaptar a las piernas si no están seleccionadas o son incompatibles
         const effectiveLegs = newParts[PartCategory.LOWER_BODY];
         const currentBoots = prevParts[PartCategory.BOOTS];
@@ -1815,7 +1828,7 @@ const AppContent: React.FC = () => {
         </div>
 
         {/* Archetype Switcher */}
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', padding: '0 12px', overflow: 'hidden' }}>
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', padding: '0 12px', overflow: 'visible' }}>
           <ArchetypeSwitcher
             archetypes={ARCHETYPES_LIST}
             activeArchetypeId={selectedArchetype ?? ArchetypeId.STRONG}

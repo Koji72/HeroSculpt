@@ -166,7 +166,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
   });
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflow: pendingId ? 'visible' : 'hidden', position: 'relative' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflow: hoveredId || pendingId ? 'visible' : 'hidden', position: 'relative' }}>
       {pendingId && (
         <div style={{
           position: 'absolute',

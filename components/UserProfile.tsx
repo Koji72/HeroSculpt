@@ -133,7 +133,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   if (!isAuthenticated) {
     return isOpen ? (
       <div
-        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <div className="panel-box" style={{ width: 480, maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -575,7 +575,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
     <>
       {isOpen && (
         <div
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           onClick={onClose}
         >
           <div
