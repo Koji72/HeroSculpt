@@ -35,7 +35,7 @@ import { useLang, t } from './lib/i18n';
 import { modelCache } from './lib/modelCache';
 import ErrorBoundary from './components/ErrorBoundary';
 
-import { PurchaseHistoryService, Purchase, PurchaseItem } from './services/purchaseHistoryService';
+import { PurchaseHistoryService } from './services/purchaseHistoryService';
 import { ResendEmailService } from './services/resendEmailService';
 import { UserConfigService } from './services/userConfigService';
 import { UserConfiguration } from './lib/supabase';
@@ -244,8 +244,6 @@ const AppContent: React.FC = () => {
   // read the true current value. useState would batch true→false in one render,
   // meaning the effect would never see the flag as true.
   const isNavigatingPosesRef = useRef(false);
-  // Guards handleSaveCurrentPoseAsNew against concurrent invocations (double-click, etc.)
-  const isSavingPoseRef = useRef(false);
   // Always holds the latest selectedParts so the 800ms pose-save callback reads fresh data.
   const selectedPartsRef = useRef(selectedParts);
 
@@ -267,7 +265,7 @@ const AppContent: React.FC = () => {
     id: string;
     name: string;
     configuration: SelectedParts;
-    source: 'purchase' | 'saved';
+    source: 'saved';
     date: string;
   }>>([]);
   const [currentPoseIndex, setCurrentPoseIndex] = useState(0);
@@ -392,28 +390,9 @@ const AppContent: React.FC = () => {
     }
 
     try {
-      const purchasesResult = await PurchaseHistoryService.getUserPurchases(user.id);
-      const purchases = purchasesResult.success ? purchasesResult.purchases || [] : [];
-
       const configurations = await UserConfigService.getUserConfigurations();
 
-      const allPoses: Array<{ id: string; name: string; configuration: SelectedParts; source: 'purchase' | 'saved'; date: string }> = [];
-
-      purchases.forEach((purchase: Purchase) => {
-        if (purchase.purchase_items) {
-          purchase.purchase_items.forEach((item: PurchaseItem) => {
-            if (item.configuration_data) {
-              allPoses.push({
-                id: `purchase-${purchase.id}-${item.id}`,
-                name: `${item.item_name || 'Configuration'} (Compra)`,
-                configuration: item.configuration_data,
-                source: 'purchase',
-                date: purchase.purchase_date
-              });
-            }
-          });
-        }
-      });
+      const allPoses: Array<{ id: string; name: string; configuration: SelectedParts; source: 'saved'; date: string }> = [];
 
       configurations.forEach((config: UserConfiguration) => {
         if (config.selected_parts && Object.keys(config.selected_parts).length > 0) {
@@ -775,8 +754,7 @@ const AppContent: React.FC = () => {
   // cleared by the effect on line 750 before this effect fires in the same commit cycle.
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
-      // Skip if a navigation or save is in progress (checked at fire time, not setup time)
-      if (isNavigatingPosesRef.current || isSavingPoseRef.current) return;
+      if (isNavigatingPosesRef.current) return;
 
       let shouldUpdateDB = false;
       let poseId: string | undefined;
@@ -787,7 +765,7 @@ const AppContent: React.FC = () => {
         const currentPose = prev[currentPoseIndex];
         const configChanged = JSON.stringify(currentPose.configuration) !== JSON.stringify(selectedPartsRef.current);
         if (!configChanged) return prev;
-        shouldUpdateDB = currentPose.source === 'saved';
+        shouldUpdateDB = true;
         poseId = currentPose.id;
         poseName = currentPose.name;
         const newPoses = [...prev];
@@ -1340,10 +1318,6 @@ const AppContent: React.FC = () => {
         setIsCartOpen(false);
         setIsPurchaseConfirmationOpen(true);
 
-        // Recargar datos en segundo plano (no crítico — si falla no afecta la compra ya guardada)
-        loadUserPoses().catch(err => {
-          if (import.meta.env.DEV) console.error('Error refreshing poses after purchase:', err);
-        });
         PurchaseHistoryService.getOwnedPartIds(user.id).then(setOwnedPartIds);
         setLibraryRefreshKey(prev => prev + 1);
 
@@ -1553,12 +1527,9 @@ const AppContent: React.FC = () => {
     const pose = savedPoses[index];
     if (!pose) return;
 
-    if (pose.source === 'saved') {
-      const configId = pose.id.replace(/^saved-/, '');
-      const success = await UserConfigService.deleteConfiguration(configId);
-      if (!success) return;
-    }
-    // Purchase poses: just remove from the slider (purchase record stays in DB)
+    const configId = pose.id.replace(/^saved-/, '');
+    const success = await UserConfigService.deleteConfiguration(configId);
+    if (!success) return;
     // Use the functional form to avoid stale closure after the async await above.
     setSavedPoses(prev => {
       const newPoses = prev.filter((_, i) => i !== index);
@@ -1569,49 +1540,14 @@ const AppContent: React.FC = () => {
     });
   };
 
-  // ✨ NUEVA FUNCIONALIDAD: Convertir pose de compra en pose guardada
-  const handleSaveCurrentPoseAsNew = async () => {
-    if (!user?.id || isSavingPoseRef.current) return;
-
-    isSavingPoseRef.current = true;
-    // Block the debounced pose-update from firing against the old pose while we save
-    isNavigatingPosesRef.current = true;
-
-    try {
-      const partsSnapshot = { ...selectedPartsRef.current };
-      const configToSave = {
-        name: `Copia de ${savedPoses[currentPoseIndex]?.name || 'Pose'}`,
-        archetype: selectedArchetype || 'STRONG',
-        selected_parts: partsSnapshot,
-        total_price: 0,
-      };
-
-      const newConfig = await UserConfigService.saveConfiguration(configToSave);
-      if (newConfig) {
-        await loadUserPoses();
-      }
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Error saving pose as new:', error);
-    } finally {
-      isSavingPoseRef.current = false;
-      // isNavigatingPosesRef will be reset by the useEffect watching currentPoseIndex
-    }
-  };
-
   const updateSavedPoseName = async (index: number, newName: string) => {
     if (!user?.id || !savedPoses[index]) return;
 
     try {
-      const poseId = savedPoses[index].id;
-      if (poseId.startsWith('saved-')) {
-        const configId = poseId.replace('saved-', '');
-        await UserConfigService.updateConfigurationName(configId, newName);
-        
-      } else {
-        // Removed debug log
-      }
+      const configId = savedPoses[index].id.replace('saved-', '');
+      await UserConfigService.updateConfigurationName(configId, newName);
     } catch (error) {
-      // Removed debug log
+      if (import.meta.env.DEV) console.error('Error renaming pose:', error);
     }
   };
 
@@ -1788,7 +1724,6 @@ const AppContent: React.FC = () => {
             onNextPose={handleNextPose}
             onSelectPose={handleSelectPose}
             onRenamePose={handleRenamePose}
-            onSaveAsNew={handleSaveCurrentPoseAsNew}
             onDeletePose={handleDeletePose}
           />
         </ErrorBoundary>
@@ -2236,24 +2171,6 @@ const AppContent: React.FC = () => {
           >
             {t('bottom.vtt', lang)}
           </button>
-          {user ? (
-            <button
-              type="button"
-              onClick={handleSaveCurrentPoseAsNew}
-              style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px dashed rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
-            >
-              {t('bottom.save_pose', lang)}
-            </button>
-          ) : (
-            <button
-              type="button"
-              style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px dashed rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
-              onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
-              title={t('topbar.savehero', lang)}
-            >
-              {t('bottom.save_pose', lang)}
-            </button>
-          )}
         </div>
 
         {/* Save Hero CTA */}

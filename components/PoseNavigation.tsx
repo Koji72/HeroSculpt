@@ -6,7 +6,7 @@ interface PoseNavigationProps {
     id: string;
     name: string;
     configuration: Record<string, unknown>;
-    source: 'purchase' | 'saved';
+    source: 'saved';
     date: string;
   }>;
   currentPoseIndex: number;
@@ -14,7 +14,6 @@ interface PoseNavigationProps {
   onNextPose: () => void;
   onSelectPose: (index: number) => void;
   onRenamePose?: (index: number, newName: string) => void;
-  onSaveAsNew?: () => void;
   onDeletePose?: (index: number) => void;
 }
 
@@ -25,7 +24,6 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
   onNextPose,
   onSelectPose,
   onRenamePose,
-  onSaveAsNew,
   onDeletePose,
 }) => {
   const { lang } = useLang();
@@ -149,17 +147,6 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         )
       )}
 
-      {/* Botón Save como Nueva (solo para poses de compra) */}
-      {savedPoses[currentPoseIndex]?.source === 'purchase' && onSaveAsNew && (
-        <button
-          onClick={onSaveAsNew}
-          className="backdrop-blur-sm shadow-lg bg-blue-600/80 hover:bg-blue-500/90 text-white text-xs border-blue-400/20 hover:border-blue-400/40 rounded-full transition-colors transition-transform transition-shadow duration-200 px-3 py-1 font-medium will-change-transform border cursor-pointer"
-          title={t('pose.save_as_new_title', lang)}
-        >
-          {t('pose.save_as_new', lang)}
-        </button>
-      )}
-
       {/* Pose selector dropdown */}
       {showPoseSelector && (
         <>
@@ -185,10 +172,9 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
                 ) : (
                   <span className="flex-1 text-sm truncate" onClick={() => handlePoseSelect(index)}>
                     {index + 1}. {pose.name}
-                    {pose.source === 'purchase' && <span className="ml-1 text-xs text-yellow-400">★</span>}
                   </span>
                 )}
-                {editingPoseIndex !== index && pose.source === 'saved' && onRenamePose && (
+                {editingPoseIndex !== index && onRenamePose && (
                   <button
                     className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-white text-xs px-1 transition-opacity"
                     onMouseDown={e => { e.preventDefault(); handleRenameClick(index, pose.name); }}
