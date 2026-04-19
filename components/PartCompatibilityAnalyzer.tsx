@@ -156,8 +156,8 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {compatibility.suggestions.map((suggestion, index) => (
-                <div key={index} className="flex items-start gap-2 p-2 bg-slate-700/50 rounded">
+              {compatibility.suggestions.map((suggestion) => (
+                <div key={suggestion} className="flex items-start gap-2 p-2 bg-slate-700/50 rounded">
                   <Zap className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
                   <span className="text-slate-300 text-sm">{suggestion}</span>
                 </div>
@@ -178,9 +178,9 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {visualEffects.map((effect, index) => (
-                <span 
-                  key={index}
+              {visualEffects.map((effect) => (
+                <span
+                  key={effect}
                   className="px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm rounded-full"
                 >
                   {effect}

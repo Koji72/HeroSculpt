@@ -20,12 +20,14 @@ export interface ChampionsCharacterData extends BaseCharacterData {
     stun: { value: number; cost: number };
   };
   skills: Array<{
+    _id: string;
     name: string;
     type: string;
     cost: number;
     roll: string;
   }>;
   powers: Array<{
+    _id: string;
     name: string;
     type: string;
     cost: number;
@@ -33,6 +35,7 @@ export interface ChampionsCharacterData extends BaseCharacterData {
     description: string;
   }>;
   complications: Array<{
+    _id: string;
     name: string;
     type: string;
     value: number;
@@ -53,31 +56,31 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
 }) => {
   const championsCharacter = character as unknown as ChampionsCharacterData;
 
-  const updateCharacter = React.useCallback((path: string, value: any) => {
+  const updateCharacter = React.useCallback((path: string, value: string | number | boolean) => {
     const keys = path.split('.');
     const updated = JSON.parse(JSON.stringify(championsCharacter));
-    let current: any = updated;
+    let current: Record<string, unknown> = updated;
 
     for (let i = 0; i < keys.length - 1; i++) {
-      current = current[keys[i]];
+      current = current[keys[i]] as Record<string, unknown>;
     }
 
     current[keys[keys.length - 1]] = value;
     onCharacterChange(updated);
   }, [championsCharacter, onCharacterChange]);
 
-  const EditableField = React.memo(({ 
-    value, 
-    onChange, 
-    className = "", 
-    type = "text", 
-    min, 
+  const EditableField = React.memo(({
+    value,
+    onChange,
+    className = "",
+    type = "text",
+    min,
     max,
     placeholder = "",
     multiline = false
   }: {
-    value: any;
-    onChange: (value: any) => void;
+    value: string | number;
+    onChange: (value: string | number) => void;
     className?: string;
     type?: string;
     min?: number;
@@ -85,7 +88,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
     placeholder?: string;
     multiline?: boolean;
   }) => {
-    const [localValue, setLocalValue] = React.useState(value);
+    const [localValue, setLocalValue] = React.useState<string | number>(value);
     const [isFocused, setIsFocused] = React.useState(false);
 
     React.useEffect(() => {
@@ -94,7 +97,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
       }
     }, [value, isFocused]);
 
-    const handleChange = React.useCallback((newValue: any) => {
+    const handleChange = React.useCallback((newValue: string | number) => {
       setLocalValue(newValue);
       onChange(newValue);
     }, [onChange]);
@@ -138,6 +141,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
 
   const addSkill = React.useCallback(() => {
     const newSkill = {
+      _id: crypto.randomUUID(),
       name: "New Skill",
       type: "Everyman",
       cost: 1,
@@ -153,6 +157,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
 
   const addPower = React.useCallback(() => {
     const newPower = {
+      _id: crypto.randomUUID(),
       name: "New Power",
       type: "Attack",
       cost: 10,
@@ -169,6 +174,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
 
   const addComplication = React.useCallback(() => {
     const newComplication = {
+      _id: crypto.randomUUID(),
       name: "New Complication",
       type: "Psychological",
       value: 10,
@@ -290,7 +296,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
               </h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {championsCharacter.skills.map((skill, index) => (
-                  <div key={index} className="bg-black/20 rounded p-2">
+                  <div key={skill._id ?? index} className="bg-black/20 rounded p-2">
                     <div className="flex justify-between items-center mb-1">
                       <EditableField
                         value={skill.name}
@@ -364,7 +370,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
               </h3>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {championsCharacter.powers.map((power, index) => (
-                  <div key={index} className="bg-black/20 rounded p-3">
+                  <div key={power._id ?? index} className="bg-black/20 rounded p-3">
                     <div className="flex justify-between items-center mb-2">
                       <EditableField
                         value={power.name}
@@ -449,7 +455,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
               </h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {championsCharacter.complications.map((complication, index) => (
-                  <div key={index} className="bg-black/20 rounded p-2">
+                  <div key={complication._id ?? index} className="bg-black/20 rounded p-2">
                     <div className="flex justify-between items-center mb-1">
                       <EditableField
                         value={complication.name}

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 export interface ToonShaderUniforms {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: THREE.IUniform<any>;
   uBaseMap: THREE.IUniform<THREE.Texture | null>;
   uPaperMap: THREE.IUniform<THREE.Texture | null>;

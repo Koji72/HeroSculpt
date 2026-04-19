@@ -11,7 +11,7 @@ const overrideMaterials = new WeakSet<THREE.Material>();
 
 export function isOverrideMaterial(material: THREE.Material | null | undefined): boolean {
   if (!material) return false;
-  return overrideMaterials.has(material) || (material as any).__override === true;
+  return overrideMaterials.has(material) || (material as THREE.Material & { __override?: boolean }).__override === true;
 }
 
 type OverrideListener = (payload: { type: 'material' | 'color'; category: string }) => void;
@@ -35,12 +35,13 @@ export function subscribeMaterialOverrides(listener: OverrideListener): () => vo
 export function setMaterialOverride(category: string, material: THREE.Material) {
   const instance = material.clone();
   // mark as persistent/override to skip disposal
-  try { (instance as any).__override = true; } catch {}
+  try { (instance as THREE.Material & { __override?: boolean }).__override = true; } catch {}
   overrideMaterials.add(instance);
   materialOverrides[category] = instance;
   try {
-    (window as any).__matOverrides = (window as any).__matOverrides || {};
-    (window as any).__matOverrides[category] = instance.toJSON ? instance.toJSON() : { __type: instance.type };
+    const w = window as Window & { __matOverrides?: Record<string, unknown> };
+    w.__matOverrides = w.__matOverrides || {};
+    w.__matOverrides[category] = instance.toJSON ? instance.toJSON() : { __type: instance.type };
   } catch {}
   if (!notificationsSuspended) {
     listeners.forEach((l) => {
@@ -64,8 +65,9 @@ export function clearMaterialOverrides(categories?: string[]) {
 export function setColorOverride(category: string, colorHex: number) {
   colorOverrides[category] = colorHex;
   try {
-    (window as any).__colorOverrides = (window as any).__colorOverrides || {};
-    (window as any).__colorOverrides[category] = colorHex;
+    const w = window as Window & { __colorOverrides?: Record<string, number> };
+    w.__colorOverrides = w.__colorOverrides || {};
+    w.__colorOverrides[category] = colorHex;
   } catch {}
   if (!notificationsSuspended) {
     listeners.forEach((l) => {

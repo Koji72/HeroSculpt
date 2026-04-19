@@ -708,6 +708,9 @@ const dict = {
   'faction.desc.summoner': { en: 'Master of summoning entities', es: 'Maestro de la invocación de entidades' },
   'faction.desc.antihero': { en: 'Violent but effective protector', es: 'Protector violento pero efectivo' },
 
+  // CircularCategoryMenu
+  'menu.close_menu': { en: 'Close menu', es: 'Cerrar menú' },
+
   // TutorialOverlay
   'tutorial.step_prefix': { en: 'Step', es: 'Paso' },
   'tutorial.previous': { en: 'Previous', es: 'Anterior' },
@@ -757,6 +760,35 @@ const dict = {
   'vtt.step_shape': { en: 'SHAPE', es: 'FORMA' },
   'vtt.step_settings': { en: 'SETTINGS', es: 'AJUSTES' },
 
+  // GamingPartSelector
+  'gaming_selector.title': { en: 'Select', es: 'Seleccionar' },
+  'gaming_selector.parts_available': { en: 'parts available', es: 'partes disponibles' },
+  'gaming_selector.search_placeholder': { en: 'Search parts...', es: 'Buscar partes...' },
+  'gaming_selector.filters_btn': { en: 'Filters', es: 'Filtros' },
+  'gaming_selector.additional_filters': { en: 'Additional filters', es: 'Filtros adicionales' },
+  'gaming_selector.filter_price': { en: 'Price', es: 'Precio' },
+  'gaming_selector.filter_compat': { en: 'Compatibility', es: 'Compatibilidad' },
+  'gaming_selector.filter_rarity': { en: 'Rarity', es: 'Rareza' },
+  'gaming_selector.no_parts': { en: 'No parts found', es: 'No se encontraron partes' },
+  'gaming_selector.no_parts_hint': { en: 'Try changing the search terms', es: 'Intenta cambiar los términos de búsqueda' },
+  'gaming_selector.selected': { en: 'selected', es: 'seleccionadas' },
+  'gaming_selector.close': { en: 'Close', es: 'Cerrar' },
+
+  // PartsDebugPanel
+  'debug_panel.title': { en: 'Debug Panel - Current Parts', es: 'Panel Debug - Partes Actuales' },
+  'debug_panel.total': { en: 'Total:', es: 'Total:' },
+  'debug_panel.parts': { en: 'parts', es: 'partes' },
+  'debug_panel.duplicates': { en: 'DUPLICATES DETECTED:', es: 'DUPLICADOS DETECTADOS:' },
+  'debug_panel.no_parts': { en: 'No parts selected', es: 'No hay partes seleccionadas' },
+
+  // ArchetypeSelector
+  'archetype_selector.all_types': { en: 'ALL CHARACTER TYPES AVAILABLE', es: 'TODOS LOS TIPOS DE PERSONAJE DISPONIBLES' },
+  'archetype_selector.close': { en: 'CLOSE', es: 'CERRAR' },
+
+  // PowerEffectsPanel
+  'power_effects.title': { en: 'EFFECTS', es: 'EFECTOS' },
+  'power_effects.coming_soon': { en: 'COMING SOON', es: 'PRÓXIMAMENTE' },
+
   // VTTLibrary
   'vttlib.title': { en: '🎲 VTT Library', es: '🎲 Biblioteca VTT' },
   'vttlib.tab.tokens': { en: '🎯 Tokens', es: '🎯 Tokens' },
@@ -774,6 +806,26 @@ const dict = {
   'vttlib.chars_stored': { en: 'characters stored locally', es: 'personajes guardados localmente' },
   'vttlib.export_token': { en: 'Export New Token', es: 'Exportar Nuevo Token' },
   'vttlib.export_char': { en: 'Export New Character', es: 'Exportar Nuevo Personaje' },
+
+  // TextureSelector
+  'texture.config_title': { en: 'Texture Selection', es: 'Selección de Textura' },
+  'texture.settings_title': { en: 'Texture Configuration', es: 'Configuración de Textura' },
+  'texture.intensity': { en: 'Texture Intensity', es: 'Intensidad de Textura' },
+  'texture.scale': { en: 'Texture Scale', es: 'Escala de Textura' },
+  'texture.remove': { en: 'Remove Texture', es: 'Quitar Textura' },
+  'texture.apply_leather': { en: 'Apply Leather', es: 'Aplicar Cuero' },
+  'texture.name.leather': { en: 'Leather', es: 'Cuero' },
+  'texture.name.metal': { en: 'Metal', es: 'Metal' },
+  'texture.name.fabric': { en: 'Fabric', es: 'Tela' },
+  'texture.name.plastic': { en: 'Plastic', es: 'Plástico' },
+  'texture.name.carbon': { en: 'Carbon Fiber', es: 'Fibra de Carbono' },
+  'texture.name.none': { en: 'No Texture', es: 'Sin Textura' },
+  'texture.desc.leather': { en: 'Realistic leather texture', es: 'Textura de cuero realista' },
+  'texture.desc.metal': { en: 'Polished metallic surface', es: 'Superficie metálica pulida' },
+  'texture.desc.fabric': { en: 'Soft fabric texture', es: 'Textura de tela suave' },
+  'texture.desc.plastic': { en: 'Smooth plastic surface', es: 'Superficie de plástico liso' },
+  'texture.desc.carbon': { en: 'Carbon fiber texture', es: 'Textura de fibra de carbono' },
+  'texture.desc.none': { en: 'Base material without texture', es: 'Material base sin textura' },
 
   // ArchetypeCharacterSheet
   'sheet.hero_character_sheet': { en: 'HERO CHARACTER SHEET', es: 'FICHA DE PERSONAJE' },

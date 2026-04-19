@@ -4,6 +4,7 @@ import { ARCHETYPE_DATA } from '../lib/archetypeData';
 import ArchetypeCharacterSheet from './ArchetypeCharacterSheet';
 import RiveButton from './RiveButton';
 import StrongArchetypeButton from './StrongArchetypeButton';
+import { useLang, t } from '../lib/i18n';
 
 interface ArchetypeSelectorProps {
   selectedArchetype: ArchetypeId;
@@ -15,6 +16,7 @@ interface ArchetypeSelectorProps {
 // Usar los datos de tipos de personajes del archivo centralizado
 
 const ArchetypeSelector: React.FC<ArchetypeSelectorProps> = ({ selectedArchetype, onArchetypeChange, isOpen, onClose }) => {
+  const { lang } = useLang();
   const [showCharacterSheet, setShowCharacterSheet] = useState(false);
 
   // No need for ref and registerElement here, as this component is now a modal
@@ -39,7 +41,7 @@ const ArchetypeSelector: React.FC<ArchetypeSelectorProps> = ({ selectedArchetype
           <div className="relative z-10">
             <h3 className="text-lg font-black text-cyan-400 uppercase tracking-wider mb-4 text-center"
                 style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-              ALL CHARACTER TYPES AVAILABLE
+              {t('archetype_selector.all_types', lang)}
             </h3>
             
                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -124,7 +126,7 @@ const ArchetypeSelector: React.FC<ArchetypeSelectorProps> = ({ selectedArchetype
                 }}
               >
                 <div className="absolute from-white/0 group-hover:translate-x-full bg-gradient-to-r via-white/20 to-white/0 transition-transform duration-200 inset-0 transform -translate-x-full" />
-                <span className="relative z-10">CLOSE</span>
+                <span className="relative z-10">{t('archetype_selector.close', lang)}</span>
               </button>
             </div>
           </div>

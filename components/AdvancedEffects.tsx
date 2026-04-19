@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -101,7 +101,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
     }
   ];
 
-  const createComposer = () => {
+  const createComposer = useCallback(() => {
     const scene = getScene();
     const camera = getCamera();
     const renderer = getRenderer();
@@ -134,7 +134,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
     // Color Correction Pass
     if (effectSettings.colorCorrection.enabled) {
       const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
-      colorCorrectionPass.uniforms.powRGB.value = new THREE.Vector3(
+      colorCorrectionPass.uniforms['powRGB'].value = new THREE.Vector3(
         effectSettings.colorCorrection.powRGB.x,
         effectSettings.colorCorrection.powRGB.y,
         effectSettings.colorCorrection.powRGB.z
@@ -143,7 +143,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
     }
 
     return newComposer;
-  };
+  }, [getScene, getCamera, getRenderer, effectSettings]);
 
   const applyPreset = (preset: EffectPreset) => {
     setActivePreset(preset.name);
@@ -182,7 +182,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
     return () => {
       composer?.dispose();
     };
-  }, [isEnabled, effectSettings, getScene, getCamera, getRenderer, onComposerChange]);
+  }, [isEnabled, createComposer, onComposerChange]);
 
   const updateEffectSettings = (effect: 'ssao' | 'bloom' | 'colorCorrection', setting: string, value: number) => {
     setEffectSettings(prev => ({

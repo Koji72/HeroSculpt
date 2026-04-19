@@ -14,7 +14,6 @@ const RightHandSubmenu: React.FC<RightHandSubmenuProps> = ({
   onSelectCategory,
   activeCategory,
   isExpanded,
-  onToggle,
   submenuPosition
 }) => {
   const { lang } = useLang();

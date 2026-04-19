@@ -7,9 +7,14 @@ import ModelLoader, { ModelLoaderRef } from '../3d/ModelLoader';
 import HeroMenu from './HeroMenu';
 import PoseNavigation from '../PoseNavigation';
 
+interface ExportResult {
+  success: boolean;
+  error?: string;
+}
+
 export interface CharacterDisplayRef {
-  exportModel: () => Promise<any>;
-  exportSTL: () => Promise<any>;
+  exportModel: () => Promise<ExportResult>;
+  exportSTL: () => Promise<ExportResult>;
   getScene: () => THREE.Scene | null;
   getRenderer: () => THREE.WebGLRenderer | null;
   getCamera: () => THREE.Camera | null;
@@ -138,7 +143,7 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
     canvas3DRef.current?.toggleEdgeDetection(selectedPart);
   }, []);
 
-  const exportModel = useCallback(async () => {
+  const exportModel = useCallback(async (): Promise<ExportResult> => {
     if (!canvas3DRef.current || !modelLoaderRef.current || !selectedArchetype) {
       return { success: false, error: 'Components not ready' };
     }
@@ -146,24 +151,23 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
     try {
       const scene = canvas3DRef.current.getScene();
       const renderer = canvas3DRef.current.getRenderer();
-      
+
       if (!scene || !renderer) {
         return { success: false, error: 'Scene or renderer not available' };
       }
 
       // Import here to avoid circular dependencies
-      const { exportModel: exportModelUtil, generateModelName } = await import('../../lib/utils');
-      
-      const modelName = generateModelName(characterName || 'Character', selectedArchetype);
+      const { exportModel: exportModelUtil } = await import('../../lib/utils');
+
       const result = await exportModelUtil(scene, { format: 'glb', includeTextures: true, compression: true });
-      
+
       return result;
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
-  }, [selectedArchetype, characterName]);
+  }, [selectedArchetype]);
 
-  const exportSTL = useCallback(async () => {
+  const exportSTL = useCallback(async (): Promise<ExportResult> => {
     if (!canvas3DRef.current || !modelLoaderRef.current || !selectedArchetype) {
       return { success: false, error: 'Components not ready' };
     }
@@ -171,22 +175,21 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
     try {
       const scene = canvas3DRef.current.getScene();
       const renderer = canvas3DRef.current.getRenderer();
-      
+
       if (!scene || !renderer) {
         return { success: false, error: 'Scene or renderer not available' };
       }
 
       // Import here to avoid circular dependencies
-      const { exportModel: exportModelUtil, generateModelName } = await import('../../lib/utils');
-      
-      const modelName = generateModelName(characterName || 'Character', selectedArchetype);
+      const { exportModel: exportModelUtil } = await import('../../lib/utils');
+
       const result = await exportModelUtil(scene, { format: 'stl', includeTextures: false, compression: false });
-      
+
       return result;
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
-  }, [selectedArchetype, characterName]);
+  }, [selectedArchetype]);
 
   useImperativeHandle(ref, () => ({
     exportModel,
@@ -238,7 +241,7 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
       setLastLoadedParts(partsToLoad);
       setIsFirstLoad(false);
     }
-  }, [selectedParts, selectedArchetype, scene, previewParts, isFirstLoad]);
+  }, [selectedParts, selectedArchetype, scene, previewParts, isFirstLoad, lastLoadedParts]);
 
   return (
     <div className="relative w-full h-full">

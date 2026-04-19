@@ -27,9 +27,10 @@ export type MaterialCombo = {
 const STORAGE_KEY = 'material-combinations';
 
 export function serializeMaterial(material: THREE.Material): SerializedMaterial {
-  const anyMat: any = material;
+  const anyMat = material as THREE.MeshPhysicalMaterial & THREE.MeshStandardMaterial; // THREE.js extended props
   const type = anyMat?.constructor?.name as SerializedMaterial['type'];
-  const serializeColor = (c: any) => (c && typeof c.getHex === 'function' ? c.getHex() : undefined);
+  const serializeColor = (c: { getHex?: () => number } | null | undefined) =>
+    c && typeof c.getHex === 'function' ? c.getHex() : undefined;
   return {
     type: type === 'MeshPhysicalMaterial' || type === 'MeshStandardMaterial' ? type : 'Material',
     color: serializeColor(anyMat?.color),
@@ -53,7 +54,7 @@ export function deserializeMaterial(sm: SerializedMaterial): THREE.Material {
     : sm.type === 'MeshPhysicalMaterial'
       ? new THREE.MeshPhysicalMaterial()
       : new THREE.MeshStandardMaterial();
-  const anyMat: any = base;
+  const anyMat = base as THREE.MeshPhysicalMaterial & THREE.MeshStandardMaterial; // THREE.js extended props
   if (typeof sm.color === 'number') anyMat.color = new THREE.Color(sm.color);
   if (typeof sm.roughness === 'number') anyMat.roughness = sm.roughness;
   if (typeof sm.metalness === 'number') anyMat.metalness = sm.metalness;

@@ -32,6 +32,7 @@ export interface MAndMCharacterData extends BaseCharacterData {
     presence: { value: number; cost: number };
   };
   attacks: Array<{
+    _id: string;
     name: string;
     skill: string;
     attack: number;
@@ -42,6 +43,7 @@ export interface MAndMCharacterData extends BaseCharacterData {
     crit: number;
   }>;
   powers: Array<{
+    _id: string;
     name: string;
     type: string;
     cost: number;
@@ -60,13 +62,13 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
   const { lang } = useLang();
   const mnmCharacter = character as MAndMCharacterData;
 
-  const updateCharacter = React.useCallback((path: string, value: any) => {
+  const updateCharacter = React.useCallback((path: string, value: string | number | boolean) => {
     const keys = path.split('.');
     const updated = JSON.parse(JSON.stringify(mnmCharacter));
-    let current: any = updated;
+    let current: Record<string, unknown> = updated;
 
     for (let i = 0; i < keys.length - 1; i++) {
-      current = current[keys[i]];
+      current = current[keys[i]] as Record<string, unknown>;
     }
 
     current[keys[keys.length - 1]] = value;
@@ -83,8 +85,8 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
     placeholder = "",
     multiline = false
   }: {
-    value: any;
-    onChange: (value: any) => void;
+    value: string | number;
+    onChange: (value: string | number) => void;
     className?: string;
     type?: string;
     min?: number;
@@ -92,7 +94,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
     placeholder?: string;
     multiline?: boolean;
   }) => {
-    const [localValue, setLocalValue] = React.useState(value);
+    const [localValue, setLocalValue] = React.useState<string | number>(value);
     const [isFocused, setIsFocused] = React.useState(false);
 
     React.useEffect(() => {
@@ -101,7 +103,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
       }
     }, [value, isFocused]);
 
-    const handleChange = React.useCallback((newValue: any) => {
+    const handleChange = React.useCallback((newValue: string | number) => {
       setLocalValue(newValue);
       onChange(newValue);
     }, [onChange]);
@@ -145,6 +147,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
 
   const addAttack = React.useCallback(() => {
     const newAttack = {
+      _id: crypto.randomUUID(),
       name: t('mnm.new_attack_name', lang),
       skill: t('mnm.new_attack_skill', lang),
       attack: 0,
@@ -281,7 +284,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.attacks', lang)}</h3>
               <div className="space-y-2">
                 {mnmCharacter.attacks.map((attack, index) => (
-                  <div key={index} className="bg-black/20 rounded p-3">
+                  <div key={attack._id ?? index} className="bg-black/20 rounded p-3">
                     <div className="flex justify-between items-center mb-2">
                       <EditableField
                         value={attack.name}
@@ -353,7 +356,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.powers', lang)}</h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {mnmCharacter.powers.map((power, index) => (
-                  <div key={index} className="bg-black/20 rounded p-2 flex justify-between items-center">
+                  <div key={power._id ?? index} className="bg-black/20 rounded p-2 flex justify-between items-center">
                     <div>
                       <EditableField
                         value={power.name}
@@ -411,7 +414,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                         max={20}
                       />
                                              <span className="text-gray-400 text-sm">
-                         +{(mnmCharacter.abilities as any)[skill.ability]?.value || 0}
+                         +{(mnmCharacter.abilities as Record<string, { value: number }>)[skill.ability]?.value || 0}
                        </span>
                     </div>
                   </div>

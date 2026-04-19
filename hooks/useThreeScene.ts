@@ -136,13 +136,13 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
     
     // Add aggressive wheel prevention
     renderer.domElement.addEventListener('wheel', preventWheelZoom, { passive: false });
-    (renderer.domElement as any).addEventListener('mousewheel', preventWheelZoom, { passive: false });
-    (renderer.domElement as any).addEventListener('DOMMouseScroll', preventWheelZoom, { passive: false });
+    (renderer.domElement as EventTarget).addEventListener('mousewheel', preventWheelZoom, { passive: false });
+    (renderer.domElement as EventTarget).addEventListener('DOMMouseScroll', preventWheelZoom, { passive: false });
     
     // ✅ PREVENT BROWSER ZOOM - Add wheel prevention to parent container
     currentMount.addEventListener('wheel', preventWheelZoom, { passive: false });
-    (currentMount as any).addEventListener('mousewheel', preventWheelZoom, { passive: false });
-    (currentMount as any).addEventListener('DOMMouseScroll', preventWheelZoom, { passive: false });
+    (currentMount as EventTarget).addEventListener('mousewheel', preventWheelZoom, { passive: false });
+    (currentMount as EventTarget).addEventListener('DOMMouseScroll', preventWheelZoom, { passive: false });
     
     controls.update();
     controlsRef.current = controls;
@@ -212,14 +212,14 @@ export const useThreeScene = ({ canvasRef }: ThreeSceneConfig): ThreeSceneState 
       cancelAnimationFrame(animationIdRef.current);
       resizeObserver.disconnect();
       currentMount.removeEventListener('wheel', preventWheelZoom);
-      (currentMount as any).removeEventListener('mousewheel', preventWheelZoom);
-      (currentMount as any).removeEventListener('DOMMouseScroll', preventWheelZoom);
+      (currentMount as EventTarget).removeEventListener('mousewheel', preventWheelZoom);
+      (currentMount as EventTarget).removeEventListener('DOMMouseScroll', preventWheelZoom);
       if (rendererRef.current?.domElement) {
         rendererRef.current.domElement.removeEventListener('mouseenter', handleMouseEnter);
         rendererRef.current.domElement.removeEventListener('mouseleave', handleMouseLeave);
         rendererRef.current.domElement.removeEventListener('wheel', preventWheelZoom);
-        (rendererRef.current.domElement as any).removeEventListener('mousewheel', preventWheelZoom);
-        (rendererRef.current.domElement as any).removeEventListener('DOMMouseScroll', preventWheelZoom);
+        (rendererRef.current.domElement as EventTarget).removeEventListener('mousewheel', preventWheelZoom);
+        (rendererRef.current.domElement as EventTarget).removeEventListener('DOMMouseScroll', preventWheelZoom);
         if (currentMount) currentMount.removeChild(rendererRef.current.domElement);
       }
       rendererRef.current?.dispose();

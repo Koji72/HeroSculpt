@@ -4,7 +4,7 @@ import { ModularCharacterData, CharacterSheetProps } from './BaseCharacterSheet'
 const GenericModularSheet: React.FC<CharacterSheetProps> = ({ character, isEditing, onCharacterChange, onToggleEdit }) => {
   const modular = character as ModularCharacterData;
   const abilities = modular.abilities ?? [];
-  const handleChange = (field: keyof ModularCharacterData, value: any) => {
+  const handleChange = (field: keyof ModularCharacterData, value: string | number) => {
     onCharacterChange({ ...modular, [field]: value });
   };
   const handleAbilityChange = (idx: number, field: 'key' | 'name' | 'icon', value: string) => {
@@ -12,7 +12,7 @@ const GenericModularSheet: React.FC<CharacterSheetProps> = ({ character, isEditi
     onCharacterChange({ ...modular, abilities: updated });
   };
   const handleAddAbility = () => {
-    const updated = [...abilities, { key: '', name: '', icon: '' }];
+    const updated = [...abilities, { _id: crypto.randomUUID(), key: '', name: '', icon: '' }];
     onCharacterChange({ ...modular, abilities: updated });
   };
   const handleRemoveAbility = (idx: number) => {
@@ -90,7 +90,7 @@ const GenericModularSheet: React.FC<CharacterSheetProps> = ({ character, isEditi
           <h2 className="text-blue-400 text-xl font-bold border-b border-blue-400 pb-1 mb-4">Combat Abilities</h2>
           <div className="box-xo2 max-h-48 overflow-auto space-y-2">
             {abilities.map((ab, idx) => (
-              <div key={idx} className="ability-entry flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-2 bg-[#1c2233] rounded mb-1 border border-blue-700">
+              <div key={ab._id ?? idx} className="ability-entry flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-2 bg-[#1c2233] rounded mb-1 border border-blue-700">
                 <div className="flex gap-2 items-center w-full md:w-auto">
                   <input type="text" className="key w-14 text-center font-bold text-blue-400 bg-[#0d111a] border border-blue-400 rounded disabled:opacity-50 disabled:cursor-not-allowed" value={ab.key} onChange={e => handleAbilityChange(idx, 'key', e.target.value)} placeholder="Key" disabled={!isEditing} />
                   <input type="text" className="icon-url w-40 bg-[#0d111a] border border-blue-400 rounded p-1 text-white disabled:opacity-50 disabled:cursor-not-allowed" value={ab.icon} onChange={e => handleAbilityChange(idx, 'icon', e.target.value)} placeholder="Icon URL" disabled={!isEditing} />

@@ -41,9 +41,9 @@ export const createDefaultCharacter = (systemId: string): BaseCharacterData => {
         ventajas: '',
         descripcion: '',
         abilities: [
-          { key: 'Q', name: 'KARMIC REVIVAL', icon: 'https://r.res.easebar.com/pic/20241120/bedb33ea-a7d7-482f-a3ba-695afc84d7df.png' },
-          { key: 'SHIFT', name: 'SOUL BOND', icon: 'https://r.res.easebar.com/pic/20241120/6d9c5f2f-ad6d-4f5e-9a1d-bf039b2d6fdc.png' },
-          { key: 'E', name: 'AVATAR LIFE STREAM', icon: 'https://r.res.easebar.com/pic/20241120/00ceedf0-0fab-45f5-bcb6-009797271b65.png' }
+          { _id: 'default-q', key: 'Q', name: 'KARMIC REVIVAL', icon: 'https://r.res.easebar.com/pic/20241120/bedb33ea-a7d7-482f-a3ba-695afc84d7df.png' },
+          { _id: 'default-shift', key: 'SHIFT', name: 'SOUL BOND', icon: 'https://r.res.easebar.com/pic/20241120/6d9c5f2f-ad6d-4f5e-9a1d-bf039b2d6fdc.png' },
+          { _id: 'default-e', key: 'E', name: 'AVATAR LIFE STREAM', icon: 'https://r.res.easebar.com/pic/20241120/00ceedf0-0fab-45f5-bcb6-009797271b65.png' }
         ]
       };
     default:

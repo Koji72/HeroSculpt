@@ -48,6 +48,7 @@ import RPGCharacterSheetManager from './components/rpg-sheets/RPGCharacterSheetM
 import RPGCharacterSheet from './components/RPGCharacterSheet';
 import VTTExportModal from './components/VTTExportModal';
 import { RPGCharacterSync } from './types';
+import { BaseCharacterData } from './components/rpg-sheets/BaseCharacterSheet';
 import { STRONG_TORSO_PARTS } from './src/parts/strongTorsoParts';
 import { STRONG_LEGS_PARTS } from './src/parts/strongLegsParts';
 import { STRONG_HEAD_PARTS } from './src/parts/strongHeadParts';
@@ -89,6 +90,22 @@ const buildThreeMaterial = (type: MaterialType, color: number): THREE.MeshPhysic
   };
   const { roughness, metalness, clearcoat } = presets[type];
   return new THREE.MeshPhysicalMaterial({ color, roughness, metalness, clearcoat });
+};
+
+// Pure helpers — hoisted out of component so useCallback deps stay stable
+const mapStatToTorso = (stat: number): string => {
+  if (stat <= 3) return 'strong_torso_01';
+  if (stat <= 6) return 'strong_torso_02';
+  if (stat <= 8) return 'strong_torso_03';
+  if (stat <= 9) return 'strong_torso_04';
+  return 'strong_torso_05';
+};
+
+const mapStatToLegs = (stat: number): string => {
+  if (stat <= 3) return 'strong_legs_01';
+  if (stat <= 6) return 'strong_legs_02';
+  if (stat <= 8) return 'strong_legs_03';
+  return 'strong_legs_04';
 };
 
 const AppContent: React.FC = () => {
@@ -380,7 +397,7 @@ const AppContent: React.FC = () => {
 
       const configurations = await UserConfigService.getUserConfigurations();
 
-      const allPoses = [];
+      const allPoses: Array<{ id: string; name: string; configuration: SelectedParts; source: 'purchase' | 'saved'; date: string }> = [];
 
       purchases.forEach((purchase: Purchase) => {
         if (purchase.purchase_items) {
@@ -391,7 +408,7 @@ const AppContent: React.FC = () => {
                 name: `${item.item_name || 'Configuration'} (Compra)`,
                 configuration: item.configuration_data,
                 source: 'purchase',
-                date: purchase.purchase_date || item.created_at
+                date: purchase.purchase_date
               });
             }
           });
@@ -517,14 +534,7 @@ const AppContent: React.FC = () => {
     setCharacterViewerKey(prev => prev + 1);
     
     setActiveCategory(null);
-  }, [isAuthenticated, selectedArchetype]);
-
-  // Log activeCategory changes in development only
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-
-    }
-  }, [activeCategory]);
+  }, [isAuthenticated, selectedArchetype, pushPartsHistory]);
 
   const handleResetCamera = useCallback(() => {
     if (characterViewerRef.current?.resetCamera) {
@@ -649,12 +659,14 @@ const AppContent: React.FC = () => {
 
 
   useEffect(() => {
+    let active = true;
     const loadSessionOnAuthChange = async () => {
       if (isAuthenticated && user?.id) {
         notificationService.setupRealtimeSubscriptions(user.id);
 
         // ✅ Cargar arquetipo de la sesión guardada
         const savedSession = await SessionStorageService.loadSession();
+        if (!active) return;
         if (savedSession?.selectedArchetype) {
           setSelectedArchetype(savedSession.selectedArchetype);
         }
@@ -663,15 +675,18 @@ const AppContent: React.FC = () => {
         await loadUserPoses();
 
         // ✅ NUEVO: Restaurar posición de la cámara después del login (más cerca del modelo)
-        setTimeout(() => {
-          handleResetCamera();
-        }, 800); // Delay aumentado para asegurar que el modelo se haya cargado completamente
+        if (active) {
+          setTimeout(() => {
+            handleResetCamera();
+          }, 800); // Delay aumentado para asegurar que el modelo se haya cargado completamente
+        }
       } else if (!isAuthenticated) {
         notificationService.unsubscribe();
       }
     };
     loadSessionOnAuthChange();
-  }, [isAuthenticated, user?.id, loadUserPoses]);
+    return () => { active = false; };
+  }, [isAuthenticated, user?.id, loadUserPoses, handleResetCamera]);
 
   // Detect fresh signup vs returning login
   useEffect(() => {
@@ -713,37 +728,40 @@ const AppContent: React.FC = () => {
   }, [isAuthenticated, loading, handleResetToDefaultBuild]); // Añadir handleResetToDefaultBuild a las dependencias
 
   useEffect(() => {
+    let active = true;
     const updateSessionInfo = async () => {
       const info = await SessionStorageService.getSessionInfo();
-      setSessionInfo(info);
+      if (active) setSessionInfo(info);
     };
     updateSessionInfo();
+    return () => { active = false; };
   }, [selectedParts, currentPoseIndex]); // ✅ FIXED: Agregar currentPoseIndex para que se actualice cuando cambie la pose
 
   // Save automáticamente la última pose cuando cambie
   useEffect(() => {
+    let active = true;
     // Save automáticamente la última pose cuando cambie
     const saveCurrentPoseAuto = async () => {
       if (selectedArchetype && savedPoses.length > 0) {
         try {
-          setIsSavingLastPose(true);
+          if (active) setIsSavingLastPose(true);
           await SessionStorageService.saveLastPose(
             selectedArchetype,
             selectedParts,
             currentPoseIndex,
             savedPoses
           );
-          setIsSavingLastPose(false);
+          if (active) setIsSavingLastPose(false);
         } catch (error) {
           // Removed debug log
-          setIsSavingLastPose(false);
+          if (active) setIsSavingLastPose(false);
         }
       }
     };
 
     // Save con un pequeño delay para evitar demasiadas llamadas
     const timeoutId = setTimeout(saveCurrentPoseAuto, 1000); // Save after 3 seconds without changes
-    return () => clearTimeout(timeoutId);
+    return () => { active = false; clearTimeout(timeoutId); };
   }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses.length]); // ✅ FIXED: Usar savedPoses.length en lugar de savedPoses
 
   // Keep selectedPartsRef current so the debounced pose-save always writes the latest parts.
@@ -791,53 +809,44 @@ const AppContent: React.FC = () => {
 
   // Cargar configuración desde URL si existe parámetro 'load'
   useEffect(() => {
-    const loadConfigurationFromURL = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const configId = urlParams.get('load');
-      const shouldDownload = urlParams.get('download') === 'true';
-      
-      if (configId) {
-    
-        
-        try {
-          // Intentar cargar desde sessionStorage primero
-          const savedConfig = sessionStorage.getItem(`config_${configId}`);
-          if (savedConfig) {
-            const configData = JSON.parse(savedConfig);
-        
-            
-            if (configData.selectedParts) {
-              setSelectedParts(configData.selectedParts);
-            }
-            if (configData.selectedArchetype) {
-              setSelectedArchetype(configData.selectedArchetype);
-            }
-            
-            // Si se solicita descarga automática, esperar un momento y descargar
-            if (shouldDownload) {
-          
-              
-              // Esperar un poco para que se cargue la configuración
-              const exportTid = setTimeout(() => {
-                handleExportGLB();
-                if (import.meta.env.DEV) console.log('Auto-download triggered from URL param');
-                window.history.replaceState({}, document.title, window.location.pathname);
-              }, 2000);
-              return () => clearTimeout(exportTid);
-            } else {
-              // Limpiar URL después de cargar si no hay descarga
-              window.history.replaceState({}, document.title, window.location.pathname);
-            }
-          } else {
-        
+    const urlParams = new URLSearchParams(window.location.search);
+    const configId = urlParams.get('load');
+    const shouldDownload = urlParams.get('download') === 'true';
+    let exportTid: ReturnType<typeof setTimeout> | undefined;
+
+    if (configId) {
+      try {
+        // Intentar cargar desde sessionStorage primero
+        const savedConfig = sessionStorage.getItem(`config_${configId}`);
+        if (savedConfig) {
+          const configData = JSON.parse(savedConfig) as { selectedParts?: SelectedParts; selectedArchetype?: ArchetypeId };
+
+          if (configData.selectedParts) {
+            setSelectedParts(configData.selectedParts);
           }
-        } catch (error) {
-          // Removed debug log
+          if (configData.selectedArchetype) {
+            setSelectedArchetype(configData.selectedArchetype);
+          }
+
+          // Si se solicita descarga automática, esperar un momento y descargar
+          if (shouldDownload) {
+            // Esperar un poco para que se cargue la configuración
+            exportTid = setTimeout(() => {
+              handleExportGLB();
+              if (import.meta.env.DEV) console.log('Auto-download triggered from URL param');
+              window.history.replaceState({}, document.title, window.location.pathname);
+            }, 2000);
+          } else {
+            // Limpiar URL después de cargar si no hay descarga
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
         }
+      } catch (error) {
+        // Removed debug log
       }
-    };
-    
-    loadConfigurationFromURL();
+    }
+
+    return () => { if (exportTid !== undefined) clearTimeout(exportTid); };
   }, []); // Solo ejecutar una vez al montar el componente
 
   useEffect(() => {
@@ -1617,23 +1626,10 @@ const AppContent: React.FC = () => {
     // REMOVED: handleLoadRPGCharacterToCustomizer(character); // Esto causaba bucle infinito
   };
 
-  const mapStatToTorso = (stat: number) => {
-    if (stat <= 3) return 'strong_torso_01';
-    if (stat <= 6) return 'strong_torso_02';
-    if (stat <= 8) return 'strong_torso_03';
-    if (stat <= 9) return 'strong_torso_04';
-    return 'strong_torso_05';
-  };
-  const mapStatToLegs = (stat: number) => {
-    if (stat <= 3) return 'strong_legs_01';
-    if (stat <= 6) return 'strong_legs_02';
-    if (stat <= 8) return 'strong_legs_03';
-    return 'strong_legs_04';
-  };
-  const handleLoadRPGCharacterToCustomizer = useCallback((character: RPGCharacterSync) => {
-    setSelectedArchetype(prevArchetype => character.archetypeId || prevArchetype || ArchetypeId.STRONG);
+  const handleLoadRPGCharacterToCustomizer = useCallback((character: BaseCharacterData) => {
+    setSelectedArchetype(prevArchetype => (character.archetype as ArchetypeId | undefined) || prevArchetype || ArchetypeId.STRONG);
     setCharacterName(character.name || "");
-    
+
     setSelectedParts(prevParts => {
       const newParts = { ...prevParts };
 
@@ -1641,8 +1637,8 @@ const AppContent: React.FC = () => {
       // establecer el torso y las piernas según las estadísticas del RPG.
       // Si ya hay un torso seleccionado manualmente, lo respetamos.
       const currentTorso = newParts[PartCategory.TORSO] || newParts[PartCategory.SUIT_TORSO];
-    const torsoId = mapStatToTorso(character.str);
-    const legsId = mapStatToLegs(character.end);
+    const torsoId = mapStatToTorso(typeof character.str === 'number' ? character.str : 5);
+    const legsId = mapStatToLegs(typeof character.end === 'number' ? character.end : 5);
     const torso = STRONG_TORSO_PARTS.find(p => p.id === torsoId)!;
     const legs = STRONG_LEGS_PARTS.find(p => p.id === legsId)!;
 

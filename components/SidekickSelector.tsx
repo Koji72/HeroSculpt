@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SidekickPart, SidekickType, SidekickSize, SidekickPosition } from '../types';
+import { SidekickPart, SidekickType, SidekickSize, SidekickPosition, ArchetypeId, ExtendedPartCategory } from '../types';
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
 import { useLang, t } from '../lib/i18n';
@@ -15,8 +15,8 @@ const SAMPLE_SIDEKICKS: SidekickPart[] = [
   {
     id: 'sidekick_robot_01',
     name: 'Companion Bot Alpha',
-    category: 'SIDEKICK' as any,
-    archetype: 'TECH' as any,
+    category: ExtendedPartCategory.SIDEKICK,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/sidekicks/robot/companion_bot_alpha.glb',
     priceUSD: 2.99,
     compatible: [],
@@ -38,8 +38,8 @@ const SAMPLE_SIDEKICKS: SidekickPart[] = [
   {
     id: 'sidekick_pet_01',
     name: 'Mystic Familiar',
-    category: 'SIDEKICK' as any,
-    archetype: 'MYSTIC' as any,
+    category: ExtendedPartCategory.SIDEKICK,
+    archetype: ArchetypeId.MYSTIC,
     gltfPath: '/assets/sidekicks/pet/mystic_familiar.glb',
     priceUSD: 1.99,
     compatible: [],
@@ -61,8 +61,8 @@ const SAMPLE_SIDEKICKS: SidekickPart[] = [
   {
     id: 'sidekick_ally_01',
     name: 'Battle Partner',
-    category: 'SIDEKICK' as any,
-    archetype: 'STRONG' as any,
+    category: ExtendedPartCategory.SIDEKICK,
+    archetype: ArchetypeId.STRONG,
     gltfPath: '/assets/sidekicks/ally/battle_partner.glb',
     priceUSD: 3.99,
     compatible: [],

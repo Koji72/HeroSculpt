@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { PowerEffectsSystem, PowerType, PowerEffectConfig } from './powerEffectsSystem';
+import { PowerEffectsSystem, PowerEffectConfig } from './powerEffectsSystem';
 
 // 🌟 ENHANCED POWER EFFECTS SYSTEM
 export class EnhancedPowerEffectsSystem extends PowerEffectsSystem {

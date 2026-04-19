@@ -1,51 +1,32 @@
 import React, { useState } from 'react';
-import * as THREE from 'three';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { useLang, t } from '../lib/i18n';
 
 interface TextureSelectorProps {
   onTextureChange: (textureType: string, texturePath: string) => void;
   selectedTexture?: string;
 }
 
+type TextureKey = 'leather' | 'metal' | 'fabric' | 'plastic' | 'carbon' | 'none';
+
+const TEXTURE_PREVIEWS: Record<TextureKey, string> = {
+  leather: '🟫',
+  metal: '⚙️',
+  fabric: '🧵',
+  plastic: '🔲',
+  carbon: '⚡',
+  none: '⬜',
+};
+
+const TEXTURE_KEYS: TextureKey[] = ['leather', 'metal', 'fabric', 'plastic', 'carbon', 'none'];
+
 const TextureSelector: React.FC<TextureSelectorProps> = ({
   onTextureChange,
   selectedTexture = 'none'
 }) => {
+  const { lang } = useLang();
   const [activeTexture, setActiveTexture] = useState(selectedTexture);
-
-  const textureTypes = {
-    leather: {
-      name: 'Leather',
-      description: 'Realistic leather texture',
-      preview: '🟫'
-    },
-    metal: {
-      name: 'Metal',
-      description: 'Polished metallic surface',
-      preview: '⚙️'
-    },
-    fabric: {
-      name: 'Fabric',
-      description: 'Soft fabric texture',
-      preview: '🧵'
-    },
-    plastic: {
-      name: 'Plastic',
-      description: 'Smooth plastic surface',
-      preview: '🔲'
-    },
-    carbon: {
-      name: 'Carbon Fiber',
-      description: 'Carbon fiber texture',
-      preview: '⚡'
-    },
-    none: {
-      name: 'No Texture',
-      description: 'Base material without texture',
-      preview: '⬜'
-    }
-  };
 
   const handleTextureSelect = (textureType: string) => {
     setActiveTexture(textureType);
@@ -56,11 +37,11 @@ const TextureSelector: React.FC<TextureSelectorProps> = ({
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Texture Configuration</CardTitle>
+          <CardTitle className="text-lg">{t('texture.config_title', lang)}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
-            {Object.entries(textureTypes).map(([key, texture]) => (
+            {TEXTURE_KEYS.map((key) => (
               <button
                 key={key}
                 onClick={() => handleTextureSelect(key)}
@@ -71,10 +52,10 @@ const TextureSelector: React.FC<TextureSelectorProps> = ({
                 }`}
               >
                 <div className="flex items-center space-x-2">
-                  <span className="text-2xl">{texture.preview}</span>
+                  <span className="text-2xl">{TEXTURE_PREVIEWS[key]}</span>
                   <div>
-                    <div className="font-medium text-sm">{texture.name}</div>
-                    <div className="text-xs text-gray-500">{texture.description}</div>
+                    <div className="font-medium text-sm">{t(`texture.name.${key}`, lang)}</div>
+                    <div className="text-xs text-gray-500">{t(`texture.desc.${key}`, lang)}</div>
                   </div>
                 </div>
               </button>
@@ -85,12 +66,12 @@ const TextureSelector: React.FC<TextureSelectorProps> = ({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Texture Configuration</CardTitle>
+          <CardTitle className="text-lg">{t('texture.settings_title', lang)}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-2">Texture Intensity</label>
+              <label className="block text-sm font-medium mb-2">{t('texture.intensity', lang)}</label>
               <input
                 type="range"
                 min="0"
@@ -100,9 +81,9 @@ const TextureSelector: React.FC<TextureSelectorProps> = ({
                 className="w-full"
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium mb-2">Texture Scale</label>
+              <label className="block text-sm font-medium mb-2">{t('texture.scale', lang)}</label>
               <input
                 type="range"
                 min="0.1"
@@ -118,13 +99,13 @@ const TextureSelector: React.FC<TextureSelectorProps> = ({
                 variant="outline"
                 onClick={() => handleTextureSelect('none')}
               >
-                Remove Texture
+                {t('texture.remove', lang)}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => handleTextureSelect('leather')}
               >
-                Apply Leather
+                {t('texture.apply_leather', lang)}
               </Button>
             </div>
           </div>

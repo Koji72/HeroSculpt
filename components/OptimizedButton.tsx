@@ -94,7 +94,10 @@ const OptimizedButton: React.FC<OptimizedButtonProps> = ({
       className={`flex items-center gap-2 px-4 py-2 text-white font-black text-sm uppercase tracking-wider rounded-md relative overflow-hidden group ${className}`}
       style={{
         background: styles.normal,
-        ...styles
+        fontFamily: styles.fontFamily,
+        clipPath: styles.clipPath,
+        transition: styles.transition,
+        willChange: styles.willChange,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

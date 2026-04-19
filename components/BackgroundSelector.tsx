@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BackgroundPart, BackgroundType, LightingPreset, WeatherType } from '../types';
+import { BackgroundPart, BackgroundType, LightingPreset, WeatherType, PartCategory, ArchetypeId, ExtendedPartCategory } from '../types';
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
 
@@ -16,8 +16,8 @@ const SAMPLE_BACKGROUNDS: BackgroundPart[] = [
   {
     id: 'background_urban_01',
          name: 'Futuristic City',
-    category: 'BACKGROUND' as any,
-    archetype: 'TECH' as any,
+    category: ExtendedPartCategory.BACKGROUND as unknown as PartCategory,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/backgrounds/urban/futuristic_city.glb',
     priceUSD: 1.99,
     compatible: [],
@@ -30,8 +30,8 @@ const SAMPLE_BACKGROUNDS: BackgroundPart[] = [
   {
     id: 'background_nature_01',
          name: 'Mystic Forest',
-    category: 'BACKGROUND' as any,
-    archetype: 'MYSTIC' as any,
+    category: ExtendedPartCategory.BACKGROUND as unknown as PartCategory,
+    archetype: ArchetypeId.MYSTIC,
     gltfPath: '/assets/backgrounds/nature/mystic_forest.glb',
     priceUSD: 1.49,
     compatible: [],
@@ -44,8 +44,8 @@ const SAMPLE_BACKGROUNDS: BackgroundPart[] = [
   {
     id: 'background_space_01',
          name: 'Space Station',
-    category: 'BACKGROUND' as any,
-    archetype: 'TECH' as any,
+    category: ExtendedPartCategory.BACKGROUND as unknown as PartCategory,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/backgrounds/space/space_station.glb',
     priceUSD: 2.49,
     compatible: [],
@@ -58,8 +58,8 @@ const SAMPLE_BACKGROUNDS: BackgroundPart[] = [
   {
     id: 'background_abstract_01',
          name: 'Abstract Dimension',
-    category: 'BACKGROUND' as any,
-    archetype: 'MYSTIC' as any,
+    category: ExtendedPartCategory.BACKGROUND as unknown as PartCategory,
+    archetype: ArchetypeId.MYSTIC,
     gltfPath: '/assets/backgrounds/abstract/dimension.glb',
     priceUSD: 1.99,
     compatible: [],

@@ -15,9 +15,9 @@ export interface BaseCharacterData {
   system: string;
   level?: number;
   experience?: number | { earned: number; spent: number; available: number };
-  selectedParts?: any; // Parts from the 3D customizer
+  selectedParts?: Record<string, unknown>; // Parts from the 3D customizer
   archetype?: string; // Archetype from the 3D customizer
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ModularCharacterData extends BaseCharacterData {
@@ -31,7 +31,7 @@ export interface ModularCharacterData extends BaseCharacterData {
   poderes: string;
   ventajas: string;
   descripcion: string;
-  abilities: Array<{ key: string; name: string; icon: string }>;
+  abilities: Array<{ _id: string; key: string; name: string; icon: string }>;
 }
 
 export interface CharacterSheetProps {

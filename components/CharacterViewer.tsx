@@ -41,8 +41,8 @@ interface CharacterViewerProps {
 
 // Expose methods to parent component
 export interface CharacterViewerRef {
-  exportModel: () => Promise<any>;
-  exportSTL: (options?: { scaleFactor?: number }) => Promise<any>;
+  exportModel: () => Promise<{ success: boolean; fileName?: string; error?: string }>;
+  exportSTL: (options?: { scaleFactor?: number }) => Promise<{ success: boolean; fileName?: string; error?: string }>;
   getScene: () => THREE.Scene | null;
   getRenderer: () => THREE.WebGLRenderer | null;
   getCamera: () => THREE.Camera | null;
@@ -281,9 +281,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   useLayoutEffect(() => {
     // ? PREVENT MULTIPLE INITIALIZATION
     if (isInitializedRef.current) {
-      if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.log('CharacterViewer: Already initialized, skipping');
-      }
+      if (import.meta.env.DEV) console.log('CharacterViewer: Already initialized, skipping');
       return;
     }
 
@@ -292,9 +290,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       return;
     }
 
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Starting Three.js initialization...');
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Starting Three.js initialization...');
     isInitializedRef.current = true;
 
     const currentMount = mountRef.current;
@@ -304,12 +300,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     const mountHeight = Math.max(currentMount.clientHeight, 400);
     
     // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: mountRef.current dimensions (before renderer init):', {
-        original: { width: currentMount.clientWidth, height: currentMount.clientHeight },
-        adjusted: { width: mountWidth, height: mountHeight }
-      });
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: mountRef.current dimensions (before renderer init):', {
+      original: { width: currentMount.clientWidth, height: currentMount.clientHeight },
+      adjusted: { width: mountWidth, height: mountHeight }
+    });
 
     // Scene setup with Strong archetype theme
     const scene = new THREE.Scene();
@@ -353,13 +347,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     currentMount.appendChild(renderer.domElement);
     rendererRef.current = renderer;
   
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Renderer initialized with size:', {
-        width: currentMount.clientWidth,
-        height: currentMount.clientHeight,
-        pixelRatio: window.devicePixelRatio
-      });
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Renderer initialized with size:', {
+      width: currentMount.clientWidth,
+      height: currentMount.clientHeight,
+      pixelRatio: window.devicePixelRatio
+    });
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -503,12 +495,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       ssaoPass.setSize(newWidth, newHeight);
       bloomPass.setSize(newWidth, newHeight);
           // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Resized to', { 
-        from: { width: rawWidth, height: rawHeight },
-        to: { width: newWidth, height: newHeight }
-      });
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Resized to', {
+      from: { width: rawWidth, height: rawHeight },
+      to: { width: newWidth, height: newHeight }
+    });
     };
 
     const resizeObserver = new ResizeObserver(entries => {
@@ -524,14 +514,10 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // ? CRITICAL: Mark Three.js as ready AFTER everything is initialized
     setIsThreeJSReady(true);
     // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('?? Three.js initialization complete - ready for model loading');
-    }
+    if (import.meta.env.DEV) console.log('?? Three.js initialization complete - ready for model loading');
 
     return () => {
-      if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.log('CharacterViewer: Cleaning up Three.js scene');
-      }
+      if (import.meta.env.DEV) console.log('CharacterViewer: Cleaning up Three.js scene');
       cancelAnimationFrame(rafId);
       setIsThreeJSReady(false);
       isInitializedRef.current = false;
@@ -612,25 +598,19 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     
     const startTime = performance.now();
     setIsLoading(true);
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Loading models for Strong archetype with caching');
-      if (import.meta.env.DEV) console.log('CharacterViewer: Parts to load:', partsToLoad);
-      if (import.meta.env.DEV) console.log('CharacterViewer: Parts by category:', Object.entries(partsToLoad).map(([category, part]) => `${category}: ${part.id}`));
-      if (import.meta.env.DEV) console.log('CharacterViewer: Using preview?', false); // Always false now
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Loading models for Strong archetype with caching');
+    if (import.meta.env.DEV) console.log('CharacterViewer: Parts to load:', partsToLoad);
+    if (import.meta.env.DEV) console.log('CharacterViewer: Parts by category:', Object.entries(partsToLoad).map(([category, part]) => `${category}: ${part.id}`));
+    if (import.meta.env.DEV) console.log('CharacterViewer: Using preview?', false); // Always false now
 
     // Debug espec�fico para cabezas
     const currentHead = Object.values(partsToLoad).find(p => p.category === PartCategory.HEAD);
     // Debug espec�fico para buckles
     const currentBuckle = Object.values(partsToLoad).find(p => p.category === PartCategory.BUCKLE);
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('?? DEBUG - CharacterViewer cargando cabeza:', currentHead?.id || 'ninguna');
-      if (import.meta.env.DEV) console.log('?? DEBUG - CharacterViewer cargando buckle:', currentBuckle?.id || 'ninguno');
-    }
+    if (import.meta.env.DEV) console.log('?? DEBUG - CharacterViewer cargando cabeza:', currentHead?.id || 'ninguna');
+    if (import.meta.env.DEV) console.log('?? DEBUG - CharacterViewer cargando buckle:', currentBuckle?.id || 'ninguno');
 
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? CLEARING MODEL GROUP - Children before clear: ${modelGroup.children.length}`);
-    }
+    if (import.meta.env.DEV) console.log(`?? CLEARING MODEL GROUP - Children before clear: ${modelGroup.children.length}`);
 
     // Just remove models from the scene — do NOT dispose geometry/materials.
     // The modelCache holds the authoritative references; disposing clones here
@@ -641,18 +621,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       modelGroup.remove(child);
     });
 
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? CLEARING MODEL GROUP - Children after manual clear: ${modelGroup.children.length}`);
-    }
+    if (import.meta.env.DEV) console.log(`?? CLEARING MODEL GROUP - Children after manual clear: ${modelGroup.children.length}`);
 
     const selectedPartList = Object.values(partsToLoad).filter(Boolean);
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Filtered part list:', selectedPartList);
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Filtered part list:', selectedPartList);
     const basePath = import.meta.env.BASE_URL || '/';
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Base path:', basePath);
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Base path:', basePath);
     
     // ? NUEVO: Cargar pedestal siempre (independientemente del estado de autenticaci�n)
     if (import.meta.env.DEV) console.log('?? DEBUG: isAuthenticated =', isAuthenticated, '| selectedParts vac�o =', Object.keys(selectedParts).length === 0);
@@ -768,9 +742,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     // Verificar compatibilidad de manos con el torso actual
     const activeTorso = suit || torso;
     if (activeTorso) {
-      if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.log('?? Checking hand compatibility with torso:', activeTorso.id);
-      }
+      if (import.meta.env.DEV) console.log('?? Checking hand compatibility with torso:', activeTorso.id);
 
       // Determinar el torso base para verificar compatibilidad
       let baseTorsoId = activeTorso.id;
@@ -780,9 +752,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         if (suitMatch) {
           const torsoNumber = suitMatch[1];
           baseTorsoId = `strong_torso_${torsoNumber}`;
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`?? Suit detected, using base torso: ${baseTorsoId}`);
-          }
+          if (import.meta.env.DEV) console.log(`?? Suit detected, using base torso: ${baseTorsoId}`);
         }
       }
       
@@ -808,9 +778,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           // Si no hay torso base, permitir todas las cabezas (fallback)
           if (!baseTorsoId) {
                 // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? No torso base found, keeping head: ${part.id}`);
-    }
+    if (import.meta.env.DEV) console.log(`?? No torso base found, keeping head: ${part.id}`);
             return true;
           }
           const isCompatible = part.compatible.includes(baseTorsoId);
@@ -842,9 +810,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }
         
         try {
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`CharacterViewer: Loading [${part.category}] from cache: ${modelPath}`);
-          }
+          if (import.meta.env.DEV) console.log(`CharacterViewer: Loading [${part.category}] from cache: ${modelPath}`);
           const model = await modelCache.getModel(modelPath);
           
           // ? NUEVO: Debug espec�fico para capas
@@ -863,14 +829,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           model.userData.partId = part.id;
           
               // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`??? CharacterViewer: Tagging model for ${part.category}`, {
+    if (import.meta.env.DEV) console.log(`??? CharacterViewer: Tagging model for ${part.category}`, {
             modelName: model.name,
             modelUuid: model.uuid,
             category: part.category,
             partId: part.id
           });
-    }
           
           // Propagate category to all child meshes for color/material application
           let meshCount = 0;
@@ -880,16 +844,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               child.userData.partId = part.id;
               meshCount++;
                   // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`??? CharacterViewer: Tagged mesh ${meshCount}: ${child.name}. Assigning category: ${part.category}, Current child.userData.category: ${child.userData.category}`);
-    }
+    if (import.meta.env.DEV) console.log(`??? CharacterViewer: Tagged mesh ${meshCount}: ${child.name}. Assigning category: ${part.category}, Current child.userData.category: ${child.userData.category}`);
             }
           });
           
               // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`??? CharacterViewer: Total meshes tagged for ${part.category}: ${meshCount}`);
-    }
+    if (import.meta.env.DEV) console.log(`??? CharacterViewer: Total meshes tagged for ${part.category}: ${meshCount}`);
           
           if (generation !== loadGenerationRef.current) { modelGroup.remove(model); return null; }
           modelGroup.add(model);
@@ -902,22 +862,18 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             });
           }
           
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`CharacterViewer: Successfully loaded [${part.category}]`);
-          }
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`? CharacterViewer: Added model to group: ${model.name} (Category: ${model.userData.category}, PartId: ${model.userData.partId}, isPreview: ${!!model.userData.isPreview})`);
-            if (import.meta.env.DEV) console.log('?? CharacterViewer: Current modelGroup children AFTER ADDITION:',
-              modelGroup.children.map(child => ({
-                name: child.name,
-                category: child.userData.category,
-                partId: child.userData.partId,
-                isPreview: child.userData.isPreview,
-                visible: child.visible,
-                position: JSON.stringify(child.position.toArray()) // Changed to stringify array
-              }))
-            );
-          }
+          if (import.meta.env.DEV) console.log(`CharacterViewer: Successfully loaded [${part.category}]`);
+          if (import.meta.env.DEV) console.log(`? CharacterViewer: Added model to group: ${model.name} (Category: ${model.userData.category}, PartId: ${model.userData.partId}, isPreview: ${!!model.userData.isPreview})`);
+          if (import.meta.env.DEV) console.log('?? CharacterViewer: Current modelGroup children AFTER ADDITION:',
+            modelGroup.children.map(child => ({
+              name: child.name,
+              category: child.userData.category,
+              partId: child.userData.partId,
+              isPreview: child.userData.isPreview,
+              visible: child.visible,
+              position: JSON.stringify(child.position.toArray())
+            }))
+          );
         } catch (error) {
           if (import.meta.env.DEV) console.error(`CharacterViewer: Error loading model ${part.name} (${part.id}) from ${modelPath}`, error);
           return null;
@@ -935,9 +891,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const loadTime = Math.round(endTime - startTime);
       setIsLoading(false);
       // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`CharacterViewer: All models loaded in ${loadTime}ms. Cache size: ${modelCache.getCacheSize()}`);
-    }
+    if (import.meta.env.DEV) console.log(`CharacterViewer: All models loaded in ${loadTime}ms. Cache size: ${modelCache.getCacheSize()}`);
       
             // Position and frame the character - SOLO SI NO ESTAMOS EN HOVER PREVIEW O SI EL USUARIO NO HA INTERACTUADO CON LA C�MARA
             modelGroup.rotation.y = Math.PI;  // ? AUTO-FRAMING: Frame character when no user interaction and models are loaded
@@ -1200,9 +1154,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       if (!sceneRef.current || !cameraRef.current || !rendererRef.current || !controlsRef.current || !modelGroupRef.current) return;
       
           // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('CharacterViewer: Preview parts changed:', changedParts);
-    }
+    if (import.meta.env.DEV) console.log('CharacterViewer: Preview parts changed:', changedParts);
       
       setIsHoverPreviewActive(true);
       const loadId = ++hoverLoadCountRef.current;
@@ -1228,9 +1180,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       
       if (isClearPreview) {
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('?? CLEAR HOVER PREVIEW: Restoring original state');
-    }
+    if (import.meta.env.DEV) console.log('?? CLEAR HOVER PREVIEW: Restoring original state');
         setPreviewParts(null);
         setIsHoverPreviewActive(false); // ?? DESMARCAR INMEDIATAMENTE
         
@@ -1258,9 +1208,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
           if (child.userData.isPreview) {
             previewModelsToRemove.push(child);
-            if (import.meta.env.DEV) {
-              if (import.meta.env.DEV) console.log(`??? CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
-            }
+            if (import.meta.env.DEV) console.log(`??? CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
           }
 
           // Restore visibility of any original models that were hidden for preview
@@ -1270,13 +1218,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             const isCurrentlySelected = selectedParts[childCategory]?.id === childPartId; // Only restore if it's the actively selected part
             if (isCurrentlySelected) {
               child.visible = true;
-              if (import.meta.env.DEV) {
-                if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
-              }
+              if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
             } else {
-              if (import.meta.env.DEV) {
-                if (import.meta.env.DEV) console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
-              }
+              if (import.meta.env.DEV) console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
             }
           }
         });
@@ -1286,9 +1230,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         });
 
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
-    }
+    if (import.meta.env.DEV) console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
 
 
         // ? ZOOM REMAINS ENABLED: No need to restore zoom
@@ -1314,9 +1256,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const changedCategories = Object.keys(changedParts) as PartCategory[];
 
           // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('?? HOVER PREVIEW: Loading only changed categories:', changedCategories);
-    }
+    if (import.meta.env.DEV) console.log('?? HOVER PREVIEW: Loading only changed categories:', changedCategories);
 
       // Debug espec�fico para cinturones
       if (changedCategories.includes(PartCategory.BELT)) {
@@ -1352,33 +1292,25 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         // Hide original models of the categories being previewed
         if (!child.userData.isPreview && childCategory && changedParts[childCategory] && child.visible) {
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`??? HOVER: Hiding original model for category ${childCategory}: ${childPartId || child.name || 'unknown'}`);
-          }
+          if (import.meta.env.DEV) console.log(`??? HOVER: Hiding original model for category ${childCategory}: ${childPartId || child.name || 'unknown'}`);
           child.visible = false; // Hide the currently active part of this category
         }
 
         // Identify existing preview models from the same categories for removal
         if (child.userData.isPreview && childCategory && changedParts[childCategory]) {
           modelsToRemove.push(child);
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`??? HOVER: Marking existing preview model for removal: ${childPartId || child.name || 'unknown'}`);
-          }
+          if (import.meta.env.DEV) console.log(`??? HOVER: Marking existing preview model for removal: ${childPartId || child.name || 'unknown'}`);
         }
       });
       
       modelsToRemove.forEach(model => {
         modelGroup.remove(model);
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`??? HOVER: Removed preview model: ${model.userData.partId || model.name || 'unknown'}`);
-    }
+    if (import.meta.env.DEV) console.log(`??? HOVER: Removed preview model: ${model.userData.partId || model.name || 'unknown'}`);
       });
       
           // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? HOVER: Removed ${modelsToRemove.length} preview models`);
-    }
+    if (import.meta.env.DEV) console.log(`?? HOVER: Removed ${modelsToRemove.length} preview models`);
 
       // Load new models for changed categories — await all before clearing the flag
       await Promise.all(changedCategories.map(async (category) => {
@@ -1447,9 +1379,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
 
         if (child.userData.isPreview) {
           previewModelsToRemove.push(child);
-          if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.log(`??? CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
-          }
+          if (import.meta.env.DEV) console.log(`??? CLEAR: Marking preview model for removal: ${childPartId || child.name || 'unknown'}`);
         }
 
         // Restore visibility of any original models that were hidden for preview
@@ -1459,13 +1389,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           const isCurrentlySelected = selectedParts[childCategory]?.id === childPartId; // Only restore if it's the actively selected part
           if (isCurrentlySelected) {
             child.visible = true;
-            if (import.meta.env.DEV) {
-              if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
-            }
+            if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
           } else {
-            if (import.meta.env.DEV) {
-              if (import.meta.env.DEV) console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
-            }
+            if (import.meta.env.DEV) console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
           }
         }
       });
@@ -1476,9 +1402,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       });
       
           // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
-    }
+    if (import.meta.env.DEV) console.log(`?? CLEAR: Removed ${previewModelsToRemove.length} preview models`);
         
 
       
@@ -1696,19 +1620,17 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         let materializedMeshes = 0;
         
         // ?? DEBUG: Log all meshes and their categories
-        if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.log(`?? CharacterViewer: Scanning all meshes for partType: ${partType}`);
-          modelGroupRef.current.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-              if (import.meta.env.DEV) console.log(`?? Mesh: ${child.name || 'unnamed'}`, {
-                userDataCategory: child.userData.category,
-                partType,
-                categoryMatch: child.userData.category === partType,
-                materialType: child.material?.constructor?.name
-              });
-            }
-          });
-        }
+        if (import.meta.env.DEV) console.log(`?? CharacterViewer: Scanning all meshes for partType: ${partType}`);
+        if (import.meta.env.DEV) modelGroupRef.current.traverse((child) => {
+          if (child instanceof THREE.Mesh) {
+            console.log(`?? Mesh: ${child.name || 'unnamed'}`, {
+              userDataCategory: child.userData.category,
+              partType,
+              categoryMatch: child.userData.category === partType,
+              materialType: child.material?.constructor?.name
+            });
+          }
+        });
         
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh) {
@@ -1815,15 +1737,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         let coloredMeshes = 0;
         
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? CharacterViewer: Model group has ${modelGroupRef.current.children.length} children`);
-    }
+    if (import.meta.env.DEV) console.log(`?? CharacterViewer: Model group has ${modelGroupRef.current.children.length} children`);
         
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh) {
-                // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? Checking mesh: ${child.name || 'unnamed'}`, {
+            if (import.meta.env.DEV) console.log(`?? Checking mesh: ${child.name || 'unnamed'}`, {
               userDataCategory: child.userData.category,
               partType,
               categoryMatch: child.userData.category === partType,
@@ -1833,7 +1751,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               hasUserData: !!child.userData,
               userDataKeys: Object.keys(child.userData || {})
             });
-    }
             
             if (child.userData.category === partType && !child.userData.isPreview) {
               foundMeshes++;
@@ -1849,27 +1766,19 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                 child.material.color.setHex(color);
                 child.material.needsUpdate = true;
                 coloredMeshes++;
-                if (import.meta.env.DEV) {
-                  if (import.meta.env.DEV) console.log(`? Applied color to ${partType}: ${child.name || 'unnamed'}`);
-                }
+                if (import.meta.env.DEV) console.log(`? Applied color to ${partType}: ${child.name || 'unnamed'}`);
               } else {
-                if (import.meta.env.DEV) {
-                  if (import.meta.env.DEV) console.log(`?? Material not MeshStandardMaterial for ${partType}: ${child.name || 'unnamed'}`);
-                }
+                if (import.meta.env.DEV) console.log(`?? Material not MeshStandardMaterial for ${partType}: ${child.name || 'unnamed'}`);
               }
             }
           }
         });
         
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? Summary for ${partType}: Found ${foundMeshes} meshes, colored ${coloredMeshes}`);
-    }
+    if (import.meta.env.DEV) console.log(`?? Summary for ${partType}: Found ${foundMeshes} meshes, colored ${coloredMeshes}`);
       } else {
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('? Model group not available');
-    }
+    if (import.meta.env.DEV) console.log('? Model group not available');
       }
     },
      applyColorToAllParts: (color: number) => {
@@ -1992,46 +1901,35 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
            setEdgeDetectionActive(true);
          } else {
                // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('? Model group or scene not available');
-    }
+    if (import.meta.env.DEV) console.log('? Model group or scene not available');
          }
        }
      },
-    setComposer: (/*newComposer: EffectComposer | null*/) => {
-      // setComposer(newComposer); // This line was removed from useThreeScene
+    setComposer: (_composer: EffectComposer | null) => {
+      // no-op: composer is managed internally
      },
     debugMeshes: () => {
       if (modelGroupRef.current) {
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('?? DEBUG: All meshes in model group:');
-    }
+    if (import.meta.env.DEV) console.log('?? DEBUG: All meshes in model group:');
         let meshCount = 0;
         modelGroupRef.current.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             meshCount++;
-                // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? Mesh ${meshCount}:`, {
+            if (import.meta.env.DEV) console.log(`?? Mesh ${meshCount}:`, {
               name: child.name,
               userData: child.userData,
               materialType: child.material?.constructor?.name,
               parentName: child.parent?.name,
               parentUserData: child.parent?.userData
             });
-    }
           }
         });
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log(`?? Total meshes found: ${meshCount}`);
-    }
+    if (import.meta.env.DEV) console.log(`?? Total meshes found: ${meshCount}`);
       } else {
             // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.log('? DEBUG: Model group not available');
-    }
+    if (import.meta.env.DEV) console.log('? DEBUG: Model group not available');
       }
     },
     debugAvailableParts: () => {

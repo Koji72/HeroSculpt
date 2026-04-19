@@ -35,7 +35,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
   const lastPartsRef = useRef<SelectedParts>({});
   const changesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [recentChanges, setRecentChanges] = useState<{
-    statChanges: Partial<any>;
+    statChanges: Partial<Record<string, number>>;
     newAbilities: string[];
     removedAbilities: string[];
   } | null>(null);
@@ -90,7 +90,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
     if (changedParts.length === 0 && removedParts.length === 0) return null;
     
     // Calcular impacto del cambio
-    let totalStatChanges: Partial<any> = {};
+    let totalStatChanges: Record<string, number> = {};
     let totalNewAbilities: string[] = [];
     let totalRemovedAbilities: string[] = [];
     

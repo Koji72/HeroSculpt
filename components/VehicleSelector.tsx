@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { VehiclePart, VehicleType, VehicleSize, VehiclePosition } from '../types';
+import { VehiclePart, VehicleType, VehicleSize, VehiclePosition, ExtendedPartCategory, ArchetypeId, PartCategory } from '../types';
+
+const VEHICLE_CATEGORY = ExtendedPartCategory.VEHICLE as unknown as PartCategory;
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
 import { useLang, t } from '../lib/i18n';
@@ -17,8 +19,8 @@ const SAMPLE_VEHICLES: VehiclePart[] = [
   {
     id: 'vehicle_car_01',
     name: 'Supercar Turbo',
-    category: 'VEHICLE' as any,
-    archetype: 'TECH' as any,
+    category: VEHICLE_CATEGORY,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/vehicles/car/supercar_turbo.glb',
     priceUSD: 4.99,
     compatible: [],
@@ -36,8 +38,8 @@ const SAMPLE_VEHICLES: VehiclePart[] = [
   {
     id: 'vehicle_motorcycle_01',
     name: 'Cyber Bike',
-    category: 'VEHICLE' as any,
-    archetype: 'SPEEDSTER' as any,
+    category: VEHICLE_CATEGORY,
+    archetype: ArchetypeId.SPEEDSTER,
     gltfPath: '/assets/vehicles/motorcycle/cyber_bike.glb',
     priceUSD: 3.99,
     compatible: [],
@@ -55,8 +57,8 @@ const SAMPLE_VEHICLES: VehiclePart[] = [
   {
     id: 'vehicle_hoverboard_01',
     name: 'Hover Board Pro',
-    category: 'VEHICLE' as any,
-    archetype: 'TECH' as any,
+    category: VEHICLE_CATEGORY,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/vehicles/hoverboard/hover_board_pro.glb',
     priceUSD: 2.99,
     compatible: [],
@@ -74,8 +76,8 @@ const SAMPLE_VEHICLES: VehiclePart[] = [
   {
     id: 'vehicle_spaceship_01',
     name: 'Star Cruiser',
-    category: 'VEHICLE' as any,
-    archetype: 'TECH' as any,
+    category: VEHICLE_CATEGORY,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/vehicles/spaceship/star_cruiser.glb',
     priceUSD: 6.99,
     compatible: [],
@@ -93,8 +95,8 @@ const SAMPLE_VEHICLES: VehiclePart[] = [
   {
     id: 'vehicle_jetpack_01',
     name: 'Jet Pack Elite',
-    category: 'VEHICLE' as any,
-    archetype: 'TECH' as any,
+    category: VEHICLE_CATEGORY,
+    archetype: ArchetypeId.TECH,
     gltfPath: '/assets/vehicles/jetpack/jet_pack_elite.glb',
     priceUSD: 2.49,
     compatible: [],

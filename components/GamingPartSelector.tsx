@@ -5,6 +5,7 @@ import { Part, PartCategory, ArchetypeId } from '../types';
 import { GlassPanel } from './ui/glass-panel';
 import { GamingButton } from './ui/gaming-button';
 import { hudNotify } from './ui/hud-notification';
+import { useLang, t } from '../lib/i18n';
 
 interface GamingPartSelectorProps {
   parts: Part[];
@@ -23,6 +24,7 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
   onSelectPart,
   onClose
 }) => {
+  const { lang } = useLang();
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -48,10 +50,10 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-xl font-bold text-white mb-1">
-              Seleccionar {category}
+              {t('gaming_selector.title', lang)} {category}
             </h2>
             <p className="text-sm text-white/60">
-              {filteredParts.length} partes disponibles
+              {filteredParts.length} {t('gaming_selector.parts_available', lang)}
             </p>
           </div>
           <GamingButton
@@ -71,7 +73,7 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40" size={18} />
             <input
               type="text"
-              placeholder="Buscar partes..."
+              placeholder={t('gaming_selector.search_placeholder', lang)}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full backdrop-blur-sm bg-black/30 border-white/20 text-white focus:border-blue-500/50 rounded-lg focus:outline-none transition-colors pl-10 pr-4 py-3 border 
@@ -103,7 +105,7 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
               icon={Filter}
               onClick={() => setShowFilters(!showFilters)}
             >
-              Filtros
+              {t('gaming_selector.filters_btn', lang)}
             </GamingButton>
           </div>
         </div>
@@ -117,11 +119,11 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
               exit={{ opacity: 0, height: 0 }}
               className="mb-6 p-4 bg-black/20 border border-white/10 rounded-lg"
             >
-              <div className="text-sm text-white/60 mb-2">Filtros adicionales</div>
+              <div className="text-sm text-white/60 mb-2">{t('gaming_selector.additional_filters', lang)}</div>
               <div className="flex gap-2">
-                <GamingButton variant="ghost" size="sm">Precio</GamingButton>
-                <GamingButton variant="ghost" size="sm">Compatibilidad</GamingButton>
-                <GamingButton variant="ghost" size="sm">Rareza</GamingButton>
+                <GamingButton variant="ghost" size="sm">{t('gaming_selector.filter_price', lang)}</GamingButton>
+                <GamingButton variant="ghost" size="sm">{t('gaming_selector.filter_compat', lang)}</GamingButton>
+                <GamingButton variant="ghost" size="sm">{t('gaming_selector.filter_rarity', lang)}</GamingButton>
               </div>
             </motion.div>
           )}
@@ -131,9 +133,9 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
         <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20">
           {filteredParts.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-white/40 mb-2">No se encontraron partes</div>
+              <div className="text-white/40 mb-2">{t('gaming_selector.no_parts', lang)}</div>
               <div className="text-sm text-white/30">
-                Intenta cambiar los términos de búsqueda
+                {t('gaming_selector.no_parts_hint', lang)}
               </div>
             </div>
           ) : (
@@ -199,10 +201,10 @@ const GamingPartSelector: React.FC<GamingPartSelectorProps> = ({
         {/* Footer */}
         <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
           <div className="text-sm text-white/60">
-            {selectedPartIds.length > 0 && `${selectedPartIds.length} seleccionadas`}
+            {selectedPartIds.length > 0 && `${selectedPartIds.length} ${t('gaming_selector.selected', lang)}`}
           </div>
           <GamingButton variant="secondary" onClick={onClose}>
-            Close
+            {t('gaming_selector.close', lang)}
           </GamingButton>
         </div>
       </div>

@@ -90,7 +90,7 @@ const CircularCategoryMenu: React.FC<CircularCategoryMenuProps> = ({
         style={{
           clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)'
         }}
-        title="Close menu"
+        title={t('menu.close_menu', lang)}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-200" />
         <X className="h-5 w-5 relative z-10" />

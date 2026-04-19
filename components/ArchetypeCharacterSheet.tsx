@@ -188,8 +188,8 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                     </h4>
                     
                     <div className="flex flex-wrap gap-2">
-                      {archetype.famousExamples.map((example, index) => (
-                        <span key={index} className="text-xs bg-slate-700/50 text-slate-300 px-2 py-1 rounded border border-slate-600/50">
+                      {archetype.famousExamples.map((example) => (
+                        <span key={example} className="text-xs bg-slate-700/50 text-slate-300 px-2 py-1 rounded border border-slate-600/50">
                           {example}
                         </span>
                       ))}
@@ -204,8 +204,8 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                     </h4>
                     
                     <div className="flex flex-wrap gap-2">
-                      {archetype.associatedFactions.map((faction, index) => (
-                        <span key={index} className="text-xs bg-gradient-to-r from-orange-500/20 to-red-600/20 text-orange-400 px-2 py-1 rounded border border-orange-400/30">
+                      {archetype.associatedFactions.map((faction) => (
+                        <span key={faction} className="text-xs bg-gradient-to-r from-orange-500/20 to-red-600/20 text-orange-400 px-2 py-1 rounded border border-orange-400/30">
                           {faction.replace('_', ' ')}
                         </span>
                       ))}

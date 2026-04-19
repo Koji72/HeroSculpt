@@ -686,7 +686,7 @@ const createXMenLegend = (api: CharacterViewerRef) => {
     opacity: 0.45,
     emissive: new THREE.Color(0xff32b7),
     emissiveIntensity: 2.7,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
 
   const matMap: Array<[THREE.Material, PartCategory]> = [
     // Suit blue on main body
@@ -965,7 +965,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
 
   // Optional FX: magenta point light near hands/cards (no fog by default)
   try {
-    const scene = (api as any)?.getScene?.();
+    const scene = api.getScene();
     if (scene) {
       const prev = scene.getObjectByName('cardsLight');
       if (prev && prev.parent) { prev.parent.remove(prev); }
@@ -974,7 +974,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
       cardsLight.position.set(0.6, 1.2, 0.8);
       scene.add(cardsLight);
       // Clear any previous fog that could darken/tint the scene excessively
-      if (scene.fog) { (scene as any).fog = null; }
+      if (scene.fog) { scene.fog = null; }
       // Optional: very subtle fog can be enabled by user later if desired
     }
   } catch {}
@@ -988,7 +988,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
     clearcoatRoughness: 0.3,
     normalScale: new THREE.Vector2(1.2, 1.2),
     aoMapIntensity: 1.3,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   const spandexGreen = new THREE.MeshPhysicalMaterial({
     color: 0x127c47, // darker
     metalness: 0.02,
@@ -1000,7 +1000,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
     sheenRoughness: 0.8,
     normalScale: new THREE.Vector2(0.8, 0.8),
     aoMapIntensity: 1.1,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   const spandexYellow = new THREE.MeshPhysicalMaterial({
     color: 0xD4A320, // darker
     metalness: 0.0,
@@ -1012,7 +1012,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
     sheenRoughness: 0.7,
     normalScale: new THREE.Vector2(0.6, 0.6),
     aoMapIntensity: 1.0,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   const purplePanel = new THREE.MeshStandardMaterial({
     color: 0x5f2aa6, // darker, muted
     metalness: 0.1,
@@ -1032,7 +1032,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
     clearcoat: 0.08, // very subtle surface
     normalScale: new THREE.Vector2(0.7, 0.7),
     aoMapIntensity: 1.1,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   const metalSmall = new THREE.MeshPhysicalMaterial({
     color: 0xB0BBC2,
     metalness: 0.85, // more metallic
@@ -1042,7 +1042,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
     normalScale: new THREE.Vector2(1.1, 1.1), // subtle scratches
     aoMapIntensity: 1.2,
     ior: 2.4, // metallic IOR
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   const fxMagenta = new THREE.MeshPhysicalMaterial({
     color: 0xCC278F, // darker
     metalness: 0.0,
@@ -1058,7 +1058,7 @@ const createGambitRogue = (api: CharacterViewerRef) => {
     clearcoatRoughness: 0.05,
     normalScale: new THREE.Vector2(0.3, 0.3), // subtle surface variation
     aoMapIntensity: 0.8, // less AO for glowing effect
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
 
   // Map to our categories (approximation for duo theme)
   const matMap: Array<[THREE.Material, PartCategory]> = [
@@ -1127,7 +1127,7 @@ const createEmeraldChampion = (api: CharacterViewerRef) => {
     roughness: 0.13,
     emissive: new THREE.Color(0x47ff8b),
     emissiveIntensity: 1.8,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
 
   const matMap: Array<[THREE.Material, PartCategory]> = [
     [suitGreen, PartCategory.TORSO],
@@ -1164,7 +1164,7 @@ const createCitadelStyle = (api: CharacterViewerRef) => {
     clearcoatRoughness: 0.2,
     normalScale: new THREE.Vector2(1.5, 1.5), // Strong edge definition
     aoMapIntensity: 1.8, // Heavy recess shading
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   
   const clothRed = new THREE.MeshPhysicalMaterial({
     color: 0x8B1A1A, // Khorne Red base
@@ -1175,7 +1175,7 @@ const createCitadelStyle = (api: CharacterViewerRef) => {
     sheenRoughness: 0.8,
     normalScale: new THREE.Vector2(1.2, 1.2),
     aoMapIntensity: 2.0, // Deep fabric recesses
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   
   const gold = new THREE.MeshPhysicalMaterial({
     color: 0xDAA520, // Retributor Armor base
@@ -1187,7 +1187,7 @@ const createCitadelStyle = (api: CharacterViewerRef) => {
     emissiveIntensity: 0.1, // Subtle glow on edges
     normalScale: new THREE.Vector2(1.3, 1.3),
     aoMapIntensity: 1.5,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   
   const matMap: Array<[THREE.Material, PartCategory]> = [
     [armorMetal, PartCategory.HEAD],
@@ -1227,7 +1227,7 @@ const createVallejo = (api: CharacterViewerRef) => {
     sheenRoughness: 0.7,
     normalScale: new THREE.Vector2(1.8, 1.8), // Maximum detail
     aoMapIntensity: 2.2, // Very dark recesses
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   
   const leatherBrown = new THREE.MeshPhysicalMaterial({
     color: 0x3D2914, // Burnt Umber base
@@ -1236,7 +1236,7 @@ const createVallejo = (api: CharacterViewerRef) => {
     clearcoat: 0.1,
     normalScale: new THREE.Vector2(2.0, 2.0), // Heavy texture
     aoMapIntensity: 2.5, // Deep leather creases
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   
   const gunMetal = new THREE.MeshPhysicalMaterial({
     color: 0x2C3539, // Gun Metal base
@@ -1246,7 +1246,7 @@ const createVallejo = (api: CharacterViewerRef) => {
     clearcoatRoughness: 0.3,
     normalScale: new THREE.Vector2(1.6, 1.6),
     aoMapIntensity: 1.8,
-  } as any);
+  } as THREE.MeshPhysicalMaterialParameters);
   
   const matMap: Array<[THREE.Material, PartCategory]> = [
     [gunMetal, PartCategory.HEAD],
@@ -1316,7 +1316,7 @@ const SKINS: SkinPreset[] = [
         emissiveIntensity: 0.15, // subtle glow
         normalScale: new THREE.Vector2(0.8, 0.8),
         aoMapIntensity: 1.0,
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
       const chrome = new THREE.MeshPhysicalMaterial({ 
         color: 0xf0f0f0, 
         roughness: 0.02, 
@@ -1326,7 +1326,7 @@ const SKINS: SkinPreset[] = [
         ior: 2.8, // high metallic IOR
         normalScale: new THREE.Vector2(0.5, 0.5), // polished surface
         aoMapIntensity: 0.8,
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
       const boots = new THREE.MeshPhysicalMaterial({ 
         color: 0x4c2a85, 
         roughness: 0.25, 
@@ -1337,7 +1337,7 @@ const SKINS: SkinPreset[] = [
         emissiveIntensity: 0.1,
         normalScale: new THREE.Vector2(1.0, 1.0),
         aoMapIntensity: 1.1,
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
       const matMap: Array<[THREE.Material, PartCategory]> = [
         [suit, PartCategory.TORSO], [suit, PartCategory.SUIT_TORSO], [suit, PartCategory.LOWER_BODY], [suit, PartCategory.CAPE],
         [boots, PartCategory.BOOTS], [chrome, PartCategory.SYMBOL], [chrome, PartCategory.BELT], [chrome, PartCategory.BUCKLE]
@@ -1459,7 +1459,7 @@ const SKINS: SkinPreset[] = [
         opacity: 0.5,
         emissive: new THREE.Color(0xff32b7),
         emissiveIntensity: 2.8,
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
 
       const matMap: Array<[THREE.Material, PartCategory]> = [
         [suitBlueDark, PartCategory.TORSO],
@@ -1523,7 +1523,7 @@ const SKINS: SkinPreset[] = [
         ior: 2.8, // chrome IOR
         normalScale: new THREE.Vector2(0.7, 0.7), // subtle brushed texture
         aoMapIntensity: 0.9, // less AO for reflective surface
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
       const redSuit = new THREE.MeshPhysicalMaterial({
         color: 0x8A2828,
         metalness: 0.1,
@@ -1533,7 +1533,7 @@ const SKINS: SkinPreset[] = [
         sheenRoughness: 0.7,
         normalScale: new THREE.Vector2(0.8, 0.8),
         aoMapIntensity: 1.1,
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
       const yellowSuit = new THREE.MeshPhysicalMaterial({
         color: 0xF6A623,
         metalness: 0.0,
@@ -1545,7 +1545,7 @@ const SKINS: SkinPreset[] = [
         sheenRoughness: 0.6,
         normalScale: new THREE.Vector2(0.6, 0.6),
         aoMapIntensity: 1.0,
-      } as any);
+      } as THREE.MeshPhysicalMaterialParameters);
       const belt = new THREE.MeshStandardMaterial({
         color: 0x3B2415,
         metalness: 0.0,

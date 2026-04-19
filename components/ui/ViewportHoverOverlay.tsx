@@ -62,7 +62,7 @@ export const ViewportHoverOverlay: React.FC<ViewportHoverOverlayProps> = ({ view
           return;
         }
 
-        let node: any = hit;
+        let node: THREE.Object3D | null = hit;
         let foundCategory: PartCategory | null = null;
         while (node && !foundCategory) {
           if (node.userData?.category) foundCategory = node.userData.category as PartCategory;
@@ -79,7 +79,7 @@ export const ViewportHoverOverlay: React.FC<ViewportHoverOverlayProps> = ({ view
           clearOutline();
           try {
             const meshes: THREE.Mesh[] = [];
-            (hit as any).traverse?.((child: any) => {
+            hit.traverse((child: THREE.Object3D) => {
               if (child instanceof THREE.Mesh && child.geometry) meshes.push(child);
             });
             if (meshes.length === 0 && hit instanceof THREE.Mesh && hit.geometry) meshes.push(hit as THREE.Mesh);

@@ -14,7 +14,6 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
   onSelectCategory,
   activeCategory,
   isExpanded,
-  onToggle,
   submenuPosition
 }) => {
   const { lang } = useLang();
