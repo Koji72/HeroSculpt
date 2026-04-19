@@ -10,7 +10,7 @@ interface ShoppingCartProps {
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onClearCart: () => void;
   onCheckout: (items: CartItem[]) => Promise<void>;
-  onAddCurrentConfig: (configuration: SelectedParts) => void;
+  onAddCurrentConfig: () => void;
   currentConfiguration: SelectedParts;
   onEditCategory?: (category: PartCategory) => void;
   user?: { id: string; email?: string } | null;
@@ -299,6 +299,22 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
 
         {/* Footer CTAs */}
         <div style={{ padding: '10px 12px', borderTop: '1px solid var(--color-border)' }}>
+          {configParts.length > 0 && (
+            <button
+              onClick={onAddCurrentConfig}
+              style={{
+                width: '100%', padding: '8px',
+                background: 'rgba(216,162,58,0.12)',
+                border: '1.5px solid var(--color-accent)',
+                borderRadius: 'var(--radius)',
+                fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1.5,
+                color: 'var(--color-accent)', cursor: 'pointer',
+                marginBottom: 6,
+              }}
+            >
+              {t('cart.add_build', lang)}
+            </button>
+          )}
           {isAuthenticated ? (
             <button
               onClick={handleCheckout}

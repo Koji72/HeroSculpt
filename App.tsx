@@ -2272,6 +2272,24 @@ const AppContent: React.FC = () => {
           )}
         </div>
 
+        {/* Save Hero CTA */}
+        {Object.keys(selectedParts).length > 0 && (
+          <>
+            <div style={{ width: 1, height: 28, background: 'rgba(71, 85, 105, 0.45)' }} />
+            <button
+              type="button"
+              onClick={() => {
+                handleAddToCart(selectedParts, selectedArchetype?.toString(), characterName);
+                setIsCartOpen(true);
+              }}
+              title={t('cart.save_hero', lang)}
+              style={{ padding: '5px 14px', background: 'var(--color-accent)', border: '1px solid rgba(216,162,58,0.7)', borderRadius: '6px', color: '#09090f', fontSize: 11, fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+            >
+              💾 {t('cart.save_hero', lang)}
+            </button>
+          </>
+        )}
+
         {/* Help button */}
         <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
           <button
@@ -2408,7 +2426,7 @@ const AppContent: React.FC = () => {
         onUpdateQuantity={handleUpdateCartQuantity}
         onClearCart={handleClearCart}
         onCheckout={handleCartCheckout}
-        onAddCurrentConfig={handleAddToCart}
+        onAddCurrentConfig={() => handleAddToCart(selectedParts, selectedArchetype?.toString(), characterName)}
         currentConfiguration={selectedParts}
         onEditCategory={handleEditCategory}
         isAuthenticated={isAuthenticated}
