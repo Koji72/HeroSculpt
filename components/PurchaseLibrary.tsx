@@ -65,7 +65,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
 
   // ✅ FUNCIÓN DE FALLBACK: Cargar configuración directamente desde purchase_items
   const loadFallbackConfiguration = async (purchaseId: string, itemId: string) => {
-    console.log('🔄 loadFallbackConfiguration: Intentando carga directa...');
+    if (import.meta.env.DEV) console.log('🔄 loadFallbackConfiguration: Intentando carga directa...');
     
     try {
       // Importar supabase dinámicamente
@@ -98,7 +98,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
         return null;
       }
       
-      console.log('✅ Fallback exitoso, configuración encontrada');
+      if (import.meta.env.DEV) console.log('✅ Fallback exitoso, configuración encontrada');
       return data.configuration_data;
       
     } catch (error) {
@@ -283,7 +283,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="panel-box" style={{ width: 520, maxWidth: '95vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>

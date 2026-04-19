@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Part, PartCategory, ArchetypeId, SelectedParts } from '../types';
 import { ALL_PARTS, createNonePart } from '../constants';
 import PartItemCard from './PartItemCard';
-import { getCategoryName, assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveBootsForTorso, assignAdaptiveCapeForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso } from '../lib/utils';
+import { getCategoryName, assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveBootsForTorso, assignAdaptiveCapeForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso, assignAdaptiveChestBeltForTorso } from '../lib/utils';
 import { XMarkIcon /*, CheckIcon, RotateCcwIcon*/ } from './icons';
 import { useLang, t } from '../lib/i18n';
 
@@ -175,7 +175,24 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         const currentSuit = selectedParts[PartCategory.SUIT_TORSO];
         if (currentSuit) withSuit[PartCategory.SUIT_TORSO] = currentSuit;
         newPreviewParts = assignAdaptiveSuitTorsoForTorso(part, afterCape, withSuit);
-        
+
+        // Adapt chest belt to the new torso (replace with compatible variant or clear if none)
+        const withChestBelt = { ...newPreviewParts };
+        const currentChestBelt = selectedParts[PartCategory.CHEST_BELT];
+        if (currentChestBelt) withChestBelt[PartCategory.CHEST_BELT] = currentChestBelt;
+        newPreviewParts = assignAdaptiveChestBeltForTorso(part, newPreviewParts, withChestBelt);
+
+        // Clear torso-specific parts that don't fit the newly selected torso
+        const newTorsoId = part.id;
+        ([PartCategory.BELT, PartCategory.FOREARMS,
+          PartCategory.SHOULDERS, PartCategory.POUCH, PartCategory.BUCKLE,
+          PartCategory.BACKPACK] as PartCategory[]).forEach(cat => {
+          const cur = newPreviewParts[cat];
+          if (cur && cur.compatible.length > 0 && !cur.compatible.includes(newTorsoId)) {
+            delete newPreviewParts[cat];
+          }
+        });
+
         // console.log('? TORSO SELECT: Updated preview state:', {
         //   allParts: Object.keys(newPreviewParts),
         //   torso: newPreviewParts[activeCategory]?.id || 'removed',
@@ -355,10 +372,24 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         const withSuit = { ...afterCape };
         const currentSuit = selectedParts[PartCategory.SUIT_TORSO];
         if (currentSuit) withSuit[PartCategory.SUIT_TORSO] = currentSuit;
-        hoverPreviewParts = {
-          ...assignAdaptiveSuitTorsoForTorso(partToDisplay, afterCape, withSuit),
-          [activeCategory]: partToDisplay
-        };
+        const suitAssigned = assignAdaptiveSuitTorsoForTorso(partToDisplay, afterCape, withSuit);
+
+        // Adapt chest belt to the hovered torso
+        const withChestBeltHover = { ...suitAssigned };
+        const currentChestBeltHover = selectedParts[PartCategory.CHEST_BELT];
+        if (currentChestBeltHover) withChestBeltHover[PartCategory.CHEST_BELT] = currentChestBeltHover;
+        const afterChestBelt = assignAdaptiveChestBeltForTorso(partToDisplay, suitAssigned, withChestBeltHover);
+
+        const hoverTorsoId = partToDisplay.id;
+        ([PartCategory.BELT, PartCategory.FOREARMS,
+          PartCategory.SHOULDERS, PartCategory.POUCH, PartCategory.BUCKLE,
+          PartCategory.BACKPACK] as PartCategory[]).forEach(cat => {
+          const cur = afterChestBelt[cat];
+          if (cur && cur.compatible.length > 0 && !cur.compatible.includes(hoverTorsoId)) {
+            delete afterChestBelt[cat];
+          }
+        });
+        hoverPreviewParts = { ...afterChestBelt, [activeCategory]: partToDisplay };
       } else {
         // Si es "none" torso, asegurar que las dependencias tambi�n se eliminan del preview
         delete hoverPreviewParts[PartCategory.TORSO];
