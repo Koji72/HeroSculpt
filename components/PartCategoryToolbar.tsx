@@ -89,10 +89,10 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
 
   const sidebarBtnStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
     position: 'relative',
-    width: '60px',
-    padding: '8px 4px 9px',
-    background: isActive ? 'rgba(216, 162, 58, 0.08)' : 'rgba(19, 19, 31, 0.58)',
-    border: `1px solid ${isActive ? 'rgba(216, 162, 58, 0.42)' : 'rgba(71, 85, 105, 0.46)'}`,
+    width: '64px',
+    padding: '9px 4px 10px',
+    background: isActive ? 'rgba(216, 162, 58, 0.13)' : 'rgba(30, 42, 64, 0.82)',
+    border: `1px solid ${isActive ? 'rgba(216, 162, 58, 0.55)' : 'rgba(100, 120, 160, 0.55)'}`,
     borderRadius: '8px',
     cursor: 'pointer',
     display: 'flex',
@@ -100,15 +100,15 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     alignItems: 'center',
     gap: 6,
     transition: 'background 0.12s, border-color 0.12s, transform 0.12s',
-    boxShadow: isActive ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'none',
+    boxShadow: isActive ? '0 0 10px rgba(216,162,58,0.15), inset 0 0 0 1px rgba(255,255,255,0.06)' : '0 2px 8px rgba(0,0,0,0.35)',
   });
 
   const iconBoxStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
-    width: 28,
-    height: 28,
-    background: isActive ? 'rgba(216, 162, 58, 0.12)' : 'rgba(30, 41, 59, 0.9)',
-    borderRadius: 6,
-    border: isActive ? '1px solid rgba(216, 162, 58, 0.24)' : '1px solid rgba(71, 85, 105, 0.28)',
+    width: 32,
+    height: 32,
+    background: isActive ? 'rgba(216, 162, 58, 0.16)' : 'rgba(50, 68, 100, 0.85)',
+    borderRadius: 7,
+    border: isActive ? '1px solid rgba(216, 162, 58, 0.35)' : '1px solid rgba(100, 130, 180, 0.40)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -118,9 +118,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
   const labelStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
     fontFamily: 'var(--font-body)',
     fontWeight: 700,
-    fontSize: 9,
-    letterSpacing: '1px',
-    color: isActive ? 'var(--color-accent)' : 'var(--color-text-faint)',
+    fontSize: 10,
+    letterSpacing: '0.8px',
+    color: isActive ? 'var(--color-accent)' : 'rgba(180, 200, 230, 0.85)',
     textAlign: 'center',
     textTransform: 'uppercase',
     lineHeight: 1.15,
@@ -182,7 +182,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         style={sidebarBtnStyle(isTorsoOrSubActive)}
       >
         <div style={iconBoxStyle(isTorsoOrSubActive)}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isTorsoOrSubActive ? 'var(--color-accent)' : 'var(--color-text-faint)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isTorsoOrSubActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 7H4l2 13h12l2-13z" />
             <path d="M12 7V4" />
             <circle cx="12" cy="3" r="1" />
@@ -207,7 +207,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         style={sidebarBtnStyle(isBeltOrSubActive)}
       >
         <div style={iconBoxStyle(isBeltOrSubActive)}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isBeltOrSubActive ? 'var(--color-accent)' : 'var(--color-text-faint)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isBeltOrSubActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="9" width="20" height="6" rx="2" />
             <rect x="10" y="10" width="4" height="4" rx="1" />
           </svg>
@@ -231,7 +231,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
         style={sidebarBtnStyle(isLowerBodyOrSubActive)}
       >
         <div style={iconBoxStyle(isLowerBodyOrSubActive)}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isLowerBodyOrSubActive ? 'var(--color-accent)' : 'var(--color-text-faint)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isLowerBodyOrSubActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 4h12l1 8H5L6 4z" />
             <path d="M8 12v8M16 12v8" />
           </svg>
@@ -259,7 +259,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
             style={sidebarBtnStyle(isActive)}
           >
             <div style={iconBoxStyle(isActive)}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isActive ? 'var(--color-accent)' : 'var(--color-text-faint)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 4h6a2 2 0 012 2v1H7V6a2 2 0 012-2z" />
                 <rect x="3" y="7" width="18" height="14" rx="2" />
                 <path d="M9 11h6" />
@@ -293,10 +293,10 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
               <span
                     style={{
                       fontFamily: 'var(--font-body)',
-                      fontSize: 11,
+                      fontSize: 12,
                       letterSpacing: 0.8,
                       fontWeight: 700,
-                      color: isActive ? 'var(--color-accent)' : 'var(--color-text-faint)',
+                      color: isActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)',
                     }}
                   >
                     {labelText.slice(0, 2)}

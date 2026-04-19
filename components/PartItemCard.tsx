@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Part } from '../types';
 import { X } from 'lucide-react';
+import { useLang, t } from '../lib/i18n';
 
 interface PartItemCardProps {
   part: Part;
@@ -18,6 +19,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
   favoriteIds = new Set(),
   onToggleFavorite,
 }) => {
+  const { lang } = useLang();
   const [hovered, setHovered] = useState(false);
   const isNonePart = part.attributes?.none === true;
   const isTorso = part.category === 'TORSO' || part.category === 'SUIT_TORSO';
@@ -83,7 +85,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
             transition: 'color 0.1s, transform 0.1s',
             transform: isFavorite ? 'scale(1.2)' : 'scale(1)',
           }}
-          title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          title={isFavorite ? t('part.remove_fav', lang) : t('part.add_fav', lang)}
         >
           {isFavorite ? '♥' : '♡'}
         </button>
@@ -150,7 +152,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
             {part.name}
           </div>
           <div style={{ fontFamily: 'var(--font-body)', fontSize: 9, color: isFree ? '#60a5fa' : isOwned ? '#22c55e' : 'var(--color-accent)', marginTop: 2 }}>
-            {isFree ? 'FREE' : isOwned ? '✓ OWNED' : premiumLabel + ' · PREMIUM'}
+            {isFree ? t('part.free', lang) : isOwned ? t('cart.owned', lang) : premiumLabel + ' · ' + t('part.premium', lang)}
           </div>
         </div>
       )}
@@ -165,7 +167,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
               background: 'rgba(59,130,246,0.25)', color: '#60a5fa',
               border: '1px solid rgba(59,130,246,0.4)',
               padding: '1px 3px', borderRadius: 'var(--radius)',
-            }}>FREE</span>
+            }}>{t('part.free', lang)}</span>
           )}
           {isOwned && (
             <span style={{
@@ -174,7 +176,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
               background: 'rgba(34,197,94,0.2)', color: '#22c55e',
               border: '1px solid rgba(34,197,94,0.4)',
               padding: '1px 3px', borderRadius: 'var(--radius)',
-            }}>✓ MÍO</span>
+            }}>{t('part.owned', lang)}</span>
           )}
           {isPremium && (
             <span style={{
@@ -198,7 +200,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
         textTransform: 'uppercase',
         lineHeight: 1.2,
       }}>
-        {isNonePart ? 'None' : part.name}
+        {isNonePart ? t('part.none', lang) : part.name}
       </span>
 
       {/* State sub-label below name */}
@@ -209,14 +211,14 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
               fontFamily: 'var(--font-comic)', fontSize: 7,
               color: 'var(--color-accent)', letterSpacing: '0.5px',
               textTransform: 'uppercase', marginTop: 1,
-            }}>PREMIUM</span>
+            }}>{t('part.premium', lang)}</span>
           )}
           {isOwned && (
             <span style={{
               fontFamily: 'var(--font-comic)', fontSize: 7,
               color: '#22c55e', letterSpacing: '0.5px',
               textTransform: 'uppercase', marginTop: 1,
-            }}>YA COMPRADO</span>
+            }}>{t('part.owned_sub', lang)}</span>
           )}
         </>
       )}
@@ -228,7 +230,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
           fontFamily: 'var(--font-comic)', fontSize: 7,
           color: 'var(--color-text-faint)', letterSpacing: '0.5px',
           textTransform: 'uppercase',
-        }}>TORSO</span>
+        }}>{t('part.torso_badge', lang)}</span>
       )}
     </div>
   );

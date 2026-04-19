@@ -83,7 +83,7 @@ export class HeadquartersService {
 
       return headquartersData;
     } catch (error) {
-      console.error('Error fetching headquarters data:', error);
+      if (import.meta.env.DEV) console.error('Error fetching headquarters data:', error);
       throw error;
     }
   }
@@ -135,7 +135,7 @@ export class HeadquartersService {
 
       return data;
     } catch (error) {
-      console.error('Error saving character:', error);
+      if (import.meta.env.DEV) console.error('Error saving character:', error);
       throw error;
     }
   }
@@ -161,7 +161,7 @@ export class HeadquartersService {
 
       return data;
     } catch (error) {
-      console.error('Error updating character:', error);
+      if (import.meta.env.DEV) console.error('Error updating character:', error);
       throw error;
     }
   }
@@ -180,7 +180,7 @@ export class HeadquartersService {
       // Limpiar cache
       this.cache.delete(`hq_data_${userId}`);
     } catch (error) {
-      console.error('Error deleting character:', error);
+      if (import.meta.env.DEV) console.error('Error deleting character:', error);
       throw error;
     }
   }
@@ -206,7 +206,7 @@ export class HeadquartersService {
 
       return data;
     } catch (error) {
-      console.error('Error updating mission:', error);
+      if (import.meta.env.DEV) console.error('Error updating mission:', error);
       throw error;
     }
   }
@@ -231,7 +231,7 @@ export class HeadquartersService {
 
       return data;
     } catch (error) {
-      console.error('Error sharing hero to gallery:', error);
+      if (import.meta.env.DEV) console.error('Error sharing hero to gallery:', error);
       throw error;
     }
   }
@@ -245,9 +245,9 @@ export class HeadquartersService {
       // Obtener datos frescos
       await this.getHeadquartersData(userId);
       
-      console.log('Data synchronized successfully');
+      if (import.meta.env.DEV) console.log('Data synchronized successfully');
     } catch (error) {
-      console.error('Error syncing data:', error);
+      if (import.meta.env.DEV) console.error('Error syncing data:', error);
       throw error;
     }
   }

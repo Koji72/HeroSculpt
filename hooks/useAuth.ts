@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
@@ -8,13 +8,15 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
+  // Supabase v2 fires SIGNED_IN immediately after PASSWORD_RECOVERY — this ref
+  // prevents that SIGNED_IN from clearing the recovery flag before the modal opens.
+  const recoveryInProgress = useRef(false);
 
   const isAuthenticated = useMemo(() => !!user, [user]);
 
   const handleAuthStateChange = useCallback((event: string, session: Session | null) => {
     if (event === 'PASSWORD_RECOVERY') {
-      // Don't treat recovery as a normal sign-in — just surface the flag so
-      // the app can open the reset-password modal instead of the main UI.
+      recoveryInProgress.current = true;
       setSession(session);
       setUser(session?.user ?? null);
       setIsPasswordRecovery(true);
@@ -22,6 +24,15 @@ export function useAuth() {
       return;
     }
 
+    if (event === 'SIGNED_IN' && recoveryInProgress.current) {
+      // This SIGNED_IN is the automatic sign-in from the recovery link — keep modal open.
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+      return;
+    }
+
+    recoveryInProgress.current = false;
     setIsPasswordRecovery(false);
     setSession(session);
     setUser(session?.user ?? null);
@@ -29,7 +40,10 @@ export function useAuth() {
     setLoading(false);
   }, []);
 
-  const clearPasswordRecovery = useCallback(() => setIsPasswordRecovery(false), []);
+  const clearPasswordRecovery = useCallback(() => {
+    recoveryInProgress.current = false;
+    setIsPasswordRecovery(false);
+  }, []);
 
   const signOut = useCallback(async () => {
     if (!supabase) {

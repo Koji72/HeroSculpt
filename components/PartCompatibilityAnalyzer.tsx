@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArchetypeId, SelectedParts } from '../types';
+import { useLang, t } from '../lib/i18n';
 import { 
   isOptimalPartCombination, 
   getRecommendedParts, 
@@ -30,17 +31,19 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
   selectedParts,
   onOptimize
 }) => {
+  const { lang } = useLang();
+
   if (!selectedArchetype) {
     return (
       <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Análisis de Compatibilidad
+            {t('compat.title', lang)}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-400">Selecciona un arquetipo para analizar la compatibilidad de las partes</p>
+          <p className="text-slate-400">{t('compat.no_archetype', lang)}</p>
         </CardContent>
       </Card>
     );
@@ -65,18 +68,18 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Resumen de Compatibilidad */}
+      {/* Compatibility Summary */}
       <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Análisis de Compatibilidad
+            {t('compat.title', lang)}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Puntuación */}
+          {/* Score */}
           <div className="flex items-center justify-between">
-            <span className="text-slate-300">Puntuación de Compatibilidad:</span>
+            <span className="text-slate-300">{t('compat.score', lang)}</span>
             <div className="flex items-center gap-2">
               {getCompatibilityIcon(compatibility.score)}
               <span className={`font-bold ${getCompatibilityColor(compatibility.score)}`}>
@@ -85,7 +88,7 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
             </div>
           </div>
 
-          {/* Estado */}
+          {/* Status */}
           <div className="flex items-center gap-2">
             {compatibility.isOptimal ? (
               <CheckCircle className="h-5 w-5 text-green-400" />
@@ -93,29 +96,29 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
               <AlertTriangle className="h-5 w-5 text-yellow-400" />
             )}
             <span className="text-slate-300">
-              {compatibility.isOptimal ? 'Combinación Óptima' : 'Necesita Mejoras'}
+              {compatibility.isOptimal ? t('compat.optimal', lang) : t('compat.needs_improvement', lang)}
             </span>
           </div>
 
-          {/* Botón de Optimización */}
+          {/* Optimize Button */}
           {!compatibility.isOptimal && onOptimize && (
-            <Button 
+            <Button
               onClick={onOptimize}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               <TrendingUp className="h-4 w-4 mr-2" />
-              Optimizar Combinación
+              {t('compat.optimize_btn', lang)}
             </Button>
           )}
         </CardContent>
       </Card>
 
-      {/* Partes Seleccionadas */}
+      {/* Selected Parts */}
       <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            Partes Seleccionadas
+            {t('compat.selected_parts', lang)}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -142,13 +145,13 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
         </CardContent>
       </Card>
 
-      {/* Sugerencias */}
+      {/* Suggestions */}
       {compatibility.suggestions.length > 0 && (
         <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Lightbulb className="h-5 w-5" />
-              Sugerencias de Optimización
+              {t('compat.suggestions', lang)}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -164,13 +167,13 @@ const PartCompatibilityAnalyzer: React.FC<PartCompatibilityAnalyzerProps> = ({
         </Card>
       )}
 
-      {/* Efectos Visuales Recomendados */}
+      {/* Recommended Visual Effects */}
       {visualEffects.length > 0 && (
         <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Zap className="h-5 w-5" />
-              Efectos Visuales Recomendados
+              {t('compat.visual_effects', lang)}
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Part, ArchetypeId } from '../types';
 import { ARCHETYPE_DATA } from '../lib/archetypeData';
+import { useLang, t } from '../lib/i18n';
 
 interface PurchaseConfirmationProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
   onExportGLB,
   onOpenLibrary,
 }) => {
+  const { lang } = useLang();
   const [name, setName] = useState(modelName);
   useEffect(() => { setName(modelName); }, [modelName]);
 
@@ -58,7 +60,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
         {/* Header */}
         <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: 'var(--font-comic)', fontSize: 16, letterSpacing: 2 }}>
-            🎯 ¡HÉROE GUARDADO!
+            {t('confirm.title', lang)}
           </span>
           <button
             onClick={onClose}
@@ -122,14 +124,14 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
 
             {/* Subtitle */}
             <div style={{ fontSize: 11, color: 'var(--color-text-muted)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 4 }}>
-              {archetypeTitle} · {purchasedParts.length} PARTES
+              {archetypeTitle} · {purchasedParts.length} {t('confirm.parts_count', lang)}
             </div>
           </div>
 
           {/* Parts list */}
           <div style={{ padding: '12px 16px' }}>
             <div style={{ fontSize: 10, color: 'var(--color-text-faint)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>
-              PARTES GUARDADAS
+              {t('confirm.saved_parts', lang)}
             </div>
             <div style={{ maxHeight: 180, overflowY: 'auto' }}>
               {purchasedParts.map((part) => (
@@ -144,7 +146,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
                       {getCategoryLabel(part.category)}
                     </div>
                   </div>
-                  <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 700 }}>✓ GUARDADO</span>
+                  <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 700 }}>{t('confirm.saved_badge', lang)}</span>
                 </div>
               ))}
             </div>
@@ -163,7 +165,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
                 fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2,
                 color: '#111', cursor: 'pointer',
               }}
-            >⬇ DESCARGAR GLB</button>
+            >{t('confirm.btn.download_glb', lang)}</button>
           )}
           <button
             onClick={() => { onOpenLibrary?.(); }}
@@ -175,7 +177,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
               fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1,
               color: 'var(--color-text-muted)', cursor: 'pointer',
             }}
-          >📚 VER EN BIBLIOTECA</button>
+          >{t('confirm.btn.view_library', lang)}</button>
           <button
             onClick={onClose}
             style={{
@@ -186,7 +188,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
               fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1,
               color: 'var(--color-text-muted)', cursor: 'pointer',
             }}
-          >🎲 SEGUIR PERSONALIZANDO</button>
+          >{t('confirm.btn.keep_customizing', lang)}</button>
         </div>
 
 

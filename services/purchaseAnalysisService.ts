@@ -47,7 +47,7 @@ export class PurchaseAnalysisService {
         .order('purchase_date', { ascending: false });
 
       if (error) {
-        console.error('Error fetching purchase history:', error);
+        if (import.meta.env.DEV) console.error('Error fetching purchase history:', error);
         return { userId, purchases: [] };
       }
 
@@ -60,7 +60,7 @@ export class PurchaseAnalysisService {
 
       return { userId, purchases };
     } catch (error) {
-      console.error('Error in getUserPurchaseHistory:', error);
+      if (import.meta.env.DEV) console.error('Error in getUserPurchaseHistory:', error);
       return { userId, purchases: [] };
     }
   }
@@ -72,8 +72,8 @@ export class PurchaseAnalysisService {
     currentConfiguration: SelectedParts,
     userHistory: UserPurchaseHistory
   ): PurchaseAnalysis {
-    console.log('🔍 Analizando configuración vs historial de compras...');
-    
+    if (import.meta.env.DEV) console.log('🔍 Analizando configuración vs historial de compras...');
+
     // Obtener todas las partes que el usuario ya ha comprado
     const allExistingParts: { [category: string]: Part } = {};
     let totalExistingValue = 0;
@@ -87,8 +87,8 @@ export class PurchaseAnalysisService {
       });
     });
 
-    console.log(`📦 Partes existentes encontradas: ${Object.keys(allExistingParts).length}`);
-    console.log(`💰 Valor total de partes existentes: $${totalExistingValue.toFixed(2)}`);
+    if (import.meta.env.DEV) console.log(`📦 Partes existentes encontradas: ${Object.keys(allExistingParts).length}`);
+    if (import.meta.env.DEV) console.log(`💰 Valor total de partes existentes: $${totalExistingValue.toFixed(2)}`);
 
     // Identificar partes nuevas y modificadas
     const newParts: { [category: string]: Part } = {};
@@ -105,7 +105,7 @@ export class PurchaseAnalysisService {
         // Parte completamente nueva
         newParts[category] = currentPart;
         totalNewValue += currentPart.priceUSD || 0;
-        console.log(`🆕 Nueva parte: ${category} - ${currentPart.name} ($${(currentPart.priceUSD || 0).toFixed(2)})`);
+        if (import.meta.env.DEV) console.log(`🆕 Nueva parte: ${category} - ${currentPart.name} ($${(currentPart.priceUSD || 0).toFixed(2)})`);
       } else if (existingPart.id !== currentPart.id) {
         // Parte modificada (diferente ID)
         modifiedParts[category] = {
@@ -113,10 +113,10 @@ export class PurchaseAnalysisService {
           new: currentPart
         };
         totalModifiedValue += currentPart.priceUSD || 0;
-        console.log(`🔄 Parte modificada: ${category} - ${existingPart.name} → ${currentPart.name} ($${(currentPart.priceUSD || 0).toFixed(2)})`);
+        if (import.meta.env.DEV) console.log(`🔄 Parte modificada: ${category} - ${existingPart.name} → ${currentPart.name} ($${(currentPart.priceUSD || 0).toFixed(2)})`);
       } else {
         // Parte idéntica (ya comprada)
-        console.log(`✅ Parte ya comprada: ${category} - ${currentPart.name}`);
+        if (import.meta.env.DEV) console.log(`✅ Parte ya comprada: ${category} - ${currentPart.name}`);
       }
     });
 
@@ -141,13 +141,15 @@ export class PurchaseAnalysisService {
       savingsPercentage
     };
 
-    console.log('\n📊 RESUMEN DEL ANÁLISIS:');
-    console.log(`   Partes existentes: ${Object.keys(allExistingParts).length}`);
-    console.log(`   Partes nuevas: ${Object.keys(newParts).length}`);
-    console.log(`   Partes modificadas: ${Object.keys(modifiedParts).length}`);
-    console.log(`   Valor total actual: $${totalCurrentValue.toFixed(2)}`);
-    console.log(`   Precio final: $${finalPrice.toFixed(2)}`);
-    console.log(`   Ahorro: $${savings.toFixed(2)} (${savingsPercentage.toFixed(1)}%)`);
+    if (import.meta.env.DEV) {
+      console.log('\n📊 RESUMEN DEL ANÁLISIS:');
+      console.log(`   Partes existentes: ${Object.keys(allExistingParts).length}`);
+      console.log(`   Partes nuevas: ${Object.keys(newParts).length}`);
+      console.log(`   Partes modificadas: ${Object.keys(modifiedParts).length}`);
+      console.log(`   Valor total actual: $${totalCurrentValue.toFixed(2)}`);
+      console.log(`   Precio final: $${finalPrice.toFixed(2)}`);
+      console.log(`   Ahorro: $${savings.toFixed(2)} (${savingsPercentage.toFixed(1)}%)`);
+    }
 
     return analysis;
   }

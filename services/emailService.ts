@@ -85,7 +85,7 @@ export class EmailService {
       return { success: true, configId };
 
     } catch (error) {
-      console.error('Error saving guest configuration:', error);
+      if (import.meta.env.DEV) console.error('Error saving guest configuration:', error);
       return { success: false, error: 'Error al guardar la configuración' };
     }
   }
@@ -144,15 +144,15 @@ export class EmailService {
       );
 
       if (response.status === 200) {
-        console.log('✅ Email enviado exitosamente:', response);
+        if (import.meta.env.DEV) console.log('✅ Email enviado exitosamente:', response);
         return { success: true };
       } else {
-        console.error('❌ Error al enviar email:', response);
+        if (import.meta.env.DEV) console.error('❌ Error al enviar email:', response);
         return { success: false, error: 'Error al enviar el email' };
       }
 
     } catch (error) {
-      console.error('Error sending email with EmailJS:', error);
+      if (import.meta.env.DEV) console.error('Error sending email with EmailJS:', error);
       
       // Fallback a simulación si EmailJS falla
       return this.sendSimulatedEmail(email, configuration, totalPrice, configId);
@@ -168,8 +168,8 @@ export class EmailService {
     totalPrice: number,
     configId: string
   ): Promise<{ success: boolean; error?: string }> {
-    console.log('\n🔶 MODO SIMULACIÓN - EmailJS no configurado');
-    console.log('══════════════════════════════════════════════');
+    if (import.meta.env.DEV) console.log('\n🔶 MODO SIMULACIÓN - EmailJS no configurado');
+    if (import.meta.env.DEV) console.log('══════════════════════════════════════════════');
     
     // Simular delay de envío
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -227,7 +227,7 @@ El equipo de Superhero 3D Customizer
     `;
 
     // NO loggear contenido completo del email por seguridad
-    console.log(`📧 Email simulado enviado a: ${email.substring(0, 3)}***@${email.split('@')[1]}`);
+    if (import.meta.env.DEV) console.log(`📧 Email simulado enviado a: ${email.substring(0, 3)}***@${email.split('@')[1]}`);
 
     // Simular éxito (90% éxito simulado)
     const success = Math.random() > 0.1;
@@ -264,7 +264,7 @@ El equipo de Superhero 3D Customizer
       return null;
 
     } catch (error) {
-      console.error('Error getting guest configuration:', error);
+      if (import.meta.env.DEV) console.error('Error getting guest configuration:', error);
       return null;
     }
   }
@@ -299,7 +299,7 @@ El equipo de Superhero 3D Customizer
       // La lógica de Supabase estaba comentada y se ha eliminado.
 
     } catch (error) {
-      console.error('Error cleaning up configurations:', error);
+      if (import.meta.env.DEV) console.error('Error cleaning up configurations:', error);
     }
   }
 

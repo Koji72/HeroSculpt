@@ -10,10 +10,10 @@ if (supabaseUrl && supabaseAnonKey) {
   try {
     supabase = createClient(supabaseUrl, supabaseAnonKey)
   } catch (error) {
-    console.warn('Error creating Supabase client:', error)
+    if (import.meta.env.DEV) console.warn('Error creating Supabase client:', error)
   }
 } else {
-  console.warn('Supabase environment variables not found. Authentication will be disabled.')
+  if (import.meta.env.DEV) console.warn('Supabase environment variables not found. Authentication will be disabled.')
 }
 
 // Supabase desactivado temporalmente - exportar el cliente o null

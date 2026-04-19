@@ -17,7 +17,7 @@ export class UserConfigService {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      console.error('Error de autenticación para guardar configuración:', authError?.message || 'Usuario no autenticado.');
+      if (import.meta.env.DEV) console.error('Error de autenticación para guardar configuración:', authError?.message || 'Usuario no autenticado.');
       throw new Error('Usuario no autenticado para guardar configuración.');
     }
 
@@ -35,7 +35,7 @@ export class UserConfigService {
       .single();
 
     if (error) {
-      console.error('Error saving configuration:', error);
+      if (import.meta.env.DEV) console.error('Error saving configuration:', error);
       throw error; // Propagar el error para manejo superior
     }
 
@@ -56,13 +56,13 @@ export class UserConfigService {
         .limit(100);
 
       if (error) {
-        console.error('Error fetching configurations:', error);
+        if (import.meta.env.DEV) console.error('Error fetching configurations:', error);
         return [];
       }
 
       return data || [];
     } catch (error) {
-      console.error('Error fetching configurations:', error);
+      if (import.meta.env.DEV) console.error('Error fetching configurations:', error);
       return [];
     }
   }
@@ -82,13 +82,13 @@ export class UserConfigService {
         .single();
 
       if (error) {
-        console.log('No last pose found for user:', userId);
+        if (import.meta.env.DEV) console.log('No last pose found for user:', userId);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error fetching last pose:', error);
+      if (import.meta.env.DEV) console.error('Error fetching last pose:', error);
       return null;
     }
   }
@@ -107,13 +107,13 @@ export class UserConfigService {
         .single();
 
       if (error) {
-        console.error('Error fetching configuration:', error);
+        if (import.meta.env.DEV) console.error('Error fetching configuration:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error fetching configuration:', error);
+      if (import.meta.env.DEV) console.error('Error fetching configuration:', error);
       return null;
     }
   }
@@ -136,13 +136,13 @@ export class UserConfigService {
         .single();
 
       if (error) {
-        console.error('Error updating configuration:', error);
+        if (import.meta.env.DEV) console.error('Error updating configuration:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error updating configuration:', error);
+      if (import.meta.env.DEV) console.error('Error updating configuration:', error);
       return null;
     }
   }
@@ -160,13 +160,13 @@ export class UserConfigService {
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error deleting configuration:', error);
+        if (import.meta.env.DEV) console.error('Error deleting configuration:', error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error deleting configuration:', error);
+      if (import.meta.env.DEV) console.error('Error deleting configuration:', error);
       return false;
     }
   }
@@ -184,13 +184,13 @@ export class UserConfigService {
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error updating configuration name:', error);
+        if (import.meta.env.DEV) console.error('Error updating configuration name:', error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error updating configuration name:', error);
+      if (import.meta.env.DEV) console.error('Error updating configuration name:', error);
       return false;
     }
   }

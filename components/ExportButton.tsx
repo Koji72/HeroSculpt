@@ -1,5 +1,6 @@
 import { useState, useEffect, forwardRef } from 'react';
 import { Download, Printer, FileDown, AlertCircle } from 'lucide-react';
+import { useLang, t } from '../lib/i18n';
 
 interface ExportButtonProps {
   onExportGLB?: () => Promise<any>;
@@ -11,6 +12,7 @@ interface ExportButtonProps {
 }
 
 const ExportButton = forwardRef<HTMLButtonElement, ExportButtonProps>(({ onExportGLB, onExportSTL, disabled = false, className = "", id, registerElement }, ref) => {
+  const { lang } = useLang();
   const [isExporting, setIsExporting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [lastExportResult, setLastExportResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -80,12 +82,12 @@ const ExportButton = forwardRef<HTMLButtonElement, ExportButtonProps>(({ onExpor
         {isExporting ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent"></div>
-            Exporting...
+            {t('export.exporting', lang)}
           </>
         ) : (
           <>
             <Download className="w-4 h-4 relative z-10" />
-            <span className="relative z-10">Export</span>
+            <span className="relative z-10">{t('export.btn', lang)}</span>
           </>
         )}
       </button>
@@ -93,27 +95,27 @@ const ExportButton = forwardRef<HTMLButtonElement, ExportButtonProps>(({ onExpor
       {/* Export Menu */}
       {showMenu && !isExporting && (
         <div className="absolute top-0 left-full ml-2 origin-top-left bg-white rounded-lg shadow-xl border border-gray-200 p-2 min-w-[220px] z-50">
-          <div className="text-sm font-medium text-gray-700 mb-2 px-2">Export format:</div>
-          
+          <div className="text-sm font-medium text-gray-700 mb-2 px-2">{t('export.format', lang)}</div>
+
           <button
             onClick={() => handleExport('glb')}
             className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-100 rounded-md transition-colors"
           >
             <FileDown className="w-4 h-4 text-blue-600" />
             <div>
-              <div className="font-medium text-gray-900">GLB (3D View)</div>
-              <div className="text-xs text-gray-500">For 3D visualization</div>
+              <div className="font-medium text-gray-900">{t('export.glb_label', lang)}</div>
+              <div className="text-xs text-gray-500">{t('export.glb_desc', lang)}</div>
             </div>
           </button>
-          
+
           <button
             onClick={() => handleExport('stl')}
             className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-100 rounded-md transition-colors"
           >
             <Printer className="w-4 h-4 text-green-600" />
             <div>
-              <div className="font-medium text-gray-900">STL (3D Print)</div>
-              <div className="text-xs text-gray-500">For 3D printing</div>
+              <div className="font-medium text-gray-900">{t('export.stl_label', lang)}</div>
+              <div className="text-xs text-gray-500">{t('export.stl_desc', lang)}</div>
             </div>
           </button>
         </div>

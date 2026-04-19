@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { getSignUpConfig } from '../lib/emailRedirectConfig';
+import { getSignUpConfig, getEmailRedirectUrl } from '../lib/emailRedirectConfig';
 import { useLang, t } from '../lib/i18n';
 
 interface AuthModalProps {
@@ -38,7 +38,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     try {
       if (mode === 'forgot') {
         const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + window.location.pathname,
+          redirectTo: getEmailRedirectUrl(),
         });
         if (err) { setError(err.message); return; }
         setForgotSent(true);
@@ -147,7 +147,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 <input
                   type="email"
                   name="email"
-                  placeholder="email"
+                  placeholder={t('auth.email_placeholder', lang)}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   style={inputStyle}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArchetypeId } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface SimpleArchetypeSelectorProps {
   selectedArchetype: ArchetypeId;
@@ -11,97 +12,97 @@ const FACTION_DATA = {
   [ArchetypeId.STRONG]: {
     name: 'POWERHOUSE',
     icon: '💪',
-    description: 'Raw strength and unbreakable defense'
+    descKey: 'faction.desc.strong' as const
   },
   [ArchetypeId.JUSTICIERO]: {
     name: 'GALACTIC_GUARDIANS',
     icon: '⚖️',
-    description: 'Justice and protection for all'
+    descKey: 'faction.desc.justiciero' as const
   },
   [ArchetypeId.SPEEDSTER]: {
     name: 'SPEEDCORE',
     icon: '⚡',
-    description: 'Lightning speed and agility'
+    descKey: 'faction.desc.speedster' as const
   },
   [ArchetypeId.MYSTIC]: {
     name: 'MYSTICS',
     icon: '🔮',
-    description: 'Ancient magic and mystical powers'
+    descKey: 'faction.desc.mystic' as const
   },
   [ArchetypeId.TECH]: {
     name: 'TECHNOMANCERS',
     icon: '🤖',
-    description: 'Advanced technology and innovation'
+    descKey: 'faction.desc.tech' as const
   },
   [ArchetypeId.PARAGON]: {
     name: 'ETERNAL_DYNASTIES',
     icon: '🦸',
-    description: 'The ultimate hero with balanced powers'
+    descKey: 'faction.desc.paragon' as const
   },
   [ArchetypeId.ENERGY_PRO]: {
     name: 'ENERGY_CORE',
     icon: '🔥',
-    description: 'Master of energy manipulation'
+    descKey: 'faction.desc.energy_pro' as const
   },
   [ArchetypeId.WEAPON_MASTER]: {
     name: 'WARRIORS',
     icon: '⚔️',
-    description: 'Master of weapons and combat'
+    descKey: 'faction.desc.weapon_master' as const
   },
   [ArchetypeId.SHAPESHIFTER]: {
     name: 'ALPHA_MUTANTS',
     icon: '🦎',
-    description: 'Master of biological adaptation'
+    descKey: 'faction.desc.shapeshifter' as const
   },
   [ArchetypeId.MENTALIST]: {
     name: 'MIND_CUSTODIANS',
     icon: '🧠',
-    description: 'Master of psychic powers'
+    descKey: 'faction.desc.mentalist' as const
   },
   [ArchetypeId.GADGETEER]: {
     name: 'ARCANOTECH',
     icon: '🔧',
-    description: 'Master of gadgets and technology'
+    descKey: 'faction.desc.gadgeteer' as const
   },
   [ArchetypeId.MONSTER]: {
     name: 'INFESTED',
     icon: '👹',
-    description: 'Raw power and primal fury'
+    descKey: 'faction.desc.monster' as const
   },
   [ArchetypeId.ELEMENTAL]: {
     name: 'CORE_ELEMENTALS',
     icon: '🌪️',
-    description: 'Master of natural elements'
+    descKey: 'faction.desc.elemental' as const
   },
   [ArchetypeId.CONSTRUCT]: {
     name: 'SPACE_EXILES',
     icon: '🤖',
-    description: 'Artificial being with unique abilities'
+    descKey: 'faction.desc.construct' as const
   },
   [ArchetypeId.BLASTER]: {
     name: 'VOX',
     icon: '🎯',
-    description: 'Master of long-range attacks'
+    descKey: 'faction.desc.blaster' as const
   },
   [ArchetypeId.TRICKSTER]: {
     name: 'NIHILISTS',
     icon: '🎭',
-    description: 'Master of illusions and deception'
+    descKey: 'faction.desc.trickster' as const
   },
   [ArchetypeId.CONTROLLER]: {
     name: 'PSIONICS',
     icon: '🎮',
-    description: 'Master of battlefield control'
+    descKey: 'faction.desc.controller' as const
   },
   [ArchetypeId.SUMMONER]: {
     name: 'CRIMSON_LEGION',
     icon: '👻',
-    description: 'Master of summoning entities'
+    descKey: 'faction.desc.summoner' as const
   },
   [ArchetypeId.ANTIHERO]: {
     name: 'ABYSSAL_CORRUPTED',
     icon: '⚔️',
-    description: 'Violent but effective protector'
+    descKey: 'faction.desc.antihero' as const
   }
 };
 
@@ -109,8 +110,8 @@ const FactionSelector: React.FC<SimpleArchetypeSelectorProps> = ({
   selectedArchetype,
   onArchetypeChange
 }) => {
+  const { lang } = useLang();
   const [isExpanded, setIsExpanded] = useState(false);
-
 
 
   return (
@@ -127,13 +128,13 @@ const FactionSelector: React.FC<SimpleArchetypeSelectorProps> = ({
             </div>
             <div>
               <div className="text-xs text-cyan-400 uppercase tracking-wider font-black">
-                HERO FACTION
+                {t('faction.label', lang)}
               </div>
               <div className="text-xl font-black text-orange-400 uppercase tracking-widest">
                 {FACTION_DATA[selectedArchetype]?.name || 'UNKNOWN'}
               </div>
               <div className="text-xs text-slate-400 font-bold">
-                {FACTION_DATA[selectedArchetype]?.description || 'No description'}
+                {FACTION_DATA[selectedArchetype] ? t(FACTION_DATA[selectedArchetype].descKey, lang) : ''}
               </div>
             </div>
           </div>
@@ -153,7 +154,7 @@ const FactionSelector: React.FC<SimpleArchetypeSelectorProps> = ({
           <div className="from-slate-900/98 backdrop-blur will-change-transform-xl shadow-2xl shadow-cyan-400/20 p-6 relative overflow-hidden bg-gradient-to-b via-slate-800/98 to-slate-900/98 border-2 border-cyan-400/50 rounded-lg">
             <div className="relative z-10">
               <h3 className="text-lg font-black text-cyan-400 uppercase tracking-wider mb-4 text-center">
-                SELECT YOUR FACTION ({Object.keys(FACTION_DATA).length} FACTIONS)
+                {t('faction.select_title', lang)} ({Object.keys(FACTION_DATA).length})
               </h3>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -181,7 +182,7 @@ const FactionSelector: React.FC<SimpleArchetypeSelectorProps> = ({
                             {data.name}
                           </div>
                           <div className="text-xs text-slate-400 mt-1">
-                            {data.description}
+                            {t(data.descKey, lang)}
                           </div>
                         </div>
                         
@@ -204,7 +205,7 @@ const FactionSelector: React.FC<SimpleArchetypeSelectorProps> = ({
                   onClick={() => setIsExpanded(false)}
                   className="px-4 py-2 bg-slate-800/80 text-slate-300 hover:text-white rounded-lg transition-colors transition-transform transition-shadow duration-150"
                 >
-                  CLOSE
+                  {t('faction.close', lang)}
                 </button>
               </div>
             </div>

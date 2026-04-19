@@ -69,7 +69,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
     try {
       const items: CartItem[] = cartItems.length > 0 ? cartItems : [{
         id: crypto.randomUUID(),
-        name: 'Mi Héroe',
+        name: t('cart.hero_name', lang),
         category: 'hero',
         price: newTotal,
         thumbnail: configParts[0]?.thumbnail ?? '',
@@ -243,7 +243,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{t('cart.total_new', lang)}</span>
                     <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: 'var(--color-accent)', letterSpacing: 1 }}>
-                      TOTAL ${newTotal.toFixed(2)}
+                      {t('cart.total_label', lang)} ${newTotal.toFixed(2)}
                     </span>
                   </div>
                   {isAuthenticated && (

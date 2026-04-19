@@ -1751,7 +1751,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     },
     applyLightingPreset: (preset: LightingPreset) => {
       if (!sceneRef.current) {
-        console.warn("Scene reference is null. Cannot apply lighting preset.");
+        if (import.meta.env.DEV) console.warn("Scene reference is null. Cannot apply lighting preset.");
         return;
       }
       const currentScene = sceneRef.current; // Assign to a local variable after null check
@@ -2083,11 +2083,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
             </div>
             <div className="text-xl font-black text-orange-400 mb-2 animate-pulse uppercase tracking-wider"
                  style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-              Loading 3D Model
+              {t('viewer.loading_model', lang)}
             </div>
             <div className="text-sm text-cyan-400 font-bold uppercase tracking-wider"
                  style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-              Preparing your superhero...
+              {t('viewer.loading_subtitle', lang)}
             </div>
             <div className="mt-4 w-48 h-1 bg-slate-700 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-orange-400 to-cyan-400 rounded-full animate-pulse"></div>

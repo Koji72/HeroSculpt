@@ -1,6 +1,7 @@
 import React from 'react';
 import { CharacterSheetProps, BaseCharacterData } from './BaseCharacterSheet';
 import { Edit2, Save, Plus, X } from 'lucide-react';
+import { useLang, t } from '../../lib/i18n';
 
 export interface MAndMCharacterData extends BaseCharacterData {
   complications: string;
@@ -56,6 +57,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
   onCharacterChange,
   onToggleEdit
 }) => {
+  const { lang } = useLang();
   const mnmCharacter = character as MAndMCharacterData;
 
   const updateCharacter = React.useCallback((path: string, value: any) => {
@@ -143,17 +145,17 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
 
   const addAttack = React.useCallback(() => {
     const newAttack = {
-      name: "New Attack",
-      skill: "Combat Skill",
+      name: t('mnm.new_attack_name', lang),
+      skill: t('mnm.new_attack_skill', lang),
       attack: 0,
       rank: 0,
       mod: 0,
-      descriptor: "Bludgeoning",
+      descriptor: t('mnm.new_attack_descriptor', lang),
       dc: 15,
       crit: 20
     };
     updateCharacter('attacks', [...mnmCharacter.attacks, newAttack]);
-  }, [mnmCharacter.attacks, updateCharacter]);
+  }, [mnmCharacter.attacks, updateCharacter, lang]);
 
   const removeAttack = React.useCallback((index: number) => {
     const newAttacks = mnmCharacter.attacks.filter((_, i) => i !== index);
@@ -172,9 +174,9 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-600 to-red-600 p-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold text-white tracking-wider">MUTANTS & MASTERMINDS</h1>
+            <h1 className="text-3xl font-bold text-white tracking-wider">{t('mnm.title', lang)}</h1>
             <span className="bg-yellow-400 text-black px-3 py-1 rounded-full font-bold text-sm">
-              COMPLICATIONS
+              {t('mnm.complications', lang)}
             </span>
           </div>
           
@@ -184,7 +186,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
               className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             >
               {isEditing ? <Save size={16} /> : <Edit2 size={16} />}
-              <span>{isEditing ? 'Save' : 'Edit'}</span>
+              <span>{isEditing ? t('mnm.save', lang) : t('mnm.edit', lang)}</span>
             </button>
           </div>
         </div>
@@ -192,12 +194,12 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
         {/* Character Info */}
         <div className="bg-yellow-400 p-3 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <span className="text-black font-semibold">Player:</span>
+            <span className="text-black font-semibold">{t('mnm.player', lang)}</span>
             <EditableField
               value={mnmCharacter.player}
               onChange={(value) => updateCharacter('player', value)}
               className="text-black font-bold"
-              placeholder="Player name..."
+              placeholder={t('mnm.placeholder.player', lang)}
             />
           </div>
           
@@ -206,12 +208,12 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
               value={mnmCharacter.name}
               onChange={(value) => updateCharacter('name', value)}
               className="text-4xl font-black text-black tracking-widest"
-              placeholder="Character name..."
+              placeholder={t('mnm.placeholder.character', lang)}
             />
           </div>
           
           <div className="flex items-center space-x-2">
-            <span className="text-black font-semibold">Level:</span>
+            <span className="text-black font-semibold">{t('mnm.level', lang)}</span>
             <EditableField
               value={mnmCharacter.level || 1}
               onChange={(value) => updateCharacter('level', value)}
@@ -230,7 +232,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
             
             {/* Defenses */}
             <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-4">
-              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">DEFENSES</h3>
+              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.defenses', lang)}</h3>
               <div className="space-y-3">
                 {Object.entries(mnmCharacter.defenses).map(([key, defense]) => (
                   <div key={key} className="flex items-center justify-between bg-black/20 rounded p-2">
@@ -252,7 +254,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
 
             {/* Abilities */}
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-4">
-              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">ABILITIES</h3>
+              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.abilities', lang)}</h3>
               <div className="grid grid-cols-2 gap-2">
                 {Object.entries(mnmCharacter.abilities).map(([key, ability]) => (
                   <div key={key} className="bg-black/20 rounded p-2 text-center">
@@ -276,7 +278,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
             
             {/* Attacks */}
             <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4">
-              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">ATTACKS</h3>
+              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.attacks', lang)}</h3>
               <div className="space-y-2">
                 {mnmCharacter.attacks.map((attack, index) => (
                   <div key={index} className="bg-black/20 rounded p-3">
@@ -285,7 +287,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                         value={attack.name}
                         onChange={(value) => updateCharacter(`attacks.${index}.name`, value)}
                         className="text-yellow-300 font-bold"
-                        placeholder="Attack name..."
+                        placeholder={t('mnm.placeholder.attack', lang)}
                       />
                       {isEditing && (
                         <button
@@ -298,7 +300,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                     </div>
                     <div className="grid grid-cols-3 gap-1 text-xs">
                       <div className="text-center">
-                        <div className="text-gray-300 text-xs">Attack</div>
+                        <div className="text-gray-300 text-xs">{t('mnm.attack_label', lang)}</div>
                         <EditableField
                           value={attack.attack}
                           onChange={(value) => updateCharacter(`attacks.${index}.attack`, value)}
@@ -309,7 +311,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                         />
                       </div>
                       <div className="text-center">
-                        <div className="text-gray-300 text-xs">DC</div>
+                        <div className="text-gray-300 text-xs">{t('mnm.attack_dc', lang)}</div>
                         <EditableField
                           value={attack.dc}
                           onChange={(value) => updateCharacter(`attacks.${index}.dc`, value)}
@@ -320,7 +322,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                         />
                       </div>
                       <div className="text-center">
-                        <div className="text-gray-300 text-xs">Crit</div>
+                        <div className="text-gray-300 text-xs">{t('mnm.attack_crit', lang)}</div>
                         <EditableField
                           value={attack.crit}
                           onChange={(value) => updateCharacter(`attacks.${index}.crit`, value)}
@@ -340,7 +342,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded flex items-center justify-center space-x-2"
                   >
                     <Plus size={16} />
-                    <span>Add Attack</span>
+                    <span>{t('mnm.add_attack', lang)}</span>
                   </button>
                 )}
               </div>
@@ -348,7 +350,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
 
             {/* Powers */}
             <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-4">
-              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">POWERS</h3>
+              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.powers', lang)}</h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {mnmCharacter.powers.map((power, index) => (
                   <div key={index} className="bg-black/20 rounded p-2 flex justify-between items-center">
@@ -357,13 +359,13 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
                         value={power.name}
                         onChange={(value) => updateCharacter(`powers.${index}.name`, value)}
                         className="text-white font-semibold"
-                        placeholder="Power name..."
+                        placeholder={t('mnm.placeholder.power', lang)}
                       />
                       <EditableField
                         value={power.type}
                         onChange={(value) => updateCharacter(`powers.${index}.type`, value)}
                         className="text-gray-300 text-sm"
-                        placeholder="Power type..."
+                        placeholder={t('mnm.placeholder.power_type', lang)}
                       />
                     </div>
                     <div className="text-right">
@@ -394,7 +396,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
             
             {/* Skills */}
             <div className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-lg p-4">
-              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">SKILLS</h3>
+              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.skills', lang)}</h3>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {Object.entries(mnmCharacter.skills).map(([key, skill]) => (
                   <div key={key} className="bg-black/20 rounded p-2 flex justify-between items-center">
@@ -419,7 +421,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
             
             {/* Conditions */}
             <div className="bg-gradient-to-br from-orange-600 to-orange-800 rounded-lg p-4">
-              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">CONDITIONS</h3>
+              <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">{t('mnm.conditions', lang)}</h3>
               <div className="grid grid-cols-2 gap-2">
                 {Object.entries(mnmCharacter.conditions).map(([key, active]) => (
                   <label key={key} className="flex items-center space-x-2 cursor-pointer">

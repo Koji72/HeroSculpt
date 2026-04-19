@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTutorial } from '../hooks/useTutorial';
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from './icons';
+import { useLang, t } from '../lib/i18n';
 
 const TutorialOverlay: React.FC = () => {
+  const { lang } = useLang();
   const { currentStep, nextStep, prevStep, skipTutorial, highlightedElement, tutorialActive } = useTutorial();
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number; width?: number; } | null>(null);
@@ -98,7 +100,7 @@ const TutorialOverlay: React.FC = () => {
                        currentStep.placement === 'right' ? 'translateX(10px)' : 'none',
           }}
         >
-          <p className="text-lg font-semibold mb-3">Step {currentStep.id.split('-')[0].toUpperCase()}: {currentStep.message}</p>
+          <p className="text-lg font-semibold mb-3">{t('tutorial.step_prefix', lang)} {currentStep.id.split('-')[0].toUpperCase()}: {currentStep.message}</p>
 
           <div className="flex justify-between items-center mt-4">
             <button
@@ -106,13 +108,13 @@ const TutorialOverlay: React.FC = () => {
               disabled={currentStep.id === 'welcome'}
               className="px-3 py-1 bg-slate-700 text-white rounded-md hover:bg-slate-600 disabled:opacity-50 transition-colors flex items-center gap-1"
             >
-              <ChevronLeftIcon className="w-4 h-4" /> Previous
+              <ChevronLeftIcon className="w-4 h-4" /> {t('tutorial.previous', lang)}
             </button>
             <button
               onClick={() => nextStep('manual')}
               className="px-3 py-1 bg-amber-500 text-black font-bold rounded-md hover:bg-amber-400 transition-colors flex items-center gap-1"
             >
-              Next <ChevronRightIcon className="w-4 h-4" />
+              {t('tutorial.next', lang)} <ChevronRightIcon className="w-4 h-4" />
             </button>
           </div>
           <button 

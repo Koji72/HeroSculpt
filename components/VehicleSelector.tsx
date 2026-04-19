@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { VehiclePart, VehicleType, VehicleSize, VehiclePosition } from '../types';
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
+import { useLang, t } from '../lib/i18n';
 
 interface VehicleSelectorProps {
   selectedVehicle?: VehiclePart;
@@ -118,6 +119,7 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({
   currentPosition,
   currentColor
 }) => {
+  const { lang } = useLang();
   const [hoveredVehicle, setHoveredVehicle] = useState<string | null>(null);
 
   const getVehicleTypeIcon = (type: VehicleType) => {
@@ -134,39 +136,39 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({
 
   const getSizeLabel = (size: VehicleSize) => {
     switch (size) {
-      case VehicleSize.SMALL: return 'Pequeño';
-      case VehicleSize.MEDIUM: return 'Mediano';
-      case VehicleSize.LARGE: return 'Grande';
-      default: return 'Mediano';
+      case VehicleSize.SMALL: return t('vehicle.size.small', lang);
+      case VehicleSize.MEDIUM: return t('vehicle.size.medium', lang);
+      case VehicleSize.LARGE: return t('vehicle.size.large', lang);
+      default: return t('vehicle.size.medium', lang);
     }
   };
 
   const getPositionLabel = (position: VehiclePosition) => {
     switch (position) {
-      case VehiclePosition.GROUND: return 'Suelo';
-      case VehiclePosition.FLOATING: return 'Flotando';
-      case VehiclePosition.BACKGROUND: return 'Fondo';
-      default: return 'Suelo';
+      case VehiclePosition.GROUND: return t('vehicle.pos.ground_label', lang);
+      case VehiclePosition.FLOATING: return t('vehicle.pos.floating_label', lang);
+      case VehiclePosition.BACKGROUND: return t('vehicle.pos.background_label', lang);
+      default: return t('vehicle.pos.ground_label', lang);
     }
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-white">Vehículo</h3>
+        <h3 className="text-lg font-bold text-white">{t('vehicle.title', lang)}</h3>
         <GamingButton
           variant="ghost"
           size="sm"
           onClick={() => onVehicleSelect(null)}
           className="text-red-400 hover:text-red-300"
         >
-          Remover
+          {t('vehicle.remove', lang)}
         </GamingButton>
       </div>
 
-      {/* Posición del Vehículo */}
+      {/* Vehicle Position */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Posición</label>
+        <label className="text-sm font-medium text-gray-300">{t('vehicle.position', lang)}</label>
         <div className="grid grid-cols-3 gap-2">
           {Object.values(VehiclePosition).map((position) => (
             <GamingButton
@@ -176,18 +178,18 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({
               onClick={() => onPositionChange(position)}
               className="text-xs"
             >
-              {position === VehiclePosition.GROUND && '🛣️ Suelo'}
-              {position === VehiclePosition.FLOATING && '☁️ Flotando'}
-              {position === VehiclePosition.BACKGROUND && '🌌 Fondo'}
+              {position === VehiclePosition.GROUND && t('vehicle.pos.ground', lang)}
+              {position === VehiclePosition.FLOATING && t('vehicle.pos.floating', lang)}
+              {position === VehiclePosition.BACKGROUND && t('vehicle.pos.background', lang)}
             </GamingButton>
           ))}
         </div>
       </div>
 
-      {/* Selector de Color */}
+      {/* Color Selector */}
       {selectedVehicle && (
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-300">Color</label>
+          <label className="text-sm font-medium text-gray-300">{t('vehicle.color', lang)}</label>
           <div className="grid grid-cols-5 gap-2">
             {selectedVehicle.customization.colors.map((color) => (
               <button
@@ -204,9 +206,9 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({
         </div>
       )}
 
-      {/* Lista de Vehículos */}
+      {/* Vehicles List */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Vehículos Disponibles</label>
+        <label className="text-sm font-medium text-gray-300">{t('vehicle.available', lang)}</label>
         <div className="grid grid-cols-1 gap-3">
           {SAMPLE_VEHICLES.map((vehicle) => (
             <Card
@@ -266,19 +268,19 @@ const VehicleSelector: React.FC<VehicleSelectorProps> = ({
         </div>
       </div>
 
-      {/* Información del Vehículo Seleccionado */}
+      {/* Selected Vehicle Info */}
       {selectedVehicle && (
         <Card className="p-4 bg-blue-900/20 border-blue-500/30">
           <h4 className="font-medium text-blue-300 mb-2">
             {selectedVehicle.name} - {getVehicleTypeIcon(selectedVehicle.vehicleType)}
           </h4>
           <div className="text-sm text-gray-300 space-y-1">
-            <p>Tipo: {selectedVehicle.vehicleType}</p>
-            <p>Tamaño: {getSizeLabel(selectedVehicle.size)}</p>
-            <p>Posición: {getPositionLabel(currentPosition)}</p>
-            <p>Color: <span className="inline-block w-4 h-4 rounded border border-gray-600" style={{ backgroundColor: currentColor }}></span> {currentColor}</p>
-            <p>Efectos: {selectedVehicle.customization.effects.join(', ')}</p>
-            <p>Animaciones: {selectedVehicle.animations.join(', ')}</p>
+            <p>{t('vehicle.info.type', lang)} {selectedVehicle.vehicleType}</p>
+            <p>{t('vehicle.info.size', lang)} {getSizeLabel(selectedVehicle.size)}</p>
+            <p>{t('vehicle.info.position', lang)} {getPositionLabel(currentPosition)}</p>
+            <p>{t('vehicle.info.color', lang)} <span className="inline-block w-4 h-4 rounded border border-gray-600" style={{ backgroundColor: currentColor }}></span> {currentColor}</p>
+            <p>{t('vehicle.info.effects', lang)} {selectedVehicle.customization.effects.join(', ')}</p>
+            <p>{t('vehicle.info.animations', lang)} {selectedVehicle.animations.join(', ')}</p>
           </div>
         </Card>
       )}

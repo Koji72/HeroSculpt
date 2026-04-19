@@ -22,7 +22,7 @@ export class SupabaseEmailService {
   ): Promise<{ success: boolean; error?: string }> {
     
     if (!supabase) {
-      console.warn('⚠️ Supabase is not configured, sending simulated email');
+      if (import.meta.env.DEV) console.warn('⚠️ Supabase is not configured, sending simulated email');
       return this.sendSimulatedEmail(email, configuration, totalPrice, configId);
     }
 
@@ -103,17 +103,17 @@ export class SupabaseEmailService {
       });
 
       if (error) {
-        console.error('❌ Error al enviar email con Supabase:', error);
+        if (import.meta.env.DEV) console.error('❌ Error al enviar email con Supabase:', error);
         
         // Fallback a simulación si Supabase falla
         return this.sendSimulatedEmail(email, configuration, totalPrice, configId);
       }
 
-      console.log('✅ Email enviado exitosamente con Supabase:', data);
+      if (import.meta.env.DEV) console.log('✅ Email enviado exitosamente con Supabase:', data);
       return { success: true };
 
     } catch (error) {
-      console.error('Error al enviar email con Supabase:', error);
+      if (import.meta.env.DEV) console.error('Error al enviar email con Supabase:', error);
       
       // Fallback a simulación en caso de error
       return this.sendSimulatedEmail(email, configuration, totalPrice, configId);
@@ -129,8 +129,8 @@ export class SupabaseEmailService {
     totalPrice: number,
     configId: string
   ): Promise<{ success: boolean; error?: string }> {
-    console.log('\n🔶 MODO SIMULACIÓN - Supabase Edge Function no disponible');
-    console.log('══════════════════════════════════════════════════════════════');
+    if (import.meta.env.DEV) console.log('\n🔶 MODO SIMULACIÓN - Supabase Edge Function no disponible');
+    if (import.meta.env.DEV) console.log('══════════════════════════════════════════════════════════════');
     
     // Simular delay de envío
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -194,7 +194,7 @@ los usuarios por email. ¡El sistema funciona perfectamente!
     `;
 
     // NO loggear contenido completo del email por seguridad
-    console.log(`📧 Email simulado enviado a: ${email.substring(0, 3)}***@${email.split('@')[1]}`);
+    if (import.meta.env.DEV) console.log(`📧 Email simulado enviado a: ${email.substring(0, 3)}***@${email.split('@')[1]}`);
 
     // Simular éxito (95% éxito para demostrar confiabilidad)
     const success = Math.random() > 0.05;
@@ -261,7 +261,7 @@ los usuarios por email. ¡El sistema funciona perfectamente!
       return { success: true, configId };
 
     } catch (error) {
-      console.error('Error saving guest configuration:', error);
+      if (import.meta.env.DEV) console.error('Error saving guest configuration:', error);
       return { success: false, error: 'Error al guardar la configuración' };
     }
   }

@@ -59,10 +59,10 @@ export class SessionStorageService {
         await SupabaseSessionService.saveSession();
         // console.log('SessionStorageService: Session also saved to Supabase');
       } catch (supabaseError) {
-        console.warn('SessionStorageService: Failed to save to Supabase, using localStorage only:', supabaseError);
+        if (import.meta.env.DEV) console.warn('SessionStorageService: Failed to save to Supabase, using localStorage only:', supabaseError);
       }
     } catch (error) {
-      console.error('SessionStorageService: Error saving session:', error);
+      if (import.meta.env.DEV) console.error('SessionStorageService: Error saving session:', error);
     }
   }
 
@@ -86,7 +86,7 @@ export class SessionStorageService {
           };
         }
       } catch (supabaseError) {
-        console.warn('SessionStorageService: Failed to load from Supabase, trying localStorage:', supabaseError);
+        if (import.meta.env.DEV) console.warn('SessionStorageService: Failed to load from Supabase, trying localStorage:', supabaseError);
       }
 
       // Fallback to localStorage
@@ -94,7 +94,7 @@ export class SessionStorageService {
       const timestampData = localStorage.getItem(SESSION_TIMESTAMP_KEY);
 
       if (!sessionData || !timestampData) {
-        console.log('SessionStorageService: No saved session found');
+        if (import.meta.env.DEV) console.log('SessionStorageService: No saved session found');
         return null;
       }
 
@@ -105,7 +105,7 @@ export class SessionStorageService {
       const isExpired = Date.now() - timestamp > this.SESSION_DURATION;
       
       if (isExpired) {
-        console.log('SessionStorageService: Session expired, clearing old data');
+        if (import.meta.env.DEV) console.log('SessionStorageService: Session expired, clearing old data');
         await this.clearSession();
         return null;
       }
@@ -113,7 +113,7 @@ export class SessionStorageService {
       // console.log('SessionStorageService: Session loaded from localStorage');
       return session;
     } catch (error) {
-      console.error('SessionStorageService: Error loading session:', error);
+      if (import.meta.env.DEV) console.error('SessionStorageService: Error loading session:', error);
       this.clearSession();
       return null;
     }
@@ -123,16 +123,16 @@ export class SessionStorageService {
    * Clear saved session (localStorage + Supabase)
    */
   static async clearSession(): Promise<void> {
-    console.log('SessionStorageService: Session cleared from localStorage');
+    if (import.meta.env.DEV) console.log('SessionStorageService: Session cleared from localStorage');
     localStorage.removeItem(SESSION_STORAGE_KEY);
     localStorage.removeItem(SESSION_TIMESTAMP_KEY);
-    
+
     // Clear from Supabase if authenticated
     try {
       await SupabaseSessionService.clearCurrentSession();
-      console.log('SessionStorageService: Session also cleared from Supabase');
+      if (import.meta.env.DEV) console.log('SessionStorageService: Session also cleared from Supabase');
     } catch (supabaseError) {
-      console.warn('SessionStorageService: Failed to clear from Supabase:', supabaseError);
+      if (import.meta.env.DEV) console.warn('SessionStorageService: Failed to clear from Supabase:', supabaseError);
     }
   }
 
@@ -167,7 +167,7 @@ export class SessionStorageService {
         source: 'localStorage'
       };
     } catch (error) {
-      console.error('SessionStorageService: Error getting session info:', error);
+      if (import.meta.env.DEV) console.error('SessionStorageService: Error getting session info:', error);
       return { hasSession: false };
     }
   }
@@ -200,7 +200,7 @@ export class SessionStorageService {
       
       // console.log('✅ Última pose guardada exitosamente');
     } catch (error) {
-      console.error('❌ Error guardando última pose:', error);
+      if (import.meta.env.DEV) console.error('❌ Error guardando última pose:', error);
     }
   }
 
@@ -223,14 +223,14 @@ export class SessionStorageService {
       const session = await this.loadSession();
       
       if (!session) {
-        console.log('📭 No hay última pose guardada');
+        if (import.meta.env.DEV) console.log('📭 No hay última pose guardada');
         return null;
       }
 
       const lastPoseIndex = session.lastPoseIndex !== undefined ? session.lastPoseIndex : 0;
       const savedPoses = session.savedPoses !== undefined ? session.savedPoses : [];
-      
-      console.log(`📂 Cargando última pose: ${lastPoseIndex + 1}/${savedPoses.length}`);
+
+      if (import.meta.env.DEV) console.log(`📂 Cargando última pose: ${lastPoseIndex + 1}/${savedPoses.length}`);
       
       return {
         selectedArchetype: session.selectedArchetype,
@@ -239,7 +239,7 @@ export class SessionStorageService {
         savedPoses
       };
     } catch (error) {
-      console.error('❌ Error cargando última pose:', error);
+      if (import.meta.env.DEV) console.error('❌ Error cargando última pose:', error);
       return null;
     }
   }

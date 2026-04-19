@@ -724,6 +724,7 @@ export function generateModelName(selectedParts: any, archetype: string): string
 
 /**
  * Get user-friendly name for a part category
+ * @deprecated Use getCategoryI18nKey + t() instead to support i18n
  */
 export function getCategoryName(category: PartCategory): string {
   const categoryNames: Record<PartCategory, string> = {
@@ -743,10 +744,34 @@ export function getCategoryName(category: PartCategory): string {
     [PartCategory.FOREARMS]: 'Forearms',
     [PartCategory.BOOTS]: 'Boots',
     [PartCategory.SYMBOL]: 'Symbol',
-  
   };
 
   return categoryNames[category] || category;
+}
+
+/**
+ * Map a PartCategory to its i18n translation key (sub.* namespace)
+ */
+export function getCategoryI18nKey(category: PartCategory): import('./i18n').TransKey {
+  const keys: Record<PartCategory, import('./i18n').TransKey> = {
+    [PartCategory.TORSO]: 'sub.torso',
+    [PartCategory.SUIT_TORSO]: 'sub.suit',
+    [PartCategory.HEAD]: 'sub.head',
+    [PartCategory.HAND_LEFT]: 'sub.hand_left',
+    [PartCategory.HAND_RIGHT]: 'sub.hand_right',
+    [PartCategory.CAPE]: 'sub.cape',
+    [PartCategory.SYMBOL]: 'sub.symbol',
+    [PartCategory.CHEST_BELT]: 'sub.chest',
+    [PartCategory.SHOULDERS]: 'sub.shoulders',
+    [PartCategory.FOREARMS]: 'sub.forearms',
+    [PartCategory.BELT]: 'sub.belt',
+    [PartCategory.POUCH]: 'sub.pouch',
+    [PartCategory.BUCKLE]: 'sub.buckle',
+    [PartCategory.LOWER_BODY]: 'sub.legs',
+    [PartCategory.BOOTS]: 'sub.boots',
+    [PartCategory.BACKPACK]: 'sub.backpack',
+  };
+  return keys[category] ?? 'sub.torso';
 } 
 
 /**

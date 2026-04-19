@@ -24,7 +24,7 @@ import GuestEmailModal from './components/GuestEmailModal';
 import { useAuth } from './hooks/useAuth';
 import { useFavorites } from './hooks/useFavorites';
 import { useRecentParts } from './hooks/useRecentParts';
-import { assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveCapeForTorso, assignAdaptiveBootsForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso, getCategoryName } from './lib/utils';
+import { assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveCapeForTorso, assignAdaptiveBootsForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso, getCategoryI18nKey } from './lib/utils';
 import { ARCHETYPE_DATA, ARCHETYPES_LIST } from './lib/archetypeData';
 import ArchetypeSwitcher from './components/ArchetypeSwitcher';
 import STLScaleModal from './components/STLScaleModal';
@@ -212,6 +212,7 @@ const AppContent: React.FC = () => {
 
   // Estado para biblioteca de compras
   const [isPurchaseLibraryOpen, setIsPurchaseLibraryOpen] = useState(false);
+  const [libraryRefreshKey, setLibraryRefreshKey] = useState(0);
 
   // Estado para modal de email de invitado
   const [isGuestEmailModalOpen, setIsGuestEmailModalOpen] = useState(false);
@@ -882,7 +883,7 @@ const AppContent: React.FC = () => {
     }
     
     setSelectedParts(defaultBuild);
-    setCharacterName('New Hero');
+    setCharacterName(t('topbar.heroplaceholder', lang));
   };
 
   // Task 6: ArchetypeSwitcher handler
@@ -1005,6 +1006,13 @@ const AppContent: React.FC = () => {
     });
     return true;
   }, [setSelectedParts, pushPartsHistory, recordUsed]);
+
+  // Stable callback that delegates to the viewer ref — avoids passing
+  // characterViewerRef.current?.handlePreviewPartsChange directly as a prop,
+  // which would be undefined on the first render and never update.
+  const handlePreviewChange = useCallback((parts: SelectedParts) => {
+    characterViewerRef.current?.handlePreviewPartsChange(parts);
+  }, []);
 
   const handleEditCategory = (category: PartCategory) => {
     setActiveCategory(category);
@@ -1347,6 +1355,7 @@ const AppContent: React.FC = () => {
         // Removed debug log
         await loadUserPoses();
         PurchaseHistoryService.getOwnedPartIds(user.id).then(setOwnedPartIds);
+        setLibraryRefreshKey(prev => prev + 1);
 
         // Mostrar confirmación de compra gratuita
         setIsPurchaseConfirmationOpen(true);
@@ -1570,11 +1579,14 @@ const AppContent: React.FC = () => {
 
   const handleDeletePose = async (index: number) => {
     const pose = savedPoses[index];
-    if (!pose || pose.source !== 'saved') return;
+    if (!pose) return;
 
-    const configId = pose.id.replace(/^saved-/, '');
-    const success = await UserConfigService.deleteConfiguration(configId);
-    if (!success) return;
+    if (pose.source === 'saved') {
+      const configId = pose.id.replace(/^saved-/, '');
+      const success = await UserConfigService.deleteConfiguration(configId);
+      if (!success) return;
+    }
+    // Purchase poses: just remove from the slider (purchase record stays in DB)
 
     const newPoses = savedPoses.filter((_, i) => i !== index);
     const newIndex = newPoses.length === 0 ? 0 : index > 0 ? index - 1 : 0;
@@ -2072,7 +2084,7 @@ const AppContent: React.FC = () => {
               </div>
               {activePanelMode === 'parts' && activeCategory ? (
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: 16, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
-                  {getCategoryName(activeCategory)}
+                  {t(getCategoryI18nKey(activeCategory), lang)}
                 </div>
               ) : (
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: 18, fontWeight: 800, color: 'var(--color-text)', lineHeight: 1.1 }}>
@@ -2084,7 +2096,7 @@ const AppContent: React.FC = () => {
               {activePanelMode === 'parts' && activeCategory && (
                 <button
                   onClick={() => characterViewerRef.current?.focusOnCategory(activeCategory)}
-                  title="Centrar cámara en esta parte"
+                  title={t('panel.focus_camera', lang)}
                   style={{
                     width: 32, height: 32,
                     background: 'rgba(216,162,58,0.12)',
@@ -2133,7 +2145,7 @@ const AppContent: React.FC = () => {
                 selectedParts={selectedParts}
                 onPartSelect={handleSelectPart}
                 onClose={handleCloseSelector}
-                onPreviewChange={characterViewerRef.current?.handlePreviewPartsChange}
+                onPreviewChange={handlePreviewChange}
                 id="part-selector-panel"
                 registerElement={registerElement}
                 characterViewerRef={characterViewerRef}
@@ -2178,7 +2190,7 @@ const AppContent: React.FC = () => {
           </span>
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handleNextPose}>▶</button>
-          {user && savedPoses?.[currentPoseIndex ?? 0]?.source === 'saved' && (
+          {user && savedPoses?.[currentPoseIndex ?? 0] && (
             <button
               className="btn-comic btn-ghost"
               style={{ width: 30, height: 30, padding: 0, fontSize: 13, borderRadius: 6, color: 'var(--color-danger, #f43f5e)' }}
@@ -2214,31 +2226,31 @@ const AppContent: React.FC = () => {
           <button
             type="button"
             onClick={handleScreenshot}
-            title="Captura de pantalla PNG"
+            title={t('bottom.png', lang)}
             style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
-            📷 PNG
+            {t('bottom.png', lang)}
           </button>
           <button
             type="button"
             onClick={handleExportGLB}
             style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
-            📦 GLB
+            {t('bottom.glb', lang)}
           </button>
           <button
             type="button"
             onClick={() => setShowSTLModal(true)}
             style={{ padding: '5px 12px', background: 'rgba(19,19,31,0.84)', border: '1px solid rgba(71, 85, 105, 0.56)', borderRadius: '6px', color: '#b8c0cc', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
-            🖨️ STL
+            {t('bottom.stl', lang)}
           </button>
           <button
             type="button"
             onClick={handleOpenVTTLibrary}
             style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px solid rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
-            🎲 VTT
+            {t('bottom.vtt', lang)}
           </button>
           {user ? (
             <button
@@ -2246,16 +2258,16 @@ const AppContent: React.FC = () => {
               onClick={handleSaveCurrentPoseAsNew}
               style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px dashed rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
             >
-              💾 POSE
+              {t('bottom.save_pose', lang)}
             </button>
           ) : (
             <button
               type="button"
               style={{ padding: '5px 12px', background: 'rgba(216, 162, 58, 0.08)', border: '1px dashed rgba(216, 162, 58, 0.34)', borderRadius: '6px', color: 'var(--color-accent)', fontSize: 10, fontWeight: 700, letterSpacing: 0.7, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
               onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
-              title="Sign in to save poses"
+              title={t('topbar.savehero', lang)}
             >
-              💾 POSES
+              {t('bottom.save_pose', lang)}
             </button>
           )}
         </div>
@@ -2432,6 +2444,7 @@ const AppContent: React.FC = () => {
            user={user}
            onExportGLB={handleExportGLB}
            onExportSTL={handleExportSTL}
+           refreshKey={libraryRefreshKey}
         />
       )}
 

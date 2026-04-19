@@ -256,7 +256,7 @@ export class GamificationService {
 
       return data;
     } catch (error) {
-      console.error('Error fetching user stats:', error);
+      if (import.meta.env.DEV) console.error('Error fetching user stats:', error);
       throw error;
     }
   }
@@ -278,7 +278,7 @@ export class GamificationService {
 
       return data;
     } catch (error) {
-      console.error('Error updating user stats:', error);
+      if (import.meta.env.DEV) console.error('Error updating user stats:', error);
       throw error;
     }
   }
@@ -313,7 +313,7 @@ export class GamificationService {
 
       return unlockedAchievements;
     } catch (error) {
-      console.error('Error checking achievements:', error);
+      if (import.meta.env.DEV) console.error('Error checking achievements:', error);
       throw error;
     }
   }
@@ -373,7 +373,7 @@ export class GamificationService {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error unlocking achievement:', error);
+      if (import.meta.env.DEV) console.error('Error unlocking achievement:', error);
       throw error;
     }
   }
@@ -399,7 +399,7 @@ export class GamificationService {
         achievementsUnlocked: userStats.achievementsUnlocked + 1
       });
     } catch (error) {
-      console.error('Error awarding points:', error);
+      if (import.meta.env.DEV) console.error('Error awarding points:', error);
       throw error;
     }
   }
@@ -451,7 +451,7 @@ export class GamificationService {
         avatar: entry.users.avatar_url
       }));
     } catch (error) {
-      console.error('Error fetching leaderboard:', error);
+      if (import.meta.env.DEV) console.error('Error fetching leaderboard:', error);
       throw error;
     }
   }
@@ -495,7 +495,7 @@ export class GamificationService {
         lastLoginDate: today
       });
     } catch (error) {
-      console.error('Error updating consecutive days:', error);
+      if (import.meta.env.DEV) console.error('Error updating consecutive days:', error);
       throw error;
     }
   }
@@ -526,7 +526,7 @@ export class GamificationService {
         averageLevel
       };
     } catch (error) {
-      console.error('Error fetching global stats:', error);
+      if (import.meta.env.DEV) console.error('Error fetching global stats:', error);
       throw error;
     }
   }
@@ -551,7 +551,7 @@ export class GamificationService {
           : undefined
       }));
     } catch (error) {
-      console.error('Error fetching user achievements:', error);
+      if (import.meta.env.DEV) console.error('Error fetching user achievements:', error);
       throw error;
     }
   }

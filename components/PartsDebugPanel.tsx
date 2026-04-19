@@ -1,5 +1,6 @@
 import React from 'react';
 import { SelectedParts, PartCategory } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface PartsDebugPanelProps {
   selectedParts: SelectedParts;

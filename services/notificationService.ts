@@ -44,7 +44,7 @@ export class NotificationService {
     try {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     } catch (error) {
-      console.warn('Audio context not supported');
+      if (import.meta.env.DEV) console.warn('Audio context not supported');
     }
   }
 
@@ -88,7 +88,7 @@ export class NotificationService {
       try {
         listener(notification);
       } catch (error) {
-        console.error('Error in notification listener:', error);
+        if (import.meta.env.DEV) console.error('Error in notification listener:', error);
       }
     });
 
@@ -167,7 +167,7 @@ export class NotificationService {
       oscillator.start(this.audioContext.currentTime);
       oscillator.stop(this.audioContext.currentTime + 0.5);
     } catch (error) {
-      console.warn('Error playing notification sound:', error);
+      if (import.meta.env.DEV) console.warn('Error playing notification sound:', error);
     }
   }
 
@@ -221,7 +221,7 @@ export class NotificationService {
 
       return data;
     } catch (error) {
-      console.error('Error sending notification:', error);
+      if (import.meta.env.DEV) console.error('Error sending notification:', error);
       throw error;
     }
   }
@@ -284,7 +284,7 @@ export class NotificationService {
 
       return data || [];
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      if (import.meta.env.DEV) console.error('Error fetching notifications:', error);
       throw error;
     }
   }
@@ -301,7 +301,7 @@ export class NotificationService {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      if (import.meta.env.DEV) console.error('Error marking notification as read:', error);
       throw error;
     }
   }
@@ -318,7 +318,7 @@ export class NotificationService {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      if (import.meta.env.DEV) console.error('Error deleting notification:', error);
       throw error;
     }
   }
@@ -380,7 +380,7 @@ export class NotificationService {
         byType
       };
     } catch (error) {
-      console.error('Error getting notification stats:', error);
+      if (import.meta.env.DEV) console.error('Error getting notification stats:', error);
       return { total: 0, unread: 0, byType: {} };
     }
   }

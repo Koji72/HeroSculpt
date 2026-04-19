@@ -15,6 +15,7 @@ interface PurchaseLibraryProps {
   // registerElement: (id: string, element: HTMLElement | null) => void; // Removed: not used
   onExportGLB?: () => Promise<any>;
   onExportSTL?: () => Promise<any>;
+  refreshKey?: number;
 }
 
 const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
@@ -24,7 +25,8 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
   user,
   // registerElement, // Removed
   onExportGLB,
-  onExportSTL
+  onExportSTL,
+  refreshKey,
 }) => {
   const { lang } = useLang();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -42,7 +44,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
     if (isOpen && user?.id) {
       loadPurchases();
     }
-  }, [isOpen, user?.id]);
+  }, [isOpen, user?.id, refreshKey]);
 
   const loadPurchases = async () => {
     setLoading(true);
@@ -54,10 +56,10 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       if (result.success) {
         setPurchases(result.purchases || []);
       } else {
-        setError(result.error || 'Error loading purchases');
+        setError(result.error || t('library.error.title', lang));
       }
     } catch (err) {
-      setError('Unexpected error loading purchases');
+      setError(t('library.error.title', lang));
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
-        console.error('❌ Variables de entorno de Supabase no configuradas');
+        if (import.meta.env.DEV) console.error('❌ Variables de entorno de Supabase no configuradas');
         return null;
       }
       
@@ -89,12 +91,12 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
         .single();
       
       if (error) {
-        console.error('❌ Error en fallback:', error);
+        if (import.meta.env.DEV) console.error('❌ Error en fallback:', error);
         return null;
       }
-      
+
       if (!data || !data.configuration_data) {
-        console.error('❌ No hay datos de configuración en fallback');
+        if (import.meta.env.DEV) console.error('❌ No hay datos de configuración en fallback');
         return null;
       }
       
@@ -102,7 +104,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       return data.configuration_data;
       
     } catch (error) {
-      console.error('❌ Error inesperado en fallback:', error);
+      if (import.meta.env.DEV) console.error('❌ Error inesperado en fallback:', error);
       return null;
     }
   };
@@ -115,7 +117,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
 
   const handleSaveName = async (itemId: string) => {
     if (!editingName.trim()) {
-      alert('El nombre no puede estar vacío');
+      alert(t('library.err.name_empty', lang));
       return;
     }
 
@@ -150,8 +152,8 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       setEditingName('');
       
     } catch (error) {
-      console.error('Error updating name:', error);
-      alert('Error al actualizar el nombre');
+      if (import.meta.env.DEV) console.error('Error updating name:', error);
+      alert(t('library.err.name_update', lang));
     } finally {
       setUpdatingName(null);
     }
@@ -178,31 +180,34 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       if (result.success && result.configuration) {
         const currentPurchase = purchases.find(p => p.id === purchaseId);
         const currentItem = currentPurchase?.purchase_items?.find(item => item.id === itemId);
-        const modelName = currentItem?.item_name || 'Modelo sin nombre';
-        
+        const modelName = currentItem?.item_name || t('library.item.unnamed', lang);
+
         onLoadConfiguration(result.configuration, modelName);
       } else {
         // Fallback: try to load from the purchase data directly
         const currentPurchase = purchases.find(p => p.id === purchaseId);
         const currentItem = currentPurchase?.purchase_items?.find(item => item.id === itemId);
-        
+
         if (currentItem?.configuration_data) {
-          const modelName = currentItem?.item_name || 'Modelo sin nombre';
+          const modelName = currentItem?.item_name || t('library.item.unnamed', lang);
           onLoadConfiguration(currentItem.configuration_data, modelName);
         } else {
-          console.error('No configuration data found for purchase:', purchaseId, 'item:', itemId);
+          if (import.meta.env.DEV) console.error('No configuration data found for purchase:', purchaseId, 'item:', itemId);
+          alert(t('library.err.load_config', lang));
         }
       }
     } catch (error) {
-      console.error('Error loading configuration:', error);
+      if (import.meta.env.DEV) console.error('Error loading configuration:', error);
 
       // Final fallback: try to load from the purchase data directly
       const currentPurchase = purchases.find(p => p.id === purchaseId);
       const currentItem = currentPurchase?.purchase_items?.find(item => item.id === itemId);
 
       if (currentItem?.configuration_data) {
-        const modelName = currentItem?.item_name || 'Modelo sin nombre';
+        const modelName = currentItem?.item_name || t('library.item.unnamed', lang);
         onLoadConfiguration(currentItem.configuration_data, modelName);
+      } else {
+        alert(t('library.err.load_config', lang));
       }
     } finally {
       setLoadingConfigId(null);
@@ -230,11 +235,11 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
           }
         }, 500);
       } else {
-        alert(result.error || 'Error loading configuration for download');
+        alert(result.error || t('library.err.download', lang));
       }
     } catch (err) {
-      console.error('Error en descarga:', err);
-      alert('Error preparing download');
+      if (import.meta.env.DEV) console.error('Error en descarga:', err);
+      alert(t('library.err.download', lang));
     }
   };
 
@@ -294,7 +299,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
               onClick={loadPurchases}
               disabled={loading}
               style={{ background: 'none', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.5 : 0.6, color: '#000' }}
-              title="Refresh library"
+              title={t('library.refresh_title', lang)}
             >
               <RefreshCw style={{ width: 16, height: 16 }} className={loading ? 'animate-spin' : ''} />
             </button>
@@ -304,7 +309,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
         <div style={{ padding: '0', overflowY: 'auto', flex: 1, background: 'var(--color-surface)', display: 'flex', flexDirection: 'column' }}>
           {/* Subtitle */}
           <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--color-border-strong)', background: 'var(--color-surface-2)' }}>
-            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>Tus compras y configuraciones guardadas</p>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>{t('library.subtitle', lang)}</p>
           </div>
 
           {/* Filters */}
@@ -314,25 +319,25 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                 onClick={() => setActiveFilter('all')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'all' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'all' ? '#000' : 'var(--color-text)' }}
               >
-                Todos ({purchases.length})
+                {t('library.filter.all', lang)} ({purchases.length})
               </button>
               <button
                 onClick={() => setActiveFilter('recent')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'recent' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'recent' ? '#000' : 'var(--color-text)' }}
               >
-                Recientes
+                {t('library.filter.recent', lang)}
               </button>
               <button
                 onClick={() => setActiveFilter('completed')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'completed' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'completed' ? '#000' : 'var(--color-text)' }}
               >
-                Completados
+                {t('library.filter.completed', lang)}
               </button>
               <button
                 onClick={() => setActiveFilter('pending')}
                 style={{ padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-body)', borderRadius: 'var(--radius)', border: '1.5px solid var(--color-border-strong)', cursor: 'pointer', background: activeFilter === 'pending' ? 'var(--color-accent)' : 'var(--color-surface)', color: activeFilter === 'pending' ? '#000' : 'var(--color-text)' }}
               >
-                Pendientes
+                {t('library.filter.pending', lang)}
               </button>
             </div>
           </div>
@@ -343,48 +348,48 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-                  <p className="text-slate-400">Cargando tu biblioteca...</p>
+                  <p className="text-slate-400">{t('library.loading', lang)}</p>
                 </div>
               </div>
             ) : error ? (
               <div className="bg-red-900/20 border border-red-400/30 rounded-lg p-6 text-center">
                 <div className="text-4xl mb-3">⚠️</div>
-                <h3 className="text-red-400 font-bold mb-2">Error al cargar</h3>
+                <h3 className="text-red-400 font-bold mb-2">{t('library.error.title', lang)}</h3>
                 <p className="text-slate-300 text-sm mb-4">{error}</p>
                 <button
                   onClick={loadPurchases}
                   className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md transition-colors"
                 >
-                  Retry
+                  {t('library.error.retry', lang)}
                 </button>
               </div>
             ) : filteredPurchases.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📚</div>
                 <h3 className="text-slate-300 text-xl font-bold mb-2">
-                  {activeFilter === 'all' ? 'Tu biblioteca está vacía' : 'Sin resultados con este filtro'}
+                  {activeFilter === 'all' ? t('library.empty.title', lang) : t('library.empty.filtered', lang)}
                 </h3>
                 <p className="text-slate-400 text-sm mb-6">
-                  {activeFilter === 'all' 
-                    ? 'Guarda tu primera configuración para empezar tu colección'
-                    : 'Cambia el filtro para ver otras compras'
+                  {activeFilter === 'all'
+                    ? t('library.empty.hint', lang)
+                    : t('library.empty.filtered_hint', lang)
                   }
                 </p>
                 <button
                   onClick={onClose}
                   className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
                 >
-                  Create Superhero
+                  {t('library.empty.cta', lang)}
                 </button>
               </div>
             ) : (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-bold text-slate-200 uppercase tracking-wider">
-                    Your Purchases ({filteredPurchases.length})
+                    {t('library.purchases_title', lang)} ({filteredPurchases.length})
                   </h3>
                   <div className="text-sm text-slate-400">
-                    Showing {filteredPurchases.length} of {purchases.length} purchases
+                    {t('library.showing', lang)} {filteredPurchases.length} {t('library.of', lang)} {purchases.length} {t('library.purchases_label', lang)}
                   </div>
                 </div>
 
@@ -396,7 +401,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-white font-bold text-lg">{purchase.configuration_name}</h4>
                             <span className={`text-sm font-medium ${getStatusColor(purchase.status)}`}>
-                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? 'Completado' : 'Pendiente'}
+                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? t('library.status.completed', lang) : purchase.status === 'cancelled' ? t('library.status.cancelled', lang) : t('library.status.pending', lang)}
                             </span>
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
@@ -427,7 +432,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                         <div className="space-y-3">
                           <h5 className="text-sm font-medium text-slate-300 uppercase tracking-wider flex items-center gap-2">
                             <Package className="w-4 h-4" />
-                            Configurations:
+                            {t('library.configurations', lang)}
                           </h5>
                           <div className="grid gap-3">
                           {purchase.purchase_items.map((item: any) => (
@@ -456,7 +461,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                         onClick={() => handleSaveName(item.id)}
                                         disabled={updatingName === item.id}
                                         className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50"
-                                        title="Save name"
+                                        title={t('library.name.save_title', lang)}
                                       >
                                         {updatingName === item.id ? (
                                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-400"></div>
@@ -471,7 +476,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                       <button
                                         onClick={() => handleStartEditName(item.id, item.item_name)}
                                         className="p-1 text-slate-400 hover:text-blue-400 transition-colors"
-                                        title="Edit name"
+                                        title={t('library.name.edit_title', lang)}
                                       >
                                         <PencilIcon className="w-4 h-4" />
                                       </button>
@@ -479,9 +484,9 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                   )}
                                 </div>
                                   <div className="flex flex-wrap items-center gap-4 text-slate-400 text-xs mt-1">
-                                    <span>Quantity: {item.quantity}</span>
-                                    <span>${item.item_price.toFixed(2)} each</span>
-                                    <span>Total: ${(item.quantity * item.item_price).toFixed(2)}</span>
+                                    <span>{t('library.quantity', lang)} {item.quantity}</span>
+                                    <span>${item.item_price.toFixed(2)} {t('library.each', lang)}</span>
+                                    <span>{t('library.item_total', lang)} ${(item.quantity * item.item_price).toFixed(2)}</span>
                                   </div>
                               </div>
                                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -490,17 +495,17 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                   onClick={() => handleLoadConfiguration(purchase.id, item.id)}
                                   disabled={loadingConfigId === item.id}
                                     className="flex gap-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white text-sm transition-colors items-center justify-center px-4 py-2 disabled:cursor-not-allowed font-bold rounded"
-                                  title="Apply this configuration to the customizer"
+                                  title={t('library.item.apply_title', lang)}
                                 >
                                   {loadingConfigId === item.id ? (
                                     <>
                                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                      Loading...
+                                      {t('library.btn.loading', lang)}
                                     </>
                                   ) : (
                                     <>
                                       <ArrowDownTrayIcon className="w-4 h-4" />
-                                      Apply
+                                      {t('library.btn.apply', lang)}
                                     </>
                                   )}
                                 </button>
@@ -510,7 +515,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                 <button
                                   onClick={() => handleDownloadModel(purchase.id, item, 'STL')}
                                       className="flex items-center gap-1 px-3 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded transition-colors"
-                                  title="Download for 3D printing"
+                                  title={t('library.item.stl_title', lang)}
                                 >
                                   <DocumentArrowDownIcon className="w-3 h-3" />
                                   STL
@@ -518,7 +523,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                                 <button
                                   onClick={() => handleDownloadModel(purchase.id, item, 'GLB')}
                                       className="flex items-center gap-1 px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded transition-colors"
-                                  title="Download with textures"
+                                  title={t('library.item.glb_title', lang)}
                                 >
                                   <DocumentArrowDownIcon className="w-3 h-3" />
                                   GLB
@@ -540,20 +545,15 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
           {/* Footer */}
           <div style={{ padding: '10px 16px', borderTop: '1px solid var(--color-border-strong)', background: 'var(--color-surface-2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <div style={{ fontSize: 12, color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}>
-              <span>Total: {purchases.length} purchases</span>
+              <span>{t('library.footer.total', lang)} {purchases.length} {t('library.purchases_label', lang)}</span>
               <span style={{ marginLeft: 8 }}>• ${purchases.reduce((sum, p) => sum + p.total_price, 0).toFixed(2)}</span>
             </div>
             <button
-              onClick={() => {
-                // Close the library and return to the customizer
-                onClose();
-                // Optional: Show a confirmation message
-              }}
+              onClick={onClose}
               className="btn-comic btn-primary"
               style={{ padding: '8px 16px', fontSize: 14, letterSpacing: 2 }}
-              title="Return to customizer to create more superheroes"
             >
-              CONTINUE CREATING
+              {t('library.btn.continue', lang)}
             </button>
           </div>
         </div>

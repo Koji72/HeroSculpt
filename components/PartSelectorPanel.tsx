@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Part, PartCategory, ArchetypeId, SelectedParts } from '../types';
 import { ALL_PARTS, createNonePart } from '../constants';
 import PartItemCard from './PartItemCard';
-import { getCategoryName, assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveBootsForTorso, assignAdaptiveCapeForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso, assignAdaptiveChestBeltForTorso } from '../lib/utils';
+import { getCategoryI18nKey, assignDefaultHandsForTorso, assignAdaptiveHeadForTorso, assignAdaptiveBootsForTorso, assignAdaptiveCapeForTorso, assignAdaptiveSymbolForTorso, assignAdaptiveSuitTorsoForTorso, assignAdaptiveChestBeltForTorso } from '../lib/utils';
 import { XMarkIcon /*, CheckIcon, RotateCcwIcon*/ } from './icons';
 import { useLang, t } from '../lib/i18n';
 
@@ -798,7 +798,7 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
       {/* Header */}
       <div className="panel-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getCategoryName(activeCategory)}</span>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t(getCategoryI18nKey(activeCategory), lang)}</span>
           {allPartsToShow.length > 0 && (
             <span style={{
               fontSize: 8, fontFamily: 'var(--font-body)', fontWeight: 700,

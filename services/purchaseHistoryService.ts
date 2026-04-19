@@ -56,7 +56,7 @@ export class PurchaseHistoryService {
         .single();
 
       if (purchaseError) {
-        console.error('Error saving purchase:', purchaseError);
+        if (import.meta.env.DEV) console.error('Error saving purchase:', purchaseError);
         return { success: false, error: purchaseError.message };
       }
 
@@ -74,14 +74,14 @@ export class PurchaseHistoryService {
         .insert(purchaseItems);
 
       if (itemsError) {
-        console.error('Error saving purchase items:', itemsError);
+        if (import.meta.env.DEV) console.error('Error saving purchase items:', itemsError);
         return { success: false, error: itemsError.message };
       }
 
       return { success: true, purchaseId: purchase.id };
 
     } catch (error) {
-      console.error('Error in savePurchase:', error);
+      if (import.meta.env.DEV) console.error('Error in savePurchase:', error);
       return { success: false, error: 'Error inesperado al guardar la compra' };
     }
   }
@@ -108,14 +108,14 @@ export class PurchaseHistoryService {
         .order('purchase_date', { ascending: false });
 
       if (error) {
-        console.error('Error fetching purchases:', error);
+        if (import.meta.env.DEV) console.error('Error fetching purchases:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true, purchases: data || [] };
 
     } catch (error) {
-      console.error('Error in getUserPurchases:', error);
+      if (import.meta.env.DEV) console.error('Error in getUserPurchases:', error);
       return { success: false, error: 'Error al cargar el historial de compras' };
     }
   }
@@ -143,12 +143,12 @@ export class PurchaseHistoryService {
         .single();
 
       if (error) {
-        console.error('Error fetching purchase:', error);
+        if (import.meta.env.DEV) console.error('Error fetching purchase:', error);
         return { success: false, error: error.message };
       }
 
-      return { 
-        success: true, 
+      return {
+        success: true,
         purchase: {
           ...data,
           items: data.purchase_items || []
@@ -156,7 +156,7 @@ export class PurchaseHistoryService {
       };
 
     } catch (error) {
-      console.error('Error in getPurchaseById:', error);
+      if (import.meta.env.DEV) console.error('Error in getPurchaseById:', error);
       return { success: false, error: 'Error al cargar la compra' };
     }
   }
@@ -184,7 +184,7 @@ export class PurchaseHistoryService {
         .single();
 
       if (error) {
-        console.error('Error loading purchase:', error);
+        if (import.meta.env.DEV) console.error('Error loading purchase:', error);
         return { success: false, error: error.message };
       }
 
@@ -199,7 +199,7 @@ export class PurchaseHistoryService {
 
       return { success: true, configuration: item.configuration_data };
     } catch (error) {
-      console.error('Error in loadConfigurationFromPurchase:', error);
+      if (import.meta.env.DEV) console.error('Error in loadConfigurationFromPurchase:', error);
       return { success: false, error: 'Failed to load configuration' };
     }
   }

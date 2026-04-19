@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArchetypeInfo, Faction } from '../types';
 import { getAverageStats } from '../lib/archetypeData';
+import { useLang, t } from '../lib/i18n';
 
 interface ArchetypeCharacterSheetProps {
   archetype: ArchetypeInfo;
@@ -13,6 +14,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
   isExpanded = false,
   onToggle
 }) => {
+  const { lang } = useLang();
   const averageStats = getAverageStats(archetype);
 
   const getStatColor = (value: number) => {
@@ -53,7 +55,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
             <div>
               <div className="text-xs text-cyan-400 uppercase tracking-wider font-black"
                    style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                HERO CHARACTER SHEET
+                {t('sheet.hero_character_sheet', lang)}
               </div>
               <div className={`text-xl font-black uppercase tracking-widest bg-gradient-to-r ${archetype.colors} bg-clip-text text-transparent`}
                    style={{ fontFamily: 'var(--font-comic), system-ui' }}>
@@ -87,7 +89,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
             <div className="relative z-10">
               <h3 className="text-lg font-black text-purple-400 uppercase tracking-wider mb-4 text-center"
                   style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                CHARACTER STATISTICS
+                {t('sheet.character_statistics', lang)}
               </h3>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -96,7 +98,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                   <div className="bg-slate-800/50 border border-slate-600/50 rounded-lg p-4">
                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-wider mb-3"
                         style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                      BASE STATISTICS
+                      {t('sheet.base_statistics', lang)}
                     </h4>
                     
                     <div className="space-y-3">
@@ -124,7 +126,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-purple-400 uppercase font-bold"
                               style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                          AVERAGE
+                          {t('sheet.average', lang)}
                         </span>
                         <span className={`text-sm font-bold ${getStatColor(averageStats)}`}>
                           {averageStats}
@@ -137,7 +139,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                   <div className="bg-slate-800/50 border border-slate-600/50 rounded-lg p-4">
                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-wider mb-3"
                         style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                      ABILITIES
+                      {t('sheet.abilities', lang)}
                     </h4>
                     
                     <div className="space-y-3">
@@ -162,7 +164,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                   <div className="bg-slate-800/50 border border-slate-600/50 rounded-lg p-4">
                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-wider mb-3"
                         style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                      DESCRIPTION
+                      {t('sheet.description', lang)}
                     </h4>
                     
                     <div className="space-y-2">
@@ -170,10 +172,10 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                         {archetype.description}
                       </p>
                       <p className="text-xs text-slate-400">
-                        <span className="text-cyan-400 font-bold">Brief:</span> {archetype.briefDescription}
+                        <span className="text-cyan-400 font-bold">{t('sheet.brief', lang)}</span> {archetype.briefDescription}
                       </p>
                       <p className="text-xs text-slate-400">
-                        <span className="text-purple-400 font-bold">Theme:</span> {archetype.theme}
+                        <span className="text-purple-400 font-bold">{t('sheet.theme', lang)}</span> {archetype.theme}
                       </p>
                     </div>
                   </div>
@@ -182,7 +184,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                   <div className="bg-slate-800/50 border border-slate-600/50 rounded-lg p-4">
                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-wider mb-3"
                         style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                      FAMOUS EXAMPLES
+                      {t('sheet.famous_examples', lang)}
                     </h4>
                     
                     <div className="flex flex-wrap gap-2">
@@ -198,7 +200,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                   <div className="bg-slate-800/50 border border-slate-600/50 rounded-lg p-4">
                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-wider mb-3"
                         style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                      ASSOCIATED FACTIONS
+                      {t('sheet.associated_factions', lang)}
                     </h4>
                     
                     <div className="flex flex-wrap gap-2">
@@ -214,7 +216,7 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                   <div className="bg-slate-800/50 border border-slate-600/50 rounded-lg p-4">
                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-wider mb-3"
                         style={{ fontFamily: 'var(--font-comic), system-ui' }}>
-                      ICONIC PIECES
+                      {t('sheet.iconic_pieces', lang)}
                     </h4>
                     
                     <p className="text-xs text-slate-300">
@@ -227,9 +229,9 @@ const ArchetypeCharacterSheet: React.FC<ArchetypeCharacterSheetProps> = ({
                              {/* Footer with additional information */}
               <div className="mt-6 pt-4 border-t border-slate-600/50">
                 <div className="flex justify-between items-center text-xs text-slate-400">
-                  <span>Archetype ID: {archetype.id}</span>
-                  <span>Prefix: {archetype.prefix}</span>
-                  <span>Palette: {archetype.palette}</span>
+                  <span>{t('sheet.archetype_id', lang)} {archetype.id}</span>
+                  <span>{t('sheet.prefix', lang)} {archetype.prefix}</span>
+                  <span>{t('sheet.palette', lang)} {archetype.palette}</span>
                 </div>
               </div>
             </div>

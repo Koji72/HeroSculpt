@@ -1,6 +1,7 @@
 import React from 'react';
 import { PartCategory } from '../types';
-import { getCategoryName } from '../lib/utils'; 
+import { getCategoryI18nKey } from '../lib/utils';
+import { useLang, t } from '../lib/i18n';
 import { 
   User, 
   Shirt, 
@@ -63,6 +64,7 @@ const CircularCategoryMenu: React.FC<CircularCategoryMenuProps> = ({
   radius = 120,
   startAngleOffset = -90, // Start at top
 }) => {
+  const { lang } = useLang();
   const angleStep = 360 / (categories.length || 1);
 
   return (
@@ -111,7 +113,7 @@ const CircularCategoryMenu: React.FC<CircularCategoryMenuProps> = ({
                 onSelectCategory(isSelected ? null : category);
             }}
             disabled={disabled}
-            title={getCategoryName(category)}
+            title={t(getCategoryI18nKey(category), lang)}
             className={`absolute w-12 h-12 flex items-center justify-center
                         marvel-button transition-colors transition-transform transition-shadow duration-200 ease-in-out pointer-events-auto
               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2
@@ -137,7 +139,7 @@ const CircularCategoryMenu: React.FC<CircularCategoryMenuProps> = ({
               opacity-0 group-hover:opacity-100 transition-opacity duration-200
               pointer-events-none z-50
             `}>
-            {getCategoryName(category)}
+            {t(getCategoryI18nKey(category), lang)}
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 
                 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900">
               </div>

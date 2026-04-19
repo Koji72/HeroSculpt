@@ -121,8 +121,8 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
         ▶
       </button>
 
-      {/* Botón Borrar (solo para poses guardadas) */}
-      {savedPoses[currentPoseIndex]?.source === 'saved' && onDeletePose && (
+      {/* Botón Borrar */}
+      {savedPoses[currentPoseIndex] && onDeletePose && (
         confirmingDelete ? (
           <div className="flex items-center gap-1">
             <button

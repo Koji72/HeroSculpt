@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+import { useLang, t, TransKey } from '../lib/i18n';
 
 interface ScaleOption {
   label: string;
-  description: string;
+  descKey: TransKey;
   scaleFactor: number;
   recommended?: boolean;
 }
 
 const SCALE_OPTIONS: ScaleOption[] = [
-  { label: '28mm', description: 'Classic tabletop standard', scaleFactor: 1, recommended: false },
-  { label: '32mm', description: 'Modern heroic standard', scaleFactor: 32 / 28, recommended: true },
-  { label: '32mm Heroic', description: 'Larger proportions, easier to paint', scaleFactor: 1.2 },
-  { label: '54mm Display', description: 'Collector scale, max detail', scaleFactor: 54 / 28 },
+  { label: '28mm', descKey: 'stl.desc.28mm', scaleFactor: 1, recommended: false },
+  { label: '32mm', descKey: 'stl.desc.32mm', scaleFactor: 32 / 28, recommended: true },
+  { label: '32mm Heroic', descKey: 'stl.desc.32mm_heroic', scaleFactor: 1.2 },
+  { label: '54mm Display', descKey: 'stl.desc.54mm', scaleFactor: 54 / 28 },
 ];
 
 interface STLScaleModalProps {
@@ -20,6 +21,7 @@ interface STLScaleModalProps {
 }
 
 export default function STLScaleModal({ onConfirm, onCancel }: STLScaleModalProps) {
+  const { lang } = useLang();
   const [selected, setSelected] = useState<number>(32 / 28);
 
   return (
@@ -45,7 +47,7 @@ export default function STLScaleModal({ onConfirm, onCancel }: STLScaleModalProp
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2, color: '#000' }}>
-            🖨️ STL EXPORT SCALE
+            {t('stl.title', lang)}
           </span>
           <button
             onClick={onCancel}
@@ -86,11 +88,11 @@ export default function STLScaleModal({ onConfirm, onCancel }: STLScaleModalProp
                         fontSize: 8, fontFamily: 'var(--font-comic)', letterSpacing: 1,
                         background: 'var(--color-accent)', color: '#000',
                         padding: '1px 4px', borderRadius: 2,
-                      }}>RECOMMENDED</span>
+                      }}>{t('stl.recommended', lang)}</span>
                     )}
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--color-text-muted)', marginTop: 1 }}>
-                    {opt.description} · ×{opt.scaleFactor.toFixed(2)}
+                    {t(opt.descKey, lang)} · ×{opt.scaleFactor.toFixed(2)}
                   </div>
                 </div>
               </button>
@@ -111,7 +113,7 @@ export default function STLScaleModal({ onConfirm, onCancel }: STLScaleModalProp
               fontFamily: 'var(--font-comic)', fontSize: 11, letterSpacing: 1,
               color: 'var(--color-text-muted)',
             }}
-          >CANCEL</button>
+          >{t('stl.cancel', lang)}</button>
           <button
             type="button"
             onClick={() => onConfirm(selected)}
@@ -123,7 +125,7 @@ export default function STLScaleModal({ onConfirm, onCancel }: STLScaleModalProp
               fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 2,
               color: '#000', fontWeight: 700,
             }}
-          >DOWNLOAD STL</button>
+          >{t('stl.download', lang)}</button>
         </div>
       </div>
     </div>

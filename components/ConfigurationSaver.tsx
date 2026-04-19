@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SelectedParts } from '../types';
+import { useLang, t } from '../lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 // Input component - simple implementation
@@ -28,6 +29,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
   selectedParts,
   onLoadConfiguration
 }) => {
+  const { lang } = useLang();
   const [savedConfigs, setSavedConfigs] = useState<SavedConfiguration[]>([]);
   const [newConfigName, setNewConfigName] = useState('');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -39,7 +41,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
       try {
         setSavedConfigs(JSON.parse(saved));
       } catch (error) {
-        console.error('Error loading saved configurations:', error);
+        if (import.meta.env.DEV) { console.error('Error loading saved configurations:', error); }
       }
     }
   }, []);
@@ -108,7 +110,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
           onLoadConfiguration(config.parts);
         }
       } catch (error) {
-        console.error('Error importing configuration:', error);
+        if (import.meta.env.DEV) { console.error('Error importing configuration:', error); }
       }
     };
     reader.readAsText(file);
@@ -126,7 +128,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Save className="w-5 h-5" />
-            Save Configuration
+            {t('saver.save_title', lang)}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -137,23 +139,23 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
               disabled={Object.keys(selectedParts).length === 0}
             >
               <Save className="w-4 h-4 mr-2" />
-              Save Current Configuration
+              {t('saver.save_btn', lang)}
             </Button>
 
             {showSaveDialog && (
               <div className="space-y-3 p-3 border rounded-lg bg-gray-50">
                 <Input
-                  placeholder="Configuration name"
+                  placeholder={t('saver.name_placeholder', lang)}
                   value={newConfigName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewConfigName(e.target.value)}
                   onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleSaveConfiguration()}
                 />
                 <div className="flex gap-2">
                   <Button onClick={handleSaveConfiguration} disabled={!newConfigName.trim()}>
-                    Save
+                    {t('saver.save', lang)}
                   </Button>
                   <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
-                    Cancel
+                    {t('saver.cancel', lang)}
                   </Button>
                 </div>
               </div>
@@ -162,7 +164,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => document.getElementById('import-config')?.click()}>
                 <Upload className="w-4 h-4 mr-2" />
-                Import
+                {t('saver.import', lang)}
               </Button>
               <input
                 id="import-config"
@@ -178,11 +180,11 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Saved Configurations</CardTitle>
+          <CardTitle className="text-lg">{t('saver.list_title', lang)}</CardTitle>
         </CardHeader>
         <CardContent>
           {sortedConfigs.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No saved configurations</p>
+            <p className="text-gray-500 text-center py-4">{t('saver.empty', lang)}</p>
           ) : (
             <div className="space-y-2">
               {sortedConfigs.map((config) => (
@@ -210,7 +212,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
                       variant="outline"
                       onClick={() => handleLoadConfiguration(config)}
                     >
-                      Load
+                      {t('saver.load', lang)}
                     </Button>
                     <Button
                       size="sm"

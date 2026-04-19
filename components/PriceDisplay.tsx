@@ -3,6 +3,7 @@ import { SelectedParts } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Download, Loader2 } from "lucide-react";
+import { useLang, t } from '../lib/i18n';
 
 interface PriceDisplayProps {
   selectedParts: SelectedParts;
@@ -10,6 +11,7 @@ interface PriceDisplayProps {
 }
 
 const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadModel }) => {
+  const { lang } = useLang();
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadMessage, setDownloadMessage] = useState<string>('');
 
@@ -22,12 +24,12 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
 
   const handleDownload = async () => {
     if (!onDownloadModel) {
-      alert('Download functionality not available');
+      alert(t('price.download_unavailable', lang));
       return;
     }
 
     setIsDownloading(true);
-    setDownloadMessage('Preparing model for download...');
+    setDownloadMessage(t('price.btn.preparing', lang));
 
     try {
       const result = await onDownloadModel();
@@ -51,7 +53,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
     <Card className="bg-slate-900">
       <CardHeader className="p-2 md:p-3">
         <CardTitle className="text-sm md:text-base font-semibold text-orange-400">
-          Total Price
+          {t('price.title', lang)}
         </CardTitle>
         <p className="text-xl md:text-2xl font-bold text-cyan-300">
           ${totalPrice.toFixed(2)} <span className="text-sm md:text-lg text-slate-400">USD</span>
@@ -70,10 +72,10 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
             <Download className="h-3 w-3 md:h-4 md:w-4 mr-1.5" />
           )}
           <span className="hidden sm:inline">
-            {isDownloading ? 'Preparing...' : 'Download STL'}
+            {isDownloading ? t('price.btn.preparing', lang) : t('price.btn.download_stl', lang)}
           </span>
           <span className="sm:hidden">
-            {isDownloading ? '...' : 'STL'}
+            {isDownloading ? '...' : t('price.btn.download_stl_short', lang)}
           </span>
         </Button>
 
@@ -84,8 +86,8 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
           disabled={totalPrice === 0}
         >
           <ShoppingCart className="h-3 w-3 md:h-4 md:w-4 mr-1.5" />
-          <span className="hidden sm:inline">Checkout (Mock)</span>
-          <span className="sm:hidden">Buy</span>
+          <span className="hidden sm:inline">{t('price.btn.checkout', lang)}</span>
+          <span className="sm:hidden">{t('price.btn.checkout_short', lang)}</span>
         </Button>
 
         {/* Download Status Message */}
@@ -103,7 +105,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({ selectedParts, onDownloadMo
       </CardContent>
       <CardFooter className="p-2 md:p-3 pt-0">
         <p className="text-xs text-slate-400 text-center w-full">
-          Download your custom 3D model as STL • Checkout for STL files
+          {t('price.footer', lang)}
         </p>
       </CardFooter>
     </Card>

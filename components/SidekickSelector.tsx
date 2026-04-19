@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SidekickPart, SidekickType, SidekickSize, SidekickPosition } from '../types';
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
+import { useLang, t } from '../lib/i18n';
 
 interface SidekickSelectorProps {
   selectedSidekick?: SidekickPart;
@@ -88,6 +89,7 @@ const SidekickSelector: React.FC<SidekickSelectorProps> = ({
   onPositionChange,
   currentPosition
 }) => {
+  const { lang } = useLang();
   const [hoveredSidekick, setHoveredSidekick] = useState<string | null>(null);
 
   const getSidekickTypeIcon = (type: SidekickType) => {
@@ -102,30 +104,30 @@ const SidekickSelector: React.FC<SidekickSelectorProps> = ({
 
   const getSizeLabel = (size: SidekickSize) => {
     switch (size) {
-      case SidekickSize.SMALL: return 'Pequeño';
-      case SidekickSize.MEDIUM: return 'Mediano';
-      case SidekickSize.LARGE: return 'Grande';
-      default: return 'Mediano';
+      case SidekickSize.SMALL: return t('sidekick.size.small', lang);
+      case SidekickSize.MEDIUM: return t('sidekick.size.medium', lang);
+      case SidekickSize.LARGE: return t('sidekick.size.large', lang);
+      default: return t('sidekick.size.medium', lang);
     }
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-white">Compañero de Batalla</h3>
+        <h3 className="text-lg font-bold text-white">{t('sidekick.title', lang)}</h3>
         <GamingButton
           variant="ghost"
           size="sm"
           onClick={() => onSidekickSelect(null)}
           className="text-red-400 hover:text-red-300"
         >
-          Remover
+          {t('sidekick.remove', lang)}
         </GamingButton>
       </div>
 
-      {/* Posición del Sidekick */}
+      {/* Sidekick Position */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Posición</label>
+        <label className="text-sm font-medium text-gray-300">{t('sidekick.position', lang)}</label>
         <div className="grid grid-cols-2 gap-2">
           {Object.values(SidekickPosition).map((position) => (
             <GamingButton
@@ -135,18 +137,18 @@ const SidekickSelector: React.FC<SidekickSelectorProps> = ({
               onClick={() => onPositionChange(position)}
               className="text-xs"
             >
-              {position === SidekickPosition.LEFT && '⬅️ Izquierda'}
-              {position === SidekickPosition.RIGHT && '➡️ Derecha'}
-              {position === SidekickPosition.BEHIND && '⬇️ Detrás'}
-              {position === SidekickPosition.FLOATING && '☁️ Flotando'}
+              {position === SidekickPosition.LEFT && t('sidekick.pos.left', lang)}
+              {position === SidekickPosition.RIGHT && t('sidekick.pos.right', lang)}
+              {position === SidekickPosition.BEHIND && t('sidekick.pos.behind', lang)}
+              {position === SidekickPosition.FLOATING && t('sidekick.pos.floating', lang)}
             </GamingButton>
           ))}
         </div>
       </div>
 
-      {/* Lista de Sidekicks */}
+      {/* Sidekicks List */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Compañeros Disponibles</label>
+        <label className="text-sm font-medium text-gray-300">{t('sidekick.available', lang)}</label>
         <div className="grid grid-cols-1 gap-3">
           {SAMPLE_SIDEKICKS.map((sidekick) => (
             <Card
@@ -203,17 +205,17 @@ const SidekickSelector: React.FC<SidekickSelectorProps> = ({
         </div>
       </div>
 
-      {/* Información del Sidekick Seleccionado */}
+      {/* Selected Sidekick Info */}
       {selectedSidekick && (
         <Card className="p-4 bg-blue-900/20 border-blue-500/30">
           <h4 className="font-medium text-blue-300 mb-2">
             {selectedSidekick.name} - {getSidekickTypeIcon(selectedSidekick.companionType)}
           </h4>
           <div className="text-sm text-gray-300 space-y-1">
-            <p>Tamaño: {getSizeLabel(selectedSidekick.size)}</p>
-            <p>Posición: {currentPosition}</p>
-            <p>Sincronizado: {selectedSidekick.syncWithHero ? 'Sí' : 'No'}</p>
-            <p>Animaciones: {selectedSidekick.animations.join(', ')}</p>
+            <p>{t('sidekick.info.size', lang)} {getSizeLabel(selectedSidekick.size)}</p>
+            <p>{t('sidekick.info.position', lang)} {currentPosition}</p>
+            <p>{t('sidekick.info.synced', lang)} {selectedSidekick.syncWithHero ? t('sidekick.info.synced_yes', lang) : t('sidekick.info.synced_no', lang)}</p>
+            <p>{t('sidekick.info.animations', lang)} {selectedSidekick.animations.join(', ')}</p>
           </div>
         </Card>
       )}

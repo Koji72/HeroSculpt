@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLang, t } from '../lib/i18n';
 import { 
   Settings, 
   Monitor, 
@@ -58,6 +59,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
   onClose,
   user
 }) => {
+  const { lang } = useLang();
   const [settings, setSettings] = useState({
     // Display Settings
     darkMode: true,
@@ -360,7 +362,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
               className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
             >
               {showExamples.has(setting.id) ? <XCircle className="h-3 w-3" /> : <Info className="h-3 w-3" />}
-              {showExamples.has(setting.id) ? 'Ocultar ejemplo' : 'Ver ejemplo'}
+              {showExamples.has(setting.id) ? t('settings.example.hide', lang) : t('settings.example.show', lang)}
             </button>
             {showExamples.has(setting.id) && (
               <p className="text-slate-300 text-xs mt-1 bg-slate-600/50 p-2 rounded">
@@ -401,7 +403,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             onClick={() => toggleSetting(setting.id)}
             className="border-slate-600"
           >
-            {setting.value ? 'Configured' : 'Configure'}
+            {setting.value ? t('settings.btn.configured', lang) : t('settings.btn.configure', lang)}
           </Button>
         )}
       </div>
@@ -414,11 +416,8 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         return (
           <div className="space-y-4">
             <div className="bg-blue-900/20 border border-blue-400/30 rounded-lg p-4 mb-4">
-              <h3 className="text-blue-400 font-bold mb-2">💡 Configuration Tip</h3>
-              <p className="text-slate-300 text-sm">
-                Dark mode is recommended for long customization sessions. 
-                Responsive design adapts automatically to your device.
-              </p>
+              <h3 className="text-blue-400 font-bold mb-2">{t('settings.tip.display', lang)}</h3>
+              <p className="text-slate-300 text-sm">{t('settings.tip.display_body', lang)}</p>
             </div>
             {displaySettings.map(renderSetting)}
           </div>
@@ -427,10 +426,8 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         return (
           <div className="space-y-4">
             <div className="bg-yellow-900/20 border border-yellow-400/30 rounded-lg p-4 mb-4">
-              <h3 className="text-yellow-400 font-bold mb-2">🔔 Notification Management</h3>
-              <p className="text-slate-300 text-sm">
-                Customize which notifications you receive to stay informed without being annoying.
-              </p>
+              <h3 className="text-yellow-400 font-bold mb-2">{t('settings.tip.notifications', lang)}</h3>
+              <p className="text-slate-300 text-sm">{t('settings.tip.notifications_body', lang)}</p>
             </div>
             {notificationSettings.map(renderSetting)}
           </div>
@@ -439,10 +436,8 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         return (
           <div className="space-y-4">
             <div className="bg-green-900/20 border border-green-400/30 rounded-lg p-4 mb-4">
-              <h3 className="text-green-400 font-bold mb-2">🔒 Security</h3>
-              <p className="text-slate-300 text-sm">
-                Protect your account and customize how your data is handled.
-              </p>
+              <h3 className="text-green-400 font-bold mb-2">{t('settings.tip.account', lang)}</h3>
+              <p className="text-slate-300 text-sm">{t('settings.tip.account_body', lang)}</p>
             </div>
             {accountSettings.map(renderSetting)}
           </div>
@@ -451,10 +446,8 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         return (
           <div className="space-y-4">
             <div className="bg-purple-900/20 border border-purple-400/30 rounded-lg p-4 mb-4">
-              <h3 className="text-purple-400 font-bold mb-2">⚡ Performance Optimization</h3>
-              <p className="text-slate-300 text-sm">
-                Adjust settings to get the best performance on your device.
-              </p>
+              <h3 className="text-purple-400 font-bold mb-2">{t('settings.tip.performance', lang)}</h3>
+              <p className="text-slate-300 text-sm">{t('settings.tip.performance_body', lang)}</p>
             </div>
             {performanceSettings.map(renderSetting)}
           </div>
@@ -463,10 +456,8 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         return (
           <div className="space-y-4">
             <div className="bg-indigo-900/20 border border-indigo-400/30 rounded-lg p-4 mb-4">
-              <h3 className="text-indigo-400 font-bold mb-2">🌍 Regional Settings</h3>
-              <p className="text-slate-300 text-sm">
-                Customize language, currency, and time zone according to your location.
-              </p>
+              <h3 className="text-indigo-400 font-bold mb-2">{t('settings.tip.language', lang)}</h3>
+              <p className="text-slate-300 text-sm">{t('settings.tip.language_body', lang)}</p>
             </div>
             {languageSettings.map(renderSetting)}
           </div>
@@ -475,10 +466,8 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         return (
           <div className="space-y-4">
             <div className="bg-orange-900/20 border border-orange-400/30 rounded-lg p-4 mb-4">
-              <h3 className="text-orange-400 font-bold mb-2">♿ Accessibility</h3>
-              <p className="text-slate-300 text-sm">
-                Special settings to improve the experience for users with specific needs.
-              </p>
+              <h3 className="text-orange-400 font-bold mb-2">{t('settings.tip.accessibility', lang)}</h3>
+              <p className="text-slate-300 text-sm">{t('settings.tip.accessibility_body', lang)}</p>
             </div>
             {accessibilitySettings.map(renderSetting)}
           </div>
@@ -498,7 +487,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
           <DialogTitle className="text-white flex items-center justify-between">
             <span className="text-xl font-bold flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              User Settings
+              {t('settings.title', lang)}
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -530,7 +519,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
                 className="border-slate-600 text-slate-400 hover:text-white"
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
-                Reset
+                {t('settings.reset', lang)}
               </Button>
               <Button
                 variant="ghost"
@@ -539,7 +528,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
                 className="text-slate-400 hover:text-white"
               >
                 <X className="h-5 w-5" />
-                Close
+                {t('settings.close', lang)}
               </Button>
             </div>
           </DialogTitle>
@@ -554,9 +543,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             className={activeTab === 'display' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}
           >
             <Monitor className="h-4 w-4 mr-2" />
-            Display
+            {t('settings.tab.display', lang)}
           </Button>
-          
+
           <Button
             variant={activeTab === 'notifications' ? 'default' : 'ghost'}
             size="sm"
@@ -564,7 +553,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             className={activeTab === 'notifications' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}
           >
             <Bell className="h-4 w-4 mr-2" />
-            Notifications
+            {t('settings.tab.notifications', lang)}
           </Button>
           
           <Button
@@ -574,9 +563,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             className={activeTab === 'account' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}
           >
             <User className="h-4 w-4 mr-2" />
-            Account
+            {t('settings.tab.account', lang)}
           </Button>
-          
+
           <Button
             variant={activeTab === 'performance' ? 'default' : 'ghost'}
             size="sm"
@@ -584,9 +573,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             className={activeTab === 'performance' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}
           >
             <RotateCcw className="h-4 w-4 mr-2" />
-            Performance
+            {t('settings.tab.performance', lang)}
           </Button>
-          
+
           <Button
             variant={activeTab === 'language' ? 'default' : 'ghost'}
             size="sm"
@@ -594,9 +583,9 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             className={activeTab === 'language' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}
           >
             <Globe className="h-4 w-4 mr-2" />
-            Language
+            {t('settings.tab.language', lang)}
           </Button>
-          
+
           <Button
             variant={activeTab === 'accessibility' ? 'default' : 'ghost'}
             size="sm"
@@ -604,7 +593,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             className={activeTab === 'accessibility' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}
           >
             <Eye className="h-4 w-4 mr-2" />
-            Accessibility
+            {t('settings.tab.accessibility', lang)}
           </Button>
         </div>
 
@@ -617,13 +606,13 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         <div className="pt-4 border-t border-slate-700">
           <div className="flex justify-between items-center">
             <p className="text-slate-400 text-sm">
-              Settings saved automatically
+              {t('settings.autosave', lang)}
             </p>
             <Button
               onClick={onClose}
               className="bg-blue-600 hover:bg-blue-500 text-white"
             >
-              Apply Changes
+              {t('settings.apply', lang)}
             </Button>
           </div>
         </div>

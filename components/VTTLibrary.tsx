@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RPGCharacterSync } from '../types';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
+import { useLang, t } from '../lib/i18n';
 
 interface VTTToken {
   id: string;
@@ -36,6 +37,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
   onExportToken,
   onExportCharacter
 }) => {
+  const { lang } = useLang();
   const [activeTab, setActiveTab] = useState<'tokens' | 'characters'>('tokens');
   const [tokens, setTokens] = useState<VTTToken[]>([]);
   const [characters, setCharacters] = useState<VTTCharacter[]>([]);
@@ -62,7 +64,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
         setCharacters(JSON.parse(savedCharacters));
       }
     } catch (error) {
-      console.error('Error loading VTT data:', error);
+      if (import.meta.env.DEV) { console.error('Error loading VTT data:', error); }
     }
   };
 
@@ -71,7 +73,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
       localStorage.setItem('vtt_tokens', JSON.stringify(tokens));
       localStorage.setItem('vtt_characters', JSON.stringify(characters));
     } catch (error) {
-      console.error('Error saving VTT data:', error);
+      if (import.meta.env.DEV) { console.error('Error saving VTT data:', error); }
     }
   };
 
@@ -125,7 +127,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
         <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-6 border-b border-slate-600">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-black text-white uppercase tracking-wider">
-              🎲 VTT Library
+              {t('vttlib.title', lang)}
             </h2>
             <Button
               onClick={onClose}
@@ -146,7 +148,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
-            🎯 Tokens ({tokens.length})
+            {t('vttlib.tab.tokens', lang)} ({tokens.length})
           </button>
           <button
             onClick={() => setActiveTab('characters')}
@@ -156,7 +158,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
-            👤 Characters ({characters.length})
+            {t('vttlib.tab.characters', lang)} ({characters.length})
           </button>
         </div>
 
@@ -167,8 +169,8 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
               {tokens.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">🎯</div>
-                  <h3 className="text-xl font-bold text-slate-300 mb-2">No tokens yet</h3>
-                  <p className="text-slate-400">Export tokens from your characters to see them here</p>
+                  <h3 className="text-xl font-bold text-slate-300 mb-2">{t('vttlib.no_tokens_title', lang)}</h3>
+                  <p className="text-slate-400">{t('vttlib.no_tokens_desc', lang)}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -181,15 +183,15 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                       
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Archetype:</span>
+                          <span className="text-slate-400">{t('vttlib.archetype', lang)}</span>
                           <span className="text-white">{token.archetype}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Size:</span>
+                          <span className="text-slate-400">{t('vttlib.size', lang)}</span>
                           <span className="text-white">{token.size}x{token.size}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Created:</span>
+                          <span className="text-slate-400">{t('vttlib.created', lang)}</span>
                           <span className="text-white">{new Date(token.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
@@ -199,7 +201,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                           onClick={() => downloadToken(token)}
                           className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white text-sm"
                         >
-                          Download
+                          {t('vttlib.download', lang)}
                         </Button>
                         <Button
                           onClick={() => deleteToken(token.id)}
@@ -220,8 +222,8 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
               {characters.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">👤</div>
-                  <h3 className="text-xl font-bold text-slate-300 mb-2">No characters yet</h3>
-                  <p className="text-slate-400">Export characters from your builds to see them here</p>
+                  <h3 className="text-xl font-bold text-slate-300 mb-2">{t('vttlib.no_chars_title', lang)}</h3>
+                  <p className="text-slate-400">{t('vttlib.no_chars_desc', lang)}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -234,15 +236,15 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                       
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Archetype:</span>
+                          <span className="text-slate-400">{t('vttlib.archetype', lang)}</span>
                           <span className="text-white">{character.archetype}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Format:</span>
+                          <span className="text-slate-400">{t('vttlib.format', lang)}</span>
                           <span className="text-white">{character.format.toUpperCase()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Created:</span>
+                          <span className="text-slate-400">{t('vttlib.created', lang)}</span>
                           <span className="text-white">{new Date(character.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
@@ -252,7 +254,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                           onClick={() => downloadCharacter(character)}
                           className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-sm"
                         >
-                          Download
+                          {t('vttlib.download', lang)}
                         </Button>
                         <Button
                           onClick={() => deleteCharacter(character.id)}
@@ -273,9 +275,9 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
         <div className="bg-slate-800 p-4 border-t border-slate-600">
           <div className="flex justify-between items-center">
             <div className="text-slate-400 text-sm">
-              {activeTab === 'tokens' 
-                ? `${tokens.length} tokens stored locally`
-                : `${characters.length} characters stored locally`
+              {activeTab === 'tokens'
+                ? `${tokens.length} ${t('vttlib.tokens_stored', lang)}`
+                : `${characters.length} ${t('vttlib.chars_stored', lang)}`
               }
             </div>
             <Button
@@ -288,7 +290,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
               }}
               className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white"
             >
-              {activeTab === 'tokens' ? 'Export New Token' : 'Export New Character'}
+              {activeTab === 'tokens' ? t('vttlib.export_token', lang) : t('vttlib.export_char', lang)}
             </Button>
           </div>
         </div>
