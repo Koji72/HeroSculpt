@@ -768,6 +768,7 @@ const dict = {
   'vtt.border_color': { en: 'BORDER COLOR', es: 'COLOR BORDE' },
   'vtt.generating': { en: 'GENERATING...', es: 'GENERANDO...' },
   'vtt.download_token': { en: '⬇ DOWNLOAD TOKEN', es: '⬇ DESCARGAR TOKEN' },
+  'vtt.download_foundry': { en: '⬇ FOUNDRY JSON', es: '⬇ JSON FOUNDRY' },
   'vtt.export_error': { en: '⚠️ Error generating token', es: '⚠️ Error al generar el token' },
   'vtt.step_capture': { en: 'CAPTURE', es: 'CAPTURA' },
   'vtt.step_shape': { en: 'SHAPE', es: 'FORMA' },

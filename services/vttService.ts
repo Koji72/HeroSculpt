@@ -212,6 +212,52 @@ export class VTTService {
     });
   }
 
+  static generateFoundryJSON(
+    character: RPGCharacterSync,
+    heroName: string,
+    tokenFilename: string
+  ): string {
+    const name = heroName.trim() || character.archetypeId;
+    const stats = character.calculatedStats;
+
+    // Primary stat = highest value
+    const statEntries = Object.entries(stats) as Array<[keyof ArchetypeStats, number]>;
+    const primaryStat = statEntries.reduce((a, b) => b[1] > a[1] ? b : a)[0];
+
+    const manifest = {
+      name,
+      img: tokenFilename,
+      width: character.physicalAttributes.build === 'heavy' ? 2 : 1,
+      height: character.physicalAttributes.height === 'giant' ? 2 : 1,
+      displayName: 30,   // HOVER
+      disposition: 1,    // FRIENDLY
+      displayBars: 20,   // OWNER_ONLY
+      bar1: { attribute: primaryStat },
+      bar2: { attribute: 'defense' },
+      actorData: {
+        type: 'character',
+        system: {
+          attributes: Object.fromEntries(
+            statEntries.map(([k, v]) => [k, { value: v, max: 100 }])
+          ),
+          details: {
+            archetype: character.archetypeId,
+            build: character.physicalAttributes.build,
+            height: character.physicalAttributes.height,
+          },
+        },
+      },
+      flags: {
+        herosculpt: {
+          version: '1.0',
+          generatedAt: new Date().toISOString(),
+        },
+      },
+    };
+
+    return JSON.stringify(manifest, null, 2);
+  }
+
   private static innerPath(ctx: CanvasRenderingContext2D, shape: 'circle' | 'hex', cx: number, cy: number, r: number) {
     if (shape === 'circle') {
       ctx.arc(cx, cy, r, 0, 2 * Math.PI);

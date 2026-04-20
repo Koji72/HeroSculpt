@@ -288,6 +288,23 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
           {isExporting ? t('vtt.generating', lang) : t('vtt.download_token', lang)}
         </button>
       </div>
+      <button
+        style={{ ...btnSecondary, width: '100%', textAlign: 'center' }}
+        onClick={() => {
+          const safeName = (heroName && heroName.trim()) ? heroName.trim() : character.archetypeId;
+          const filename = `${safeName}_token_${shape}_${tokenOptions.size}.${tokenOptions.format}`;
+          const json = VTTService.generateFoundryJSON(character, safeName, filename);
+          const blob = new Blob([json], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${safeName}_foundry.json`;
+          link.click();
+          URL.revokeObjectURL(url);
+        }}
+      >
+        {t('vtt.download_foundry', lang)}
+      </button>
       {exportError && (
         <div style={{ color: 'var(--color-text-muted)', fontSize: 10, fontFamily: 'var(--font-comic)', letterSpacing: 1, textAlign: 'center' }}>
           {t('vtt.export_error', lang)}
