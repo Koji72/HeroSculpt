@@ -773,6 +773,8 @@ const dict = {
   'vtt.step_capture': { en: 'CAPTURE', es: 'CAPTURA' },
   'vtt.step_shape': { en: 'SHAPE', es: 'FORMA' },
   'vtt.step_settings': { en: 'SETTINGS', es: 'AJUSTES' },
+  'vtt.platforms_circle': { en: 'Roll20, Foundry', es: 'Roll20, Foundry' },
+  'vtt.platforms_hex': { en: 'Hex maps', es: 'Mapas hex' },
 
   // GamingPartSelector
   'gaming_selector.title': { en: 'Select', es: 'Seleccionar' },

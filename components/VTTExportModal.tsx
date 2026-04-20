@@ -210,7 +210,7 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
               {s === 'circle' ? t('vtt.circle', lang) : t('vtt.hex', lang)}
             </span>
             <span style={{ fontSize: 9, color: 'var(--color-text-faint)' }}>
-              {s === 'circle' ? 'Roll20, Foundry' : 'Hex maps'}
+              {s === 'circle' ? t('vtt.platforms_circle', lang) : t('vtt.platforms_hex', lang)}
             </span>
           </button>
         ))}

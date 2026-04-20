@@ -159,6 +159,9 @@ const AppContent: React.FC = () => {
   }, [isAuthenticated]);
   const [activeCategory, setActiveCategory] = useState<PartCategory | null>(null);
 
+  // Ref for latest pose state — used by beforeunload handler to avoid re-attaching on every change
+  const poseStateRef = useRef({ selectedArchetype, selectedParts, currentPoseIndex: 0, savedPoses: [] as typeof savedPoses });
+
   // Undo/redo history for part selections
   const partsHistoryRef = useRef<SelectedParts[]>([]);
   const historyIndexRef = useRef<number>(-1);
@@ -606,33 +609,29 @@ const AppContent: React.FC = () => {
     } catch {}
   }, [loading, setSelectedParts]);
 
+  // Keep ref in sync so the handlers below always read fresh values without re-attaching
+  useEffect(() => {
+    poseStateRef.current = { selectedArchetype, selectedParts, currentPoseIndex, savedPoses };
+  }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses]);
+
   // Save última pose cuando el usuario salga de la página
   useEffect(() => {
     const handleBeforeUnload = () => {
+      const { selectedArchetype, selectedParts, currentPoseIndex, savedPoses } = poseStateRef.current;
       if (selectedArchetype && savedPoses.length > 0) {
-        SessionStorageService.saveLastPose(
-          selectedArchetype,
-          selectedParts,
-          currentPoseIndex,
-          savedPoses
-        );
+        SessionStorageService.saveLastPose(selectedArchetype, selectedParts, currentPoseIndex, savedPoses);
       }
     };
-
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'hidden') {
-        await handleBeforeUnload();
-      }
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') handleBeforeUnload();
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses]);
+  }, []); // empty — reads latest values from poseStateRef
 
 
 
@@ -1598,12 +1597,16 @@ const AppContent: React.FC = () => {
         const currentRightHand = prevParts[PartCategory.HAND_RIGHT];
 
         if (!currentLeftHand || !currentLeftHand.compatible.includes(effectiveTorso.id)) {
-          newParts[PartCategory.HAND_LEFT] = STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_LEFT && h.compatible.includes(effectiveTorso.id) && h.id.endsWith('_ng')) ||
-                                            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_LEFT && h.compatible.includes(effectiveTorso.id))!;
+          newParts[PartCategory.HAND_LEFT] =
+            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_LEFT && h.compatible.includes(effectiveTorso.id) && h.id.endsWith('_ng')) ||
+            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_LEFT && h.compatible.includes(effectiveTorso.id)) ||
+            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_LEFT);
         }
         if (!currentRightHand || !currentRightHand.compatible.includes(effectiveTorso.id)) {
-          newParts[PartCategory.HAND_RIGHT] = STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_RIGHT && h.compatible.includes(effectiveTorso.id) && h.id.endsWith('_ng')) ||
-                                             STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_RIGHT && h.compatible.includes(effectiveTorso.id))!;
+          newParts[PartCategory.HAND_RIGHT] =
+            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_RIGHT && h.compatible.includes(effectiveTorso.id) && h.id.endsWith('_ng')) ||
+            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_RIGHT && h.compatible.includes(effectiveTorso.id)) ||
+            STRONG_HANDS_PARTS.find(h => h.category === PartCategory.HAND_RIGHT);
         }
 
         // Cabeza: preservar si es compatible con el torso actual, si no, asignar adaptativa

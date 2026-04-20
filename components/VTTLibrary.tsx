@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const safeDate = (s: string | Date) => { const d = new Date(s); return isNaN(d.getTime()) ? '—' : d.toLocaleDateString(); };
 import { RPGCharacterSync } from '../types';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
@@ -188,7 +190,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-400">{t('vttlib.created', lang)}</span>
-                          <span className="text-white">{new Date(token.date).toLocaleDateString()}</span>
+                          <span className="text-white">{safeDate(token.date)}</span>
                         </div>
                       </div>
                       
@@ -241,7 +243,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-400">{t('vttlib.created', lang)}</span>
-                          <span className="text-white">{new Date(character.createdAt).toLocaleDateString()}</span>
+                          <span className="text-white">{safeDate(character.createdAt)}</span>
                         </div>
                       </div>
                       
