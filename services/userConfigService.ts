@@ -39,7 +39,7 @@ export class UserConfigService {
       throw error; // Propagar el error para manejo superior
     }
 
-    return data;
+    return data as unknown as UserConfiguration;
   }
 
   // Get all configurations for a user
@@ -60,7 +60,7 @@ export class UserConfigService {
         return [];
       }
 
-      return data || [];
+      return (data || []) as unknown as unknown as UserConfiguration[];
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error fetching configurations:', error);
       return [];
@@ -86,7 +86,7 @@ export class UserConfigService {
         return null;
       }
 
-      return data;
+      return data as unknown as UserConfiguration;
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error fetching last pose:', error);
       return null;
@@ -111,7 +111,7 @@ export class UserConfigService {
         return null;
       }
 
-      return data;
+      return data as unknown as UserConfiguration;
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error fetching configuration:', error);
       return null;
@@ -140,7 +140,7 @@ export class UserConfigService {
         return null;
       }
 
-      return data;
+      return data as unknown as UserConfiguration;
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error updating configuration:', error);
       return null;

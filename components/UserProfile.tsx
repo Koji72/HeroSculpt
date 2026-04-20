@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { UserConfigService } from '../services/userConfigService';
-import { UserConfiguration, User as SupabaseUser } from '../lib/supabase';
+import { UserConfiguration } from '../lib/supabase';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 import { SelectedParts } from '../types';
 import { useLang, t } from '../lib/i18n';
 import { Button } from './ui/button';

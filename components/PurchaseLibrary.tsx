@@ -368,13 +368,13 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-white font-bold text-lg">{purchase.configuration_name}</h4>
                             <span className={`text-sm font-medium ${getStatusColor(purchase.status)}`}>
-                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? t('library.status.completed', lang) : purchase.status === 'cancelled' ? t('library.status.cancelled', lang) : t('library.status.pending', lang)}
+                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? t('library.status.completed', lang) : t('library.status.pending', lang)}
                             </span>
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
                                                         <div className="flex items-center gap-1">  
                               <Calendar className="w-4 h-4" />
-                              {new Date(purchase.purchase_date || purchase.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
+                              {new Date(purchase.purchase_date).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',

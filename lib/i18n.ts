@@ -609,6 +609,17 @@ const dict = {
   'assets.total': { en: 'Total:', es: 'Total:' },
 
   // RPGCharacterSheetManager
+  'rpgmgr.title': { en: 'RPG Character Sheets', es: 'Hojas de Personaje RPG' },
+  'rpgmgr.select_system': { en: 'Select RPG System', es: 'Seleccionar Sistema RPG' },
+  'rpgmgr.import': { en: 'Import', es: 'Importar' },
+  'rpgmgr.new_character': { en: 'New Character', es: 'Nuevo Personaje' },
+  'rpgmgr.saved_characters': { en: 'Saved Characters', es: 'Personajes Guardados' },
+  'rpgmgr.player_label': { en: 'Player:', es: 'Jugador:' },
+  'rpgmgr.load': { en: 'Load', es: 'Cargar' },
+  'rpgmgr.load_to_customizer': { en: 'Load to Customizer', es: 'Cargar en Personalizador' },
+  'rpgmgr.delete': { en: 'Delete', es: 'Eliminar' },
+  'rpgmgr.back_to_systems': { en: '← Back to Systems', es: '← Volver a Sistemas' },
+  'rpgmgr.save_character': { en: 'Save Character', es: 'Guardar Personaje' },
   'rpgmgr.err.required_fields': { en: 'Please fill in all required fields', es: 'Por favor completa todos los campos requeridos' },
   'rpgmgr.import.success': { en: 'Character imported successfully!', es: '¡Personaje importado con éxito!' },
   'rpgmgr.import.err.invalid': { en: 'Invalid character file', es: 'Archivo de personaje inválido' },
@@ -827,6 +838,45 @@ const dict = {
   'texture.desc.carbon': { en: 'Carbon fiber texture', es: 'Textura de fibra de carbono' },
   'texture.desc.none': { en: 'Base material without texture', es: 'Material base sin textura' },
 
+  // AdvancedEffects
+  'fx.title': { en: 'Advanced Effects', es: 'Efectos Avanzados' },
+  'fx.enable': { en: 'Enable effects', es: 'Activar efectos' },
+  'fx.presets': { en: 'Presets', es: 'Preajustes' },
+  'fx.ssao': { en: 'SSAO (Ambient Shadows)', es: 'SSAO (Sombras Ambientales)' },
+  'fx.kernel_radius': { en: 'Kernel Radius', es: 'Radio del Kernel' },
+  'fx.min_distance': { en: 'Minimum Distance', es: 'Distancia Mínima' },
+  'fx.bloom': { en: 'Bloom (Glow)', es: 'Bloom (Resplandor)' },
+  'fx.intensity': { en: 'Intensity', es: 'Intensidad' },
+  'fx.radius': { en: 'Radius', es: 'Radio' },
+  'fx.threshold': { en: 'Threshold', es: 'Umbral' },
+
+  // MaterialPanel
+  'materials.header': { en: 'MATERIALS', es: 'MATERIALES' },
+  'materials.debug_parts': { en: 'Debug Available Parts', es: 'Debug Partes Disponibles' },
+  'materials.textures': { en: 'TEXTURES', es: 'TEXTURAS' },
+  'materials.wood_torso': { en: 'Wood (Torso)', es: 'Madera (Torso)' },
+  'materials.metal_boots': { en: 'Metal (Boots)', es: 'Metal (Botas)' },
+  'materials.advanced_effects': { en: 'ADVANCED EFFECTS', es: 'EFECTOS AVANZADOS' },
+
+  // Sidebar
+  'sidebar.title': { en: 'Superhero Customizer', es: 'Personalizador de Superhéroes' },
+  'sidebar.subtitle': { en: '3D Character Builder', es: 'Constructor de Personajes 3D' },
+  'sidebar.archetypes': { en: 'Archetypes', es: 'Arquetipos' },
+
+  // CharacterDisplay
+  'character.loading': { en: 'Loading models...', es: 'Cargando modelos...' },
+
+  // HeroMenu
+  'heromenu.library': { en: 'Library', es: 'Biblioteca' },
+  'heromenu.library_desc': { en: 'Load saved configurations', es: 'Cargar configuraciones guardadas' },
+  'heromenu.settings': { en: 'Settings', es: 'Ajustes' },
+  'heromenu.settings_desc': { en: 'Configure preferences', es: 'Configurar preferencias' },
+  'heromenu.profile': { en: 'Profile', es: 'Perfil' },
+  'heromenu.profile_desc': { en: 'Manage account', es: 'Gestionar cuenta' },
+  'heromenu.exporting': { en: 'Exporting...', es: 'Exportando...' },
+  'heromenu.export_glb': { en: 'Export GLB', es: 'Exportar GLB' },
+  'heromenu.export_stl': { en: 'Export STL', es: 'Exportar STL' },
+
   // ArchetypeCharacterSheet
   'sheet.hero_character_sheet': { en: 'HERO CHARACTER SHEET', es: 'FICHA DE PERSONAJE' },
   'sheet.character_statistics': { en: 'CHARACTER STATISTICS', es: 'ESTADÍSTICAS DEL PERSONAJE' },
@@ -842,6 +892,102 @@ const dict = {
   'sheet.archetype_id': { en: 'Archetype ID:', es: 'ID del arquetipo:' },
   'sheet.prefix': { en: 'Prefix:', es: 'Prefijo:' },
   'sheet.palette': { en: 'Palette:', es: 'Paleta:' },
+
+  // BaseCharacterSheet
+  'base_sheet.title': { en: 'Character Sheet', es: 'Ficha de Personaje' },
+  'base_sheet.save': { en: 'Save', es: 'Guardar' },
+  'base_sheet.edit': { en: 'Edit', es: 'Editar' },
+  'base_sheet.placeholder': { en: 'Base character sheet - extend this for specific RPG systems', es: 'Ficha base - extiéndela para sistemas RPG específicos' },
+
+  // RPGCharacterSheet
+  'rpg.select_archetype_prompt': { en: 'Select an archetype to view the character sheet', es: 'Selecciona un arquetipo para ver la ficha de personaje' },
+
+  // StrongArchetypeButton
+  'strong_btn.label': { en: 'STRONG', es: 'STRONG' },
+  'strong_btn.loading': { en: 'Loading...', es: 'Cargando...' },
+  'strong_btn.error': { en: 'Error loading animation', es: 'Error al cargar la animación' },
+
+  // ChampionsSheet
+  'champions.save': { en: 'Save', es: 'Guardar' },
+  'champions.edit': { en: 'Edit', es: 'Editar' },
+  'champions.player_label': { en: 'Player:', es: 'Jugador:' },
+  'champions.points_label': { en: 'Points:', es: 'Puntos:' },
+  'champions.xp_label': { en: 'XP:', es: 'XP:' },
+  'champions.characteristics': { en: 'CHARACTERISTICS', es: 'CARACTERÍSTICAS' },
+  'champions.skills': { en: 'SKILLS', es: 'HABILIDADES' },
+  'champions.powers': { en: 'POWERS', es: 'PODERES' },
+  'champions.complications': { en: 'COMPLICATIONS', es: 'COMPLICACIONES' },
+  'champions.experience_summary': { en: 'EXPERIENCE SUMMARY', es: 'RESUMEN DE EXPERIENCIA' },
+  'champions.col.type': { en: 'Type', es: 'Tipo' },
+  'champions.col.cost': { en: 'Cost', es: 'Coste' },
+  'champions.col.roll': { en: 'Roll', es: 'Tirada' },
+  'champions.col.end_cost': { en: 'END Cost', es: 'Coste END' },
+  'champions.col.description': { en: 'Description', es: 'Descripción' },
+  'champions.col.value': { en: 'Value', es: 'Valor' },
+  'champions.btn.add_skill': { en: 'Add Skill', es: 'Añadir Habilidad' },
+  'champions.btn.add_power': { en: 'Add Power', es: 'Añadir Poder' },
+  'champions.btn.add_complication': { en: 'Add Complication', es: 'Añadir Complicación' },
+  'champions.label.total_spent': { en: 'Total Points Spent:', es: 'Puntos Totales Gastados:' },
+  'champions.label.xp_earned': { en: 'Experience Earned:', es: 'Experiencia Ganada:' },
+  'champions.label.available': { en: 'Available Points:', es: 'Puntos Disponibles:' },
+  'champions.placeholder.player_name': { en: 'Player name...', es: 'Nombre del jugador...' },
+  'champions.placeholder.character_name': { en: 'Character name...', es: 'Nombre del personaje...' },
+  'champions.placeholder.skill_name': { en: 'Skill name...', es: 'Nombre de la habilidad...' },
+  'champions.placeholder.skill_type': { en: 'Type...', es: 'Tipo...' },
+  'champions.placeholder.skill_roll': { en: '11-', es: '11-' },
+  'champions.placeholder.power_name': { en: 'Power name...', es: 'Nombre del poder...' },
+  'champions.placeholder.power_type': { en: 'Attack, Defense, etc...', es: 'Ataque, Defensa, etc...' },
+  'champions.placeholder.power_desc': { en: "Describe the power's effects and limitations...", es: 'Describe los efectos y limitaciones del poder...' },
+  'champions.placeholder.complication_name': { en: 'Complication name...', es: 'Nombre de la complicación...' },
+  'champions.placeholder.complication_type': { en: 'Psychological, Physical...', es: 'Psicológico, Físico...' },
+  'champions.placeholder.complication_desc': { en: "Describe the complication's impact...", es: 'Describe el impacto de la complicación...' },
+
+  // GenericModularSheet
+  'generic.title': { en: 'Character Sheet', es: 'Ficha de Personaje' },
+  'generic.save': { en: 'Save', es: 'Guardar' },
+  'generic.edit': { en: 'Edit', es: 'Editar' },
+  'generic.label.char_name': { en: 'Character Name', es: 'Nombre del Personaje' },
+  'generic.label.power_level': { en: 'Power Level', es: 'Nivel de Poder' },
+  'generic.label.attributes': { en: 'Attributes', es: 'Atributos' },
+  'generic.label.str': { en: 'Strength (STR)', es: 'Fuerza (FUE)' },
+  'generic.label.end': { en: 'Endurance (END)', es: 'Resistencia (RES)' },
+  'generic.label.agi': { en: 'Agility (AGI)', es: 'Agilidad (AGI)' },
+  'generic.label.wil': { en: 'Willpower (WIL)', es: 'Voluntad (VOL)' },
+  'generic.label.int': { en: 'Intellect (INT)', es: 'Intelecto (INT)' },
+  'generic.label.pre': { en: 'Presence (PRE)', es: 'Presencia (PRE)' },
+  'generic.label.powers': { en: 'Powers (comma-separated)', es: 'Poderes (separados por comas)' },
+  'generic.label.advantages': { en: 'Advantages (comma-separated)', es: 'Ventajas (separadas por comas)' },
+  'generic.label.description': { en: 'Description / Notes', es: 'Descripción / Notas' },
+  'generic.label.combat_abilities': { en: 'Combat Abilities', es: 'Habilidades de Combate' },
+  'generic.grade.g1': { en: 'G1 - Civilian', es: 'G1 - Civil' },
+  'generic.grade.g3': { en: 'G3 - Vigilante', es: 'G3 - Vigilante' },
+  'generic.grade.g5': { en: 'G5 - Urban Hero', es: 'G5 - Héroe Urbano' },
+  'generic.grade.g7': { en: 'G7 - National Hero', es: 'G7 - Héroe Nacional' },
+  'generic.grade.g10': { en: 'G10 - Global Threat', es: 'G10 - Amenaza Global' },
+  'generic.placeholder.char_name': { en: 'e.g. Red Neon', es: 'ej. Neón Rojo' },
+  'generic.placeholder.powers': { en: 'e.g. Flight, Super Strength', es: 'ej. Vuelo, Super Fuerza' },
+  'generic.placeholder.advantages': { en: 'e.g. Power Strike, Adaptability', es: 'ej. Golpe Potente, Adaptabilidad' },
+  'generic.placeholder.description': { en: 'Backstory, appearance, etc.', es: 'Historia, apariencia, etc.' },
+  'generic.placeholder.key': { en: 'Key', es: 'Tecla' },
+  'generic.placeholder.icon_url': { en: 'Icon URL', es: 'URL del icono' },
+  'generic.placeholder.ability_name': { en: 'Ability Name', es: 'Nombre de Habilidad' },
+  'generic.btn.add_ability': { en: '+ Add Ability', es: '+ Añadir Habilidad' },
+
+  // MaterialConfigurator
+  'mat_config.select_body_part': { en: 'SELECT BODY PART', es: 'SELECCIONAR PARTE' },
+  'mat_config.sheen_color': { en: 'SHEEN COLOR', es: 'COLOR DE BRILLO' },
+  'mat_config.export_title': { en: 'EXPORT CONFIGURATION', es: 'EXPORTAR CONFIGURACIÓN' },
+  'mat_config.export_desc': { en: 'Export the current material configuration for the selected part.', es: 'Exporta la configuración de materiales actual para la parte seleccionada.' },
+
+  // Common UI
+  'common.error': { en: 'Error', es: 'Error' },
+
+  // BackgroundSelector
+  'background.title': { en: 'Background', es: 'Fondo' },
+  'background.remove': { en: 'Remove', es: 'Eliminar' },
+  'background.lighting': { en: 'Lighting', es: 'Iluminación' },
+  'background.weather': { en: 'Weather', es: 'Clima' },
+  'background.available': { en: 'Available Backgrounds', es: 'Fondos Disponibles' },
 } as const;
 
 export type TransKey = keyof typeof dict;

@@ -235,18 +235,16 @@ const Canvas3D = forwardRef<Canvas3DRef, Canvas3DProps>(({ onSceneReady, onRende
     const lights = sceneRef.current.children.filter(child => child instanceof THREE.Light);
     lights.forEach(light => sceneRef.current!.remove(light));
 
-    // Apply preset lighting
-    if (preset.ambient) {
-      const ambientLight = new THREE.AmbientLight(preset.ambient.color, preset.ambient.intensity);
-      sceneRef.current.add(ambientLight);
-    }
-
-    if (preset.directional) {
-      const directionalLight = new THREE.DirectionalLight(preset.directional.color, preset.directional.intensity);
-      directionalLight.position.copy(preset.directional.position);
-      directionalLight.castShadow = true;
-      sceneRef.current.add(directionalLight);
-    }
+    // Apply key/fill/rim lights from preset
+    const addDir = (def: { color: number; intensity: number; position: THREE.Vector3 }, castShadow = false) => {
+      const light = new THREE.DirectionalLight(def.color, def.intensity);
+      light.position.copy(def.position);
+      light.castShadow = castShadow;
+      sceneRef.current!.add(light);
+    };
+    addDir(preset.keyLight, true);
+    addDir(preset.fillLight);
+    addDir(preset.rimLight);
   }, []);
 
   const toggleEdgeDetection = useCallback((selectedPart?: string) => {

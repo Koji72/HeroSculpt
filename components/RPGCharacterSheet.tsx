@@ -125,11 +125,11 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Target className="h-5 w-5" />
-            RPG Character Sheet
+            {t('rpg.sheet.title', lang)}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-400">Select an archetype to view the character sheet</p>
+          <p className="text-slate-400">{t('rpg.select_archetype_prompt', lang)}</p>
         </CardContent>
       </Card>
     );
@@ -226,8 +226,8 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
               <div>
                 <h4 className="text-green-300 text-sm font-semibold mb-2">{t('rpg.new_abilities', lang)}</h4>
                 <div className="flex flex-wrap gap-1">
-                  {recentChanges.newAbilities.map((ability, index) => (
-                    <Badge key={index} variant="default" className="text-xs bg-green-600">
+                  {recentChanges.newAbilities.map((ability) => (
+                    <Badge key={ability} variant="default" className="text-xs bg-green-600">
                       <Star className="h-3 w-3 mr-1" />
                       {ability}
                     </Badge>
@@ -241,8 +241,8 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
               <div>
                 <h4 className="text-red-300 text-sm font-semibold mb-2">{t('rpg.removed_abilities', lang)}</h4>
                 <div className="flex flex-wrap gap-1">
-                  {recentChanges.removedAbilities.map((ability, index) => (
-                    <Badge key={index} variant="destructive" className="text-xs">
+                  {recentChanges.removedAbilities.map((ability) => (
+                    <Badge key={ability} variant="destructive" className="text-xs">
                       {ability}
                     </Badge>
                   ))}
@@ -327,8 +327,8 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
             <div>
               <h4 className="text-white font-semibold mb-3">{t('rpg.visual_effects', lang)}</h4>
               <div className="flex flex-wrap gap-2">
-                {character.visualEffects.map((effect, index) => (
-                  <Badge key={index} variant="outline" className="text-purple-300 border-purple-500">
+                {character.visualEffects.map((effect) => (
+                  <Badge key={effect} variant="outline" className="text-purple-300 border-purple-500">
                     {effect}
                   </Badge>
                 ))}
@@ -341,8 +341,8 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
             <div>
               <h4 className="text-white font-semibold mb-3">{t('rpg.suggestions', lang)}</h4>
               <div className="space-y-2">
-                {character.compatibility.suggestions.map((suggestion, index) => (
-                  <div key={index} className="text-slate-300 text-sm bg-slate-700/50 p-2 rounded">
+                {character.compatibility.suggestions.map((suggestion) => (
+                  <div key={suggestion} className="text-slate-300 text-sm bg-slate-700/50 p-2 rounded">
                     • {suggestion}
                   </div>
                 ))}

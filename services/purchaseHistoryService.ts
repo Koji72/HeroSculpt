@@ -79,7 +79,7 @@ export class PurchaseHistoryService {
         return { success: false, error: itemsError.message };
       }
 
-      return { success: true, purchaseId: purchase.id };
+      return { success: true, purchaseId: (purchase as unknown as Purchase).id };
 
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error in savePurchase:', error);
@@ -113,7 +113,7 @@ export class PurchaseHistoryService {
         return { success: false, error: error.message };
       }
 
-      return { success: true, purchases: data || [] };
+      return { success: true, purchases: (data || []) as unknown as unknown as Purchase[] };
 
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error in getUserPurchases:', error);
@@ -148,11 +148,12 @@ export class PurchaseHistoryService {
         return { success: false, error: error.message };
       }
 
+      const purchaseData = data as unknown as unknown as Purchase & { purchase_items: PurchaseItem[] };
       return {
         success: true,
         purchase: {
-          ...data,
-          items: data.purchase_items || []
+          ...purchaseData,
+          items: purchaseData.purchase_items || []
         }
       };
 
@@ -189,11 +190,12 @@ export class PurchaseHistoryService {
         return { success: false, error: error.message };
       }
 
-      if (!purchase || !purchase.purchase_items || purchase.purchase_items.length === 0) {
+      const typedPurchase = purchase as unknown as { id: string; purchase_items: PurchaseItem[] };
+      if (!typedPurchase || !typedPurchase.purchase_items || typedPurchase.purchase_items.length === 0) {
         return { success: false, error: 'Purchase or item not found' };
       }
 
-      const item = purchase.purchase_items[0];
+      const item = typedPurchase.purchase_items[0];
       if (!item.configuration_data) {
         return { success: false, error: 'No configuration data found' };
       }

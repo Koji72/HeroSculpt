@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Rive } from '@rive-app/canvas';
 import { ArchetypeId } from '../types';
+import { useLang, t } from '../lib/i18n';
 
 interface StrongArchetypeButtonProps {
   isSelected: boolean;
@@ -17,6 +18,7 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
   width = 120,
   height = 60
 }) => {
+  const { lang } = useLang();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const riveRef = useRef<Rive | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -209,7 +211,7 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute bottom-1 left-1 right-1 text-center">
           <div className="text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
-            STRONG
+            {t('strong_btn.label', lang)}
           </div>
         </div>
       </div>
@@ -218,7 +220,7 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
         <div className="absolute inset-0 bg-slate-700/50 border border-slate-600/50 rounded flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full mx-auto mb-2"></div>
-            <div className="text-orange-400 text-xs">Loading...</div>
+            <div className="text-orange-400 text-xs">{t('strong_btn.loading', lang)}</div>
           </div>
         </div>
       )}
@@ -226,7 +228,7 @@ const StrongArchetypeButton: React.FC<StrongArchetypeButtonProps> = ({
       {error && (
         <div className="absolute inset-0 bg-red-500/20 border border-red-500/50 rounded flex items-center justify-center">
           <div className="text-center">
-            <div className="text-red-400 text-xs">Error loading animation</div>
+            <div className="text-red-400 text-xs">{t('strong_btn.error', lang)}</div>
             <div className="text-red-300 text-xs mt-1">{error}</div>
           </div>
         </div>

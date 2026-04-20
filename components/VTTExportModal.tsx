@@ -224,9 +224,9 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
         }
       </div>
 
-      <RadioGroup label={t('vtt.size_label', lang)} options={[{ v: 256, l: '256' }, { v: 512, l: '512' }, { v: 1024, l: '1024' }]} value={tokenOptions.size} onChange={v => setTokenOptions(o => ({ ...o, size: v }))} />
-      <RadioGroup label={t('vtt.format_label', lang)} options={[{ v: 'png', l: 'PNG' }, { v: 'jpg', l: 'JPG' }, { v: 'webp', l: 'WebP' }]} value={tokenOptions.format} onChange={v => setTokenOptions(o => ({ ...o, format: v }))} />
-      <RadioGroup label={t('vtt.bg_label', lang)} options={[{ v: 'transparent', l: t('vtt.bg_transparent', lang) }, { v: 'white', l: t('vtt.bg_white', lang) }, { v: 'black', l: t('vtt.bg_black', lang) }]} value={tokenOptions.background} onChange={v => setTokenOptions(o => ({ ...o, background: v }))} />
+      <RadioGroup label={t('vtt.size_label', lang)} options={[{ v: 256, l: '256' }, { v: 512, l: '512' }, { v: 1024, l: '1024' }]} value={tokenOptions.size} onChange={v => setTokenOptions(o => ({ ...o, size: v as 256 | 512 | 1024 }))} />
+      <RadioGroup label={t('vtt.format_label', lang)} options={[{ v: 'png', l: 'PNG' }, { v: 'jpg', l: 'JPG' }, { v: 'webp', l: 'WebP' }]} value={tokenOptions.format} onChange={v => setTokenOptions(o => ({ ...o, format: v as 'png' | 'jpg' | 'webp' }))} />
+      <RadioGroup label={t('vtt.bg_label', lang)} options={[{ v: 'transparent', l: t('vtt.bg_transparent', lang) }, { v: 'white', l: t('vtt.bg_white', lang) }, { v: 'black', l: t('vtt.bg_black', lang) }]} value={tokenOptions.background} onChange={v => setTokenOptions(o => ({ ...o, background: v as 'black' | 'transparent' | 'white' }))} />
 
       {/* Border color */}
       <div>

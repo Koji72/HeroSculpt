@@ -1,6 +1,7 @@
 import React from 'react';
 import { CharacterSheetProps, BaseCharacterData } from './BaseCharacterSheet';
 import { Edit2, Save, Plus, X, Shield, Zap, Brain, Heart } from 'lucide-react';
+import { useLang, t } from '../../lib/i18n';
 
 export interface ChampionsCharacterData extends BaseCharacterData {
   characteristics: {
@@ -55,8 +56,9 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
   onToggleEdit
 }) => {
   const championsCharacter = character as unknown as ChampionsCharacterData;
+  const { lang } = useLang();
 
-  const updateCharacter = React.useCallback((path: string, value: string | number | boolean) => {
+  const updateCharacter = React.useCallback((path: string, value: string | number | boolean | unknown[] | Record<string, unknown>) => {
     const keys = path.split('.');
     const updated = JSON.parse(JSON.stringify(championsCharacter));
     let current: Record<string, unknown> = updated;
@@ -207,7 +209,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
               className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             >
               {isEditing ? <Save size={16} /> : <Edit2 size={16} />}
-              <span>{isEditing ? 'Save' : 'Edit'}</span>
+              <span>{isEditing ? t('champions.save', lang) : t('champions.edit', lang)}</span>
             </button>
           </div>
         </div>
@@ -215,12 +217,12 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
         {/* Character Info */}
         <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-3 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <span className="text-black font-semibold">Player:</span>
+            <span className="text-black font-semibold">{t('champions.player_label', lang)}</span>
             <EditableField
               value={championsCharacter.player}
               onChange={(value) => updateCharacter('player', value)}
               className="text-black font-bold"
-              placeholder="Player name..."
+              placeholder={t('champions.placeholder.player_name', lang)}
             />
           </div>
           
@@ -229,13 +231,13 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
               value={championsCharacter.name}
               onChange={(value) => updateCharacter('name', value)}
               className="text-4xl font-black text-black tracking-widest"
-              placeholder="Character name..."
+              placeholder={t('champions.placeholder.character_name', lang)}
             />
           </div>
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="text-black font-semibold">Points:</span>
+              <span className="text-black font-semibold">{t('champions.points_label', lang)}</span>
               <EditableField
                 value={championsCharacter.experience?.available || 0}
                 onChange={(value) => updateCharacter('experience.available', value)}
@@ -245,7 +247,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
               />
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-black font-semibold">XP:</span>
+              <span className="text-black font-semibold">{t('champions.xp_label', lang)}</span>
               <EditableField
                 value={championsCharacter.experience?.earned || 0}
                 onChange={(value) => updateCharacter('experience.earned', value)}
@@ -266,7 +268,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
             <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-4">
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2 flex items-center">
                 <Shield className="mr-2" size={20} />
-                CHARACTERISTICS
+                {t('champions.characteristics', lang)}
               </h3>
               <div className="space-y-3">
                 {Object.entries(championsCharacter.characteristics).map(([key, char]) => (
@@ -292,7 +294,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-4">
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2 flex items-center">
                 <Brain className="mr-2" size={20} />
-                SKILLS
+                {t('champions.skills', lang)}
               </h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {championsCharacter.skills.map((skill, index) => (
@@ -302,7 +304,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                         value={skill.name}
                         onChange={(value) => updateCharacter(`skills.${index}.name`, value)}
                         className="text-white font-semibold"
-                        placeholder="Skill name..."
+                        placeholder={t('champions.placeholder.skill_name', lang)}
                       />
                       {isEditing && (
                         <button
@@ -315,16 +317,16 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                     </div>
                     <div className="grid grid-cols-3 gap-1 text-xs">
                       <div>
-                        <div className="text-gray-300 text-xs">Type</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.type', lang)}</div>
                         <EditableField
                           value={skill.type}
                           onChange={(value) => updateCharacter(`skills.${index}.type`, value)}
                           className="text-white text-xs"
-                          placeholder="Type..."
+                          placeholder={t('champions.placeholder.skill_type', lang)}
                         />
                       </div>
                       <div>
-                        <div className="text-gray-300 text-xs">Cost</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.cost', lang)}</div>
                         <EditableField
                           value={skill.cost}
                           onChange={(value) => updateCharacter(`skills.${index}.cost`, value)}
@@ -334,12 +336,12 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                         />
                       </div>
                       <div>
-                        <div className="text-gray-300 text-xs">Roll</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.roll', lang)}</div>
                         <EditableField
                           value={skill.roll}
                           onChange={(value) => updateCharacter(`skills.${index}.roll`, value)}
                           className="text-white text-xs"
-                          placeholder="11-"
+                          placeholder={t('champions.placeholder.skill_roll', lang)}
                         />
                       </div>
                     </div>
@@ -352,7 +354,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded flex items-center justify-center space-x-2"
                   >
                     <Plus size={16} />
-                    <span>Add Skill</span>
+                    <span>{t('champions.btn.add_skill', lang)}</span>
                   </button>
                 )}
               </div>
@@ -366,7 +368,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
             <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-4">
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2 flex items-center">
                 <Zap className="mr-2" size={20} />
-                POWERS
+                {t('champions.powers', lang)}
               </h3>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {championsCharacter.powers.map((power, index) => (
@@ -376,7 +378,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                         value={power.name}
                         onChange={(value) => updateCharacter(`powers.${index}.name`, value)}
                         className="text-yellow-300 font-bold"
-                        placeholder="Power name..."
+                        placeholder={t('champions.placeholder.power_name', lang)}
                       />
                       {isEditing && (
                         <button
@@ -389,16 +391,16 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                     </div>
                     <div className="grid grid-cols-2 gap-1 text-xs mb-1">
                       <div>
-                        <div className="text-gray-300 text-xs">Type</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.type', lang)}</div>
                         <EditableField
                           value={power.type}
                           onChange={(value) => updateCharacter(`powers.${index}.type`, value)}
                           className="text-white text-xs"
-                          placeholder="Attack, Defense, etc..."
+                          placeholder={t('champions.placeholder.power_type', lang)}
                         />
                       </div>
                       <div>
-                        <div className="text-gray-300 text-xs">Cost</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.cost', lang)}</div>
                         <EditableField
                           value={power.cost}
                           onChange={(value) => updateCharacter(`powers.${index}.cost`, value)}
@@ -409,7 +411,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                       </div>
                     </div>
                     <div className="mb-1">
-                      <div className="text-gray-300 text-xs">END Cost</div>
+                      <div className="text-gray-300 text-xs">{t('champions.col.end_cost', lang)}</div>
                       <EditableField
                         value={power.end}
                         onChange={(value) => updateCharacter(`powers.${index}.end`, value)}
@@ -419,13 +421,13 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                       />
                     </div>
                     <div>
-                      <div className="text-gray-300 text-xs">Description</div>
+                      <div className="text-gray-300 text-xs">{t('champions.col.description', lang)}</div>
                       <EditableField
                         value={power.description}
                         onChange={(value) => updateCharacter(`powers.${index}.description`, value)}
                         className="text-white text-xs w-full"
                         multiline
-                        placeholder="Describe the power's effects and limitations..."
+                        placeholder={t('champions.placeholder.power_desc', lang)}
                       />
                     </div>
                   </div>
@@ -437,7 +439,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded flex items-center justify-center space-x-2"
                   >
                     <Plus size={16} />
-                    <span>Add Power</span>
+                    <span>{t('champions.btn.add_power', lang)}</span>
                   </button>
                 )}
               </div>
@@ -451,7 +453,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
             <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4">
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2 flex items-center">
                 <Heart className="mr-2" size={20} />
-                COMPLICATIONS
+                {t('champions.complications', lang)}
               </h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {championsCharacter.complications.map((complication, index) => (
@@ -461,7 +463,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                         value={complication.name}
                         onChange={(value) => updateCharacter(`complications.${index}.name`, value)}
                         className="text-white font-semibold"
-                        placeholder="Complication name..."
+                        placeholder={t('champions.placeholder.complication_name', lang)}
                       />
                       {isEditing && (
                         <button
@@ -474,16 +476,16 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                     </div>
                     <div className="grid grid-cols-2 gap-1 text-xs mb-1">
                       <div>
-                        <div className="text-gray-300 text-xs">Type</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.type', lang)}</div>
                         <EditableField
                           value={complication.type}
                           onChange={(value) => updateCharacter(`complications.${index}.type`, value)}
                           className="text-white text-xs"
-                          placeholder="Psychological, Physical..."
+                          placeholder={t('champions.placeholder.complication_type', lang)}
                         />
                       </div>
                       <div>
-                        <div className="text-gray-300 text-xs">Value</div>
+                        <div className="text-gray-300 text-xs">{t('champions.col.value', lang)}</div>
                         <EditableField
                           value={complication.value}
                           onChange={(value) => updateCharacter(`complications.${index}.value`, value)}
@@ -495,13 +497,13 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                       </div>
                     </div>
                     <div>
-                      <div className="text-gray-300 text-xs">Description</div>
+                      <div className="text-gray-300 text-xs">{t('champions.col.description', lang)}</div>
                       <EditableField
                         value={complication.description}
                         onChange={(value) => updateCharacter(`complications.${index}.description`, value)}
                         className="text-white text-xs w-full"
                         multiline
-                        placeholder="Describe the complication's impact..."
+                        placeholder={t('champions.placeholder.complication_desc', lang)}
                       />
                     </div>
                   </div>
@@ -513,7 +515,7 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded flex items-center justify-center space-x-2"
                   >
                     <Plus size={16} />
-                    <span>Add Complication</span>
+                    <span>{t('champions.btn.add_complication', lang)}</span>
                   </button>
                 )}
               </div>
@@ -522,23 +524,23 @@ const ChampionsSheet: React.FC<CharacterSheetProps> = ({
             {/* Experience Summary */}
             <div className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-lg p-4">
               <h3 className="text-yellow-300 font-bold text-xl mb-4 border-b border-yellow-300/30 pb-2">
-                EXPERIENCE SUMMARY
+                {t('champions.experience_summary', lang)}
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center bg-black/20 rounded p-2">
-                  <span className="text-white font-semibold">Total Points Spent:</span>
+                  <span className="text-white font-semibold">{t('champions.label.total_spent', lang)}</span>
                   <span className="text-yellow-300 font-bold">
                     {championsCharacter.experience?.spent || 0}
                   </span>
                 </div>
                 <div className="flex justify-between items-center bg-black/20 rounded p-2">
-                  <span className="text-white font-semibold">Experience Earned:</span>
+                  <span className="text-white font-semibold">{t('champions.label.xp_earned', lang)}</span>
                   <span className="text-green-300 font-bold">
                     {championsCharacter.experience?.earned || 0}
                   </span>
                 </div>
                 <div className="flex justify-between items-center bg-black/20 rounded p-2">
-                  <span className="text-white font-semibold">Available Points:</span>
+                  <span className="text-white font-semibold">{t('champions.label.available', lang)}</span>
                   <span className="text-blue-300 font-bold">
                     {championsCharacter.experience?.available || 0}
                   </span>

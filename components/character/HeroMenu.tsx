@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { exportModel, downloadBlob, generateModelName } from '../../lib/utils';
+import { useLang, t } from '../../lib/i18n';
 import { Canvas3DRef } from '../3d/Canvas3D';
 import { ModelLoaderRef } from '../3d/ModelLoader';
 import { SelectedParts, ArchetypeId } from '../../types';
@@ -30,6 +31,7 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
   selectedParts,
   selectedArchetype
 }) => {
+  const { lang } = useLang();
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(characterName || '');
   const [isExporting, setIsExporting] = useState(false);
@@ -158,8 +160,8 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
                 <BookOpenIcon className="w-5 h-5" />
               </div>
               <div className="hero-menu-item-content">
-                <div className="hero-menu-item-text">Library</div>
-                <div className="hero-menu-item-description">Load saved configurations</div>
+                <div className="hero-menu-item-text">{t('heromenu.library', lang)}</div>
+                <div className="hero-menu-item-description">{t('heromenu.library_desc', lang)}</div>
               </div>
               <div className="hero-menu-item-indicator-wrapper">
                 <div className="hero-menu-item-indicator" />
@@ -171,8 +173,8 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
                 <Cog6ToothIcon className="w-5 h-5" />
               </div>
               <div className="hero-menu-item-content">
-                <div className="hero-menu-item-text">Settings</div>
-                <div className="hero-menu-item-description">Configure preferences</div>
+                <div className="hero-menu-item-text">{t('heromenu.settings', lang)}</div>
+                <div className="hero-menu-item-description">{t('heromenu.settings_desc', lang)}</div>
               </div>
               <div className="hero-menu-item-indicator-wrapper">
                 <div className="hero-menu-item-indicator" />
@@ -184,8 +186,8 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
                 <UserIcon className="w-5 h-5" />
               </div>
               <div className="hero-menu-item-content">
-                <div className="hero-menu-item-text">Profile</div>
-                <div className="hero-menu-item-description">Manage account</div>
+                <div className="hero-menu-item-text">{t('heromenu.profile', lang)}</div>
+                <div className="hero-menu-item-description">{t('heromenu.profile_desc', lang)}</div>
               </div>
               <div className="hero-menu-item-indicator-wrapper">
                 <div className="hero-menu-item-indicator" />
@@ -200,14 +202,14 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
                 disabled={isExporting}
                 className="from-blue-600 hover:from-blue-500 bg-gradient-to-r to-blue-500 text-white hover:to-blue-400 rounded-md disabled:opacity-50 transition-colors transition-transform transition-shadow duration-150 px-4 py-2 font-bold disabled:cursor-not-allowed"
               >
-                {isExporting ? 'Exporting...' : 'Export GLB'}
+                {isExporting ? t('heromenu.exporting', lang) : t('heromenu.export_glb', lang)}
               </button>
               <button
                 onClick={handleExportSTL}
                 disabled={isExporting}
                 className="from-green-600 hover:from-green-500 bg-gradient-to-r to-green-500 text-white hover:to-green-400 rounded-md disabled:opacity-50 transition-colors transition-transform transition-shadow duration-150 px-4 py-2 font-bold disabled:cursor-not-allowed ml-2"
               >
-                {isExporting ? 'Exporting...' : 'Export STL'}
+                {isExporting ? t('heromenu.exporting', lang) : t('heromenu.export_stl', lang)}
               </button>
             </div>
           </div>

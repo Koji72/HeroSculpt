@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as THREE from 'three';
+import { useLang, t } from '../lib/i18n';
 import { LightingPreset } from '../lib/lightingPresets';
 import MaterialConfigurator from './MaterialConfigurator';
 import AdvancedEffects from './AdvancedEffects';
@@ -23,6 +24,7 @@ const MaterialPanel = React.memo(({
   onClose,
   isHeadquartersOpen = false
 }: MaterialPanelProps) => {
+  const { lang } = useLang();
   const [currentColors, setCurrentColors] = useState<{ [key: string]: number }>({});
 
   // If Headquarters is open, don't render the MaterialPanel
@@ -95,7 +97,7 @@ const MaterialPanel = React.memo(({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       <div className="panel-header">
-        <span>MATERIALS</span>
+        <span>{t('materials.header', lang)}</span>
         <button
           onClick={onClose}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-comic)', fontSize: 18, color: '#000', opacity: 0.6 }}
@@ -114,7 +116,7 @@ const MaterialPanel = React.memo(({
               className="btn-comic"
               style={{ width: '100%', fontSize: 12 }}
             >
-              Debug Available Parts
+              {t('materials.debug_parts', lang)}
             </button>
           </div>
         )}
@@ -132,24 +134,24 @@ const MaterialPanel = React.memo(({
 
         {/* Texture Options */}
         <div style={{ marginTop: 16 }}>
-          <div style={{ fontFamily: 'var(--font-comic)', fontSize: 13, letterSpacing: 1, marginBottom: 8, color: 'var(--color-text-muted)' }}>TEXTURES</div>
+          <div style={{ fontFamily: 'var(--font-comic)', fontSize: 13, letterSpacing: 1, marginBottom: 8, color: 'var(--color-text-muted)' }}>{t('materials.textures', lang)}</div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               className="btn-comic btn-ghost"
               style={{ flex: 1, fontSize: 11 }}
               onClick={() => handleTextureChange(PartCategory.TORSO)}
-            >Wood (Torso)</button>
+            >{t('materials.wood_torso', lang)}</button>
             <button
               className="btn-comic btn-ghost"
               style={{ flex: 1, fontSize: 11 }}
               onClick={() => handleTextureChange(PartCategory.BOOTS)}
-            >Metal (Boots)</button>
+            >{t('materials.metal_boots', lang)}</button>
           </div>
         </div>
 
         {/* Advanced Effects */}
         <div style={{ marginTop: 16 }}>
-          <div style={{ fontFamily: 'var(--font-comic)', fontSize: 13, letterSpacing: 1, marginBottom: 8, color: 'var(--color-text-muted)' }}>ADVANCED EFFECTS</div>
+          <div style={{ fontFamily: 'var(--font-comic)', fontSize: 13, letterSpacing: 1, marginBottom: 8, color: 'var(--color-text-muted)' }}>{t('materials.advanced_effects', lang)}</div>
           <AdvancedEffects
             getScene={getScene}
             getRenderer={getRenderer}

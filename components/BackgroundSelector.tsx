@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BackgroundPart, BackgroundType, LightingPreset, WeatherType, PartCategory, ArchetypeId, ExtendedPartCategory } from '../types';
+import { useLang, t } from '../lib/i18n';
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
 
@@ -79,6 +80,7 @@ const BackgroundSelector: React.FC<BackgroundSelectorProps> = ({
   currentLighting,
   currentWeather
 }) => {
+  const { lang } = useLang();
   const [hoveredBackground, setHoveredBackground] = useState<string | null>(null);
 
   const getBackgroundTypeIcon = (type: BackgroundType) => {
@@ -116,20 +118,20 @@ const BackgroundSelector: React.FC<BackgroundSelectorProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-                 <h3 className="text-lg font-bold text-white">Background</h3>
+                 <h3 className="text-lg font-bold text-white">{t('background.title', lang)}</h3>
         <GamingButton
           variant="ghost"
           size="sm"
           onClick={() => onBackgroundSelect(null)}
           className="text-red-400 hover:text-red-300"
         >
-                     Remove
+          {t('background.remove', lang)}
         </GamingButton>
       </div>
 
                 {/* Lighting Configuration */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Lighting</label>
+        <label className="text-sm font-medium text-gray-300">{t('background.lighting', lang)}</label>
         <div className="grid grid-cols-3 gap-2">
           {Object.values(LightingPreset).map((lighting) => (
             <GamingButton
@@ -147,7 +149,7 @@ const BackgroundSelector: React.FC<BackgroundSelectorProps> = ({
 
                 {/* Weather Configuration */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Weather</label>
+        <label className="text-sm font-medium text-gray-300">{t('background.weather', lang)}</label>
         <div className="grid grid-cols-3 gap-2">
           {Object.values(WeatherType).map((weather) => (
             <GamingButton
@@ -165,7 +167,7 @@ const BackgroundSelector: React.FC<BackgroundSelectorProps> = ({
 
       {/* Lista de Fondos */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Available Backgrounds</label>
+        <label className="text-sm font-medium text-gray-300">{t('background.available', lang)}</label>
         <div className="grid grid-cols-1 gap-3">
           {SAMPLE_BACKGROUNDS.map((background) => (
             <Card

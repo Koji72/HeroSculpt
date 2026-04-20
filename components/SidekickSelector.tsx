@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SidekickPart, SidekickType, SidekickSize, SidekickPosition, ArchetypeId, ExtendedPartCategory } from '../types';
+import { SidekickPart, SidekickType, SidekickSize, SidekickPosition, ArchetypeId, ExtendedPartCategory, PartCategory } from '../types';
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
 import { useLang, t } from '../lib/i18n';
@@ -15,7 +15,7 @@ const SAMPLE_SIDEKICKS: SidekickPart[] = [
   {
     id: 'sidekick_robot_01',
     name: 'Companion Bot Alpha',
-    category: ExtendedPartCategory.SIDEKICK,
+    category: ExtendedPartCategory.SIDEKICK as unknown as PartCategory,
     archetype: ArchetypeId.TECH,
     gltfPath: '/assets/sidekicks/robot/companion_bot_alpha.glb',
     priceUSD: 2.99,
@@ -38,7 +38,7 @@ const SAMPLE_SIDEKICKS: SidekickPart[] = [
   {
     id: 'sidekick_pet_01',
     name: 'Mystic Familiar',
-    category: ExtendedPartCategory.SIDEKICK,
+    category: ExtendedPartCategory.SIDEKICK as unknown as PartCategory,
     archetype: ArchetypeId.MYSTIC,
     gltfPath: '/assets/sidekicks/pet/mystic_familiar.glb',
     priceUSD: 1.99,
@@ -61,7 +61,7 @@ const SAMPLE_SIDEKICKS: SidekickPart[] = [
   {
     id: 'sidekick_ally_01',
     name: 'Battle Partner',
-    category: ExtendedPartCategory.SIDEKICK,
+    category: ExtendedPartCategory.SIDEKICK as unknown as PartCategory,
     archetype: ArchetypeId.STRONG,
     gltfPath: '/assets/sidekicks/ally/battle_partner.glb',
     priceUSD: 3.99,

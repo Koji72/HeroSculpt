@@ -60,7 +60,7 @@ export class NotificationService {
         table: 'notifications',
         filter: `user_id=eq.${userId}`
       }, (payload) => {
-        this.handleRealtimeNotification(payload);
+        this.handleRealtimeNotification(payload as unknown as RealtimePostgresInsertPayload<Notification>);
       })
       .subscribe();
   }
@@ -75,7 +75,7 @@ export class NotificationService {
   // 🎯 MANEJAR NOTIFICACIÓN EN TIEMPO REAL
   private handleRealtimeNotification(payload: RealtimePostgresInsertPayload<Notification>): void {
     if (payload.eventType === 'INSERT') {
-      const notification = payload.new as Notification;
+      const notification = payload.new as unknown as Notification;
       this.showNotification(notification);
       this.playNotificationSound(notification.type);
     }
@@ -221,7 +221,7 @@ export class NotificationService {
 
       if (error) throw error;
 
-      return data;
+      return data as unknown as Notification;
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error sending notification:', error);
       throw error;
@@ -284,7 +284,7 @@ export class NotificationService {
 
       if (error) throw error;
 
-      return data || [];
+      return (data || []) as unknown as Notification[];
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error fetching notifications:', error);
       throw error;

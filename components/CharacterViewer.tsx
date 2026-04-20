@@ -27,7 +27,7 @@ interface CharacterViewerProps {
     id: string;
     name: string;
     configuration: SelectedParts;
-    source: 'purchase' | 'saved';
+    source: 'saved';
     date: string;
   }>;
   currentPoseIndex?: number;
@@ -35,7 +35,6 @@ interface CharacterViewerProps {
   onNextPose?: () => void;
   onSelectPose?: (index: number) => void;
   onRenamePose?: (index: number, newName: string) => void;
-  onSaveAsNew?: () => void;
   onDeletePose?: (index: number) => void;
 }
 
@@ -79,7 +78,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
   onNextPose,
   onSelectPose,
   onRenamePose,
-  onSaveAsNew,
   onDeletePose,
 }, ref) => {
   const { lang } = useLang();
@@ -2136,7 +2134,6 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           onNextPose={onNextPose || (() => {})}
           onSelectPose={onSelectPose || (() => {})}
           onRenamePose={onRenamePose}
-          onSaveAsNew={onSaveAsNew}
           onDeletePose={onDeletePose}
         />
       )}

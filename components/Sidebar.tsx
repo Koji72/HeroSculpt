@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArchetypeId } from '@/types';
+import { useLang, t } from '../lib/i18n';
 import { ARCHETYPES } from '@/constants';
 import { Settings, HelpCircle, Sparkles, Zap } from 'lucide-react';
 import { GamingButton } from './ui/gaming-button';
@@ -11,6 +12,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ selectedArchetype, onArchetypeSelect }) => {
+  const { lang } = useLang();
   return (
     <div className="h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 border-r border-slate-700/50 flex flex-col relative overflow-hidden">
       {/* Animated background gradient */}
@@ -25,9 +27,9 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedArchetype, onArchetypeSelect 
             </div>
             <div>
               <h1 className="text-lg font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-                Superhero Customizer
+                {t('sidebar.title', lang)}
               </h1>
-              <p className="text-xs text-slate-400">3D Character Builder</p>
+              <p className="text-xs text-slate-400">{t('sidebar.subtitle', lang)}</p>
             </div>
           </div>
         </div>
@@ -38,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedArchetype, onArchetypeSelect 
         <GlassPanel variant="floating" glowColor="purple" className="mb-4">
           <div className="p-4">
             <div className="mb-4 text-center">
-              <h2 className="text-lg font-bold text-white/90 mb-1">Archetypes</h2>
+              <h2 className="text-lg font-bold text-white/90 mb-1">{t('sidebar.archetypes', lang)}</h2>
               <div className="w-12 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full" />
             </div>
             

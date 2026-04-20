@@ -177,7 +177,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <BookOpen size={24} />
-            <span>RPG Character Sheets</span>
+            <span>{t('rpgmgr.title', lang)}</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -207,7 +207,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
 
             {/* Header con acciones */}
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">Select RPG System</h2>
+              <h2 className="text-xl font-bold">{t('rpgmgr.select_system', lang)}</h2>
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
@@ -215,7 +215,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                   onClick={() => document.getElementById('import-file')?.click()}
                 >
                   <Upload size={16} className="mr-2" />
-                  Import
+                  {t('rpgmgr.import', lang)}
                 </Button>
                 <input
                   id="import-file"
@@ -247,7 +247,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                         className="flex-1"
                       >
                         <Plus size={16} className="mr-2" />
-                        New Character
+                        {t('rpgmgr.new_character', lang)}
                       </Button>
                     </div>
                   </CardContent>
@@ -260,7 +260,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold flex items-center">
                   <Users size={20} className="mr-2" />
-                  Saved Characters
+                  {t('rpgmgr.saved_characters', lang)}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {savedCharacters.map((character) => {
@@ -272,7 +272,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                             <span>{character.name}</span>
                             <span className="text-sm text-gray-500">{systemInfo?.name}</span>
                           </CardTitle>
-                          <div className="text-sm text-gray-600">Player: {character.player}</div>
+                          <div className="text-sm text-gray-600">{t('rpgmgr.player_label', lang)} {character.player}</div>
                         </CardHeader>
                         <CardContent className="pt-0">
                           <div className="flex space-x-2">
@@ -281,7 +281,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                               onClick={() => loadCharacter(character)}
                               className="flex-1"
                             >
-                              Load
+                              {t('rpgmgr.load', lang)}
                             </Button>
                             <Button
                               size="sm"
@@ -294,7 +294,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                               size="sm"
                               variant="secondary"
                               onClick={() => {
-                                
+
                                 if (onLoadToCustomizer) {
                                   onLoadToCustomizer(character);
                                 } else {
@@ -302,14 +302,14 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                                 }
                               }}
                             >
-                              Load to Customizer
+                              {t('rpgmgr.load_to_customizer', lang)}
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => deleteCharacter(character.id)}
                             >
-                              Delete
+                              {t('rpgmgr.delete', lang)}
                             </Button>
                           </div>
                         </CardContent>
@@ -325,7 +325,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
             {/* Header con navegación */}
             <div className="flex justify-between items-center mb-4">
               <Button variant="outline" onClick={handleBackToSelector}>
-                ← Back to Systems
+                {t('rpgmgr.back_to_systems', lang)}
               </Button>
               {currentCharacter && (
                 <div className="flex flex-col items-end gap-1">
@@ -335,7 +335,7 @@ const RPGCharacterSheetManager: React.FC<RPGCharacterSheetManagerProps> = ({
                   <div className="flex space-x-2">
                     <Button onClick={saveCurrentCharacter} disabled={!isEditing}>
                       <Save size={16} className="mr-2" />
-                      Save Character
+                      {t('rpgmgr.save_character', lang)}
                     </Button>
                   </div>
                 </div>

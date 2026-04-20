@@ -62,7 +62,7 @@ const MutantsAndMastermindsSheet: React.FC<CharacterSheetProps> = ({
   const { lang } = useLang();
   const mnmCharacter = character as MAndMCharacterData;
 
-  const updateCharacter = React.useCallback((path: string, value: string | number | boolean) => {
+  const updateCharacter = React.useCallback((path: string, value: string | number | boolean | unknown[] | Record<string, unknown>) => {
     const keys = path.split('.');
     const updated = JSON.parse(JSON.stringify(mnmCharacter));
     let current: Record<string, unknown> = updated;

@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
+import { useLang, t } from '../../lib/i18n';
 import { SelectedParts, ArchetypeId } from '../../types';
 import Canvas3D, { Canvas3DRef } from '../3d/Canvas3D';
 import { LightingPreset } from '../../lib/lightingPresets';
@@ -45,7 +46,7 @@ interface CharacterDisplayProps {
     id: string;
     name: string;
     configuration: SelectedParts;
-    source: 'purchase' | 'saved';
+    source: 'saved';
     date: string;
   }>;
   currentPoseIndex?: number;
@@ -71,6 +72,7 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
   onSelectPose,
   onRenamePose,
 }, ref) => {
+  const { lang } = useLang();
   const canvas3DRef = useRef<Canvas3DRef>(null);
   const modelLoaderRef = useRef<ModelLoaderRef>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
@@ -248,7 +250,7 @@ const CharacterDisplay = forwardRef<CharacterDisplayRef, CharacterDisplayProps>(
       {/* Loading overlay */}
       {isLoading && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="text-white text-lg font-bold">Loading models...</div>
+          <div className="text-white text-lg font-bold">{t('character.loading', lang)}</div>
         </div>
       )}
 

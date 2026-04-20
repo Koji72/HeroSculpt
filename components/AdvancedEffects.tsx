@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
+import { useLang, t } from '../lib/i18n';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass';
@@ -42,6 +43,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
   getRenderer, // New prop
   onComposerChange
 }) => {
+  const { lang } = useLang();
   const [isEnabled, setIsEnabled] = useState(false);
   const [activePreset, setActivePreset] = useState<string>('none');
   // const [composer, setComposer] = useState<EffectComposer | null>(null); // Removed: not used
@@ -198,12 +200,12 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Advanced Effects</CardTitle>
+          <CardTitle className="text-base">{t('fx.title', lang)}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Toggle principal */}
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Enable effects</label>
+            <label className="text-sm font-medium">{t('fx.enable', lang)}</label>
             <input
               type="checkbox"
               checked={isEnabled}
@@ -214,7 +216,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
 
           {/* Presets */}
           <div>
-            <label className="block text-sm font-medium mb-2">Presets</label>
+            <label className="block text-sm font-medium mb-2">{t('fx.presets', lang)}</label>
             <div className="grid grid-cols-1 gap-2">
               {effectPresets.map((preset) => (
                 <Button
@@ -239,10 +241,10 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
               {/* SSAO Settings */}
               {effectSettings.ssao.enabled && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">SSAO (Ambient Shadows)</label>
+                  <label className="text-sm font-medium">{t('fx.ssao', lang)}</label>
                   <div className="space-y-2">
                     <div>
-                      <label className="text-xs">Kernel Radius</label>
+                      <label className="text-xs">{t('fx.kernel_radius', lang)}</label>
                       <input
                         type="range"
                         min="0.1"
@@ -255,7 +257,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
                       <span className="text-xs text-gray-500">{effectSettings.ssao.kernelRadius.toFixed(1)}</span>
                     </div>
                     <div>
-                      <label className="text-xs">Minimum Distance</label>
+                      <label className="text-xs">{t('fx.min_distance', lang)}</label>
                       <input
                         type="range"
                         min="0.001"
@@ -274,10 +276,10 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
               {/* Bloom Settings */}
               {effectSettings.bloom.enabled && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Bloom (Glow)</label>
+                  <label className="text-sm font-medium">{t('fx.bloom', lang)}</label>
                   <div className="space-y-2">
                     <div>
-                      <label className="text-xs">Intensity</label>
+                      <label className="text-xs">{t('fx.intensity', lang)}</label>
                       <input
                         type="range"
                         min="0.1"
@@ -290,7 +292,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
                       <span className="text-xs text-gray-500">{effectSettings.bloom.strength.toFixed(1)}</span>
                     </div>
                     <div>
-                      <label className="text-xs">Radius</label>
+                      <label className="text-xs">{t('fx.radius', lang)}</label>
                       <input
                         type="range"
                         min="0.1"
@@ -303,7 +305,7 @@ const AdvancedEffects: React.FC<AdvancedEffectsProps> = ({
                       <span className="text-xs text-gray-500">{effectSettings.bloom.radius.toFixed(1)}</span>
                     </div>
                     <div>
-                      <label className="text-xs">Threshold</label>
+                      <label className="text-xs">{t('fx.threshold', lang)}</label>
                       <input
                         type="range"
                         min="0.1"

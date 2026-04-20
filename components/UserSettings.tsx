@@ -386,12 +386,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({
         )}
         {setting.type === 'select' && setting.options && (
           <select
-            value={setting.value}
+            value={String(setting.value)}
             onChange={(e) => updateSetting(setting.id, e.target.value)}
             className="bg-slate-700 border border-slate-600 text-white text-sm rounded px-3 py-2"
           >
             {setting.options.map(option => (
-              <option key={option.value} value={option.value}>
+              <option key={String(option.value)} value={String(option.value)}>
                 {option.label}
               </option>
             ))}

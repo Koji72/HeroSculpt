@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLang, t } from '../lib/i18n';
 import * as THREE from 'three';
 
 // import { colorPalettes, getColorableParts, isPartColorable } from './materials/materials'; // Removed unused imports
@@ -29,6 +30,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
   currentColors,
   onLoadConfiguration
 }) => {
+  const { lang } = useLang();
   const [activeTab, setActiveTab] = useState<'parts' | 'materials' | 'lighting' | 'export'>('parts'); // Added 'export' tab
   const [selectedPart, setSelectedPart] = useState<string>('TORSO');
   const [materialSettings, setMaterialSettings] = useState({
@@ -922,7 +924,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
         {activeTab === 'parts' && (
           <div>
             <div style={sectionStyle}>
-              <div style={sectionHeaderStyle}>SELECT BODY PART</div>
+              <div style={sectionHeaderStyle}>{t('mat_config.select_body_part', lang)}</div>
               <div style={{ ...sectionBodyStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                 {availableCategories.map((category) => {
                   const isSelected = selectedPart === category;
@@ -1051,7 +1053,7 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
                   </div>
                 ))}
                 <div>
-                  <label style={labelStyle}>SHEEN COLOR</label>
+                  <label style={labelStyle}>{t('mat_config.sheen_color', lang)}</label>
                   <input type="color" value={materialSettings.sheenColor}
                     onChange={(e) => setMaterialSettings(prev => ({ ...prev, sheenColor: e.target.value }))}
                     style={{ width: '100%', height: 36, border: '2px solid var(--color-border)', borderRadius: 'var(--radius)', cursor: 'pointer' }} />
@@ -1085,10 +1087,10 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
         {/* EXPORT */}
         {activeTab === 'export' && (
           <div style={sectionStyle}>
-            <div style={sectionHeaderStyle}>💾 EXPORT CONFIGURATION</div>
+            <div style={sectionHeaderStyle}>💾 {t('mat_config.export_title', lang)}</div>
             <div style={sectionBodyStyle}>
-              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 12 }}>Export the current material configuration for the selected part.</p>
-              <button onClick={() => onLoadConfiguration(selectedParts)} className="btn-comic btn-primary" style={{ width: '100%' }}>EXPORT CONFIGURATION</button>
+              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 12 }}>{t('mat_config.export_desc', lang)}</p>
+              <button onClick={() => onLoadConfiguration(selectedParts)} className="btn-comic btn-primary" style={{ width: '100%' }}>{t('mat_config.export_title', lang)}</button>
             </div>
           </div>
         )}

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Rive } from '@rive-app/canvas';
+import { useLang, t } from '../lib/i18n';
 
 interface RiveButtonProps {
   riveFile: string;
@@ -24,6 +25,7 @@ const RiveButton: React.FC<RiveButtonProps> = ({
   height = 60,
   title
 }) => {
+  const { lang } = useLang();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const riveRef = useRef<Rive | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -150,7 +152,7 @@ const RiveButton: React.FC<RiveButtonProps> = ({
       
       {error && (
         <div className="absolute inset-0 bg-red-500/20 border border-red-500/50 rounded flex items-center justify-center">
-          <span className="text-red-400 text-xs">Error</span>
+          <span className="text-red-400 text-xs">{t('common.error', lang)}</span>
         </div>
       )}
       

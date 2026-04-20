@@ -611,18 +611,18 @@ export async function exportModel(scene: THREE.Object3D, options: ModelExportOpt
     };
 
     // Export the scene
-    const result: { data: ArrayBuffer | string } = await new Promise<{ data: ArrayBuffer | string }>((resolve, reject) => {
-      exporter.parse(scene, (gltf: ArrayBuffer | string) => {
+    const result: { data: ArrayBuffer | { [key: string]: unknown } } = await new Promise((resolve, reject) => {
+      exporter.parse(scene, (gltf: ArrayBuffer | { [key: string]: unknown }) => {
         resolve({ data: gltf });
-      }, (error: Error) => {
-        reject(error);
+      }, (error: ErrorEvent) => {
+        reject(new Error(error.message));
       }, exportOptions);
     });
 
     // Create blob and filename
     const blob = options.format === 'glb'
       ? new Blob([result.data as ArrayBuffer], { type: 'model/gltf-binary' })
-      : new Blob([result.data as string], { type: 'model/gltf+json' });
+      : new Blob([JSON.stringify(result.data)], { type: 'model/gltf+json' });
 
     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
     const filename = `superhero_3d_model_${timestamp}.${options.format}`;
@@ -657,7 +657,7 @@ async function exportSTL(scene: THREE.Object3D, options: STLExportOptions = { bi
     const stlData = exporter.parse(scene, exportOptions);
 
     // Create blob and filename
-    const blob = new Blob([stlData as any], {
+    const blob = new Blob([stlData], {
       type: options.binary ? 'application/octet-stream' : 'text/plain'
     });
 
