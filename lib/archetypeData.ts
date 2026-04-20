@@ -6,7 +6,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
   // Tipos de personajes originales (mantener compatibilidad)
   [ArchetypeId.STRONG]: {
     id: ArchetypeId.STRONG,
-    name: 'STRONG',
+    name: 'SENTINEL',
     title: 'THE POWERHOUSE',
     description: 'Raw strength and unbreakable defense',
     briefDescription: 'Super strength, flight, invulnerability',
@@ -30,7 +30,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
 
   [ArchetypeId.JUSTICIERO]: {
     id: ArchetypeId.JUSTICIERO,
-    name: 'JUSTICIERO',
+    name: 'PHANTOM',
     title: 'THE GUARDIAN',
     description: 'Justice and protection for all',
     briefDescription: 'Justice, protection, leadership',
@@ -54,7 +54,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
 
   [ArchetypeId.SPEEDSTER]: {
     id: ArchetypeId.SPEEDSTER,
-    name: 'SPEEDSTER',
+    name: 'BLITZ',
     title: 'THE FLASH',
     description: 'Lightning speed and agility',
     briefDescription: 'Super speed, hyper-reflexes',
@@ -78,7 +78,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
 
   [ArchetypeId.MYSTIC]: {
     id: ArchetypeId.MYSTIC,
-    name: 'MYSTIC',
+    name: 'ARCANE',
     title: 'THE SORCERER',
     description: 'Ancient magic and mystical powers',
     briefDescription: 'Magic, runes, summoning',
@@ -102,7 +102,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
 
   [ArchetypeId.TECH]: {
     id: ArchetypeId.TECH,
-    name: 'TECH',
+    name: 'GHOST',
     title: 'THE INVENTOR',
     description: 'Advanced technology and innovation',
     briefDescription: 'Creative technology use',
@@ -127,7 +127,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
   // Nuevos tipos de personajes
   [ArchetypeId.PARAGON]: {
     id: ArchetypeId.PARAGON,
-    name: 'PARAGON',
+    name: 'TITAN',
     title: 'THE PERFECT HERO',
     description: 'The ultimate hero with balanced powers',
     briefDescription: 'Super strength, flight, invulnerability',
