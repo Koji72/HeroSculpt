@@ -317,6 +317,14 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
 
   const handleHoverPreview = useCallback((part: Part | null) => {
     if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    if (!part) {
+      // Clear immediately on card leave — no debounce needed for null hover.
+      // A debounced null-hover with delta-based hiding would briefly hide the
+      // active category's model before the grid onMouseLeave could restore it.
+      hoverTimerRef.current = null;
+      if (onPreviewChange) onPreviewChange({});
+      return;
+    }
     hoverTimerRef.current = setTimeout(() => {
     if (!activeCategory || !onPreviewChange) return;
 
