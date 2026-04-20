@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { PartCategory, Part, ArchetypeId } from '../types';
+import { PartCategory, ArchetypeId } from '../types';
 import { useLang, t } from '../lib/i18n';
-import { ALL_PARTS } from '../constants';
 
 interface LowerBodySubmenuProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -10,8 +9,8 @@ interface LowerBodySubmenuProps {
   onToggle: () => void;
   submenuPosition: { top: number; left: number };
   selectedArchetype: ArchetypeId;
-  onPartHover: (part: Part) => void;
-  onPartUnhover: () => void;
+  onPartHover?: (part: never) => void;
+  onPartUnhover?: () => void;
 }
 
 const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
@@ -20,8 +19,6 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
   isExpanded,
   submenuPosition,
   selectedArchetype,
-  onPartHover,
-  onPartUnhover,
 }) => {
   const { lang } = useLang();
   const [hoveredCategory, setHoveredCategory] = useState<PartCategory | null>(null);
@@ -59,15 +56,8 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
-            onMouseEnter={() => {
-              setHoveredCategory(category);
-              const part = ALL_PARTS.find(p => p.category === category && p.archetype === selectedArchetype);
-              if (part) onPartHover(part);
-            }}
-            onMouseLeave={() => {
-              setHoveredCategory(null);
-              onPartUnhover();
-            }}
+            onMouseEnter={() => setHoveredCategory(category)}
+            onMouseLeave={() => setHoveredCategory(null)}
             style={{
               width: '100%',
               padding: '8px 12px',
