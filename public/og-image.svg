@@ -1,0 +1,242 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#04040a"/>
+      <stop offset="50%" stop-color="#070710"/>
+      <stop offset="100%" stop-color="#04040a"/>
+    </linearGradient>
+    <!-- Orange glow radial -->
+    <radialGradient id="centerGlow" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#04040a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Title gradient -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="50%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <!-- Card gradients -->
+    <linearGradient id="cardStrong" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c2d12" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#1c0a04" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardJust" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c1d3b" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#030f1f" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardSpeed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1400" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0a0900" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardMystic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a0533" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#080212" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardTech" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#001c2a" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#000c12" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardParagon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d0505" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f0505" stop-opacity="0.95"/>
+    </linearGradient>
+    <!-- Glow filters -->
+    <filter id="orangeGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="titleGlow" x="-10%" y="-50%" width="120%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Clip paths for cards -->
+    <clipPath id="cardClip"><rect width="172" height="190" rx="2"/></clipPath>
+  </defs>
+
+  <!-- ═══ BACKGROUND ═══ -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#centerGlow)"/>
+
+  <!-- Subtle hex grid overlay -->
+  <g opacity="0.04" stroke="#f97316" stroke-width="0.5" fill="none">
+    <polygon points="100,80 140,57 180,80 180,126 140,149 100,126"/>
+    <polygon points="180,80 220,57 260,80 260,126 220,149 180,126"/>
+    <polygon points="940,80 980,57 1020,80 1020,126 980,149 940,126"/>
+    <polygon points="1020,80 1060,57 1100,80 1100,126 1060,149 1020,126"/>
+    <polygon points="60,180 100,157 140,180 140,226 100,249 60,226"/>
+    <polygon points="1060,180 1100,157 1140,180 1140,226 1100,249 1060,226"/>
+    <polygon points="100,480 140,457 180,480 180,526 140,549 100,526"/>
+    <polygon points="1020,480 1060,457 1100,480 1100,526 1060,549 1020,526"/>
+  </g>
+
+  <!-- Decorative scan lines -->
+  <g opacity="0.03">
+    <line x1="0" y1="150" x2="1200" y2="150" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="300" x2="1200" y2="300" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="450" x2="1200" y2="450" stroke="#ffffff" stroke-width="1"/>
+  </g>
+
+  <!-- Vertical accent lines -->
+  <line x1="60" y1="0" x2="60" y2="630" stroke="#f97316" stroke-width="1" opacity="0.12"/>
+  <line x1="1140" y1="0" x2="1140" y2="630" stroke="#f97316" stroke-width="1" opacity="0.12"/>
+
+  <!-- Top accent bar -->
+  <rect x="60" y="0" width="1080" height="3" fill="url(#titleGrad)" opacity="0.8"/>
+  <!-- Bottom accent bar -->
+  <rect x="60" y="627" width="1080" height="3" fill="url(#titleGrad)" opacity="0.8"/>
+
+  <!-- ═══ BADGE TAG ═══ -->
+  <rect x="516" y="42" width="168" height="22" rx="1" fill="#f97316" fill-opacity="0.12" stroke="#f97316" stroke-opacity="0.4" stroke-width="1"/>
+  <text x="600" y="57" font-family="'Arial Black', 'Helvetica Neue', sans-serif" font-size="9" font-weight="900" fill="#f97316" text-anchor="middle" letter-spacing="3">3D SUPERHERO CREATOR</text>
+
+  <!-- ═══ MAIN TITLE ═══ -->
+  <!-- Shadow/glow layer -->
+  <text x="600" y="162" font-family="'Arial Black', Impact, 'Helvetica Neue', sans-serif" font-size="120" font-weight="900" fill="#f97316" fill-opacity="0.15" text-anchor="middle" letter-spacing="18" filter="url(#titleGlow)">HEROSCULPT</text>
+  <!-- Main title -->
+  <text x="600" y="162" font-family="'Arial Black', Impact, 'Helvetica Neue', sans-serif" font-size="120" font-weight="900" fill="url(#titleGrad)" text-anchor="middle" letter-spacing="18">HEROSCULPT</text>
+
+  <!-- Tagline -->
+  <text x="600" y="196" font-family="'Arial Black', 'Helvetica Neue', sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)" text-anchor="middle" letter-spacing="5">FORGE YOUR LEGEND IN REAL-TIME 3D</text>
+
+  <!-- Divider line under title -->
+  <line x1="200" y1="212" x2="1000" y2="212" stroke="url(#titleGrad)" stroke-width="1" opacity="0.3"/>
+
+  <!-- ═══ ARCHETYPE CARDS ═══ -->
+  <!-- Card layout: 6 cards, x positions: 87, 255, 423, 591, 759, 927, width 162, height 185 -->
+
+  <!-- STRONG card -->
+  <g transform="translate(87, 230)">
+    <rect width="162" height="185" rx="2" fill="url(#cardStrong)" stroke="#f97316" stroke-opacity="0.4" stroke-width="1"/>
+    <rect width="162" height="3" rx="0" fill="#f97316" opacity="0.8"/>
+    <text x="81" y="52" font-family="Arial" font-size="36" text-anchor="middle">💪</text>
+    <text x="81" y="80" font-family="'Arial Black', sans-serif" font-size="8" font-weight="900" fill="#f97316" text-anchor="middle" letter-spacing="2">THE POWERHOUSE</text>
+    <text x="81" y="100" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="white" text-anchor="middle" letter-spacing="2">STRONG</text>
+    <text x="81" y="120" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.45)" text-anchor="middle" letter-spacing="1">Raw strength · Defense</text>
+    <!-- Stat bar -->
+    <rect x="16" y="135" width="130" height="3" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <rect x="16" y="135" width="123" height="3" rx="1" fill="#f97316" opacity="0.85"/>
+    <text x="16" y="152" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.35)" letter-spacing="1">POWER</text>
+    <text x="146" y="152" font-family="'Arial Black', sans-serif" font-size="8" fill="#f97316" text-anchor="end" letter-spacing="1">95</text>
+    <text x="81" y="173" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Superman · Hulk · Thor</text>
+  </g>
+
+  <!-- GUARDIAN card -->
+  <g transform="translate(255, 230)">
+    <rect width="162" height="185" rx="2" fill="url(#cardJust)" stroke="#06b6d4" stroke-opacity="0.4" stroke-width="1"/>
+    <rect width="162" height="3" rx="0" fill="#06b6d4" opacity="0.8"/>
+    <text x="81" y="52" font-family="Arial" font-size="36" text-anchor="middle">⚖️</text>
+    <text x="81" y="80" font-family="'Arial Black', sans-serif" font-size="8" font-weight="900" fill="#06b6d4" text-anchor="middle" letter-spacing="2">THE PROTECTOR</text>
+    <text x="81" y="100" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="white" text-anchor="middle" letter-spacing="2">GUARDIAN</text>
+    <text x="81" y="120" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.45)" text-anchor="middle" letter-spacing="1">Justice · Leadership</text>
+    <rect x="16" y="135" width="130" height="3" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <rect x="16" y="135" width="117" height="3" rx="1" fill="#06b6d4" opacity="0.85"/>
+    <text x="16" y="152" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.35)" letter-spacing="1">DEFENSE</text>
+    <text x="146" y="152" font-family="'Arial Black', sans-serif" font-size="8" fill="#06b6d4" text-anchor="end" letter-spacing="1">90</text>
+    <text x="81" y="173" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Cap. America · Black Panther</text>
+  </g>
+
+  <!-- SPEEDSTER card -->
+  <g transform="translate(423, 230)">
+    <rect width="162" height="185" rx="2" fill="url(#cardSpeed)" stroke="#fbbf24" stroke-opacity="0.4" stroke-width="1"/>
+    <rect width="162" height="3" rx="0" fill="#fbbf24" opacity="0.8"/>
+    <text x="81" y="52" font-family="Arial" font-size="36" text-anchor="middle">⚡</text>
+    <text x="81" y="80" font-family="'Arial Black', sans-serif" font-size="8" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="2">THE FLASH</text>
+    <text x="81" y="100" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="white" text-anchor="middle" letter-spacing="2">SPEEDSTER</text>
+    <text x="81" y="120" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.45)" text-anchor="middle" letter-spacing="1">Speed · Agility</text>
+    <rect x="16" y="135" width="130" height="3" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <rect x="16" y="135" width="127" height="3" rx="1" fill="#fbbf24" opacity="0.85"/>
+    <text x="16" y="152" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.35)" letter-spacing="1">SPEED</text>
+    <text x="146" y="152" font-family="'Arial Black', sans-serif" font-size="8" fill="#fbbf24" text-anchor="end" letter-spacing="1">98</text>
+    <text x="81" y="173" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Flash · Quicksilver · Sonic</text>
+  </g>
+
+  <!-- MYSTIC card -->
+  <g transform="translate(591, 230)">
+    <rect width="162" height="185" rx="2" fill="url(#cardMystic)" stroke="#a855f7" stroke-opacity="0.4" stroke-width="1"/>
+    <rect width="162" height="3" rx="0" fill="#a855f7" opacity="0.8"/>
+    <text x="81" y="52" font-family="Arial" font-size="36" text-anchor="middle">🔮</text>
+    <text x="81" y="80" font-family="'Arial Black', sans-serif" font-size="8" font-weight="900" fill="#a855f7" text-anchor="middle" letter-spacing="2">THE SORCERER</text>
+    <text x="81" y="100" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="white" text-anchor="middle" letter-spacing="2">MYSTIC</text>
+    <text x="81" y="120" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.45)" text-anchor="middle" letter-spacing="1">Magic · Wisdom</text>
+    <rect x="16" y="135" width="130" height="3" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <rect x="16" y="135" width="123" height="3" rx="1" fill="#a855f7" opacity="0.85"/>
+    <text x="16" y="152" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.35)" letter-spacing="1">ENERGY</text>
+    <text x="146" y="152" font-family="'Arial Black', sans-serif" font-size="8" fill="#a855f7" text-anchor="end" letter-spacing="1">95</text>
+    <text x="81" y="173" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Dr. Strange · Scarlet Witch</text>
+  </g>
+
+  <!-- TECH card -->
+  <g transform="translate(759, 230)">
+    <rect width="162" height="185" rx="2" fill="url(#cardTech)" stroke="#22d3ee" stroke-opacity="0.4" stroke-width="1"/>
+    <rect width="162" height="3" rx="0" fill="#22d3ee" opacity="0.8"/>
+    <text x="81" y="52" font-family="Arial" font-size="36" text-anchor="middle">🤖</text>
+    <text x="81" y="80" font-family="'Arial Black', sans-serif" font-size="8" font-weight="900" fill="#22d3ee" text-anchor="middle" letter-spacing="2">THE INVENTOR</text>
+    <text x="81" y="100" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="white" text-anchor="middle" letter-spacing="2">TECH</text>
+    <text x="81" y="120" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.45)" text-anchor="middle" letter-spacing="1">Technology · Genius</text>
+    <rect x="16" y="135" width="130" height="3" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <rect x="16" y="135" width="127" height="3" rx="1" fill="#22d3ee" opacity="0.85"/>
+    <text x="16" y="152" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.35)" letter-spacing="1">INTEL</text>
+    <text x="146" y="152" font-family="'Arial Black', sans-serif" font-size="8" fill="#22d3ee" text-anchor="end" letter-spacing="1">98</text>
+    <text x="81" y="173" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Iron Man · Batman</text>
+  </g>
+
+  <!-- PARAGON card -->
+  <g transform="translate(927, 230)">
+    <rect width="162" height="185" rx="2" fill="url(#cardParagon)" stroke="#ef4444" stroke-opacity="0.4" stroke-width="1"/>
+    <rect width="162" height="3" rx="0" fill="#ef4444" opacity="0.8"/>
+    <text x="81" y="52" font-family="Arial" font-size="36" text-anchor="middle">🦸</text>
+    <text x="81" y="80" font-family="'Arial Black', sans-serif" font-size="8" font-weight="900" fill="#ef4444" text-anchor="middle" letter-spacing="2">THE PERFECT HERO</text>
+    <text x="81" y="100" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="white" text-anchor="middle" letter-spacing="2">PARAGON</text>
+    <text x="81" y="120" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.45)" text-anchor="middle" letter-spacing="1">Balance · Perfection</text>
+    <rect x="16" y="135" width="130" height="3" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <rect x="16" y="135" width="117" height="3" rx="1" fill="#ef4444" opacity="0.85"/>
+    <text x="16" y="152" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.35)" letter-spacing="1">ALL STATS</text>
+    <text x="146" y="152" font-family="'Arial Black', sans-serif" font-size="8" fill="#ef4444" text-anchor="end" letter-spacing="1">90</text>
+    <text x="81" y="173" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Superman · Capt. Marvel</text>
+  </g>
+
+  <!-- ═══ BOTTOM STATS STRIP ═══ -->
+  <rect x="60" y="445" width="1080" height="1" fill="url(#titleGrad)" opacity="0.2"/>
+  <rect x="60" y="592" width="1080" height="1" fill="url(#titleGrad)" opacity="0.2"/>
+
+  <!-- Stats row -->
+  <g transform="translate(0, 505)">
+    <!-- 300+ PARTS -->
+    <text x="210" y="0" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="url(#titleGrad)" text-anchor="middle" letter-spacing="2">300+</text>
+    <text x="210" y="22" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="4">MODULAR PARTS</text>
+
+    <!-- Divider -->
+    <line x1="360" y1="-20" x2="360" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+    <!-- 15 ARCHETYPES -->
+    <text x="480" y="0" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="url(#titleGrad)" text-anchor="middle" letter-spacing="2">15+</text>
+    <text x="480" y="22" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="4">ARCHETYPES</text>
+
+    <!-- Divider -->
+    <line x1="620" y1="-20" x2="620" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+    <!-- EXPORT FORMATS -->
+    <text x="730" y="0" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="url(#titleGrad)" text-anchor="middle" letter-spacing="2">3</text>
+    <text x="730" y="22" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="4">EXPORT FORMATS</text>
+
+    <!-- Divider -->
+    <line x1="870" y1="-20" x2="870" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+    <!-- FREE TO START -->
+    <text x="990" y="0" font-family="'Arial Black', sans-serif" font-size="28" font-weight="900" fill="url(#titleGrad)" text-anchor="middle" letter-spacing="3">FREE</text>
+    <text x="990" y="22" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="4">TO START</text>
+  </g>
+
+  <!-- CTA button representation -->
+  <rect x="450" y="556" width="300" height="44" rx="1" fill="#f97316" fill-opacity="0.15" stroke="#f97316" stroke-opacity="0.5" stroke-width="1.5"/>
+  <text x="600" y="583" font-family="'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#f97316" text-anchor="middle" letter-spacing="4">BUILD YOUR HERO FREE →</text>
+
+  <!-- URL -->
+  <text x="600" y="616" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.2)" text-anchor="middle" letter-spacing="3">HEROSCULPT.APP</text>
+</svg>
