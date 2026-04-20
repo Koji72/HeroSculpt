@@ -1985,16 +1985,22 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-900/90 backdrop-blur-sm will-change-transform z-20">
           <div className="text-center">
-            <div className="relative w-24 h-24 mx-auto mb-6">
+            <div className="relative mx-auto mb-6" style={{ width: 140, height: 140 }}>
               {/* Rotating outer ring */}
-              <div className="absolute inset-0 border-4 border-orange-400/30 rounded-full animate-spin border-t-orange-400"></div>
+              <div className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid rgba(251,146,60,0.2)', borderTopColor: 'rgba(251,146,60,0.9)' }}></div>
               {/* Secondary inner ring */}
-              <div className="absolute inset-2 border-3 border-cyan-400/40 rounded-full animate-spin animate-reverse border-b-cyan-400" style={{ animationDuration: '2s' }}></div>
-              {/* Inner pulsing circle */}
-              <div className="absolute inset-3 bg-gradient-to-r from-orange-400/20 to-cyan-400/20 rounded-full animate-pulse"></div>
-              {/* Logo */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <img src="/logo.png" alt="HeroSculpt" style={{ width: 52, height: 52, objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(251,146,60,0.7))' }} className="animate-pulse" />
+              <div className="absolute rounded-full" style={{ inset: 6, border: '3px solid rgba(34,211,238,0.2)', borderBottomColor: 'rgba(34,211,238,0.8)', animation: 'spin 2s linear infinite reverse' }}></div>
+              {/* Circular logo mask */}
+              <div className="absolute rounded-full overflow-hidden" style={{
+                inset: 14,
+                background: 'radial-gradient(circle, rgba(15,20,40,0.95) 0%, rgba(8,12,28,0.98) 100%)',
+                boxShadow: 'inset 0 0 20px rgba(251,146,60,0.15), 0 0 12px rgba(251,146,60,0.2)',
+              }}>
+                <img
+                  src="/logo.png"
+                  alt="HeroSculpt"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 6 }}
+                />
               </div>
             </div>
             <div className="text-xl font-black text-orange-400 mb-2 animate-pulse uppercase tracking-wider"
