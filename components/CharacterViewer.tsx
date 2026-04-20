@@ -1251,15 +1251,25 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       if (!modelGroup) return;
 
       const basePath = import.meta.env.BASE_URL || '/';
-      const changedCategories = Object.keys(changedParts) as PartCategory[];
+
+      // Compute only the categories that actually differ from the current selection
+      const allCats = new Set([
+        ...Object.keys(changedParts),
+        ...Object.keys(selectedParts),
+      ]) as Set<string>;
+      const deltaCategories = new Set<PartCategory>(
+        ([...allCats] as PartCategory[]).filter(
+          cat => changedParts[cat as PartCategory]?.id !== selectedParts[cat as PartCategory]?.id
+        )
+      );
 
           // ?? OPTIMIZADO: Solo log en desarrollo
-    if (import.meta.env.DEV) console.log('?? HOVER PREVIEW: Loading only changed categories:', changedCategories);
+    if (import.meta.env.DEV) console.log('?? HOVER PREVIEW: Loading only changed categories:', [...deltaCategories]);
 
       // Debug espec�fico para cinturones
-      if (changedCategories.includes(PartCategory.BELT)) {
+      if (deltaCategories.has(PartCategory.BELT)) {
         if (import.meta.env.DEV) console.log('?? BELT HOVER DEBUG - CharacterViewer:', {
-          changedCategories,
+          deltaCategories: [...deltaCategories],
           beltPart: changedParts[PartCategory.BELT],
           allChangedParts: Object.keys(changedParts).reduce((acc, key) => {
             acc[key] = changedParts[key]?.id || 'none';
@@ -1289,13 +1299,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         const childPartId = child.userData.partId;
 
         // Hide original models of the categories being previewed
-        if (!child.userData.isPreview && childCategory && changedParts[childCategory] && child.visible) {
+        if (!child.userData.isPreview && childCategory && deltaCategories.has(childCategory as PartCategory) && child.visible) {
           if (import.meta.env.DEV) console.log(`??? HOVER: Hiding original model for category ${childCategory}: ${childPartId || child.name || 'unknown'}`);
           child.visible = false; // Hide the currently active part of this category
         }
 
         // Identify existing preview models from the same categories for removal
-        if (child.userData.isPreview && childCategory && changedParts[childCategory]) {
+        if (child.userData.isPreview && childCategory && deltaCategories.has(childCategory as PartCategory)) {
           modelsToRemove.push(child);
           if (import.meta.env.DEV) console.log(`??? HOVER: Marking existing preview model for removal: ${childPartId || child.name || 'unknown'}`);
         }
@@ -1311,7 +1321,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     if (import.meta.env.DEV) console.log(`?? HOVER: Removed ${modelsToRemove.length} preview models`);
 
       // Load new models for changed categories — await all before clearing the flag
-      await Promise.all(changedCategories.map(async (category) => {
+      await Promise.all([...deltaCategories].map(async (category) => {
         const part = changedParts[category];
         if (!part || part.attributes?.none || part.attributes?.hidden || !part.gltfPath) {
           return;
@@ -1320,6 +1330,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         const modelPath = `${basePath}${part.gltfPath.startsWith('/') ? part.gltfPath.slice(1) : part.gltfPath}`;
         try {
           const model = await modelCache.getModel(modelPath);
+          if (loadId !== hoverLoadCountRef.current) return; // Preview was cleared or superseded
           model.userData.category = part.category ||
                                     (part.id.includes('legs') ? PartCategory.LOWER_BODY :
                                      part.id.includes('boots') ? PartCategory.BOOTS :
@@ -1349,10 +1360,11 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       }
     },
     clearPreview: () => {
+      hoverLoadCountRef.current++; // Invalidate any in-flight preview loads
       setPreviewParts(null);
       setIsHoverPreviewActive(false); // ?? DESMARCAR HOVER PREVIEW
-      
-      
+
+
       // Remove all preview models and restore original models visibility
       const modelGroup = modelGroupRef.current;
       if (!modelGroup) return;
