@@ -332,7 +332,13 @@ const AppContent: React.FC = () => {
       PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT];
     setBeltSubmenuExpanded(false);
     setLowerBodySubmenuExpanded(false);
-    setTorsoSubmenuExpanded(prev => !prev);
+    setTorsoSubmenuExpanded(prev => {
+      if (!prev) {
+        const rect = torsoButtonRef.current?.getBoundingClientRect();
+        if (rect) setSubmenuPosition({ top: rect.top, left: rect.right + 4 });
+      }
+      return !prev;
+    });
     const cat = upperCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.TORSO;
     setActiveCategory(cat);
     setActiveTab('parts');
@@ -348,7 +354,13 @@ const AppContent: React.FC = () => {
   const handleBeltSubmenuToggle = useCallback(() => {
     const beltCats = [PartCategory.BELT, PartCategory.POUCH, PartCategory.BUCKLE];
     setTorsoSubmenuExpanded(false);
-    setBeltSubmenuExpanded(prev => !prev);
+    setBeltSubmenuExpanded(prev => {
+      if (!prev) {
+        const rect = beltButtonRef.current?.getBoundingClientRect();
+        if (rect) setBeltSubmenuPosition({ top: rect.top, left: rect.right + 4 });
+      }
+      return !prev;
+    });
     setLowerBodySubmenuExpanded(false);
     const cat = beltCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.BELT;
     setActiveCategory(cat);
@@ -367,7 +379,13 @@ const AppContent: React.FC = () => {
     const lowerCats = [PartCategory.LOWER_BODY, PartCategory.BOOTS];
     setTorsoSubmenuExpanded(false);
     setBeltSubmenuExpanded(false);
-    setLowerBodySubmenuExpanded(prev => !prev);
+    setLowerBodySubmenuExpanded(prev => {
+      if (!prev) {
+        const rect = lowerBodyButtonRef.current?.getBoundingClientRect();
+        if (rect) setLowerBodySubmenuPosition({ top: rect.top, left: rect.right + 4 });
+      }
+      return !prev;
+    });
     const cat = lowerCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.LOWER_BODY;
     setActiveCategory(cat);
     setActiveTab('parts');
