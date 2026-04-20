@@ -100,7 +100,9 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
       link.href = tokenImage;
       const safeName = (heroName && heroName.trim()) ? heroName.trim() : character.archetypeId;
       link.download = `${safeName}_token_${shape}_${tokenOptions.size}.${tokenOptions.format}`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       onExportToken(tokenOptions.format, tokenOptions.size);
 
       // Save to vtt_library in localStorage
@@ -299,7 +301,9 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
           const link = document.createElement('a');
           link.href = url;
           link.download = `${safeName}_foundry.json`;
+          document.body.appendChild(link);
           link.click();
+          document.body.removeChild(link);
           URL.revokeObjectURL(url);
         }}
       >

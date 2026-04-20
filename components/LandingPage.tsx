@@ -29,12 +29,12 @@ const C = {
 };
 
 const ARCHETYPES = [
-  { id: 'TANK',    label: 'TANK',    abbr: '',   color: '#ff9063', img: true },
-  { id: 'ROGUE',   label: 'ROGUE',   abbr: 'RG', color: '#00e3fd', img: false },
-  { id: 'MAGE',    label: 'MAGE',    abbr: 'MG', color: '#ffe792', img: false },
-  { id: 'BRAWLER', label: 'BRAWLER', abbr: 'BR', color: '#ff716c', img: false },
-  { id: 'SPEEDER', label: 'SPEEDER', abbr: 'SP', color: '#004d57', img: false },
-  { id: 'SCOUT',   label: 'SCOUT',   abbr: 'SC', color: '#26e6ff', img: false },
+  { id: 'STRONG',     label: 'SENTINEL', abbr: '',   color: '#ff9063', img: true },
+  { id: 'JUSTICIERO', label: 'PHANTOM',  abbr: 'PH', color: '#00e3fd', img: false },
+  { id: 'MYSTIC',     label: 'ARCANE',   abbr: 'AR', color: '#ffe792', img: false },
+  { id: 'PARAGON',    label: 'TITAN',    abbr: 'TT', color: '#ff716c', img: false },
+  { id: 'SPEEDSTER',  label: 'BLITZ',    abbr: 'BL', color: '#a855f7', img: false },
+  { id: 'TECH',       label: 'GHOST',    abbr: 'GH', color: '#26e6ff', img: false },
 ];
 
 const NAV_LINKS = ['Gallery', 'Creator', 'Community', 'Marketplace'];
@@ -53,9 +53,6 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
   return (
     <div style={{ backgroundColor: C.surface, color: C.onSurface, minHeight: '100vh', overflowX: 'hidden' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-
         .ms { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display: inline-block; }
         .hl { font-family: 'Space Grotesk', sans-serif; }
         .bd { font-family: 'Inter', sans-serif; }

@@ -739,7 +739,7 @@ const AppContent: React.FC = () => {
     // Save con un pequeño delay para evitar demasiadas llamadas
     const timeoutId = setTimeout(saveCurrentPoseAuto, 1000); // Save after 1 second without changes
     return () => { active = false; clearTimeout(timeoutId); };
-  }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses.length]); // ✅ FIXED: Usar savedPoses.length en lugar de savedPoses
+  }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses]);
 
   // Keep selectedPartsRef current so the debounced pose-save always writes the latest parts.
   useEffect(() => { selectedPartsRef.current = selectedParts; }, [selectedParts]);
@@ -1529,13 +1529,11 @@ const AppContent: React.FC = () => {
     const success = await UserConfigService.deleteConfiguration(configId);
     if (!success) return;
     // Use the functional form to avoid stale closure after the async await above.
-    setSavedPoses(prev => {
-      const newPoses = prev.filter((_, i) => i !== index);
-      const newIndex = newPoses.length === 0 ? 0 : index > 0 ? index - 1 : 0;
-      setCurrentPoseIndex(newIndex);
-      setSelectedParts(newPoses.length === 0 ? {} : newPoses[newIndex].configuration);
-      return newPoses;
-    });
+    setSavedPoses(prev => prev.filter((_, i) => i !== index));
+    const newPoses = savedPoses.filter((_, i) => i !== index);
+    const newIndex = newPoses.length === 0 ? 0 : index > 0 ? index - 1 : 0;
+    setCurrentPoseIndex(newIndex);
+    setSelectedParts(newPoses.length === 0 ? {} : newPoses[newIndex].configuration);
   };
 
   const updateSavedPoseName = async (index: number, newName: string) => {

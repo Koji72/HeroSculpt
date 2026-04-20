@@ -603,7 +603,7 @@ export async function exportModel(scene: THREE.Object3D, options: ModelExportOpt
     // Prepare export options
     const exportOptions = {
       binary: options.format === 'glb',
-      includeTextures: options.includeTextures,
+      embedImages: options.includeTextures,
       forceIndices: true,
       truncateDrawRange: true,
       maxTextureSize: 2048,

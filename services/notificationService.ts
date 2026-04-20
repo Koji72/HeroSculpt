@@ -332,7 +332,7 @@ export class NotificationService {
   getNotificationSettings(): NotificationSettings {
     const stored = localStorage.getItem('notificationSettings');
     if (stored) {
-      return JSON.parse(stored);
+      try { return JSON.parse(stored); } catch { /* fall through to defaults */ }
     }
 
     // Configuración por defecto

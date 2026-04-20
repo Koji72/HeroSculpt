@@ -333,7 +333,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     );
     cameraRef.current = camera;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
     renderer.setSize(mountWidth, mountHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;

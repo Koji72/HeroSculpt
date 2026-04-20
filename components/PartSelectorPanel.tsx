@@ -230,12 +230,15 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         delete newPreviewParts[activeCategory];
       } else {
         const currentTorso = previewParts[PartCategory.TORSO] || previewParts[PartCategory.SUIT_TORSO];
-        
+
         if (!currentTorso) {
           newPreviewParts[activeCategory] = part;
         } else {
-          // Check if the selected symbol is compatible with current torso
-          const isCompatible = part.compatible.includes(currentTorso.id);
+          // Unwrap SUIT_TORSO to base torso ID (same as assignAdaptiveSymbolForTorso in utils.ts)
+          const effectiveTorsoId = currentTorso.category === PartCategory.SUIT_TORSO && currentTorso.compatible.length > 0
+            ? currentTorso.compatible[0]
+            : currentTorso.id;
+          const isCompatible = part.compatible.includes(effectiveTorsoId);
           
           if (isCompatible) {
             newPreviewParts[activeCategory] = part;
