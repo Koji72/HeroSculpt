@@ -86,7 +86,7 @@ const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
 
             {/* Sparkles */}
             {(['✦', '★', '✦', '★'] as const).map((s, i) => (
-              <span key={i} style={{
+              <span key={`sparkle-${i}`} style={{
                 position: 'absolute',
                 fontSize: 12, opacity: 0.6,
                 top: (['12%', '18%', '65%', '70%'] as const)[i],
