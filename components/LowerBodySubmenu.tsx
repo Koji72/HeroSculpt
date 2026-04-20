@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PartCategory, Part, ArchetypeId } from '../types';
 import { useLang, t } from '../lib/i18n';
 import { ALL_PARTS } from '../constants';
-import { CharacterViewerRef } from './CharacterViewer';
 
 interface LowerBodySubmenuProps {
   onSelectCategory: (category: PartCategory) => void;
@@ -10,10 +9,9 @@ interface LowerBodySubmenuProps {
   isExpanded: boolean;
   onToggle: () => void;
   submenuPosition: { top: number; left: number };
-  characterViewerRef: React.RefObject<CharacterViewerRef>; // NEW: Reference to the CharacterViewer
-  selectedArchetype: ArchetypeId; // NEW: Currently selected archetype
-  onPartHover: (part: Part) => void; // NEW: Function to handle part hover
-  onPartUnhover: () => void; // NEW: Function to handle part unhover
+  selectedArchetype: ArchetypeId;
+  onPartHover: (part: Part) => void;
+  onPartUnhover: () => void;
 }
 
 const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
@@ -21,24 +19,19 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
   activeCategory,
   isExpanded,
   submenuPosition,
-  selectedArchetype, // Destructure new prop
-  onPartHover,       // Destructure new prop
-  onPartUnhover      // Destructure new prop
+  selectedArchetype,
+  onPartHover,
+  onPartUnhover,
 }) => {
   const { lang } = useLang();
+  const [hoveredCategory, setHoveredCategory] = useState<PartCategory | null>(null);
+
   const submenuCategories = [
-    { category: PartCategory.LOWER_BODY, label: t('sub.legs', lang), icon: '🦵' },
-    { category: PartCategory.BOOTS, label: t('sub.boots', lang), icon: '👢' },
+    { category: PartCategory.LOWER_BODY, label: t('sub.legs', lang),  icon: '🦵' },
+    { category: PartCategory.BOOTS,      label: t('sub.boots', lang), icon: '👢' },
   ];
 
-  // Variable para determinar si el lower body está activo (no utilizada pero mantenida para consistencia)
-  // const isLowerBodyActive = activeCategory === PartCategory.LOWER_BODY ||
-  //   submenuCategories.some(item => item.category === activeCategory);
-
-  // Si no está expandido, no renderizar nada
-  if (!isExpanded) {
-    return null;
-  }
+  if (!isExpanded) return null;
 
   return (
     <div
@@ -53,49 +46,42 @@ const LowerBodySubmenu: React.FC<LowerBodySubmenuProps> = ({
         padding: '8px',
         zIndex: 150,
         minWidth: 140,
+        maxHeight: 'calc(100vh - 16px)',
+        overflowY: 'auto',
         animation: 'submenuAppear 150ms ease',
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
       }}
     >
       {submenuCategories.map(({ category, label, icon }) => {
         const isActive = activeCategory === category;
+        const isHovered = hoveredCategory === category;
         return (
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
             onMouseEnter={() => {
+              setHoveredCategory(category);
               const part = ALL_PARTS.find(p => p.category === category && p.archetype === selectedArchetype);
-              if (part) {
-                onPartHover(part);
-              }
+              if (part) onPartHover(part);
             }}
-            onMouseLeave={onPartUnhover}
+            onMouseLeave={() => {
+              setHoveredCategory(null);
+              onPartUnhover();
+            }}
             style={{
               width: '100%',
               padding: '8px 12px',
-              background: isActive ? 'var(--color-accent-dim)' : 'transparent',
+              background: isActive || isHovered ? 'var(--color-accent-dim)' : 'transparent',
               border: `1px solid ${isActive ? 'var(--color-accent)' : 'transparent'}`,
               borderRadius: 'var(--radius)',
               fontFamily: 'var(--font-comic)',
               fontSize: 12,
               letterSpacing: '1px',
-              color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
+              color: isActive || isHovered ? 'var(--color-accent)' : 'var(--color-text-muted)',
               textAlign: 'left',
               cursor: 'pointer',
-              transition: 'all 0.1s',
+              transition: 'background 0.1s, color 0.1s',
               display: 'block',
-            }}
-            onMouseOver={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-accent)';
-                e.currentTarget.style.background = 'var(--color-accent-dim)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-text-muted)';
-                e.currentTarget.style.background = 'transparent';
-              }
             }}
           >
             <span style={{ marginRight: 6 }}>{icon}</span>{label}

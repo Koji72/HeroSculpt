@@ -116,7 +116,7 @@ export class SessionStorageService {
       return session;
     } catch (error) {
       if (import.meta.env.DEV) console.error('SessionStorageService: Error loading session:', error);
-      this.clearSession();
+      await this.clearSession();
       return null;
     }
   }

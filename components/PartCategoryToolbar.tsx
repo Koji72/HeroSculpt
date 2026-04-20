@@ -45,6 +45,7 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
   const beltButtonRef = useRef<HTMLButtonElement>(null);
   const lowerBodyButtonRef = useRef<HTMLButtonElement>(null);
   const [tooltip, setTooltip] = useState<{ label: string; y: number } | null>(null);
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   useEffect(() => {
     registerElement(id, ref.current);
@@ -87,21 +88,25 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     activeCategory === PartCategory.LOWER_BODY ||
     (activeCategory && [PartCategory.BOOTS].includes(activeCategory));
 
-  const sidebarBtnStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
-    position: 'relative',
-    width: '64px',
-    padding: '9px 4px 10px',
-    background: isActive ? 'rgba(216, 162, 58, 0.13)' : 'rgba(30, 42, 64, 0.82)',
-    border: `1px solid ${isActive ? 'rgba(216, 162, 58, 0.55)' : 'rgba(100, 120, 160, 0.55)'}`,
-    borderRadius: '8px',
-    cursor: 'pointer',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 6,
-    transition: 'background 0.12s, border-color 0.12s, transform 0.12s',
-    boxShadow: isActive ? '0 0 10px rgba(216,162,58,0.15), inset 0 0 0 1px rgba(255,255,255,0.06)' : '0 2px 8px rgba(0,0,0,0.35)',
-  });
+  const sidebarBtnStyle = (isActive: boolean | null | undefined, key: string): React.CSSProperties => {
+    const isHovered = hoveredKey === key;
+    return {
+      position: 'relative',
+      width: '64px',
+      padding: '9px 4px 10px',
+      background: isActive ? 'rgba(216, 162, 58, 0.13)' : isHovered ? 'rgba(50, 68, 100, 0.95)' : 'rgba(30, 42, 64, 0.82)',
+      border: `1px solid ${isActive ? 'rgba(216, 162, 58, 0.55)' : isHovered ? 'rgba(150, 180, 220, 0.65)' : 'rgba(100, 120, 160, 0.55)'}`,
+      borderRadius: '8px',
+      cursor: 'pointer',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 6,
+      transition: 'background 0.12s, border-color 0.12s, transform 0.12s',
+      transform: isHovered && !isActive ? 'scale(1.04)' : 'scale(1)',
+      boxShadow: isActive ? '0 0 10px rgba(216,162,58,0.15), inset 0 0 0 1px rgba(255,255,255,0.06)' : isHovered ? '0 4px 14px rgba(0,0,0,0.5)' : '0 2px 8px rgba(0,0,0,0.35)',
+    };
+  };
 
   const iconBoxStyle = (isActive: boolean | null | undefined): React.CSSProperties => ({
     width: 32,
@@ -177,9 +182,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={torsoButtonRef}
         onClick={onTorsoToggle}
-        onMouseEnter={e => showTooltip(e, t('toolbar.upper', lang))}
-        onMouseLeave={() => setTooltip(null)}
-        style={sidebarBtnStyle(isTorsoOrSubActive)}
+        onMouseEnter={e => { showTooltip(e, t('toolbar.upper', lang)); setHoveredKey('torso'); }}
+        onMouseLeave={() => { setTooltip(null); setHoveredKey(null); }}
+        style={sidebarBtnStyle(isTorsoOrSubActive, 'torso')}
       >
         <div style={iconBoxStyle(isTorsoOrSubActive)}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isTorsoOrSubActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -202,9 +207,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={beltButtonRef}
         onClick={onBeltToggle}
-        onMouseEnter={e => showTooltip(e, t('toolbar.belt', lang))}
-        onMouseLeave={() => setTooltip(null)}
-        style={sidebarBtnStyle(isBeltOrSubActive)}
+        onMouseEnter={e => { showTooltip(e, t('toolbar.belt', lang)); setHoveredKey('belt'); }}
+        onMouseLeave={() => { setTooltip(null); setHoveredKey(null); }}
+        style={sidebarBtnStyle(isBeltOrSubActive, 'belt')}
       >
         <div style={iconBoxStyle(isBeltOrSubActive)}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isBeltOrSubActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -226,9 +231,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
       <button
         ref={lowerBodyButtonRef}
         onClick={onLowerBodyToggle}
-        onMouseEnter={e => showTooltip(e, t('toolbar.lower', lang))}
-        onMouseLeave={() => setTooltip(null)}
-        style={sidebarBtnStyle(isLowerBodyOrSubActive)}
+        onMouseEnter={e => { showTooltip(e, t('toolbar.lower', lang)); setHoveredKey('lower'); }}
+        onMouseLeave={() => { setTooltip(null); setHoveredKey(null); }}
+        style={sidebarBtnStyle(isLowerBodyOrSubActive, 'lower')}
       >
         <div style={iconBoxStyle(isLowerBodyOrSubActive)}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isLowerBodyOrSubActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -254,9 +259,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
             key={category}
             id={`category-toolbar-item-${category}`}
             onClick={() => onSelectCategory(category)}
-            onMouseEnter={e => showTooltip(e, t('toolbar.backpack', lang))}
-            onMouseLeave={() => setTooltip(null)}
-            style={sidebarBtnStyle(isActive)}
+            onMouseEnter={e => { showTooltip(e, t('toolbar.backpack', lang)); setHoveredKey(category); }}
+            onMouseLeave={() => { setTooltip(null); setHoveredKey(null); }}
+            style={sidebarBtnStyle(isActive, category)}
           >
             <div style={iconBoxStyle(isActive)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isActive ? 'var(--color-accent)' : 'rgba(180,205,240,0.9)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -285,9 +290,9 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
-                onMouseEnter={e => showTooltip(e, key === 'style' ? t('toolbar.style', lang) : t('toolbar.skins', lang))}
-                onMouseLeave={() => setTooltip(null)}
-                style={sidebarBtnStyle(isActive)}
+                onMouseEnter={e => { showTooltip(e, key === 'style' ? t('toolbar.style', lang) : t('toolbar.skins', lang)); setHoveredKey(key); }}
+                onMouseLeave={() => { setTooltip(null); setHoveredKey(null); }}
+                style={sidebarBtnStyle(isActive, key)}
               >
                 <div style={iconBoxStyle(isActive)}>
               <span

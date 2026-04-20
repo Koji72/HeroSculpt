@@ -32,8 +32,10 @@ export class VTTService {
     calculatedStats?: ArchetypeStats
   ): Promise<string> {
     if (!screenshotDataUrl) throw new Error('Screenshot data required');
+    const stats = calculatedStats ?? character.calculatedStats;
+    if (!stats) throw new Error('No stats available for token generation');
     const displayName = heroName && heroName.trim() ? heroName.trim() : character.archetypeId;
-    return this.processImageForToken(screenshotDataUrl, options, shape, displayName, calculatedStats ?? character.calculatedStats);
+    return this.processImageForToken(screenshotDataUrl, options, shape, displayName, stats);
   }
 
   private static processImageForToken(
@@ -239,6 +241,7 @@ export class VTTService {
   ): string {
     const name = heroName.trim() || character.archetypeId;
     const stats = character.calculatedStats;
+    if (!stats || !character.physicalAttributes) throw new Error('Character missing stats or physicalAttributes');
 
     // Primary stat = highest value
     const statEntries = Object.entries(stats) as Array<[keyof ArchetypeStats, number]>;

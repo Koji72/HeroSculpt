@@ -24,7 +24,7 @@ const PartItemCard: React.FC<PartItemCardProps> = ({
   const isNonePart = part.attributes?.none === true;
   const isTorso = part.category === 'TORSO' || part.category === 'SUIT_TORSO';
 
-  const isFree   = !isNonePart && part.priceUSD === 0;
+  const isFree   = !isNonePart && (part.priceUSD === 0 || part.freeForAll === true);
   const isOwned  = !isNonePart && part.priceUSD > 0 && ownedPartIds.has(part.id);
   const isPremium = !isNonePart && part.priceUSD > 0 && !isOwned;
   const premiumLabel = part.priceUSD != null ? `$${part.priceUSD.toFixed(2)}` : '';

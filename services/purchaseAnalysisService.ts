@@ -101,18 +101,23 @@ export class PurchaseAnalysisService {
 
       const existingPart = allExistingParts[category];
 
-      if (!existingPart) {
+      const partPrice = currentPart.freeForAll ? 0 : (currentPart.priceUSD || 0);
+
+      if (currentPart.freeForAll) {
+        // Starter/free part — always $0, never charged
+        if (import.meta.env.DEV) console.log(`🎁 Parte gratuita: ${category} - ${currentPart.name}`);
+      } else if (!existingPart) {
         // Parte completamente nueva
         newParts[category] = currentPart;
-        totalNewValue += currentPart.priceUSD || 0;
-        if (import.meta.env.DEV) console.log(`🆕 Nueva parte: ${category} - ${currentPart.name} ($${(currentPart.priceUSD || 0).toFixed(2)})`);
+        totalNewValue += partPrice;
+        if (import.meta.env.DEV) console.log(`🆕 Nueva parte: ${category} - ${currentPart.name} ($${partPrice.toFixed(2)})`);
       } else if (existingPart.id !== currentPart.id) {
         // Parte modificada (diferente ID)
         modifiedParts[category] = {
           old: existingPart,
           new: currentPart
         };
-        totalModifiedValue += currentPart.priceUSD || 0;
+        totalModifiedValue += partPrice;
         if (import.meta.env.DEV) console.log(`🔄 Parte modificada: ${category} - ${existingPart.name} → ${currentPart.name} ($${(currentPart.priceUSD || 0).toFixed(2)})`);
       } else {
         // Parte idéntica (ya comprada)
@@ -120,10 +125,10 @@ export class PurchaseAnalysisService {
       }
     });
 
-    // Calcular precio final y ahorros
+    // Calcular precio final y ahorros (free parts don't count toward value)
     const totalCurrentValue = Object.values(currentConfiguration)
       .filter(part => part)
-      .reduce((sum, part) => sum + (part?.priceUSD || 0), 0);
+      .reduce((sum, part) => sum + (part?.freeForAll ? 0 : (part?.priceUSD || 0)), 0);
 
     const finalPrice = totalNewValue + totalModifiedValue;
     const savings = totalCurrentValue - finalPrice;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PartCategory, Part, ArchetypeId } from '../types';
 import { useLang, t } from '../lib/i18n';
 import { ALL_PARTS } from '../constants';
@@ -18,26 +18,21 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
   onSelectCategory,
   activeCategory,
   isExpanded,
-  onToggle,
   submenuPosition,
   selectedArchetype,
   onPartHover,
   onPartUnhover,
 }) => {
   const { lang } = useLang();
+  const [hoveredCategory, setHoveredCategory] = useState<PartCategory | null>(null);
+
   const submenuCategories = [
-    { category: PartCategory.BELT, label: t('sub.belt', lang), icon: '🪖' },
-    { category: PartCategory.POUCH, label: t('sub.pouch', lang), icon: '🎒' },
+    { category: PartCategory.BELT,   label: t('sub.belt', lang),   icon: '🪖' },
+    { category: PartCategory.POUCH,  label: t('sub.pouch', lang),  icon: '🎒' },
     { category: PartCategory.BUCKLE, label: t('sub.buckle', lang), icon: '🔗' },
   ];
 
-  const isBeltActive = activeCategory === PartCategory.BELT ||
-    submenuCategories.some(item => item.category === activeCategory);
-
-  // Si no está expandido, no renderizar nada
-  if (!isExpanded) {
-    return null;
-  }
+  if (!isExpanded) return null;
 
   return (
     <div
@@ -52,47 +47,42 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
         padding: '8px',
         zIndex: 150,
         minWidth: 140,
+        maxHeight: 'calc(100vh - 16px)',
+        overflowY: 'auto',
         animation: 'submenuAppear 150ms ease',
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
       }}
     >
       {submenuCategories.map(({ category, label, icon }) => {
         const isActive = activeCategory === category;
+        const isHovered = hoveredCategory === category;
         return (
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
             onMouseEnter={() => {
+              setHoveredCategory(category);
               const part = ALL_PARTS.find(p => p.category === category && p.archetype === selectedArchetype);
               if (part) onPartHover(part);
             }}
-            onMouseLeave={onPartUnhover}
+            onMouseLeave={() => {
+              setHoveredCategory(null);
+              onPartUnhover();
+            }}
             style={{
               width: '100%',
               padding: '8px 12px',
-              background: isActive ? 'var(--color-accent-dim)' : 'transparent',
+              background: isActive || isHovered ? 'var(--color-accent-dim)' : 'transparent',
               border: `1px solid ${isActive ? 'var(--color-accent)' : 'transparent'}`,
               borderRadius: 'var(--radius)',
               fontFamily: 'var(--font-comic)',
               fontSize: 12,
               letterSpacing: '1px',
-              color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
+              color: isActive || isHovered ? 'var(--color-accent)' : 'var(--color-text-muted)',
               textAlign: 'left',
               cursor: 'pointer',
-              transition: 'all 0.1s',
+              transition: 'background 0.1s, color 0.1s',
               display: 'block',
-            }}
-            onMouseOver={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-accent)';
-                e.currentTarget.style.background = 'var(--color-accent-dim)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-text-muted)';
-                e.currentTarget.style.background = 'transparent';
-              }
             }}
           >
             <span style={{ marginRight: 6 }}>{icon}</span>{label}

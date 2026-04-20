@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PartCategory } from '../types';
 import { useLang, t } from '../lib/i18n';
 
@@ -17,26 +17,22 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
   submenuPosition
 }) => {
   const { lang } = useLang();
+  const [hoveredCategory, setHoveredCategory] = useState<PartCategory | null>(null);
+
   const submenuCategories = [
-    { category: PartCategory.TORSO, label: t('sub.torso', lang), icon: '🦾' },
-    { category: PartCategory.HEAD, label: t('sub.head', lang), icon: '👤' },
-    { category: PartCategory.SUIT_TORSO, label: t('sub.suit', lang), icon: '👕' },
-    { category: PartCategory.CAPE, label: t('sub.cape', lang), icon: '🦇' },
-    { category: PartCategory.SYMBOL, label: t('sub.symbol', lang), icon: '⭐' },
-    { category: PartCategory.CHEST_BELT, label: t('sub.chest', lang), icon: '🛡️' },
-    { category: PartCategory.SHOULDERS, label: t('sub.shoulders', lang), icon: '💪' },
-    { category: PartCategory.FOREARMS, label: t('sub.forearms', lang), icon: '🦾' },
-    { category: PartCategory.HAND_LEFT, label: t('sub.hand_left', lang), icon: '✋' },
-    { category: PartCategory.HAND_RIGHT, label: t('sub.hand_right', lang), icon: '✋' },
+    { category: PartCategory.TORSO,      label: t('sub.torso', lang),      icon: '🦾' },
+    { category: PartCategory.HEAD,       label: t('sub.head', lang),        icon: '👤' },
+    { category: PartCategory.SUIT_TORSO, label: t('sub.suit', lang),        icon: '👕' },
+    { category: PartCategory.CAPE,       label: t('sub.cape', lang),        icon: '🦇' },
+    { category: PartCategory.SYMBOL,     label: t('sub.symbol', lang),      icon: '⭐' },
+    { category: PartCategory.CHEST_BELT, label: t('sub.chest', lang),       icon: '🛡️' },
+    { category: PartCategory.SHOULDERS,  label: t('sub.shoulders', lang),   icon: '💪' },
+    { category: PartCategory.FOREARMS,   label: t('sub.forearms', lang),    icon: '🦾' },
+    { category: PartCategory.HAND_LEFT,  label: t('sub.hand_left', lang),   icon: '✋' },
+    { category: PartCategory.HAND_RIGHT, label: t('sub.hand_right', lang),  icon: '✋' },
   ];
 
-  const isTorsoActive = activeCategory === PartCategory.TORSO ||
-    submenuCategories.some(item => item.category === activeCategory);
-
-  // Si no está expandido, no renderizar nada
-  if (!isExpanded) {
-    return null;
-  }
+  if (!isExpanded) return null;
 
   return (
     <div
@@ -51,42 +47,35 @@ const TorsoSubmenu: React.FC<TorsoSubmenuProps> = ({
         padding: '8px',
         zIndex: 150,
         minWidth: 140,
+        maxHeight: 'calc(100vh - 16px)',
+        overflowY: 'auto',
         animation: 'submenuAppear 150ms ease',
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
       }}
     >
       {submenuCategories.map(({ category, label, icon }) => {
         const isActive = activeCategory === category;
+        const isHovered = hoveredCategory === category;
         return (
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
+            onMouseEnter={() => setHoveredCategory(category)}
+            onMouseLeave={() => setHoveredCategory(null)}
             style={{
               width: '100%',
               padding: '8px 12px',
-              background: isActive ? 'var(--color-accent-dim)' : 'transparent',
+              background: isActive || isHovered ? 'var(--color-accent-dim)' : 'transparent',
               border: `1px solid ${isActive ? 'var(--color-accent)' : 'transparent'}`,
               borderRadius: 'var(--radius)',
               fontFamily: 'var(--font-comic)',
               fontSize: 12,
               letterSpacing: '1px',
-              color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
+              color: isActive || isHovered ? 'var(--color-accent)' : 'var(--color-text-muted)',
               textAlign: 'left',
               cursor: 'pointer',
-              transition: 'all 0.1s',
+              transition: 'background 0.1s, color 0.1s',
               display: 'block',
-            }}
-            onMouseOver={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-accent)';
-                e.currentTarget.style.background = 'var(--color-accent-dim)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.color = 'var(--color-text-muted)';
-                e.currentTarget.style.background = 'transparent';
-              }
             }}
           >
             <span style={{ marginRight: 6 }}>{icon}</span>{label}

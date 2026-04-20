@@ -2366,8 +2366,7 @@ const AppContent: React.FC = () => {
         isExpanded={lowerBodySubmenuExpanded}
         onToggle={handleLowerBodySubmenuToggle}
         submenuPosition={lowerBodySubmenuPosition}
-        characterViewerRef={characterViewerRef} // Pass ref
-        selectedArchetype={selectedArchetype || ArchetypeId.STRONG} // Pass selectedArchetype
+        selectedArchetype={selectedArchetype || ArchetypeId.STRONG}
         onPartHover={handlePartHover} // Pass hover handler
         onPartUnhover={handlePartUnhover} // Pass unhover handler
       />

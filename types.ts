@@ -157,6 +157,7 @@ export interface Part {
   archetype: ArchetypeId;
   gltfPath: string; // e.g., "/assets/strong/torso/strong_torso_01.glb"
   priceUSD: number;
+  freeForAll?: boolean; // always free — part of the starter collection
   compatible: string[]; // List of IDs of parts this part is compatible with / depends on
   thumbnail: string; // URL to placeholder image
   attributes?: Record<string, any>; // e.g., { "side": "right", "hidden": true }
