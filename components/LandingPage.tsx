@@ -196,11 +196,12 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
       position: 'fixed', inset: 0,
       background: '#04040a',
       overflowY: 'auto',
-      fontFamily: "'RefrigeratorDeluxeHeavy', 'RefrigeratorDeluxeBold', ui-sans-serif, system-ui, sans-serif",
+      fontFamily: "'Black Ops One', 'RefrigeratorDeluxeHeavy', cursive",
       opacity: visible ? 1 : 0,
       transition: 'opacity 0.6s ease',
     }}>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
         @keyframes hs-pulse-glow {
           0%, 100% { text-shadow: 0 0 30px rgba(249,115,22,0.8), 0 0 60px rgba(249,115,22,0.4); }
           50% { text-shadow: 0 0 60px rgba(249,115,22,1), 0 0 120px rgba(249,115,22,0.6); }
@@ -343,11 +344,13 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
         {/* Main title */}
         <h1 style={{
           fontSize: 'clamp(64px, 12vw, 140px)',
-          color: '#ffffff',
+          color: '#2a3a5a',
           margin: '0 0 8px',
           textAlign: 'center',
           letterSpacing: '8px',
           lineHeight: 0.9,
+          WebkitTextStroke: '2px #f97316',
+          textShadow: '0 0 40px rgba(249,115,22,0.7), 4px 4px 0px #111, 2px 2px 0px #1a2a4a',
           animation: 'hs-pulse-glow 3s ease-in-out infinite, hs-fadeup 0.7s ease both',
         }}>
           HERO
@@ -375,7 +378,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
           maxWidth: 560,
           lineHeight: 1.5,
           marginBottom: 48,
-          fontFamily: "'RefrigeratorDeluxeBold', sans-serif",
+          fontFamily: "'Black Ops One', cursive",
           letterSpacing: 2,
           animation: 'hs-fadeup 0.9s ease both',
         }}>
@@ -576,7 +579,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
                 fontSize: 13,
                 color: 'rgba(255,255,255,0.5)',
                 lineHeight: 1.7,
-                fontFamily: "'RefrigeratorDeluxeBold', sans-serif",
+                fontFamily: "'Black Ops One', cursive",
                 letterSpacing: 0.5,
               }}>
                 {f.desc}
