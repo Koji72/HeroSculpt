@@ -67,12 +67,12 @@ export class VTTService {
           ctx.fillRect(0, 0, S, S);
         }
 
-        // --- Portrait clipped to inner shape ---
+        // --- Portrait clipped to inner shape (shifted up 8% to center character better) ---
         const scale = Math.max(innerR * 2 / img.width, innerR * 2 / img.height);
         const sw = img.width * scale;
         const sh = img.height * scale;
         const sx = cx - sw / 2;
-        const sy = cy - sh / 2;
+        const sy = cy - sh / 2 - Math.round(S * 0.08);
 
         ctx.save();
         ctx.beginPath();
@@ -82,7 +82,7 @@ export class VTTService {
         ctx.restore();
 
         // --- Name banner (dark strip at bottom, clipped to inner shape) ---
-        const bannerH = Math.round(S * 0.20);
+        const bannerH = Math.round(S * 0.22);
         const bannerY = cy + innerR - bannerH;
         ctx.save();
         ctx.beginPath();
@@ -93,20 +93,36 @@ export class VTTService {
           [0, bannerY, 0, cy + innerR],
           [
             [0, 'rgba(0,0,0,0)'],
-            [0.3, 'rgba(0,0,0,0.82)'],
-            [1, 'rgba(0,0,0,0.92)'],
+            [0.25, 'rgba(0,0,0,0.88)'],
+            [1, 'rgba(0,0,0,0.97)'],
           ],
-          'rgba(0,0,0,0.92)'
+          'rgba(0,0,0,0.95)'
         );
         ctx.fillStyle = bannerGrad;
         ctx.fillRect(cx - innerR, bannerY, innerR * 2, bannerH + 10);
 
-        const fontSize = Math.round(S * 0.072);
+        // Auto-shrink name font to fit within the inner chord width at banner height
+        const maxNameW = innerR * 1.7;
+        let fontSize = Math.round(S * 0.072);
+        const minFontSize = Math.max(8, Math.round(S * 0.035));
         ctx.font = `900 ${fontSize}px 'Arial Black', Arial, sans-serif`;
+        // Shrink until fits
+        while (fontSize > minFontSize && ctx.measureText(characterName).width > maxNameW) {
+          fontSize -= 1;
+          ctx.font = `900 ${fontSize}px 'Arial Black', Arial, sans-serif`;
+        }
+        // Truncate with ellipsis if still too wide
+        let displayName = characterName;
+        if (ctx.measureText(displayName).width > maxNameW) {
+          while (displayName.length > 1 && ctx.measureText(displayName + '…').width > maxNameW) {
+            displayName = displayName.slice(0, -1);
+          }
+          displayName = displayName + '…';
+        }
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(characterName, cx, bannerY + bannerH * 0.58);
+        ctx.fillText(displayName, cx, bannerY + bannerH * 0.60);
         ctx.restore();
 
         // --- Stats badges (Power, Defense, Speed) ---
@@ -120,26 +136,37 @@ export class VTTService {
           { label: 'DEF', value: stats.defense, color: '#3b82f6' },
           { label: 'SPD', value: stats.speed,   color: '#10b981' },
         ];
-        const badgeFontSize = Math.max(8, Math.round(S * 0.05));
-        const badgeH = Math.round(badgeFontSize * 1.7);
-        const badgeGap = Math.round(S * 0.025);
-        const badgeW = Math.round(innerR * 0.55);
+        const badgeFontSize = Math.max(8, Math.round(S * 0.044));
+        const badgeH = Math.round(badgeFontSize * 1.6);
+        const badgeGap = Math.round(S * 0.018);
+        const badgeW = Math.round(innerR * 0.50);
         const totalBadgesW = badgeStats.length * badgeW + (badgeStats.length - 1) * badgeGap;
-        const badgeY = bannerY - badgeH - Math.round(S * 0.015);
+        const badgeY = bannerY - badgeH - Math.round(S * 0.02);
         let badgeX = cx - totalBadgesW / 2;
 
         for (const badge of badgeStats) {
-          // Badge background (dark semi-transparent pill)
-          ctx.fillStyle = 'rgba(0,0,0,0.72)';
-          ctx.beginPath();
           const r2 = badgeH / 2;
-          ctx.moveTo(badgeX + r2, badgeY);
-          ctx.lineTo(badgeX + badgeW - r2, badgeY);
-          ctx.arc(badgeX + badgeW - r2, badgeY + r2, r2, -Math.PI / 2, Math.PI / 2);
-          ctx.lineTo(badgeX + r2, badgeY + badgeH);
-          ctx.arc(badgeX + r2, badgeY + r2, r2, Math.PI / 2, -Math.PI / 2);
-          ctx.closePath();
+          // Draw pill path helper
+          const drawPill = () => {
+            ctx.beginPath();
+            ctx.moveTo(badgeX + r2, badgeY);
+            ctx.lineTo(badgeX + badgeW - r2, badgeY);
+            ctx.arc(badgeX + badgeW - r2, badgeY + r2, r2, -Math.PI / 2, Math.PI / 2);
+            ctx.lineTo(badgeX + r2, badgeY + badgeH);
+            ctx.arc(badgeX + r2, badgeY + r2, r2, Math.PI / 2, -Math.PI / 2);
+            ctx.closePath();
+          };
+
+          // Dark background
+          drawPill();
+          ctx.fillStyle = 'rgba(5,8,20,0.82)';
           ctx.fill();
+
+          // Colored top border (1.5px stroke, clipped to top half)
+          drawPill();
+          ctx.strokeStyle = badge.color;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
 
           // Colored label
           ctx.font = `700 ${badgeFontSize}px 'Arial Black', Arial, sans-serif`;
