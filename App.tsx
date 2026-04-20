@@ -269,7 +269,8 @@ const AppContent: React.FC = () => {
     date: string;
   }>>([]);
   const [currentPoseIndex, setCurrentPoseIndex] = useState(0);
-  
+  const [editingPoseName, setEditingPoseName] = useState<string | null>(null);
+
   // Key to force CharacterViewer re-render
   const [characterViewerKey, setCharacterViewerKey] = useState(0);
 
@@ -2104,9 +2105,46 @@ const AppContent: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handlePreviousPose}>◀</button>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 700, letterSpacing: 0.8, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
-            {t('bottom.pose', lang)} {(currentPoseIndex ?? 0) + 1} / {Math.max(savedPoses?.length ?? 0, 1)}
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 80, maxWidth: 140 }}>
+            {editingPoseName !== null ? (
+              <input
+                autoFocus
+                value={editingPoseName}
+                maxLength={40}
+                onChange={e => setEditingPoseName(e.target.value)}
+                onBlur={() => {
+                  const trimmed = editingPoseName.trim();
+                  if (trimmed) handleRenamePose(currentPoseIndex ?? 0, trimmed);
+                  setEditingPoseName(null);
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') { (e.target as HTMLInputElement).blur(); }
+                  if (e.key === 'Escape') { setEditingPoseName(null); }
+                }}
+                style={{
+                  fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1,
+                  color: 'var(--color-accent)', background: 'transparent',
+                  border: 'none', borderBottom: '1px solid var(--color-accent)',
+                  outline: 'none', textAlign: 'center', width: '100%',
+                }}
+              />
+            ) : (
+              <span
+                title={t('pose.click_to_rename', lang)}
+                onClick={() => setEditingPoseName(savedPoses?.[currentPoseIndex ?? 0]?.name ?? '')}
+                style={{
+                  fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1,
+                  color: 'var(--color-text)', cursor: 'text', whiteSpace: 'nowrap',
+                  overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 130,
+                }}
+              >
+                {savedPoses?.[currentPoseIndex ?? 0]?.name || t('bottom.pose', lang)}
+              </span>
+            )}
+            <span style={{ fontSize: 10, color: 'var(--color-text-faint)', letterSpacing: 0.5 }}>
+              {(currentPoseIndex ?? 0) + 1} / {Math.max(savedPoses?.length ?? 0, 1)}
+            </span>
+          </div>
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handleNextPose}>▶</button>
           {user && savedPoses?.[currentPoseIndex ?? 0] && (

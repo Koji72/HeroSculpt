@@ -89,6 +89,7 @@ const dict = {
   'bottom.delete_pose': { en: 'Delete this pose', es: 'Borrar esta pose' },
 
   // Pose navigation
+  'pose.click_to_rename': { en: 'Click to rename', es: 'Clic para renombrar' },
   'pose.saving': { en: 'Saving last pose...', es: 'Guardando última pose...' },
   'pose.last': { en: 'Last pose:', es: 'Última pose:' },
   'pose.saved_at': { en: 'Saved:', es: 'Guardado:' },
