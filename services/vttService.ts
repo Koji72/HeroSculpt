@@ -1,4 +1,4 @@
-import { RPGCharacterSync } from '../types';
+import { RPGCharacterSync, ArchetypeStats } from '../types';
 
 export interface VTTTokenExport {
   format: 'png' | 'jpg' | 'webp';
@@ -27,17 +27,21 @@ export class VTTService {
     character: RPGCharacterSync,
     options: VTTTokenExport,
     screenshotDataUrl: string,
-    shape: 'circle' | 'hex'
+    shape: 'circle' | 'hex',
+    heroName?: string,
+    calculatedStats?: ArchetypeStats
   ): Promise<string> {
     if (!screenshotDataUrl) throw new Error('Screenshot data required');
-    return this.processImageForToken(screenshotDataUrl, options, shape, character.archetypeId);
+    const displayName = heroName && heroName.trim() ? heroName.trim() : character.archetypeId;
+    return this.processImageForToken(screenshotDataUrl, options, shape, displayName, calculatedStats ?? character.calculatedStats);
   }
 
   private static processImageForToken(
     screenshotDataUrl: string,
     options: VTTTokenExport,
     shape: 'circle' | 'hex',
-    characterName: string
+    characterName: string,
+    stats: ArchetypeStats
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
@@ -103,6 +107,49 @@ export class VTTService {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(characterName, cx, bannerY + bannerH * 0.58);
+        ctx.restore();
+
+        // --- Stats badges (Power, Defense, Speed) ---
+        ctx.save();
+        ctx.beginPath();
+        this.innerPath(ctx, shape, cx, cy, innerR);
+        ctx.clip();
+
+        const badgeStats: Array<{ label: string; value: number; color: string }> = [
+          { label: 'PWR', value: stats.power,   color: '#f59e0b' },
+          { label: 'DEF', value: stats.defense, color: '#3b82f6' },
+          { label: 'SPD', value: stats.speed,   color: '#10b981' },
+        ];
+        const badgeFontSize = Math.max(8, Math.round(S * 0.05));
+        const badgeH = Math.round(badgeFontSize * 1.7);
+        const badgeGap = Math.round(S * 0.025);
+        const badgeW = Math.round(innerR * 0.55);
+        const totalBadgesW = badgeStats.length * badgeW + (badgeStats.length - 1) * badgeGap;
+        const badgeY = bannerY - badgeH - Math.round(S * 0.015);
+        let badgeX = cx - totalBadgesW / 2;
+
+        for (const badge of badgeStats) {
+          // Badge background (dark semi-transparent pill)
+          ctx.fillStyle = 'rgba(0,0,0,0.72)';
+          ctx.beginPath();
+          const r2 = badgeH / 2;
+          ctx.moveTo(badgeX + r2, badgeY);
+          ctx.lineTo(badgeX + badgeW - r2, badgeY);
+          ctx.arc(badgeX + badgeW - r2, badgeY + r2, r2, -Math.PI / 2, Math.PI / 2);
+          ctx.lineTo(badgeX + r2, badgeY + badgeH);
+          ctx.arc(badgeX + r2, badgeY + r2, r2, Math.PI / 2, -Math.PI / 2);
+          ctx.closePath();
+          ctx.fill();
+
+          // Colored label
+          ctx.font = `700 ${badgeFontSize}px 'Arial Black', Arial, sans-serif`;
+          ctx.fillStyle = badge.color;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${badge.label} ${badge.value}`, badgeX + badgeW / 2, badgeY + badgeH / 2);
+
+          badgeX += badgeW + badgeGap;
+        }
         ctx.restore();
 
         // --- Decorative ring ---

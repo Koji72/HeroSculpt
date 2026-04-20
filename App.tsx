@@ -2449,6 +2449,8 @@ const AppContent: React.FC = () => {
             // no-op
           }}
           characterViewerRef={characterViewerRef}
+          heroName={characterName}
+          calculatedStats={rpgCharacter.calculatedStats}
         />
       )}
 

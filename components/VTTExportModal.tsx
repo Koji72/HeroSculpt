@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { RPGCharacterSync } from '../types';
+import { RPGCharacterSync, ArchetypeStats } from '../types';
 import { CharacterViewerRef } from './CharacterViewer';
 import { VTTService, VTTTokenExport } from '../services/vttService';
 import { useLang, t } from '../lib/i18n';
+
+interface VTTLibraryItem {
+  id: string;
+  name: string;
+  imageDataUrl: string;
+  shape: 'circle' | 'hex';
+  size: number;
+  format: string;
+  date: string;
+}
 
 interface VTTExportModalProps {
   isOpen: boolean;
@@ -10,6 +20,8 @@ interface VTTExportModalProps {
   character: RPGCharacterSync;
   onExportToken: (format: string, size: number) => void;
   characterViewerRef?: React.RefObject<CharacterViewerRef | null>;
+  heroName?: string;
+  calculatedStats?: ArchetypeStats;
 }
 
 type WizardStep = 1 | 2 | 3;
@@ -19,7 +31,7 @@ const HEX_CLIP = 'polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)';
 
 const BORDER_SWATCHES = ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6'];
 
-export default function VTTExportModal({ isOpen, onClose, character, onExportToken, characterViewerRef }: VTTExportModalProps) {
+export default function VTTExportModal({ isOpen, onClose, character, onExportToken, characterViewerRef, heroName, calculatedStats }: VTTExportModalProps) {
   const { lang } = useLang();
   const [step, setStep] = useState<WizardStep>(1);
   const [screenshot, setScreenshot] = useState('');
@@ -83,12 +95,30 @@ export default function VTTExportModal({ isOpen, onClose, character, onExportTok
     setIsExporting(true);
     setExportError(false);
     try {
-      const tokenImage = await VTTService.exportToken(character, tokenOptions, screenshot, shape);
+      const tokenImage = await VTTService.exportToken(character, tokenOptions, screenshot, shape, heroName, calculatedStats);
       const link = document.createElement('a');
       link.href = tokenImage;
-      link.download = `${character.archetypeId}_token_${shape}_${tokenOptions.size}.${tokenOptions.format}`;
+      const safeName = (heroName && heroName.trim()) ? heroName.trim() : character.archetypeId;
+      link.download = `${safeName}_token_${shape}_${tokenOptions.size}.${tokenOptions.format}`;
       link.click();
       onExportToken(tokenOptions.format, tokenOptions.size);
+
+      // Save to vtt_library in localStorage
+      try {
+        const existing: VTTLibraryItem[] = JSON.parse(localStorage.getItem('vtt_library') ?? '[]');
+        const item: VTTLibraryItem = {
+          id: `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+          name: safeName,
+          imageDataUrl: tokenImage,
+          shape,
+          size: tokenOptions.size,
+          format: tokenOptions.format,
+          date: new Date().toISOString(),
+        };
+        localStorage.setItem('vtt_library', JSON.stringify([...existing, item]));
+      } catch {
+        // localStorage failure is non-fatal
+      }
     } catch {
       setExportError(true);
     } finally {

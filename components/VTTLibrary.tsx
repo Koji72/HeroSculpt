@@ -7,11 +7,11 @@ import { useLang, t } from '../lib/i18n';
 interface VTTToken {
   id: string;
   name: string;
-  archetype: string;
-  format: string;
+  imageDataUrl: string;
+  shape: string;
   size: number;
-  url: string;
-  createdAt: Date;
+  format: string;
+  date: string;
 }
 
 interface VTTCharacter {
@@ -53,13 +53,13 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
 
   const loadVTTData = () => {
     try {
-      const savedTokens = localStorage.getItem('vtt_tokens');
+      const savedTokens = localStorage.getItem('vtt_library');
       const savedCharacters = localStorage.getItem('vtt_characters');
-      
+
       if (savedTokens) {
         setTokens(JSON.parse(savedTokens));
       }
-      
+
       if (savedCharacters) {
         setCharacters(JSON.parse(savedCharacters));
       }
@@ -70,7 +70,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
 
   const saveVTTData = () => {
     try {
-      localStorage.setItem('vtt_tokens', JSON.stringify(tokens));
+      localStorage.setItem('vtt_library', JSON.stringify(tokens));
       localStorage.setItem('vtt_characters', JSON.stringify(characters));
     } catch (error) {
       if (import.meta.env.DEV) { console.error('Error saving VTT data:', error); }
@@ -80,7 +80,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
   const addToken = (token: VTTToken) => {
     const newTokens = [...tokens, token];
     setTokens(newTokens);
-    localStorage.setItem('vtt_tokens', JSON.stringify(newTokens));
+    localStorage.setItem('vtt_library', JSON.stringify(newTokens));
   };
 
   const addCharacter = (character: VTTCharacter) => {
@@ -92,7 +92,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
   const deleteToken = (tokenId: string) => {
     const newTokens = tokens.filter(token => token.id !== tokenId);
     setTokens(newTokens);
-    localStorage.setItem('vtt_tokens', JSON.stringify(newTokens));
+    localStorage.setItem('vtt_library', JSON.stringify(newTokens));
   };
 
   const deleteCharacter = (characterId: string) => {
@@ -103,7 +103,7 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
 
   const downloadToken = (token: VTTToken) => {
     const link = document.createElement('a');
-    link.href = token.url;
+    link.href = token.imageDataUrl;
     link.download = `${token.name}_${token.size}.${token.format}`;
     link.click();
   };
@@ -183,16 +183,12 @@ const VTTLibrary: React.FC<VTTLibraryProps> = ({
                       
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">{t('vttlib.archetype', lang)}</span>
-                          <span className="text-white">{token.archetype}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
                           <span className="text-slate-400">{t('vttlib.size', lang)}</span>
                           <span className="text-white">{token.size}x{token.size}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-400">{t('vttlib.created', lang)}</span>
-                          <span className="text-white">{new Date(token.createdAt).toLocaleDateString()}</span>
+                          <span className="text-white">{new Date(token.date).toLocaleDateString()}</span>
                         </div>
                       </div>
                       
