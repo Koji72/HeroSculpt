@@ -89,7 +89,7 @@ function generatePage(archetype, lang) {
   <meta property="og:url" content="${canonicalUrl}">
   <meta property="og:type" content="website">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"${pageTitle}","description":"${ldata.metaDesc}","url":"${canonicalUrl}"}
+  {"@context":"https://schema.org","@type":"WebPage","name":${JSON.stringify(pageTitle)},"description":${JSON.stringify(ldata.metaDesc)},"url":${JSON.stringify(canonicalUrl)}}
   </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -182,7 +182,7 @@ function generatePage(archetype, lang) {
     </section>
   </div>
   <footer>
-    <div class="container">© 2025 HeroSculpt · ${i18n.footerText} · <a href="${altUrl}">${i18n.altLangText}</a></div>
+    <div class="container">© ${new Date().getFullYear()} HeroSculpt · ${i18n.footerText} · <a href="${altUrl}">${i18n.altLangText}</a></div>
   </footer>
 </body>
 </html>`;
@@ -225,6 +225,7 @@ function generateIndex(lang) {
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${desc}">
   <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:type" content="website">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:#0a0a0f;color:#e2e8f0;font-family:system-ui,-apple-system,sans-serif;line-height:1.6}
@@ -263,7 +264,7 @@ function generateIndex(lang) {
     <div class="index-grid">${cardsHtml}</div>
   </div>
   <footer>
-    <div class="container">© 2025 HeroSculpt · <a href="${altUrl}">${i18n.altLangText}</a></div>
+    <div class="container">© ${new Date().getFullYear()} HeroSculpt · <a href="${altUrl}">${i18n.altLangText}</a></div>
   </footer>
 </body>
 </html>`;
