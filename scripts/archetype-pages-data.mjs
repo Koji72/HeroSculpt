@@ -137,7 +137,7 @@ export const ARCHETYPES = [
     theme: ['Technology', 'Intelligence', 'Innovation'],
     stats: { power: 85, defense: 80, speed: 82, intelligence: 98, energy: 85 },
     en: {
-      title: 'The Inventor',
+      title: 'The Engineer',
       metaDesc: "Create a Ghost tech hero in HeroSculpt's free 3D superhero creator. Tech blast, shield generator, nanotech swarm — design your inventor character.",
       description: 'Advanced technology and constant innovation. The inventor who turns gadgets into devastating weapons.',
       abilities: { primary: 'Tech Blast', secondary: 'Shield Generator', ultimate: 'Nanotech Swarm', passive: 'Technological Mastery' },
@@ -421,7 +421,7 @@ export const ARCHETYPES = [
     id: 'CONSTRUCT',
     slug: 'construct',
     name: 'Construct',
-    icon: '🤖',
+    icon: '🦾',
     theme: ['Artificial', 'Technology', 'Evolution'],
     stats: { power: 85, defense: 90, speed: 75, intelligence: 90, energy: 85 },
     en: {
@@ -581,7 +581,7 @@ export const ARCHETYPES = [
     id: 'ANTIHERO',
     slug: 'antihero',
     name: 'Antihero',
-    icon: '⚔️',
+    icon: '🗡️',
     theme: ['Violence', 'Pragmatism', 'Justice'],
     stats: { power: 85, defense: 80, speed: 80, intelligence: 85, energy: 75 },
     en: {
