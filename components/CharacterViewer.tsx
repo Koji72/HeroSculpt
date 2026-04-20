@@ -1992,9 +1992,9 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               <div className="absolute inset-2 border-3 border-cyan-400/40 rounded-full animate-spin animate-reverse border-b-cyan-400" style={{ animationDuration: '2s' }}></div>
               {/* Inner pulsing circle */}
               <div className="absolute inset-3 bg-gradient-to-r from-orange-400/20 to-cyan-400/20 rounded-full animate-pulse"></div>
-              {/* 3D Icon */}
-              <div className="absolute inset-0 flex items-center justify-center text-3xl animate-bounce">
-                ?????
+              {/* Logo */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <img src="/logo.png" alt="HeroSculpt" style={{ width: 52, height: 52, objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(251,146,60,0.7))' }} className="animate-pulse" />
               </div>
             </div>
             <div className="text-xl font-black text-orange-400 mb-2 animate-pulse uppercase tracking-wider"
