@@ -2561,9 +2561,20 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => (
-    <AppContent />
-);
+import LandingPage from './components/LandingPage';
+
+const App: React.FC = () => {
+  const [showLanding, setShowLanding] = useState(() => !localStorage.getItem('hs_entered'));
+
+  const handleEnter = (archetypeId?: string) => {
+    localStorage.setItem('hs_entered', '1');
+    setShowLanding(false);
+    // archetypeId could be used to pre-select archetype in future
+  };
+
+  if (showLanding) return <LandingPage onEnter={handleEnter} />;
+  return <AppContent />;
+};
 
 export default App;
 
