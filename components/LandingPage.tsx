@@ -1,661 +1,371 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 interface LandingPageProps {
   onEnter: (archetypeId?: string) => void;
 }
 
+const C = {
+  surface: '#0c0e12',
+  surfaceCLL: '#000000',
+  surfaceCL: '#111318',
+  surfaceC: '#171a1f',
+  surfaceCH: '#1d2025',
+  surfaceCHH: '#23262c',
+  onSurface: '#f6f6fc',
+  onSurfaceV: '#aaabb0',
+  primary: '#ff9063',
+  primaryDim: '#ff7437',
+  primaryC: '#ff793f',
+  onPrimary: '#571b00',
+  onPrimaryFixed: '#000000',
+  secondary: '#00e3fd',
+  secondaryC: '#006875',
+  secondaryFixed: '#26e6ff',
+  onSecondary: '#004d57',
+  tertiary: '#ffe792',
+  error: '#ff716c',
+  outline: '#74757a',
+  outlineV: '#46484d',
+};
+
 const ARCHETYPES = [
-  {
-    id: 'STRONG',
-    name: 'STRONG',
-    title: 'THE POWERHOUSE',
-    tagline: 'Raw strength. Unbreakable defense.',
-    icon: '💪',
-    color: '#f97316',
-    glow: 'rgba(249,115,22,0.6)',
-    gradient: 'linear-gradient(135deg, #7c2d12 0%, #1c0a04 100%)',
-    border: '#f97316',
-    examples: 'Superman · Hulk · Thor',
-    stat: 95,
-    statLabel: 'POWER',
-  },
-  {
-    id: 'JUSTICIERO',
-    name: 'GUARDIAN',
-    title: 'THE PROTECTOR',
-    tagline: 'Justice and protection for all.',
-    icon: '⚖️',
-    color: '#06b6d4',
-    glow: 'rgba(6,182,212,0.6)',
-    gradient: 'linear-gradient(135deg, #0c1d3b 0%, #030f1f 100%)',
-    border: '#06b6d4',
-    examples: 'Captain America · Black Panther',
-    stat: 90,
-    statLabel: 'DEFENSE',
-  },
-  {
-    id: 'SPEEDSTER',
-    name: 'SPEEDSTER',
-    title: 'THE FLASH',
-    tagline: 'Lightning speed and hyper-reflexes.',
-    icon: '⚡',
-    color: '#fbbf24',
-    glow: 'rgba(251,191,36,0.6)',
-    gradient: 'linear-gradient(135deg, #1c1400 0%, #0a0900 100%)',
-    border: '#fbbf24',
-    examples: 'Flash · Quicksilver · Sonic',
-    stat: 98,
-    statLabel: 'SPEED',
-  },
-  {
-    id: 'MYSTIC',
-    name: 'MYSTIC',
-    title: 'THE SORCERER',
-    tagline: 'Ancient magic and mystical power.',
-    icon: '🔮',
-    color: '#a855f7',
-    glow: 'rgba(168,85,247,0.6)',
-    gradient: 'linear-gradient(135deg, #1a0533 0%, #080212 100%)',
-    border: '#a855f7',
-    examples: 'Doctor Strange · Scarlet Witch',
-    stat: 95,
-    statLabel: 'ENERGY',
-  },
-  {
-    id: 'TECH',
-    name: 'TECH',
-    title: 'THE INVENTOR',
-    tagline: 'Advanced technology and pure genius.',
-    icon: '🤖',
-    color: '#22d3ee',
-    glow: 'rgba(34,211,238,0.6)',
-    gradient: 'linear-gradient(135deg, #001c2a 0%, #000c12 100%)',
-    border: '#22d3ee',
-    examples: 'Iron Man · Batman · Mr. Fantastic',
-    stat: 98,
-    statLabel: 'INTEL',
-  },
-  {
-    id: 'PARAGON',
-    name: 'PARAGON',
-    title: 'THE PERFECT HERO',
-    tagline: 'The ultimate balanced champion.',
-    icon: '🦸',
-    color: '#ef4444',
-    glow: 'rgba(239,68,68,0.6)',
-    gradient: 'linear-gradient(135deg, #2d0505 0%, #0f0505 100%)',
-    border: '#ef4444',
-    examples: 'Superman · Captain Marvel',
-    stat: 90,
-    statLabel: 'ALL',
-  },
+  { id: 'TANK',    label: 'TANK',    abbr: '',   color: '#ff9063', img: true },
+  { id: 'ROGUE',   label: 'ROGUE',   abbr: 'RG', color: '#00e3fd', img: false },
+  { id: 'MAGE',    label: 'MAGE',    abbr: 'MG', color: '#ffe792', img: false },
+  { id: 'BRAWLER', label: 'BRAWLER', abbr: 'BR', color: '#ff716c', img: false },
+  { id: 'SPEEDER', label: 'SPEEDER', abbr: 'SP', color: '#004d57', img: false },
+  { id: 'SCOUT',   label: 'SCOUT',   abbr: 'SC', color: '#26e6ff', img: false },
 ];
 
-const FEATURES = [
-  {
-    icon: '⚙️',
-    title: '300+ MODULAR PARTS',
-    desc: 'Mix and match heads, torsos, arms, legs, capes, symbols and more. Every combination is unique.',
-    color: '#f97316',
-  },
-  {
-    icon: '🎨',
-    title: 'FULL MATERIAL CONTROL',
-    desc: 'PBR materials, metallic finishes, custom colors and textures. Make it yours down to the last pixel.',
-    color: '#a855f7',
-  },
-  {
-    icon: '📦',
-    title: 'EXPORT ANYWHERE',
-    desc: 'GLB/GLTF for games and metaverses, STL for 3D printing, PNG tokens for Foundry VTT and Roll20.',
-    color: '#22d3ee',
-  },
-  {
-    icon: '📜',
-    title: 'RPG CHARACTER SHEET',
-    desc: 'Auto-generated stats compatible with Mutants & Masterminds. Ready for your next campaign.',
-    color: '#fbbf24',
-  },
+const NAV_LINKS = ['Gallery', 'Creator', 'Community', 'Marketplace'];
+
+const HUD_STATS = [
+  { label: 'Power Output',     value: 94 },
+  { label: 'Agility Vector',   value: 82 },
+  { label: 'Durability Matrix', value: 68 },
 ];
 
-const STATS = [
-  { value: '300+', label: 'PARTS' },
-  { value: '15+', label: 'ARCHETYPES' },
-  { value: '3', label: 'EXPORT FORMATS' },
-  { value: 'FREE', label: 'TO START' },
-];
+const FEATURES_3 = ['devices', 'cloud_sync', 'videogame_asset'];
 
 export default function LandingPage({ onEnter }: LandingPageProps) {
-  const [hoveredArchetype, setHoveredArchetype] = useState<string | null>(null);
-  const [visible, setVisible] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animRef = useRef<number>(0);
-
-  useEffect(() => {
-    setTimeout(() => setVisible(true), 80);
-  }, []);
-
-  // Particle canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number; color: string }[] = [];
-    const colors = ['#f97316', '#fbbf24', '#06b6d4', '#a855f7', '#22d3ee'];
-
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-      animRef.current = requestAnimationFrame(draw);
-    };
-    draw();
-
-    const onResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener('resize', onResize);
-    return () => {
-      cancelAnimationFrame(animRef.current);
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
+  const [hoveredArch, setHoveredArch] = useState<string | null>(null);
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0,
-      background: '#04040a',
-      overflowY: 'auto',
-      fontFamily: "'Black Ops One', 'RefrigeratorDeluxeHeavy', cursive",
-      opacity: visible ? 1 : 0,
-      transition: 'opacity 0.6s ease',
-    }}>
+    <div style={{ backgroundColor: C.surface, color: C.onSurface, minHeight: '100vh', overflowX: 'hidden' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
-        @keyframes hs-pulse-glow {
-          0%, 100% { text-shadow: 0 0 30px rgba(249,115,22,0.8), 0 0 60px rgba(249,115,22,0.4); }
-          50% { text-shadow: 0 0 60px rgba(249,115,22,1), 0 0 120px rgba(249,115,22,0.6); }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+        .ms { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display: inline-block; }
+        .hl { font-family: 'Space Grotesk', sans-serif; }
+        .bd { font-family: 'Inter', sans-serif; }
+        .glow-p { text-shadow: 0 0 15px rgba(255,144,99,0.4), 0 0 30px rgba(255,144,99,0.2); }
+        .glow-s { text-shadow: 0 0 10px rgba(0,227,253,0.5); }
+        .obsidian { background: linear-gradient(145deg, rgba(23,26,31,0.9), rgba(12,14,18,0.95)); backdrop-filter: blur(12px); }
+
+        @keyframes lp-bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-8px); } }
+        @keyframes lp-spin-fwd  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+        @keyframes lp-spin-back { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
+        @keyframes lp-pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+        .lp-bounce  { animation: lp-bounce  1.0s ease-in-out infinite; }
+        .lp-spin-fwd  { animation: lp-spin-fwd  20s linear infinite; }
+        .lp-spin-back { animation: lp-spin-back 10s linear infinite; }
+        .lp-pulse   { animation: lp-pulse   2s ease-in-out infinite; }
+
+        .lp-arch-img { filter: grayscale(1); opacity: 0.4; transform: scale(1.1); transition: all 0.5s; }
+        .lp-arch-card:hover .lp-arch-img { filter: grayscale(0); opacity: 1; transform: scale(1); }
+        .lp-arch-bar { width: 0; height: 2px; margin: 0 auto; transition: width 0.3s; }
+        .lp-arch-card:hover .lp-arch-bar { width: 50%; }
+
+        .lp-feat-img { filter: grayscale(1); opacity: 0.6; transition: all 0.7s; }
+        .lp-feat-wrap:hover .lp-feat-img { filter: grayscale(0); }
+        .lp-feat-icon { opacity: 0.2; transition: opacity 0.3s; }
+        .lp-feat-wrap:hover .lp-feat-icon { opacity: 1; }
+
+        .lp-btn-pri {
+          position: relative; overflow: hidden;
+          background: linear-gradient(135deg, ${C.primary}, ${C.primaryC});
+          color: ${C.onPrimaryFixed};
+          font-family: 'Space Grotesk', sans-serif; font-weight: 900;
+          letter-spacing: -0.04em; text-transform: uppercase;
+          transition: transform 0.2s; cursor: pointer; border: none;
         }
-        @keyframes hs-scan {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100vh); }
+        .lp-btn-pri:hover { transform: scale(1.05); }
+        .lp-btn-pri:active { transform: scale(0.95); }
+        .lp-btn-pri .glow-layer { position:absolute; inset:0; background:${C.secondary}; filter:blur(20px); opacity:0; transition:opacity 0.3s; }
+        .lp-btn-pri:hover .glow-layer { opacity: 0.3; }
+
+        .lp-btn-sec {
+          border: 1px solid rgba(0,227,253,0.3); color: ${C.secondary};
+          font-family: 'Space Grotesk', sans-serif; font-weight: 900;
+          letter-spacing: -0.04em; text-transform: uppercase;
+          background: transparent; cursor: pointer; transition: background 0.2s;
+          display: flex; align-items: center; gap: 12px;
         }
-        @keyframes hs-float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(3deg); }
+        .lp-btn-sec:hover { background: rgba(0,227,253,0.1); }
+
+        .lp-cta-btn {
+          position: relative; overflow: hidden;
+          background: ${C.primary}; color: ${C.onPrimary};
+          font-family: 'Space Grotesk', sans-serif; font-weight: 900;
+          font-size: 1.5rem; letter-spacing: -0.04em; text-transform: uppercase;
+          border: none; cursor: pointer; transition: transform 0.3s;
         }
-        @keyframes hs-border-glow {
-          0%, 100% { box-shadow: 0 0 10px var(--glow), inset 0 0 10px var(--glow); }
-          50% { box-shadow: 0 0 30px var(--glow), inset 0 0 20px var(--glow); }
+        .lp-cta-btn:hover { transform: scale(1.1); }
+        .lp-cta-btn:active { transform: scale(0.95); }
+        .lp-cta-btn .glow-layer { position:absolute; inset:-4px; background:${C.primary}; filter:blur(20px); opacity:0; transition:opacity 0.3s; }
+        .lp-cta-btn:hover .glow-layer { opacity: 0.4; }
+
+        .lp-dna-btn {
+          width: 100%; font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+          text-transform: uppercase; letter-spacing: 0.2em; font-size: 11px;
+          background: rgba(0,227,253,0.1); color: ${C.secondary};
+          border: 1px solid rgba(0,227,253,0.3); cursor: pointer;
+          padding: 12px 0; transition: background 0.2s;
         }
-        @keyframes hs-fadeup {
-          from { opacity: 0; transform: translateY(40px); }
-          to { opacity: 1; transform: translateY(0); }
+        .lp-dna-btn:hover { background: rgba(0,227,253,0.2); }
+
+        .lp-nav-link {
+          font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+          letter-spacing: -0.02em; text-transform: uppercase;
+          text-decoration: none; transition: color 0.2s; cursor: pointer;
         }
-        @keyframes hs-shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        .hs-cta-primary {
-          background: linear-gradient(135deg, #f97316, #ea580c);
-          border: 2px solid #f97316;
-          color: #fff;
-          padding: 18px 48px;
-          font-size: 20px;
-          letter-spacing: 3px;
-          cursor: pointer;
-          clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-          transition: all 0.2s ease;
-          text-transform: uppercase;
-          font-family: inherit;
-        }
-        .hs-cta-primary:hover {
-          background: linear-gradient(135deg, #fb923c, #f97316);
-          box-shadow: 0 0 40px rgba(249,115,22,0.7);
-          transform: scale(1.04);
-        }
-        .hs-cta-secondary {
-          background: transparent;
-          border: 2px solid rgba(255,255,255,0.2);
-          color: rgba(255,255,255,0.7);
-          padding: 18px 40px;
-          font-size: 18px;
-          letter-spacing: 3px;
-          cursor: pointer;
-          clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-          transition: all 0.2s ease;
-          text-transform: uppercase;
-          font-family: inherit;
-        }
-        .hs-cta-secondary:hover {
-          border-color: rgba(255,255,255,0.6);
-          color: #fff;
-          box-shadow: 0 0 20px rgba(255,255,255,0.15);
-        }
-        .hs-archetype-card {
-          position: relative;
-          background: var(--card-bg);
-          border: 1px solid var(--card-border);
-          cursor: pointer;
-          transition: all 0.25s ease;
-          overflow: hidden;
-          clip-path: polygon(16px 0%, 100% 0%, calc(100% - 16px) 100%, 0% 100%);
-        }
-        .hs-archetype-card:hover {
-          transform: translateY(-8px) scale(1.02);
-          border-color: var(--card-hover-border);
-          box-shadow: 0 20px 60px var(--card-glow);
-        }
-        .hs-feature-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.08);
-          padding: 32px 28px;
-          transition: all 0.25s ease;
-        }
-        .hs-feature-card:hover {
-          background: rgba(255,255,255,0.06);
-          border-color: rgba(255,255,255,0.18);
-          transform: translateY(-4px);
-        }
-        .hs-stat-bar {
-          height: 4px;
-          background: rgba(255,255,255,0.1);
-          border-radius: 2px;
-          overflow: hidden;
-          margin-top: 6px;
-        }
-        .hs-stat-fill {
-          height: 100%;
-          border-radius: 2px;
-          transition: width 0.8s ease;
-        }
+        .lp-nav-link:hover { color: ${C.onSurface}; }
       `}</style>
 
-      {/* Particles */}
-      <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
-
-      {/* Scan line */}
-      <div style={{
-        position: 'fixed', left: 0, right: 0, height: 2,
-        background: 'linear-gradient(90deg, transparent, rgba(249,115,22,0.4), transparent)',
-        animation: 'hs-scan 6s linear infinite',
-        pointerEvents: 'none', zIndex: 1,
-      }} />
-
-      {/* ═══ HERO SECTION ═══ */}
-      <section style={{
-        position: 'relative', minHeight: '100vh',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '40px 24px',
-        zIndex: 2,
-      }}>
-        {/* Background radial glow */}
-        <div style={{
-          position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)',
-          width: 800, height: 800, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* Badge */}
-        <div style={{
-          background: 'rgba(249,115,22,0.15)',
-          border: '1px solid rgba(249,115,22,0.4)',
-          color: '#f97316',
-          padding: '6px 20px',
-          fontSize: 11,
-          letterSpacing: 4,
-          marginBottom: 32,
-          animation: 'hs-fadeup 0.6s ease both',
-        }}>
-          THE ULTIMATE 3D SUPERHERO CREATOR
-        </div>
-
-        {/* Main title */}
-        <h1 style={{
-          fontSize: 'clamp(64px, 12vw, 140px)',
-          color: '#2a3a5a',
-          margin: '0 0 8px',
-          textAlign: 'center',
-          letterSpacing: '8px',
-          lineHeight: 0.9,
-          WebkitTextStroke: '2px #f97316',
-          textShadow: '0 0 40px rgba(249,115,22,0.7), 4px 4px 0px #111, 2px 2px 0px #1a2a4a',
-          animation: 'hs-pulse-glow 3s ease-in-out infinite, hs-fadeup 0.7s ease both',
-        }}>
-          HERO
-        </h1>
-        <h1 style={{
-          fontSize: 'clamp(64px, 12vw, 140px)',
-          background: 'linear-gradient(135deg, #f97316 0%, #fbbf24 50%, #f97316 100%)',
-          backgroundSize: '200% auto',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          margin: '0 0 24px',
-          textAlign: 'center',
-          letterSpacing: '8px',
-          lineHeight: 0.9,
-          animation: 'hs-shimmer 3s linear infinite, hs-fadeup 0.8s ease both',
-        }}>
-          SCULPT
-        </h1>
-
-        <p style={{
-          fontSize: 'clamp(16px, 2.5vw, 22px)',
-          color: 'rgba(255,255,255,0.6)',
-          textAlign: 'center',
-          maxWidth: 560,
-          lineHeight: 1.5,
-          marginBottom: 48,
-          fontFamily: "'Black Ops One', cursive",
-          letterSpacing: 2,
-          animation: 'hs-fadeup 0.9s ease both',
-        }}>
-          FORGE YOUR LEGEND IN REAL-TIME 3D.<br />
-          300+ PARTS · 15 ARCHETYPES · FULL MATERIAL CONTROL.
-        </p>
-
-        {/* CTA buttons */}
-        <div style={{
-          display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center',
-          animation: 'hs-fadeup 1s ease both',
-          marginBottom: 80,
-        }}>
-          <button className="hs-cta-primary" onClick={() => onEnter()}>
-            BUILD YOUR HERO FREE →
-          </button>
-          <button className="hs-cta-secondary" onClick={() => {
-            document.getElementById('hs-archetypes')?.scrollIntoView({ behavior: 'smooth' });
-          }}>
-            EXPLORE ARCHETYPES
-          </button>
-        </div>
-
-        {/* Stats strip */}
-        <div style={{
-          display: 'flex', gap: 0, flexWrap: 'wrap', justifyContent: 'center',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          width: '100%', maxWidth: 700,
-          animation: 'hs-fadeup 1.1s ease both',
-        }}>
-          {STATS.map((s, i) => (
-            <div key={s.label} style={{
-              flex: '1 1 150px', textAlign: 'center',
-              padding: '20px 16px',
-              borderRight: i < STATS.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-            }}>
-              <div style={{ fontSize: 'clamp(24px, 4vw, 36px)', color: '#f97316', letterSpacing: 2 }}>
-                {s.value}
-              </div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', letterSpacing: 3, marginTop: 4 }}>
-                {s.label}
-              </div>
+      {/* ── NAV ── */}
+      <nav style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, backgroundColor: 'rgba(9,9,11,0.8)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 32px rgba(255,94,0,0.05)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 32px', height: 80 }}>
+          <div className="hl" style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.05em', textTransform: 'uppercase', color: C.onSurface }}>
+            HEROSCULPT
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+            {NAV_LINKS.map((item, i) => (
+              <a key={item} className="lp-nav-link" style={{ color: i === 0 ? C.primary : C.onSurfaceV, borderBottom: i === 0 ? `2px solid ${C.primaryDim}` : 'none', paddingBottom: i === 0 ? 4 : 0 }}>
+                {item}
+              </a>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <button onClick={() => onEnter()} className="lp-btn-pri" style={{ padding: '10px 24px', fontSize: 14 }}>
+              <div className="glow-layer" />
+              <span style={{ position: 'relative', zIndex: 1 }}>Start Creating</span>
+            </button>
+            <div style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', border: `1px solid ${C.outlineV}`, backgroundColor: C.surfaceCHH }}>
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxIY8feiUxlkU3U-JpHBsu8KcaCsp9VIIUYe1K4ytPsjk1vltaFlervYq9qfKh8dDTwBsv-m9HkOI9nOlRgZCvcAui8lKUpE1R5ucjgb6gQioDYjdbXmS8_2wP6op127ZLjR8SBZ4WJbAKh59XoSB1VJl7avhzyFWxyCoMMMq2NG7_LTZ_laPx-v1pYeiObeE6uoja7cOK_lvT519-gWk1LgJ0zsJJzD63taBSFVrSlH0Gg7FKpaNM-kMIQcKJbxYz94zo5gkus_c"
+                   alt="User" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-          ))}
+          </div>
         </div>
+      </nav>
 
-        {/* Scroll indicator */}
-        <div style={{
-          position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-          color: 'rgba(255,255,255,0.3)', fontSize: 10, letterSpacing: 3,
-          animation: 'hs-float 2s ease-in-out infinite',
-          cursor: 'pointer',
-        }} onClick={() => document.getElementById('hs-archetypes')?.scrollIntoView({ behavior: 'smooth' })}>
-          SCROLL
-          <div style={{ width: 1, height: 32, background: 'linear-gradient(to bottom, rgba(249,115,22,0.6), transparent)' }} />
+      {/* ── HERO ── */}
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzW3Rv2NfbKb3i_Eyqki7aFRik5IwsiZfgjJ3oY2118TF4vLfYpcvtF9C6m27V9MM6c6S5WYgfAoqsHrb--W1NN0oi8JkqlJ9G7ybMivxsexAQ8u-YigIy3wdRaa5qg5WmzwY36eCxvVUxqSAygGoitSf6qNYgwMUuun38u3AG2TedeIG4E1Hf4kWaUz_w7hAx3_xArrrHUYRLkW-lw88jDUr3JXWlG_c7EITu7RxvtHr2hwOQXE3NBrUp-zHaNNwa9byvgQ-Ux1A"
+               alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
+          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${C.surface}, transparent, rgba(12,14,18,0.4))` }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(12,14,18,0.8), transparent, rgba(12,14,18,0.8))' }} />
+        </div>
+        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 16px' }}>
+          <h1 className="hl glow-p" style={{ fontSize: 'clamp(80px,12vw,192px)', fontWeight: 900, letterSpacing: '-0.05em', lineHeight: 0.8, color: C.onSurface, marginBottom: 16, opacity: 0.9, fontStyle: 'italic' }}>
+            HEROSCULPT
+          </h1>
+          <p className="hl" style={{ fontSize: 'clamp(14px,2vw,24px)', fontWeight: 700, letterSpacing: '0.5em', color: C.primary, marginBottom: 48, textTransform: 'uppercase' }}>
+            3D SUPERHERO CHARACTER CREATOR
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', alignItems: 'center' }}>
+            <button onClick={() => onEnter()} className="lp-btn-pri" style={{ padding: '16px 40px', fontSize: 20 }}>
+              <div className="glow-layer" />
+              <span style={{ position: 'relative', zIndex: 1 }}>INITIALIZE FORGE</span>
+            </button>
+            <button className="lp-btn-sec" style={{ padding: '16px 40px', fontSize: 20 }}>
+              <span className="ms">play_arrow</span>
+              WATCH TRAILER
+            </button>
+          </div>
+        </div>
+        <div className="lp-bounce" style={{ position: 'absolute', bottom: 48, left: '50%', color: C.outline }}>
+          <span className="ms" style={{ fontSize: 32 }}>keyboard_double_arrow_down</span>
         </div>
       </section>
 
-      {/* ═══ ARCHETYPES SECTION ═══ */}
-      <section id="hs-archetypes" style={{
-        position: 'relative', zIndex: 2,
-        padding: 'clamp(60px, 8vw, 120px) clamp(16px, 4vw, 80px)',
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div style={{ fontSize: 11, letterSpacing: 5, color: '#f97316', marginBottom: 16 }}>
-            — CHOOSE YOUR PATH —
+      {/* ── HERO LINEUP + HUD ── */}
+      <section style={{ position: 'relative', padding: '128px 0', backgroundColor: C.surfaceCLL }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 32px', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 48, alignItems: 'center' }}>
+          {/* Image */}
+          <div style={{ gridColumn: 'span 8', position: 'relative', overflow: 'hidden', borderRadius: 4, boxShadow: '0 25px 50px rgba(0,0,0,0.5)', border: `1px solid rgba(70,72,77,0.1)` }}>
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCliQZ4ExSJ8Ldu_Wju7VMbpJN914EMD3BklIZRP-_qwQfV-rTM-Mhr0R8FAqkBN6dqfDs92mwWIdxOd-YCC7OR56pjLKG7ZU4LeQv4CU9jWHhppFY7rdClAVzNy8jgQ_D7yzP-GV8m66JPH07JfW9CUJ1TWe9Cm58CcisNj6H_ywhvfm-SKbfNzFGJFp4BR5dMfeR4Aw72_92hfXlMsMesXzYT-nRTWIzfwI2qjOFw6VnbaGM4plC0vvFFlFk_3PCQ6SVuwotEun0"
+                 alt="Hero Lineup" style={{ width: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.8), transparent)` }} />
           </div>
-          <h2 style={{
-            fontSize: 'clamp(36px, 6vw, 72px)',
-            color: '#fff',
-            letterSpacing: 6,
-            margin: 0,
-          }}>
-            ARCHETYPES
-          </h2>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, letterSpacing: 2, marginTop: 16 }}>
-            EVERY HERO HAS AN ORIGIN. WHICH ONE IS YOURS?
-          </p>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 20,
-          maxWidth: 1200,
-          margin: '0 auto',
-        }}>
-          {ARCHETYPES.map(arch => (
-            <div
-              key={arch.id}
-              className="hs-archetype-card"
-              style={{
-                '--card-bg': arch.gradient,
-                '--card-border': `${arch.border}30`,
-                '--card-hover-border': arch.border,
-                '--card-glow': arch.glow,
-                padding: '32px 24px',
-              } as React.CSSProperties}
-              onClick={() => onEnter(arch.id)}
-              onMouseEnter={() => setHoveredArchetype(arch.id)}
-              onMouseLeave={() => setHoveredArchetype(null)}
-            >
-              {/* Glow overlay on hover */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: `radial-gradient(circle at 50% 0%, ${arch.glow}15, transparent 70%)`,
-                opacity: hoveredArchetype === arch.id ? 1 : 0,
-                transition: 'opacity 0.3s ease',
-                pointerEvents: 'none',
-              }} />
-
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ fontSize: 48, marginBottom: 12, display: 'block' }}>{arch.icon}</div>
-
-                <div style={{ fontSize: 10, letterSpacing: 4, color: arch.color, marginBottom: 6 }}>
-                  {arch.title}
+          {/* HUD */}
+          <div style={{ gridColumn: 'span 4' }}>
+            <div className="obsidian" style={{ padding: 32, borderRadius: 2, borderLeft: `4px solid ${C.secondary}`, boxShadow: `inset 0 0 1px 0 rgba(0,227,253,0.3)` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+                <div>
+                  <span className="hl" style={{ fontSize: 10, letterSpacing: '0.3em', color: C.secondary, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Subject: ALPHA_01</span>
+                  <h2 className="hl glow-s" style={{ fontSize: 36, fontWeight: 700, color: C.onSurface, textTransform: 'uppercase', letterSpacing: '-0.04em', margin: 0 }}>STRIKER</h2>
                 </div>
-                <div style={{ fontSize: 26, color: '#fff', letterSpacing: 3, marginBottom: 10 }}>
-                  {arch.name}
-                </div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', letterSpacing: 1, lineHeight: 1.5, marginBottom: 20 }}>
-                  {arch.tagline}
-                </div>
-
-                {/* Stat bar */}
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, letterSpacing: 2 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.4)' }}>{arch.statLabel}</span>
-                    <span style={{ color: arch.color }}>{arch.stat}</span>
+                <span className="glow-s" style={{ color: C.secondary, fontFamily: 'monospace', fontSize: 20 }}>ACTIVE</span>
+              </div>
+              {HUD_STATS.map(s => (
+                <div key={s.label} style={{ marginBottom: 24 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Space Grotesk', fontSize: 11, letterSpacing: '-0.01em', textTransform: 'uppercase', color: C.onSurfaceV, marginBottom: 8 }}>
+                    <span>{s.label}</span>
+                    <span style={{ color: C.secondary }}>{s.value}%</span>
                   </div>
-                  <div className="hs-stat-bar">
-                    <div className="hs-stat-fill" style={{
-                      width: `${arch.stat}%`,
-                      background: `linear-gradient(90deg, ${arch.color}80, ${arch.color})`,
-                    }} />
+                  <div style={{ height: 4, backgroundColor: C.surfaceCHH, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${s.value}%`, background: `linear-gradient(to right, ${C.secondaryC}, ${C.secondary})` }} />
                   </div>
                 </div>
-
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: 1 }}>
-                  {arch.examples}
-                </div>
-
-                <div style={{
-                  marginTop: 20,
-                  color: arch.color,
-                  fontSize: 11,
-                  letterSpacing: 3,
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  opacity: hoveredArchetype === arch.id ? 1 : 0.4,
-                  transition: 'opacity 0.2s',
-                }}>
-                  BUILD THIS HERO →
-                </div>
+              ))}
+              <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid rgba(70,72,77,0.2)` }}>
+                <p className="bd" style={{ color: C.onSurfaceV, fontSize: 14, lineHeight: 1.6, marginBottom: 24, fontStyle: 'italic', fontWeight: 300 }}>
+                  Optimized for high-velocity engagement and kinetic energy absorption. Chassis reinforced with graphene-titanium composite.
+                </p>
+                <button onClick={() => onEnter()} className="lp-dna-btn">View Full DNA Profile</button>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* ═══ FEATURES SECTION ═══ */}
-      <section style={{
-        position: 'relative', zIndex: 2,
-        padding: 'clamp(60px, 8vw, 120px) clamp(16px, 4vw, 80px)',
-        background: 'rgba(255,255,255,0.015)',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div style={{ fontSize: 11, letterSpacing: 5, color: '#f97316', marginBottom: 16 }}>
-            — EVERYTHING YOU NEED —
+      {/* ── CORE TECH ── */}
+      <section style={{ padding: '128px 32px', backgroundColor: C.surface }}>
+        <div style={{ maxWidth: '80rem', margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 64 }}>
+            <h2 className="hl" style={{ fontSize: 'clamp(40px,6vw,60px)', fontWeight: 900, color: C.onSurface, textTransform: 'uppercase', letterSpacing: '-0.04em', fontStyle: 'italic', margin: 0 }}>CORE TECH</h2>
+            <div style={{ height: 1, flexGrow: 1, backgroundColor: 'rgba(70,72,77,0.3)' }} />
           </div>
-          <h2 style={{ fontSize: 'clamp(32px, 5vw, 60px)', color: '#fff', letterSpacing: 5, margin: 0 }}>
-            BUILT FOR CREATORS
-          </h2>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: 20,
-          maxWidth: 1100,
-          margin: '0 auto',
-        }}>
-          {FEATURES.map(f => (
-            <div key={f.title} className="hs-feature-card">
-              <div style={{ fontSize: 36, marginBottom: 16 }}>{f.icon}</div>
-              <div style={{
-                fontSize: 13,
-                color: f.color,
-                letterSpacing: 3,
-                marginBottom: 12,
-              }}>
-                {f.title}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
+            {/* Feature 1 — spans 2 cols */}
+            <div className="lp-feat-wrap" style={{ gridColumn: 'span 2', position: 'relative', height: 500, overflow: 'hidden', backgroundColor: C.surfaceCH, border: `1px solid rgba(70,72,77,0.2)` }}>
+              <img className="lp-feat-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvQOSrVROtq5wFh27YBkjqpGWjvHhl-Q05ScoJkoCeTamc8CsnRQYQJGnd8Wy1epF1oeISdYVELdJlbWgn96-rYxTei2myTu_gzvmYk6H2lKqkgquK5g3H8YMucACZjQFANVlXyzSFoLww3W4ClHsUWoz4oe0HmkUjmZC0pqNZvZkT49ij7ZuEStLqis_Zbyo2-RhWK6AN_aVsl5TdU7_fTpgSuzj2IlZKi1pqKya8xc9ik6o83sNlxBVZ0Iwr2ziknJVNd9COPqw"
+                   alt="Modular Armor" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${C.surface}, transparent)` }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, padding: 40 }}>
+                <span className="hl" style={{ display: 'inline-block', padding: '4px 12px', backgroundColor: C.primary, color: C.onPrimary, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3em', marginBottom: 16 }}>Module_01</span>
+                <h3 className="hl" style={{ fontSize: 36, fontWeight: 700, color: C.onSurface, textTransform: 'uppercase', marginBottom: 8 }}>Modular Armor Forge</h3>
+                <p className="bd" style={{ color: C.onSurfaceV, maxWidth: 448 }}>Thousands of interlocking plates and biological components to sculpt your ultimate defender.</p>
               </div>
-              <div style={{
-                fontSize: 13,
-                color: 'rgba(255,255,255,0.5)',
-                lineHeight: 1.7,
-                fontFamily: "'Black Ops One', cursive",
-                letterSpacing: 0.5,
-              }}>
-                {f.desc}
+              <div className="lp-feat-icon" style={{ position: 'absolute', top: 0, right: 0, padding: 24 }}>
+                <span className="ms" style={{ fontSize: 64, color: C.primary }}>architecture</span>
               </div>
             </div>
-          ))}
+            {/* Feature 2 */}
+            <div style={{ position: 'relative', height: 500, overflow: 'hidden', backgroundColor: C.surfaceCH, border: `1px solid rgba(70,72,77,0.2)` }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(0,104,117,0.2), transparent)' }} />
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+                <div className="lp-spin-fwd" style={{ width: '100%', aspectRatio: '1/1', border: '2px solid rgba(0,227,253,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="lp-spin-back" style={{ width: '75%', aspectRatio: '1/1', border: '1px solid rgba(0,227,253,0.4)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span className="ms glow-s" style={{ fontSize: 72, color: C.secondary }}>bar_chart</span>
+                  </div>
+                </div>
+              </div>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, padding: 40, width: '100%', background: `linear-gradient(to top, ${C.surface}, transparent)` }}>
+                <h3 className="hl" style={{ fontSize: 24, fontWeight: 700, color: C.onSurface, textTransform: 'uppercase', marginBottom: 8 }}>Holographic HUD Stats</h3>
+                <p className="bd" style={{ color: C.onSurfaceV, fontSize: 14 }}>Real-time performance analytics for every component choice you make.</p>
+              </div>
+            </div>
+            {/* Feature 3 — full width */}
+            <div style={{ gridColumn: 'span 3', position: 'relative', height: 300, overflow: 'hidden', backgroundColor: C.surfaceC, border: `1px solid rgba(70,72,77,0.2)`, display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 64px', gap: 32, flexWrap: 'wrap' }}>
+                <div>
+                  <h3 className="hl" style={{ fontSize: 36, fontWeight: 700, color: C.onSurface, textTransform: 'uppercase', marginBottom: 8 }}>Cross-Platform Sync</h3>
+                  <p className="bd" style={{ color: C.onSurfaceV }}>Deploy your creations instantly to any game engine or metaverse environment.</p>
+                </div>
+                <div style={{ display: 'flex', gap: 48, color: C.outlineV }}>
+                  {FEATURES_3.map(icon => <span key={icon} className="ms" style={{ fontSize: 64 }}>{icon}</span>)}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ═══ FINAL CTA SECTION ═══ */}
-      <section style={{
-        position: 'relative', zIndex: 2,
-        padding: 'clamp(80px, 10vw, 160px) 24px',
-        textAlign: 'center',
-        overflow: 'hidden',
-      }}>
-        {/* Background glow */}
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          width: 600, height: 600, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(249,115,22,0.07) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{ position: 'relative' }}>
-          <div style={{ fontSize: 11, letterSpacing: 5, color: '#f97316', marginBottom: 24 }}>
-            — YOUR LEGEND AWAITS —
+      {/* ── ARCHETYPES ── */}
+      <section style={{ padding: '128px 0', backgroundColor: C.surfaceCL, overflow: 'hidden' }}>
+        <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '0 32px' }}>
+          <div style={{ textAlign: 'center', marginBottom: 96 }}>
+            <span className="hl" style={{ fontSize: 14, letterSpacing: '0.8em', color: C.tertiary, textTransform: 'uppercase', display: 'block', marginBottom: 16 }}>Select your Origin</span>
+            <h2 className="hl" style={{ fontSize: 'clamp(48px,7vw,72px)', fontWeight: 900, color: C.onSurface, textTransform: 'uppercase', letterSpacing: '-0.04em', margin: 0 }}>THE ARCHETYPES</h2>
           </div>
-          <h2 style={{
-            fontSize: 'clamp(40px, 7vw, 90px)',
-            color: '#fff',
-            letterSpacing: 6,
-            margin: '0 0 16px',
-            lineHeight: 1,
-          }}>
-            START BUILDING
-          </h2>
-          <h2 style={{
-            fontSize: 'clamp(40px, 7vw, 90px)',
-            background: 'linear-gradient(135deg, #f97316, #fbbf24)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: '0 0 32px',
-            letterSpacing: 6,
-            lineHeight: 1,
-          }}>
-            FOR FREE
-          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 16 }}>
+            {ARCHETYPES.map(arch => (
+              <div key={arch.id} className="lp-arch-card" style={{ cursor: 'pointer' }}
+                   onClick={() => onEnter(arch.id)}
+                   onMouseEnter={() => setHoveredArch(arch.id)}
+                   onMouseLeave={() => setHoveredArch(null)}>
+                <div style={{ position: 'relative', aspectRatio: '3/4', marginBottom: 16, overflow: 'hidden', backgroundColor: C.surfaceCHH, border: `1px solid ${hoveredArch === arch.id ? arch.color + '80' : 'rgba(70,72,77,0.1)'}`, transition: 'border-color 0.3s' }}>
+                  {arch.img ? (
+                    <img className="lp-arch-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtAplE8CI4lsy_2YmSK7QOIntXlh2E70BrYWM-tz7-5LU-Q6PwCX8RC5OtTylaaE884ZkRdFtjDtaBWzb0F_1fzakM4M3RpXfvUov1_wm1m6Ilypn5WXa_HDQlUajZlOwRuDm_pvCVjOcs3MClnTS9yuXq_R1aNoBekaCkiobOjI7jcLOntizb_xMTBOHq2cCes-mhbPTUX6kqdmx_cEjVdTsHd4l1QC_ORC-wX19gmsUTSwLrv_B3TkCEmCUh6YOkXCtKFiDyP_4"
+                         alt={arch.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span className="hl" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72, fontWeight: 900, color: arch.color, opacity: 0.1, userSelect: 'none' }}>
+                      {arch.abbr}
+                    </span>
+                  )}
+                  <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${arch.color}4d, transparent)`, opacity: hoveredArch === arch.id ? 1 : 0, transition: 'opacity 0.3s' }} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <h4 className="hl" style={{ fontSize: 20, fontWeight: 700, color: hoveredArch === arch.id ? arch.color : C.onSurfaceV, transition: 'color 0.3s', margin: '0 0 4px' }}>
+                    {arch.label}
+                  </h4>
+                  <div className="lp-arch-bar" style={{ backgroundColor: arch.color }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          <p style={{
-            color: 'rgba(255,255,255,0.4)',
-            fontSize: 13,
-            letterSpacing: 3,
-            marginBottom: 48,
-          }}>
-            NO SIGN-UP REQUIRED TO START · EXPORT AFTER SIGN IN
+      {/* ── CTA ── */}
+      <section style={{ position: 'relative', padding: '192px 0', backgroundColor: '#000', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle at center, rgba(255,144,99,0.2), transparent)` }} />
+          {[
+            { top: '25%',  left: '25%' },
+            { top: '66%',  right: '33%' },
+            { bottom: '25%', left: '50%' },
+            { top: '50%',  right: '25%' },
+          ].map((pos, i) => (
+            <div key={i} className="lp-pulse" style={{ position: 'absolute', width: i === 1 ? 8 : i === 2 ? 6 : 4, height: i === 1 ? 8 : i === 2 ? 6 : 4, backgroundColor: C.primary, borderRadius: '50%', filter: 'blur(1px)', animationDelay: `${i * 75}ms`, ...pos }} />
+          ))}
+        </div>
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: '56rem', margin: '0 auto', textAlign: 'center', padding: '0 32px' }}>
+          <h2 className="hl" style={{ fontSize: 'clamp(56px,9vw,96px)', fontWeight: 900, color: C.onSurface, textTransform: 'uppercase', letterSpacing: '-0.05em', lineHeight: 1, marginBottom: 32 }}>
+            THE FORGE IS{' '}
+            <span className="glow-p" style={{ color: C.primary, fontStyle: 'italic' }}>WAITING</span>
+          </h2>
+          <p className="bd" style={{ color: C.onSurfaceV, fontSize: 'clamp(16px,2vw,22px)', maxWidth: '36rem', margin: '0 auto 48px', fontWeight: 300 }}>
+            The world needs new protectors. Access the most powerful character creation suite ever forged.
           </p>
-
-          <button className="hs-cta-primary" onClick={() => onEnter()} style={{ fontSize: 22, padding: '22px 60px' }}>
-            ENTER HEROSCULPT →
+          <button onClick={() => onEnter()} className="lp-cta-btn" style={{ padding: '24px 64px' }}>
+            <div className="glow-layer" />
+            <span style={{ position: 'relative', zIndex: 1 }}>START CREATING</span>
           </button>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{
-        position: 'relative', zIndex: 2,
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        padding: '24px',
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.2)',
-        fontSize: 11,
-        letterSpacing: 3,
-      }}>
-        © 2026 HEROSCULPT · ALL RIGHTS RESERVED
+      {/* ── FOOTER ── */}
+      <footer style={{ backgroundColor: '#09090b', borderTop: '1px solid #18181b', padding: '48px 0' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', padding: '0 48px', gap: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: C.onSurface }}>
+            <span className="hl" style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', textTransform: 'uppercase' }}>HEROSCULPT</span>
+            <span style={{ width: 1, height: 16, backgroundColor: '#27272a' }} />
+            <span className="bd" style={{ color: '#71717a', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Cinematic Tectonics Protocol Active</span>
+          </div>
+          <div style={{ display: 'flex', gap: 32 }}>
+            {['Terms of Service', 'Privacy Policy', 'Cookie Settings', 'Support'].map(link => (
+              <a key={link} href="#" className="bd" style={{ color: '#71717a', fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', textDecoration: 'none' }}>{link}</a>
+            ))}
+          </div>
+          <div className="bd" style={{ color: '#71717a', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            © 2026 HEROSCULPT. ALL RIGHTS RESERVED.
+          </div>
+        </div>
       </footer>
     </div>
   );
