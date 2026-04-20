@@ -55,7 +55,7 @@ export class VTTService {
         canvas.height = S;
 
         const cx = S / 2, cy = S / 2;
-        const ringWidth = Math.round(S * 0.10);   // 10% = thick decorative ring
+        const ringWidth = Math.round(S * 0.065);  // 6.5% = slimmer ring
         const outerR = S / 2 - 2;
         const innerR = outerR - ringWidth;
 
@@ -101,28 +101,21 @@ export class VTTService {
         ctx.fillStyle = bannerGrad;
         ctx.fillRect(cx - innerR, bannerY, innerR * 2, bannerH + 10);
 
-        // Auto-shrink name font to fit within the inner chord width at banner height
-        const maxNameW = innerR * 1.7;
-        let fontSize = Math.round(S * 0.072);
-        const minFontSize = Math.max(8, Math.round(S * 0.035));
+        // Hard-truncate by character count first (font metrics unreliable on canvas)
+        // ~16 chars fits cleanly at all sizes; longer names get ellipsis
+        const MAX_CHARS = 16;
+        const displayName = characterName.length > MAX_CHARS
+          ? characterName.slice(0, MAX_CHARS - 1).trimEnd() + '…'
+          : characterName;
+
+        const fontSize = Math.round(S * 0.072);
         ctx.font = `900 ${fontSize}px 'Arial Black', Arial, sans-serif`;
-        // Shrink until fits
-        while (fontSize > minFontSize && ctx.measureText(characterName).width > maxNameW) {
-          fontSize -= 1;
-          ctx.font = `900 ${fontSize}px 'Arial Black', Arial, sans-serif`;
-        }
-        // Truncate with ellipsis if still too wide
-        let displayName = characterName;
-        if (ctx.measureText(displayName).width > maxNameW) {
-          while (displayName.length > 1 && ctx.measureText(displayName + '…').width > maxNameW) {
-            displayName = displayName.slice(0, -1);
-          }
-          displayName = displayName + '…';
-        }
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(displayName, cx, bannerY + bannerH * 0.60);
+        // fillText maxWidth compresses any remainder that still overflows
+        const maxNameW = Math.round(innerR * 1.65);
+        ctx.fillText(displayName, cx, bannerY + bannerH * 0.60, maxNameW);
         ctx.restore();
 
         // --- Stats badges (Power, Defense, Speed) ---
