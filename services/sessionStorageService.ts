@@ -77,6 +77,7 @@ export class SessionStorageService {
         if (supabaseSession) {
           // console.log('SessionStorageService: Session loaded from Supabase');
           const s = supabaseSession as Record<string, unknown>;
+          if (!s.selected_archetype || !s.selected_parts) return null;
           return {
             selectedArchetype: s.selected_archetype as ArchetypeId,
             selectedParts: s.selected_parts as SelectedParts,

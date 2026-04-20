@@ -284,7 +284,7 @@ class MutantsMastermindsService {
     }
 
     // Limpiar caché
-    this.clearCache(`characters_${character.userId}`);
+    if (character.userId) this.clearCache(`characters_${character.userId}`);
     this.clearCache(`character_${result.id}`);
 
     return {

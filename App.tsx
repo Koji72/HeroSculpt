@@ -331,7 +331,7 @@ const AppContent: React.FC = () => {
       PartCategory.SHOULDERS, PartCategory.FOREARMS, PartCategory.HAND_LEFT, PartCategory.HAND_RIGHT];
     setBeltSubmenuExpanded(false);
     setLowerBodySubmenuExpanded(false);
-    setTorsoSubmenuExpanded(false);
+    setTorsoSubmenuExpanded(prev => !prev);
     const cat = upperCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.TORSO;
     setActiveCategory(cat);
     setActiveTab('parts');
@@ -347,7 +347,7 @@ const AppContent: React.FC = () => {
   const handleBeltSubmenuToggle = useCallback(() => {
     const beltCats = [PartCategory.BELT, PartCategory.POUCH, PartCategory.BUCKLE];
     setTorsoSubmenuExpanded(false);
-    setBeltSubmenuExpanded(false);
+    setBeltSubmenuExpanded(prev => !prev);
     setLowerBodySubmenuExpanded(false);
     const cat = beltCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.BELT;
     setActiveCategory(cat);
@@ -366,7 +366,7 @@ const AppContent: React.FC = () => {
     const lowerCats = [PartCategory.LOWER_BODY, PartCategory.BOOTS];
     setTorsoSubmenuExpanded(false);
     setBeltSubmenuExpanded(false);
-    setLowerBodySubmenuExpanded(false);
+    setLowerBodySubmenuExpanded(prev => !prev);
     const cat = lowerCats.includes(activeCategory as PartCategory) ? activeCategory as PartCategory : PartCategory.LOWER_BODY;
     setActiveCategory(cat);
     setActiveTab('parts');
@@ -739,7 +739,7 @@ const AppContent: React.FC = () => {
     };
 
     // Save con un pequeño delay para evitar demasiadas llamadas
-    const timeoutId = setTimeout(saveCurrentPoseAuto, 1000); // Save after 3 seconds without changes
+    const timeoutId = setTimeout(saveCurrentPoseAuto, 1000); // Save after 1 second without changes
     return () => { active = false; clearTimeout(timeoutId); };
   }, [selectedArchetype, selectedParts, currentPoseIndex, savedPoses.length]); // ✅ FIXED: Usar savedPoses.length en lugar de savedPoses
 
@@ -1575,8 +1575,8 @@ const AppContent: React.FC = () => {
       const currentTorso = newParts[PartCategory.TORSO] || newParts[PartCategory.SUIT_TORSO];
     const torsoId = mapStatToTorso(typeof character.str === 'number' ? character.str : 5);
     const legsId = mapStatToLegs(typeof character.end === 'number' ? character.end : 5);
-    const torso = STRONG_TORSO_PARTS.find(p => p.id === torsoId)!;
-    const legs = STRONG_LEGS_PARTS.find(p => p.id === legsId)!;
+    const torso = STRONG_TORSO_PARTS.find(p => p.id === torsoId) ?? STRONG_TORSO_PARTS[0];
+    const legs = STRONG_LEGS_PARTS.find(p => p.id === legsId) ?? STRONG_LEGS_PARTS[0];
 
       if (!currentTorso || Object.keys(prevParts).length === 0) { // Si no hay torso o es una carga inicial
         newParts[PartCategory.TORSO] = torso;
@@ -1584,7 +1584,7 @@ const AppContent: React.FC = () => {
       } else {
         // Si hay un torso, pero las piernas son incompatibles, actualizarlas.
         // O si las piernas están vacías.
-        if (!newParts[PartCategory.LOWER_BODY] || !newParts[PartCategory.LOWER_BODY].compatible.includes(currentTorso.id)) {
+        if (!currentTorso || !newParts[PartCategory.LOWER_BODY] || !newParts[PartCategory.LOWER_BODY].compatible.includes(currentTorso.id)) {
             newParts[PartCategory.LOWER_BODY] = legs;
         }
       }
@@ -2113,7 +2113,7 @@ const AppContent: React.FC = () => {
             <button
               className="btn-comic btn-ghost"
               style={{ width: 30, height: 30, padding: 0, fontSize: 13, borderRadius: 6, color: 'var(--color-danger, #f43f5e)' }}
-              title="Borrar esta pose"
+              title={t('bottom.delete_pose', lang)}
               onClick={() => handleDeletePose(currentPoseIndex ?? 0)}
             >🗑</button>
           )}

@@ -86,6 +86,7 @@ const dict = {
   'bottom.stl': { en: '🖨️ STL', es: '🖨️ STL' },
   'bottom.vtt': { en: '🎲 VTT', es: '🎲 VTT' },
   'bottom.save_pose': { en: '💾 POSE', es: '💾 POSE' },
+  'bottom.delete_pose': { en: 'Delete this pose', es: 'Borrar esta pose' },
 
   // Pose navigation
   'pose.saving': { en: 'Saving last pose...', es: 'Guardando última pose...' },

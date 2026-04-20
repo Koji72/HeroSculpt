@@ -104,7 +104,7 @@ export class ExternalAPIService {
         });
       }
 
-      if (imageUrl) {
+      if (imageUrl && payload.embeds.length > 0) {
         payload.embeds[0] = {
           ...payload.embeds[0],
           image: { url: imageUrl }
