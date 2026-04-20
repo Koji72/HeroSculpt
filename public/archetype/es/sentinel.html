@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creador Sentinel — El Coloso | HeroSculpt</title>
+  <meta name="description" content="Diseña un héroe Sentinel en HeroSculpt, el creador de superhéroes 3D gratuito. Superfuerza, invulnerabilidad y golpe sísmico. Construye y exporta tu personaje.">
+  <link rel="canonical" href="https://herosculpt.com/archetype/es/sentinel.html">
+  <link rel="alternate" hreflang="en" href="https://herosculpt.com/archetype/en/sentinel.html">
+  <link rel="alternate" hreflang="es" href="https://herosculpt.com/archetype/es/sentinel.html">
+  <meta property="og:title" content="Creador Sentinel — El Coloso | HeroSculpt">
+  <meta property="og:description" content="Diseña un héroe Sentinel en HeroSculpt, el creador de superhéroes 3D gratuito. Superfuerza, invulnerabilidad y golpe sísmico. Construye y exporta tu personaje.">
+  <meta property="og:url" content="https://herosculpt.com/archetype/es/sentinel.html">
+  <meta property="og:type" content="website">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"Creador Sentinel — El Coloso | HeroSculpt","description":"Diseña un héroe Sentinel en HeroSculpt, el creador de superhéroes 3D gratuito. Superfuerza, invulnerabilidad y golpe sísmico. Construye y exporta tu personaje.","url":"https://herosculpt.com/archetype/es/sentinel.html"}
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0a0a0f;color:#e2e8f0;font-family:system-ui,-apple-system,sans-serif;line-height:1.6}
+    a{color:#d8a23a;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:860px;margin:0 auto;padding:0 20px}
+    nav{background:rgba(10,10,15,0.96);border-bottom:1px solid rgba(216,162,58,0.2);padding:12px 0;position:sticky;top:0;z-index:10}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center}
+    .logo{font-weight:900;font-size:18px;letter-spacing:2px;color:#d8a23a}
+    .nav-link{font-size:12px;letter-spacing:1px;color:#9ca3af}
+    .hero{padding:60px 0 40px;text-align:center}
+    .hero-icon{font-size:64px;margin-bottom:16px}
+    .hero-tag{display:inline-block;font-size:11px;letter-spacing:3px;color:#d8a23a;font-weight:700;margin-bottom:8px}
+    h1{font-size:clamp(32px,6vw,56px);font-weight:900;letter-spacing:3px;color:#f8fafc;margin-bottom:8px}
+    .hero-subtitle{font-size:14px;letter-spacing:2px;color:#9ca3af;margin-bottom:16px}
+    .hero-desc{font-size:16px;color:#cbd5e1;max-width:520px;margin:0 auto 32px}
+    .theme-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+    .tag{background:rgba(216,162,58,0.12);border:1px solid rgba(216,162,58,0.25);color:#d8a23a;font-size:11px;letter-spacing:1.5px;padding:4px 12px;border-radius:20px}
+    .section{padding:32px 0;border-top:1px solid rgba(255,255,255,0.06)}
+    .section-title{font-size:11px;letter-spacing:3px;color:#6b7280;text-transform:uppercase;margin-bottom:20px}
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .stat-row{display:flex;align-items:center;gap:10px}
+    .stat-label{width:80px;font-size:11px;letter-spacing:1px;color:#9ca3af}
+    .stat-bar{flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+    .stat-fill{height:100%;background:#d8a23a;border-radius:3px}
+    .stat-value{width:28px;font-size:11px;color:#9ca3af;text-align:right}
+    .abilities-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ability-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px}
+    .ability-type{font-size:9px;letter-spacing:2px;color:#6b7280;text-transform:uppercase;margin-bottom:4px}
+    .ability-name{font-size:14px;font-weight:700;color:#e2e8f0}
+    .examples{font-size:15px;color:#cbd5e1}
+    .tips-list{display:flex;flex-direction:column;gap:12px}
+    .tip{display:flex;gap:12px;align-items:flex-start}
+    .tip-num{width:22px;height:22px;background:rgba(216,162,58,0.15);border:1px solid rgba(216,162,58,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#d8a23a;flex-shrink:0;margin-top:2px}
+    .tip-text{font-size:15px;color:#cbd5e1}
+    .cta-section{padding:48px 0;text-align:center}
+    .cta-btn{display:inline-block;background:#d8a23a;color:#000;font-weight:900;font-size:14px;letter-spacing:2px;padding:14px 36px;border-radius:6px;text-decoration:none;transition:opacity 0.15s}
+    .cta-btn:hover{opacity:0.88;text-decoration:none}
+    .cta-sub{font-size:12px;color:#6b7280;margin-top:10px}
+    .other-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .other-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;transition:border-color 0.15s;color:inherit}
+    .other-card:hover{border-color:rgba(216,162,58,0.3);text-decoration:none}
+    .other-icon{font-size:20px}
+    .other-name{font-size:12px;font-weight:700;color:#e2e8f0;letter-spacing:1px}
+    .other-title{font-size:10px;color:#6b7280;margin-top:2px}
+    footer{border-top:1px solid rgba(255,255,255,0.06);padding:24px 0;text-align:center;font-size:12px;color:#4b5563}
+    @media(max-width:600px){.stats-grid,.abilities-grid{grid-template-columns:1fr}.other-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a href="/" class="logo">HEROSCULPT</a>
+      <a href="index.html" class="nav-link">← Todos los Arquetipos</a>
+    </div>
+  </nav>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-icon">💪</div>
+      <div class="hero-tag">ARQUETIPO</div>
+      <h1>Sentinel</h1>
+      <div class="hero-subtitle">EL COLOSO</div>
+      <p class="hero-desc">Fuerza bruta y defensa invulnerable. El tipo de personaje más resistente y poderoso del campo de batalla.</p>
+      <div class="theme-tags"><span class="tag">Tank</span><span class="tag">Strength</span><span class="tag">Defense</span></div>
+    </section>
+    <section class="section">
+      <div class="section-title">Estadísticas</div>
+      <div class="stats-grid">
+    <div class="stat-row">
+      <span class="stat-label">Fuerza</span>
+      <div class="stat-bar"><div class="stat-fill" style="width:95%"></div></div>
+      <span class="stat-value">95</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Defensa</span>
+      <div class="stat-bar"><div class="stat-fill" style="width:90%"></div></div>
+      <span class="stat-value">90</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Velocidad</span>
+      <div class="stat-bar"><div class="stat-fill" style="width:60%"></div></div>
+      <span class="stat-value">60</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Intel</span>
+      <div class="stat-bar"><div class="stat-fill" style="width:70%"></div></div>
+      <span class="stat-value">70</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Energía</span>
+      <div class="stat-bar"><div class="stat-fill" style="width:75%"></div></div>
+      <span class="stat-value">75</span>
+    </div></div>
+    </section>
+    <section class="section">
+      <div class="section-title">Habilidades</div>
+      <div class="abilities-grid">
+    <div class="ability-card">
+      <div class="ability-type">Principal</div>
+      <div class="ability-name">Superfuerza</div>
+    </div>
+    <div class="ability-card">
+      <div class="ability-type">Secundaria</div>
+      <div class="ability-name">Invulnerabilidad</div>
+    </div>
+    <div class="ability-card">
+      <div class="ability-type">Definitiva</div>
+      <div class="ability-name">Golpe Sísmico</div>
+    </div>
+    <div class="ability-card">
+      <div class="ability-type">Pasiva</div>
+      <div class="ability-name">Voluntad Inquebrantable</div>
+    </div></div>
+    </section>
+    <section class="section">
+      <div class="section-title">Héroes Famosos</div>
+      <p class="examples">Superman · Hulk · Thor</p>
+    </section>
+    <section class="section">
+      <div class="section-title">Consejos de Diseño</div>
+      <div class="tips-list">
+    <div class="tip">
+      <div class="tip-num">1</div>
+      <div class="tip-text">Superpón armadura pesada sobre un torso musculoso para máxima intimidación.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-num">2</div>
+      <div class="tip-text">Los colores primarios —rojo, azul, dorado— transmiten heroísmo a distancia.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-num">3</div>
+      <div class="tip-text">Prueba sin capa: el Sentinel se ve más sólido con un guardacuello grueso.</div>
+    </div></div>
+    </section>
+    <section class="cta-section">
+      <a href="/?archetype=STRONG" class="cta-btn">Crea tu Sentinel →</a>
+      <div class="cta-sub">Creador 3D gratuito · Sin cuenta requerida</div>
+    </section>
+    <section class="section">
+      <div class="section-title">Explorar Otros Arquetipos</div>
+      <div class="other-grid">
+    <a href="phantom.html" class="other-card">
+      <span class="other-icon">⚖️</span>
+      <div>
+        <div class="other-name">Phantom</div>
+        <div class="other-title">El Guardián</div>
+      </div>
+    </a>
+    <a href="blitz.html" class="other-card">
+      <span class="other-icon">⚡</span>
+      <div>
+        <div class="other-name">Blitz</div>
+        <div class="other-title">El Relámpago</div>
+      </div>
+    </a>
+    <a href="arcane.html" class="other-card">
+      <span class="other-icon">🔮</span>
+      <div>
+        <div class="other-name">Arcane</div>
+        <div class="other-title">El Hechicero</div>
+      </div>
+    </a>
+    <a href="ghost.html" class="other-card">
+      <span class="other-icon">🤖</span>
+      <div>
+        <div class="other-name">Ghost</div>
+        <div class="other-title">El Inventor</div>
+      </div>
+    </a>
+    <a href="titan.html" class="other-card">
+      <span class="other-icon">🦸</span>
+      <div>
+        <div class="other-name">Titan</div>
+        <div class="other-title">El Héroe Perfecto</div>
+      </div>
+    </a>
+    <a href="energy-pro.html" class="other-card">
+      <span class="other-icon">🔥</span>
+      <div>
+        <div class="other-name">Energy Pro</div>
+        <div class="other-title">El Maestro Energético</div>
+      </div>
+    </a></div>
+    </section>
+  </div>
+  <footer>
+    <div class="container">© 2026 HeroSculpt · Crea tu héroe. Imprímelo. Juégalo. · <a href="https://herosculpt.com/archetype/en/sentinel.html">View in English</a></div>
+  </footer>
+</body>
+</html>
