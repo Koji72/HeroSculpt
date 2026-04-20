@@ -49,7 +49,7 @@ const BeltSubmenu: React.FC<BeltSubmenuProps> = ({
         minWidth: 140,
         maxHeight: 'calc(100vh - 16px)',
         overflowY: 'auto',
-        animation: 'submenuAppear 150ms ease',
+
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
       }}
     >

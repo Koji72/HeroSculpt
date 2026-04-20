@@ -38,7 +38,7 @@ const RightHandSubmenu: React.FC<RightHandSubmenuProps> = ({
         padding: '8px',
         zIndex: 150,
         minWidth: 140,
-        animation: 'submenuAppear 150ms ease',
+
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
       }}
     >
