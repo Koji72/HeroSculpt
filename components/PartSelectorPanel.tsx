@@ -172,8 +172,10 @@ const PartSelectorPanel: React.FC<PartSelectorPanelProps> = ({
         const afterCape = assignAdaptiveCapeForTorso(part, afterSymbol, withCape);
 
         const withSuit = { ...afterCape };
-        const currentSuit = selectedParts[PartCategory.SUIT_TORSO];
-        if (currentSuit) withSuit[PartCategory.SUIT_TORSO] = currentSuit;
+        if (activeCategory !== PartCategory.SUIT_TORSO) {
+          const currentSuit = selectedParts[PartCategory.SUIT_TORSO];
+          if (currentSuit) withSuit[PartCategory.SUIT_TORSO] = currentSuit;
+        }
         newPreviewParts = assignAdaptiveSuitTorsoForTorso(part, afterCape, withSuit);
 
         // Adapt chest belt to the new torso (replace with compatible variant or clear if none)
