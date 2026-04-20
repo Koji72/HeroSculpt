@@ -60,9 +60,11 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
     (p) => p.priceUSD > 0 && ownedPartIds.has(p.id)
   ).length;
 
-  const newTotal = configParts
-    .filter((p) => p.priceUSD > 0 && !ownedPartIds.has(p.id))
-    .reduce((sum, p) => sum + p.priceUSD, 0);
+  const newTotal = Math.round(
+    configParts
+      .filter((p) => p.priceUSD > 0 && !ownedPartIds.has(p.id))
+      .reduce((sum, p) => sum + p.priceUSD, 0) * 100
+  ) / 100;
 
   const handleCheckout = async () => {
     if (!isAuthenticated) { onAuthRequired?.(); return; }

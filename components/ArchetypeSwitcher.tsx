@@ -100,6 +100,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
   const [showMore, setShowMore] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const moreRef = useRef<HTMLDivElement>(null);
+  const pendingRef = useRef<HTMLDivElement>(null);
 
   const visible = archetypes.slice(0, MAX_VISIBLE);
   const overflow = archetypes.slice(MAX_VISIBLE);
@@ -124,11 +125,20 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
 
   useEffect(() => {
     if (!pendingId) return;
+    const handleClick = (e: MouseEvent) => {
+      if (pendingRef.current && !pendingRef.current.contains(e.target as Node)) {
+        setPendingId(null);
+      }
+    };
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setPendingId(null);
     };
+    document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, [pendingId]);
 
   const handleChipClick = (id: string) => {
@@ -168,7 +178,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflow: hoveredId || pendingId ? 'visible' : 'hidden', position: 'relative' }}>
       {pendingId && (
-        <div style={{
+        <div ref={pendingRef} style={{
           position: 'absolute',
           top: '100%',
           left: 0,

@@ -8,7 +8,7 @@ export interface Purchase {
   total_price: number;
   purchase_date: string;
   items_count: number;
-  status: 'completed' | 'pending' | 'failed';
+  status: 'completed' | 'pending' | 'failed' | 'cancelled' | 'canceled';
   purchase_items?: PurchaseItem[];
 }
 

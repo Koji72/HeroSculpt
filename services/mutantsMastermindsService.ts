@@ -284,7 +284,7 @@ class MutantsMastermindsService {
     }
 
     // Limpiar caché
-    if (character.userId) this.clearCache(`characters_${character.userId}`);
+    this.clearCache(`characters_${user.id}`);
     this.clearCache(`character_${result.id}`);
 
     return {
@@ -363,9 +363,12 @@ class MutantsMastermindsService {
       if (error) throw new Error(`Error updating campaign: ${error.message}`);
       result = data;
     } else {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Unauthorized');
+
       const { data, error } = await supabase
         .from('mnm_campaigns')
-        .insert(campaignData)
+        .insert({ ...campaignData, gmId: user.id })
         .select()
         .single();
 
@@ -374,7 +377,7 @@ class MutantsMastermindsService {
     }
 
     // Limpiar caché
-    this.clearCache(`campaigns_${campaign.gmId}`);
+    this.clearCache(`campaigns_${result.gmId}`);
     this.clearCache(`campaign_${result.id}`);
 
     return {

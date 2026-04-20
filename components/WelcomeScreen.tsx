@@ -195,7 +195,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             onMouseOver={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
             onMouseOut={e => (e.currentTarget.style.filter = 'brightness(1)')}
           >
-            {pickedId ? `${t('welcome.start.with', lang)} ${pickedId.toUpperCase()} →` : t('welcome.start', lang)}
+            {pickedId ? `${t('welcome.start.with', lang)} ${displayArchetypes.find(a => a.id === pickedId)?.name ?? pickedId.toUpperCase()} →` : t('welcome.start', lang)}
           </button>
         </div>
       </div>

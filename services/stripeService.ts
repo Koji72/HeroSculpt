@@ -8,6 +8,7 @@ const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_URL ?? '';
 let stripePromise: Promise<Stripe | null>;
 
 export const getStripe = () => {
+  if (!STRIPE_PUBLISHABLE_KEY) return Promise.resolve(null);
   if (!stripePromise) {
     stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
   }

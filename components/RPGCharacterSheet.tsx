@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArchetypeId, SelectedParts, RPGCharacterSync } from '../types';
 import { useLang, t } from '../lib/i18n';
-import { syncRPGCharacterFromParts, getPartChangeImpact } from '../lib/archetypeData';
+import { syncRPGCharacterFromParts, getPartChangeImpact, ARCHETYPE_DATA } from '../lib/archetypeData';
 import { areRPGCharactersEqual, arePartsEqual } from '../lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -98,7 +98,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
     removedParts.forEach(partId => {
       const impact = getPartChangeImpact(partId, null, archetypeId);
       Object.entries(impact.statChanges).forEach(([stat, change]) => {
-        totalStatChanges[stat] = (totalStatChanges[stat] || 0) - change;
+        totalStatChanges[stat] = (totalStatChanges[stat] || 0) + change;
       });
       totalRemovedAbilities.push(...impact.removedAbilities);
     });
@@ -136,7 +136,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
   }
 
   const renderStatBar = (stat: string, value: number, maxValue: number = 100) => {
-    const percentage = (value / maxValue) * 100;
+    const percentage = Math.min(100, (value / maxValue) * 100);
     const getColor = (val: number) => {
       if (val >= 90) return 'bg-green-500';
       if (val >= 75) return 'bg-blue-500';
@@ -271,7 +271,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
           {/* Arquetipo y Compatibilidad */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-white font-bold text-lg">{character.archetypeId}</h3>
+              <h3 className="text-white font-bold text-lg">{ARCHETYPE_DATA[character.archetypeId]?.name ?? character.archetypeId}</h3>
               <p className="text-slate-400 text-sm">{t('rpg.archetype', lang)}</p>
             </div>
             <div className="text-right">
@@ -282,7 +282,7 @@ const RPGCharacterSheet: React.FC<RPGCharacterSheetProps> = ({
                   <AlertTriangle className="h-5 w-5 text-yellow-400" />
                 )}
                 <span className="text-white font-bold">
-                  {character.compatibility.score}/100
+                  {Math.min(100, character.compatibility.score)}/100
                 </span>
               </div>
               <p className="text-slate-400 text-sm">{t('rpg.compatibility', lang)}</p>

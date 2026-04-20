@@ -324,8 +324,8 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
     description: 'Artificial being with unique abilities',
     briefDescription: 'Artificial being: robot, AI',
     theme: 'Artificial • Technology • Evolution',
-    colors: 'from-silver-400 to-gray-600',
-    bgColors: 'from-silver-400/20 to-gray-600/20',
+    colors: 'from-slate-400 to-gray-600',
+    bgColors: 'from-slate-400/20 to-gray-600/20',
     icon: '🤖',
     stats: { power: 85, defense: 90, speed: 75, intelligence: 90, energy: 85, charisma: 70 },
     abilities: {
@@ -795,9 +795,10 @@ export function isOptimalPartCombination(
     }
   });
   
-  const isOptimal = score >= selectedParts.length * 8; // 80% de optimización
-  
-  return { isOptimal, score, suggestions };
+  const clampedScore = Math.max(0, Math.min(100, score));
+  const isOptimal = selectedParts.length > 0 && clampedScore >= selectedParts.length * 8;
+
+  return { isOptimal, score: clampedScore, suggestions };
 }
 
 // Generar personaje RPG basado en personalización

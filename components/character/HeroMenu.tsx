@@ -4,6 +4,7 @@ import { useLang, t } from '../../lib/i18n';
 import { Canvas3DRef } from '../3d/Canvas3D';
 import { ModelLoaderRef } from '../3d/ModelLoader';
 import { SelectedParts, ArchetypeId } from '../../types';
+import { ARCHETYPE_DATA } from '../../lib/archetypeData';
 import { ShieldCheckIcon, Cog6ToothIcon, UserIcon, BookOpenIcon } from '../icons';
 
 interface HeroMenuProps {
@@ -150,7 +151,7 @@ const HeroMenu: React.FC<HeroMenuProps> = ({
               )}
             </div>
             <div className="hero-menu-header-subtitle">
-              {selectedArchetype || 'STRONG'}
+              {selectedArchetype ? (ARCHETYPE_DATA[selectedArchetype]?.name ?? selectedArchetype) : ''}
             </div>
           </div>
 

@@ -95,8 +95,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
       const { error } = await supabase
         .from('purchase_items')
         .update({ item_name: editingName.trim() })
-        .eq('id', itemId)
-        .eq('user_id', user.id);
+        .eq('id', itemId);
       
       if (error) {
         throw error;

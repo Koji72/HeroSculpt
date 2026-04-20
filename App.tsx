@@ -141,6 +141,10 @@ const AppContent: React.FC = () => {
   // ✅ ACTIVE STATE based on authentication
   const selectedParts = isAuthenticated ? userSelectedParts : guestSelectedParts;
 
+  // Tracks whether the user has manually modified parts since the last archetype switch.
+  // False by default so the first archetype click never shows a confirmation dialog.
+  const [userHasModifiedParts, setUserHasModifiedParts] = useState(false);
+
   // ✅ CRITICAL FIX: Función que usa el estado correcto según autenticación
   const setSelectedParts = useCallback((newParts: SelectedParts | ((prev: SelectedParts) => SelectedParts)) => {
     if (isAuthenticated) {
@@ -853,6 +857,7 @@ const AppContent: React.FC = () => {
   // Task 6: ArchetypeSwitcher handler
   const handleArchetypeSelect = (id: string) => {
     setSelectedArchetype(id as ArchetypeId);
+    setUserHasModifiedParts(false);
     if (isAuthenticated) {
       setUserSelectedParts({});
     } else {
@@ -962,6 +967,7 @@ const AppContent: React.FC = () => {
   };
 
   const handleSelectPart = useCallback((newSelectedParts: SelectedParts) => {
+    setUserHasModifiedParts(true);
     pushPartsHistory(newSelectedParts);
     setSelectedParts(newSelectedParts);
     // Record recently used per category
@@ -1762,7 +1768,7 @@ const AppContent: React.FC = () => {
           <ArchetypeSwitcher
             archetypes={ARCHETYPES_LIST}
             activeArchetypeId={selectedArchetype ?? ArchetypeId.STRONG}
-            hasUnsavedParts={Object.keys(selectedParts).length > 0}
+            hasUnsavedParts={userHasModifiedParts}
             onSelect={handleArchetypeSelect}
           />
         </div>

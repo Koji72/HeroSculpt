@@ -1210,16 +1210,13 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
           }
 
           // Restore visibility of any original models that were hidden for preview
-          // Only restore if the child is NOT a preview and has a category
-          // Also, ensure it was indeed a hidden original model (not just naturally hidden)
+          // Restore any original (non-preview) model that was hidden for preview.
+          // Do NOT guard with selectedParts check — selectedParts may be {} after archetype
+          // switch while the scene still has the default build loaded, causing all models to
+          // remain permanently hidden after the preview is cleared.
           if (!child.userData.isPreview && childCategory && !child.visible) {
-            const isCurrentlySelected = selectedParts[childCategory]?.id === childPartId; // Only restore if it's the actively selected part
-            if (isCurrentlySelected) {
-              child.visible = true;
-              if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
-            } else {
-              if (import.meta.env.DEV) console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
-            }
+            child.visible = true;
+            if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of original model: ${childPartId || child.name || 'unknown'}`);
           }
         });
 
@@ -1393,19 +1390,12 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
         }
 
         // Restore visibility of any original models that were hidden for preview
-        // Only restore if the child is NOT a preview and has a category
-        // Also, ensure it was indeed a hidden original model (not just naturally hidden)
         if (!child.userData.isPreview && childCategory && !child.visible) {
-          const isCurrentlySelected = selectedParts[childCategory]?.id === childPartId; // Only restore if it's the actively selected part
-          if (isCurrentlySelected) {
-            child.visible = true;
-            if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of selected original model: ${childPartId || child.name || 'unknown'}`);
-          } else {
-            if (import.meta.env.DEV) console.log(`?? CLEAR: NOT restoring visibility of non-selected or non-original model: ${childPartId || child.name || 'unknown'}`);
-          }
+          child.visible = true;
+          if (import.meta.env.DEV) console.log(`??? CLEAR: Restoring visibility of original model: ${childPartId || child.name || 'unknown'}`);
         }
       });
-      
+
       previewModelsToRemove.forEach(model => {
         model.parent?.remove(model);
         // Do NOT dispose — geometry/materials are shared with cache clones.
