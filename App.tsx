@@ -1661,10 +1661,9 @@ const AppContent: React.FC = () => {
 
   const handlePartHover = useCallback((part: Part) => {
     if (characterViewerRef.current?.handlePreviewPartsChange) {
-      // Removed debug log
-      characterViewerRef.current.handlePreviewPartsChange({ [part.category]: part });
+      characterViewerRef.current.handlePreviewPartsChange({ ...selectedParts, [part.category]: part });
     }
-  }, []);
+  }, [selectedParts]);
 
   const handlePartUnhover = useCallback(() => {
     if (characterViewerRef.current?.clearPreview) {
