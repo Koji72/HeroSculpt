@@ -44,7 +44,7 @@ export class SessionStorageService {
         selectedArchetype,
         selectedParts,
         pose: pose || null,
-        lastPoseIndex: lastPoseIndex || 0,
+        lastPoseIndex: lastPoseIndex ?? 0,
         savedPoses: savedPoses || [],
         timestamp: Date.now()
       };
@@ -82,7 +82,7 @@ export class SessionStorageService {
             selectedArchetype: s.selected_archetype as ArchetypeId,
             selectedParts: s.selected_parts as SelectedParts,
             pose: (s.pose as string | null) || null,
-            lastPoseIndex: (s.last_pose_index as number) || 0,
+            lastPoseIndex: (s.last_pose_index as number) ?? 0,
             savedPoses: (s.saved_poses as UserSession['savedPoses']) || [],
             timestamp: new Date(s.updated_at as string).getTime()
           };

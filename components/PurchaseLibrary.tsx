@@ -53,6 +53,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
   }, [isOpen, user?.id, refreshKey]);
 
   const loadPurchases = async () => {
+    if (!user) return;
     setLoading(true);
     setError(null);
     
@@ -368,7 +369,7 @@ const PurchaseLibrary: React.FC<PurchaseLibraryProps> = ({
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-white font-bold text-lg">{purchase.configuration_name}</h4>
                             <span className={`text-sm font-medium ${getStatusColor(purchase.status)}`}>
-                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? t('library.status.completed', lang) : t('library.status.pending', lang)}
+                              {getStatusIcon(purchase.status)} {purchase.status === 'completed' ? t('library.status.completed', lang) : purchase.status === 'cancelled' ? t('library.status.cancelled', lang) : t('library.status.pending', lang)}
                             </span>
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">

@@ -35,17 +35,18 @@ export class NotificationService {
     return NotificationService.instance;
   }
 
-  private constructor() {
-    this.initializeAudioContext();
-  }
+  private constructor() {}
 
-  // 🎵 INICIALIZAR CONTEXTO DE AUDIO
-  private initializeAudioContext(): void {
-    try {
-      this.audioContext = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
-    } catch (error) {
-      if (import.meta.env.DEV) console.warn('Audio context not supported');
+  // 🎵 INICIALIZAR CONTEXTO DE AUDIO (lazy — must be called after a user gesture)
+  private getAudioContext(): AudioContext | null {
+    if (!this.audioContext) {
+      try {
+        this.audioContext = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
+      } catch (error) {
+        if (import.meta.env.DEV) console.warn('Audio context not supported');
+      }
     }
+    return this.audioContext;
   }
 
   // 📡 CONFIGURAR SUSCRIPCIONES EN TIEMPO REAL (llamar tras sign-in con el userId real)
@@ -136,9 +137,11 @@ export class NotificationService {
 
   // 🎵 REPRODUCIR SONIDO DE NOTIFICACIÓN
   private playNotificationSound(type: Notification['type']): void {
-    if (!this.audioContext || !this.shouldPlaySound(type)) {
+    const audioCtx = this.getAudioContext();
+    if (!audioCtx || !this.shouldPlaySound(type)) {
       return;
     }
+    this.audioContext = audioCtx;
 
     try {
       const oscillator = this.audioContext.createOscillator();
@@ -297,7 +300,7 @@ export class NotificationService {
       if (!supabase) return;
       const { error } = await supabase
         .from('notifications')
-        .update({ isRead: true })
+        .update({ is_read: true })
         .eq('id', notificationId)
         .eq('user_id', userId);
 

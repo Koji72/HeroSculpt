@@ -177,13 +177,15 @@ export class UserConfigService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return false;
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('user_configurations')
         .update({ name: newName })
         .eq('id', configId)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .select('id')
+        .single();
 
-      if (error) {
+      if (error || !data) {
         if (import.meta.env.DEV) console.error('Error updating configuration name:', error);
         return false;
       }

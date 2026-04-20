@@ -30,7 +30,6 @@ const PoseNavigation: React.FC<PoseNavigationProps> = ({
   const [showPoseSelector, setShowPoseSelector] = useState(false);
   const [editingPoseIndex, setEditingPoseIndex] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
-  const [showNameInput, setShowNameInput] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => { setConfirmingDelete(false); }, [currentPoseIndex]);

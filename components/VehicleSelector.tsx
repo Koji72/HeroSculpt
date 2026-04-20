@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { VehiclePart, VehicleType, VehicleSize, VehiclePosition, ExtendedPartCategory, ArchetypeId, PartCategory } from '../types';
-
-const VEHICLE_CATEGORY = ExtendedPartCategory.VEHICLE as unknown as PartCategory;
 import { Card } from './ui/card';
 import { GamingButton } from './ui/gaming-button';
 import { useLang, t } from '../lib/i18n';
+
+const VEHICLE_CATEGORY = ExtendedPartCategory.VEHICLE as unknown as PartCategory;
 
 interface VehicleSelectorProps {
   selectedVehicle?: VehiclePart;

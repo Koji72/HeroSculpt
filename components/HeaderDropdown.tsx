@@ -41,7 +41,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
 
       const rect = trigger.getBoundingClientRect();
       setPosition({
-        top: rect.bottom + window.scrollY + 8, // 8px de margen
+        top: rect.bottom + 8, // 8px de margen (position:fixed uses viewport coords)
         left: rect.right - 224 // 224px = w-56 (ancho del dropdown)
       });
     };

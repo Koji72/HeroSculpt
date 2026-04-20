@@ -146,7 +146,7 @@ const ExtendedAssetsPanel: React.FC<ExtendedAssetsPanelProps> = ({
           <h2 className="text-xl font-bold text-white">{t('assets.title', lang)}</h2>
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-300">
-              Total: <span className="text-green-400 font-medium">${getTotalPrice().toFixed(2)}</span>
+              {t('assets.total', lang)} <span className="text-green-400 font-medium">${getTotalPrice().toFixed(2)}</span>
             </div>
             <GamingButton
               variant="ghost"

@@ -606,10 +606,10 @@ const MaterialConfigurator: React.FC<MaterialConfiguratorProps> = ({
         icon: '⚡',
         category: 'metal',
         material: new THREE.MeshPhysicalMaterial({
-          color: 0xffd700,
-          roughness: 0.1,
+          color: 0xC0C0C0,
+          roughness: 0.3,
           metalness: 1.0,
-          clearcoat: 0.9,
+          clearcoat: 0.5,
         })
       },
       {

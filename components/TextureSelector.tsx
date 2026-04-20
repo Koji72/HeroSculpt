@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { useLang, t } from '../lib/i18n';
@@ -27,6 +27,8 @@ const TextureSelector: React.FC<TextureSelectorProps> = ({
 }) => {
   const { lang } = useLang();
   const [activeTexture, setActiveTexture] = useState(selectedTexture);
+
+  useEffect(() => { setActiveTexture(selectedTexture); }, [selectedTexture]);
 
   const handleTextureSelect = (textureType: string) => {
     setActiveTexture(textureType);

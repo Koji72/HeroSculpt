@@ -66,6 +66,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
 
   const handleCheckout = async () => {
     if (!isAuthenticated) { onAuthRequired?.(); return; }
+    if (newTotal === 0 && cartItems.length === 0) return;
     setCheckoutError(null);
     setIsProcessing(true);
     try {
@@ -325,13 +326,13 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
           {isAuthenticated ? (
             <button
               onClick={handleCheckout}
-              disabled={isProcessing}
+              disabled={isProcessing || (newTotal === 0 && cartItems.length === 0)}
               style={{
                 width: '100%', padding: '10px',
-                background: isProcessing ? 'var(--color-border)' : 'var(--color-accent)',
+                background: (isProcessing || (newTotal === 0 && cartItems.length === 0)) ? 'var(--color-border)' : 'var(--color-accent)',
                 border: 'none', borderRadius: 'var(--radius)',
                 fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2,
-                color: '#111', cursor: isProcessing ? 'not-allowed' : 'pointer',
+                color: '#111', cursor: (isProcessing || (newTotal === 0 && cartItems.length === 0)) ? 'not-allowed' : 'pointer',
                 marginBottom: 6,
               }}
             >

@@ -103,7 +103,7 @@ export class PurchaseAnalysisService {
 
       const partPrice = currentPart.freeForAll ? 0 : (currentPart.priceUSD || 0);
 
-      if (currentPart.freeForAll) {
+      if (currentPart.freeForAll || partPrice === 0) {
         // Starter/free part — always $0, never charged
         if (import.meta.env.DEV) console.log(`🎁 Parte gratuita: ${category} - ${currentPart.name}`);
       } else if (!existingPart) {

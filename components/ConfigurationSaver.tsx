@@ -114,6 +114,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
       }
     };
     reader.readAsText(file);
+    event.target.value = '';
   };
 
   const sortedConfigs = [...savedConfigs].sort((a, b) => {
@@ -148,7 +149,7 @@ const ConfigurationSaver: React.FC<ConfigurationSaverProps> = ({
                   placeholder={t('saver.name_placeholder', lang)}
                   value={newConfigName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewConfigName(e.target.value)}
-                  onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleSaveConfiguration()}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => !e.nativeEvent.isComposing && e.key === 'Enter' && handleSaveConfiguration()}
                 />
                 <div className="flex gap-2">
                   <Button onClick={handleSaveConfiguration} disabled={!newConfigName.trim()}>

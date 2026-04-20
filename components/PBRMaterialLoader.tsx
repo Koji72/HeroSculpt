@@ -38,6 +38,7 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
   
   const textureLoader = useRef(new THREE.TextureLoader());
   const gltfLoader = useRef(new GLTFLoader());
+  const activeMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
   
   // Función para cargar textura con configuración optimizada
   const loadTexture = async (url: string): Promise<THREE.Texture> => {
@@ -169,7 +170,8 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
       // Aplicar material al modelo
       await applyMaterialToModel(gltf.scene, material);
       
-      // Notificar que el material está listo
+      // Track for cleanup and notify
+      activeMaterialRef.current = material;
       onMaterialLoaded?.(material);
       
       if (import.meta.env.DEV) console.log(`🎨 Material PBR cargado: ${materialData.name}`);
@@ -186,6 +188,15 @@ const PBRMaterialLoader: React.FC<PBRMaterialLoaderProps> = ({
     if (modelUrl && materialData) {
       loadModelWithMaterial();
     }
+    return () => {
+      const m = activeMaterialRef.current;
+      if (m) {
+        [m.map, m.metalnessMap, m.roughnessMap, m.normalMap, m.emissiveMap, m.aoMap]
+          .forEach(t => t?.dispose());
+        m.dispose();
+        activeMaterialRef.current = null;
+      }
+    };
   }, [modelUrl, materialData]);
   
   return (
