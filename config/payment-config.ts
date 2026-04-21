@@ -4,7 +4,7 @@
 export const PAYMENT_CONFIG = {
   // 🎁 MODO GRATIS (actualmente activo)
   FREE_MODE: {
-    enabled: true,
+    enabled: false,
     description: 'Todos los modelos son gratuitos',
     userMessage: '🎁 ¡Descarga gratuita para usuarios registrados!',
     guestMessage: '📧 ¡Descarga gratuita enviada por email!',
@@ -14,7 +14,7 @@ export const PAYMENT_CONFIG = {
 
   // 💳 MODO PAGOS (preparado para futuro)
   PAID_MODE: {
-    enabled: false, // Cambiar a true para activar pagos
+    enabled: true,
     description: 'Modelos con precio real',
     userMessage: '💳 Procesando pago con Stripe...',
     guestMessage: '💳 Procesando pago como invitado...',
