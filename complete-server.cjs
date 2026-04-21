@@ -1,3 +1,5 @@
+require('dotenv').config({ path: require('path').join(__dirname, '.env.server') });
+
 const express = require('express');
 const cors = require('cors');
 const { Resend } = require('resend');
@@ -7,6 +9,11 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const Joi = require('joi');
 const winston = require('winston');
+const Stripe = require('stripe');
+
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : null;
 
 // Importar dependencias para procesamiento 3D
 let THREE;
@@ -99,16 +106,20 @@ const limiter = rateLimit({
 // Rate limiting específico para endpoints sensibles
 const emailLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hora
-  max: 10, // máximo 10 emails por hora por IP
-  message: {
-    error: 'Demasiados emails enviados, intenta más tarde',
-    retryAfter: '1 hora'
-  }
+  max: 10,
+  message: { error: 'Demasiados emails enviados, intenta más tarde', retryAfter: '1 hora' }
+});
+
+const stripeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { error: 'Demasiados intentos de pago, intenta más tarde' }
 });
 
 // Aplicar rate limiting
 app.use(limiter);
 app.use('/send-email', emailLimiter);
+app.use('/api/create-checkout-session', stripeLimiter);
 
 // 3. Validación Joi para todos los endpoints
 const emailSchema = Joi.object({
@@ -185,12 +196,20 @@ app.use((req, res, next) => {
 });
 
 // 6. Configurar CORS de forma más estricta
+const ALLOWED_ORIGINS = [
+  'http://localhost:5177',
+  'http://localhost:3000',
+  'https://darkslategrey-ape-448372.hostingersite.com',
+  'https://herosculpt.loca.lt',
+  process.env.ALLOWED_ORIGIN,
+].filter(Boolean);
+
 app.use(cors({
-  origin: ['http://localhost:5177', 'http://localhost:3000'],
+  origin: ALLOWED_ORIGINS,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400 // 24 horas
+  maxAge: 86400
 }));
 
 // 7. Validación de tamaño de payload
@@ -263,6 +282,52 @@ const sanitizeConfiguration = (config) => {
   }
   return sanitized;
 };
+
+// ✅ ENDPOINT: Stripe checkout session
+app.post('/api/create-checkout-session', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payment processing not configured' });
+  }
+
+  const { cartItems, userEmail } = req.body;
+
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
+    return res.status(400).json({ error: 'Invalid cart items' });
+  }
+
+  if (!userEmail || typeof userEmail !== 'string') {
+    return res.status(400).json({ error: 'User email required' });
+  }
+
+  try {
+    const lineItems = cartItems.map((item) => ({
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: item.name || 'HeroSculpt Model',
+          description: item.archetype ? `Archetype: ${item.archetype}` : undefined,
+        },
+        unit_amount: Math.max(0, Math.round((item.price || 0) * 100)),
+      },
+      quantity: Math.max(1, item.quantity || 1),
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      mode: 'payment',
+      customer_email: userEmail,
+      success_url: process.env.STRIPE_SUCCESS_URL || 'https://darkslategrey-ape-448372.hostingersite.com?success=true',
+      cancel_url: process.env.STRIPE_CANCEL_URL || 'https://darkslategrey-ape-448372.hostingersite.com?canceled=true',
+    });
+
+    securityLogger.info('Stripe session created', { ip: req.ip, sessionId: session.id });
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    securityLogger.error('Stripe checkout error', { ip: req.ip, error: error.message });
+    res.status(500).json({ error: 'Error creating payment session' });
+  }
+});
 
 // ✅ ENDPOINT: Health check
 app.get('/health', (req, res) => {

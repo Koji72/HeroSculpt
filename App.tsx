@@ -60,6 +60,7 @@ import { STRONG_HANDS_PARTS } from './src/parts/strongHandsParts';
 import PartsDebugPanel from './components/PartsDebugPanel';
 import LightsPanel from './components/LightsPanel';
 import PAYMENT_CONFIG from './config/payment-config';
+import { createStripeCheckoutSession, redirectToCheckout } from './services/stripeService';
 
 // Hacer disponible para debugging en consola
 
@@ -1298,7 +1299,19 @@ const AppContent: React.FC = () => {
   const handleCartCheckout = async (items: CartItem[]) => {
     if (items.length === 0) return;
 
-    // 🎯 SISTEMA HÍBRIDO: Gratis para usuarios registrados, Stripe preparado para el futuro
+    // 💳 PAID MODE: route through Stripe
+    if (!PAYMENT_CONFIG.FREE_MODE.enabled) {
+      if (!isAuthenticated || !user) { setIsAuthModalOpen(true); return; }
+      try {
+        const sessionId = await createStripeCheckoutSession(items, user.email ?? '');
+        await redirectToCheckout(sessionId);
+      } catch (error) {
+        if (import.meta.env.DEV) console.error('Stripe checkout error:', error);
+      }
+      return;
+    }
+
+    // 🎯 FREE MODE
     if (isAuthenticated && user) {
       // ✅ USUARIO REGISTRADO: Proceso gratuito
       try {
