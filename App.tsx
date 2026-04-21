@@ -1313,12 +1313,8 @@ const AppContent: React.FC = () => {
     // 💳 PAID MODE: route through Stripe
     if (!PAYMENT_CONFIG.FREE_MODE.enabled) {
       if (!isAuthenticated || !user) { setIsAuthModalOpen(true); return; }
-      try {
-        const sessionId = await createStripeCheckoutSession(items, user.email ?? '', user.id);
-        await redirectToCheckout(sessionId);
-      } catch (error) {
-        if (import.meta.env.DEV) console.error('Stripe checkout error:', error);
-      }
+      const sessionId = await createStripeCheckoutSession(items, user.email ?? '', user.id);
+      await redirectToCheckout(sessionId);
       return;
     }
 
