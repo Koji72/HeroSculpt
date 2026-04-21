@@ -340,7 +340,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.45;
     renderer.setClearColor('#0a1020', 1);
     currentMount.appendChild(renderer.domElement);
     rendererRef.current = renderer;
@@ -656,7 +656,7 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                 const m = mat.clone();
                 m.transparent = false;
                 m.opacity = 1;
-                m.color.setHex(0x8a94a1);
+                m.color.setHex(0xc2ceda);
                 m.roughness = 0.35;
                 m.metalness = 0.65;
                 return m;
@@ -666,8 +666,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
               m.transparent = false;
               m.opacity = 1;
               m.color.setHex(0x8a94a1);
-              m.roughness = 0.92;
-              m.metalness = 0.04;
+              m.roughness = 0.35;
+              m.metalness = 0.65;
               child.material = m;
             }
           }
