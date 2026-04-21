@@ -2178,10 +2178,10 @@ const AppContent: React.FC = () => {
             onClick={handleNextPose}>▶</button>
           <button
             className="btn-comic btn-ghost"
-            style={{ width: 30, height: 30, padding: 0, fontSize: 16, borderRadius: 6 }}
+            style={{ padding: '4px 10px', fontSize: 10, fontWeight: 800, letterSpacing: 1, borderRadius: 6, whiteSpace: 'nowrap' }}
             title={t('pose.save_new', lang)}
             onClick={handleSaveNewPose}
-          >+</button>
+          >+ {t('pose.save_new', lang)}</button>
           {user && savedPoses?.[currentPoseIndex ?? 0] && (
             <button
               className="btn-comic btn-ghost"

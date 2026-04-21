@@ -99,7 +99,7 @@ const dict = {
   'pose.save_as_new': { en: '💾 Save', es: '💾 Guardar' },
   'pose.delete_confirm': { en: 'Delete this pose?', es: '¿Borrar esta pose?' },
   'pose.save_as_new_title': { en: 'Save as new editable pose', es: 'Guardar como nueva pose editable' },
-  'pose.save_new': { en: 'Save as new pose', es: 'Guardar como nueva pose' },
+  'pose.save_new': { en: 'Save Pose', es: 'Guardar Pose' },
 
   // Right panel tabs
   'rtab.stats': { en: 'STATS', es: 'STATS' },
