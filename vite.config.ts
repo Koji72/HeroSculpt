@@ -9,6 +9,16 @@ export default defineConfig({
   },
   build: {
     minify: 'esbuild',
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-three': ['three'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+        },
+      },
+    },
   },
   server: {
     port: 5177,
