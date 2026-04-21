@@ -34,12 +34,7 @@ const FACTION_DATA = {
     icon: '🤖',
     descKey: 'faction.desc.tech' as const
   },
-  [ArchetypeId.PARAGON]: {
-    name: 'ETERNAL_DYNASTIES',
-    icon: '🦸',
-    descKey: 'faction.desc.paragon' as const
-  },
-  [ArchetypeId.ENERGY_PRO]: {
+[ArchetypeId.ENERGY_PRO]: {
     name: 'ENERGY_CORE',
     icon: '🔥',
     descKey: 'faction.desc.energy_pro' as const

@@ -32,8 +32,7 @@ const ARCHETYPES = [
   { id: 'STRONG',     label: 'SENTINEL', abbr: '',   color: '#ff9063', img: true },
   { id: 'JUSTICIERO', label: 'PHANTOM',  abbr: 'PH', color: '#00e3fd', img: false },
   { id: 'MYSTIC',     label: 'ARCANE',   abbr: 'AR', color: '#ffe792', img: false },
-  { id: 'PARAGON',    label: 'TITAN',    abbr: 'TT', color: '#ff716c', img: false },
-  { id: 'SPEEDSTER',  label: 'BLITZ',    abbr: 'BL', color: '#a855f7', img: false },
+{ id: 'SPEEDSTER',  label: 'BLITZ',    abbr: 'BL', color: '#a855f7', img: false },
   { id: 'TECH',       label: 'GHOST',    abbr: 'GH', color: '#26e6ff', img: false },
 ];
 

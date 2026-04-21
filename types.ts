@@ -7,8 +7,7 @@ export enum ArchetypeId {
   TECH = 'TECH',
   
   // New character types
-  PARAGON = 'PARAGON',
-  ENERGY_PRO = 'ENERGY_PRO',
+ENERGY_PRO = 'ENERGY_PRO',
   WEAPON_MASTER = 'WEAPON_MASTER',
   SHAPESHIFTER = 'SHAPESHIFTER',
   MENTALIST = 'MENTALIST',

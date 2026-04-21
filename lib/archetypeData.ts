@@ -125,30 +125,6 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
   },
 
   // Nuevos tipos de personajes
-  [ArchetypeId.PARAGON]: {
-    id: ArchetypeId.PARAGON,
-    name: 'TITAN',
-    title: 'THE PERFECT HERO',
-    description: 'The ultimate hero with balanced powers',
-    briefDescription: 'Super strength, flight, invulnerability',
-    theme: 'Heroism • Balance • Perfection',
-    colors: 'from-red-500 to-blue-600',
-    bgColors: 'from-red-500/20 to-blue-600/20',
-    icon: '🦸',
-    stats: { power: 90, defense: 85, speed: 85, intelligence: 80, energy: 85, charisma: 90 },
-    abilities: {
-      primary: 'Heroic Strike',
-      secondary: 'Flight',
-      ultimate: 'Paragon\'s Justice',
-      passive: 'Inspiring Hero'
-    },
-    famousExamples: ['Superman', 'Captain Marvel', 'Wonder Woman'],
-    associatedFactions: [Faction.POWERHOUSE, Faction.ETERNAL_DYNASTIES],
-    prefix: 'paragon',
-    palette: 'red-blue',
-    iconicPieces: 'cape, symbol, heroic stance'
-  },
-
   [ArchetypeId.ENERGY_PRO]: {
     id: ArchetypeId.ENERGY_PRO,
     name: 'ENERGY PRO',
@@ -498,13 +474,6 @@ export const ARCHETYPE_PHYSICAL_ATTRIBUTES: Record<ArchetypeId, PhysicalAttribut
     weight: 'medium',
     stance: 'erect',
     movement: 'rigid'
-  },
-  [ArchetypeId.PARAGON]: {
-    build: 'muscular',
-    height: 'tall',
-    weight: 'heavy',
-    stance: 'erect',
-    movement: 'fluid'
   },
   [ArchetypeId.ENERGY_PRO]: {
     build: 'athletic',
