@@ -59,6 +59,7 @@ import { STRONG_CHEST_BELT_PARTS } from './src/parts/strongChestBeltParts';
 import { STRONG_HANDS_PARTS } from './src/parts/strongHandsParts';
 import PartsDebugPanel from './components/PartsDebugPanel';
 import LightsPanel from './components/LightsPanel';
+import PAYMENT_CONFIG from './config/payment-config';
 
 // Hacer disponible para debugging en consola
 
@@ -1243,7 +1244,7 @@ const AppContent: React.FC = () => {
       id: `config_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name: configName,
       category: 'Configuration Completa',
-      price: configPrice,
+      price: PAYMENT_CONFIG.FREE_MODE.enabled ? 0 : configPrice,
       thumbnail: configThumbnail,
       quantity: 1,
       configuration: { ...configuration },

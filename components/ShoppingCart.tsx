@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SelectedParts, Part, PartCategory, CartItem } from '../types';
 import { useLang, t } from '../lib/i18n';
+import PAYMENT_CONFIG from '../config/payment-config';
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -66,9 +67,13 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
       .reduce((sum, p) => sum + p.priceUSD, 0) * 100
   ) / 100;
 
+  const isFree = PAYMENT_CONFIG.FREE_MODE.enabled;
+  const effectiveTotal = isFree ? 0 : newTotal;
+
   const handleCheckout = async () => {
     if (!isAuthenticated) { onAuthRequired?.(); return; }
-    if (newTotal === 0 && cartItems.length === 0) return;
+    if (!isFree && effectiveTotal === 0 && cartItems.length === 0) return;
+    if (configParts.length === 0 && cartItems.length === 0) return;
     setCheckoutError(null);
     setIsProcessing(true);
     try {
@@ -76,7 +81,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
         id: crypto.randomUUID(),
         name: t('cart.hero_name', lang),
         category: 'hero',
-        price: newTotal,
+        price: effectiveTotal,
         thumbnail: configParts[0]?.thumbnail ?? '',
         quantity: 1,
         configuration: currentConfiguration,
@@ -221,14 +226,9 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                           <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 700 }}>{t('cart.owned', lang)}</span>
                         )}
                         {isNew && (
-                          <>
-                            <div style={{ fontSize: 12, color: 'var(--color-accent)', fontWeight: 700 }}>
-                              ${part.priceUSD.toFixed(2)}
-                            </div>
-                            <div style={{ fontSize: 9, color: 'var(--color-text-faint)', textTransform: 'uppercase' }}>
-                              {t('cart.new_badge', lang)}
-                            </div>
-                          </>
+                          <div style={{ fontSize: 12, color: isFree ? '#22c55e' : 'var(--color-accent)', fontWeight: 700 }}>
+                            {isFree ? t('cart.free', lang) : `$${part.priceUSD.toFixed(2)}`}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -247,16 +247,10 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{t('cart.total_new', lang)}</span>
-                    <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: 'var(--color-accent)', letterSpacing: 1 }}>
-                      {t('cart.total_label', lang)} ${newTotal.toFixed(2)}
+                    <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: isFree ? '#22c55e' : 'var(--color-accent)', letterSpacing: 1 }}>
+                      {isFree ? t('cart.free', lang) : `${t('cart.total_label', lang)} $${newTotal.toFixed(2)}`}
                     </span>
                   </div>
-                  {isAuthenticated && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{t('cart.discount', lang)}</span>
-                      <span style={{ fontFamily: 'var(--font-comic)', fontSize: 14, color: '#22c55e', letterSpacing: 1 }}>{t('cart.free', lang)}</span>
-                    </div>
-                  )}
                 </div>
               )}
             </>
@@ -328,13 +322,13 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
           {isAuthenticated ? (
             <button
               onClick={handleCheckout}
-              disabled={isProcessing || (newTotal === 0 && cartItems.length === 0)}
+              disabled={isProcessing || (configParts.length === 0 && cartItems.length === 0)}
               style={{
                 width: '100%', padding: '10px',
-                background: (isProcessing || (newTotal === 0 && cartItems.length === 0)) ? 'var(--color-border)' : 'var(--color-accent)',
+                background: (isProcessing || (configParts.length === 0 && cartItems.length === 0)) ? 'var(--color-border)' : 'var(--color-accent)',
                 border: 'none', borderRadius: 'var(--radius)',
                 fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2,
-                color: '#111', cursor: (isProcessing || (newTotal === 0 && cartItems.length === 0)) ? 'not-allowed' : 'pointer',
+                color: '#111', cursor: (isProcessing || (configParts.length === 0 && cartItems.length === 0)) ? 'not-allowed' : 'pointer',
                 marginBottom: 6,
               }}
             >
