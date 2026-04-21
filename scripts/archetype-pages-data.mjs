@@ -1,4 +1,4 @@
-export const SITE_DOMAIN = 'https://herosculpt.app';
+export const SITE_DOMAIN = 'https://darkslategrey-ape-448372.hostingersite.com';
 
 export const ARCHETYPES = [
   {
