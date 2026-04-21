@@ -361,8 +361,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
       line_items: lineItems,
       mode: 'payment',
       customer_email: userEmail,
-      success_url: process.env.STRIPE_SUCCESS_URL || 'https://darkslategrey-ape-448372.hostingersite.com?success=true',
-      cancel_url: process.env.STRIPE_CANCEL_URL || 'https://darkslategrey-ape-448372.hostingersite.com?canceled=true',
+      success_url: process.env.STRIPE_SUCCESS_URL || `${req.headers.origin || 'https://darkslategrey-ape-448372.hostingersite.com'}?success=true`,
+      cancel_url: process.env.STRIPE_CANCEL_URL || `${req.headers.origin || 'https://darkslategrey-ape-448372.hostingersite.com'}?canceled=true`,
     });
 
     // Store pending purchase so webhook can save it after payment
@@ -1296,6 +1296,15 @@ async function sendPurchaseConfirmationEmail(toEmail, cartItems, totalPrice) {
   } catch (err) {
     securityLogger.error('sendPurchaseConfirmationEmail error', { error: err.message });
   }
+}
+
+// Serve frontend static files (SPA fallback — must be AFTER all API routes)
+const DIST_PATH = path.join(__dirname, 'dist');
+if (fs.existsSync(DIST_PATH)) {
+  app.use(express.static(DIST_PATH));
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(DIST_PATH, 'index.html'));
+  });
 }
 
 // Iniciar servidor

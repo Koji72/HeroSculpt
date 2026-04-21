@@ -26,7 +26,7 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
-          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          VITE_BACKEND_URL: ""
           NODE_ENV: production
 
       - name: Create archive
@@ -86,6 +86,10 @@ jobs:
             /usr/local/bin/deploy-herosculpt.sh
             printf 'STRIPE_SECRET_KEY=%s\nSTRIPE_WEBHOOK_SECRET=%s\nRESEND_API_KEY=%s\nSUPABASE_SERVICE_KEY=%s\n' "$STRIPE_SECRET_KEY" "$STRIPE_WEBHOOK_SECRET" "$RESEND_API_KEY" "$SUPABASE_SERVICE_KEY" > /docker/openclaw-cd97/data/.openclaw/workspace/HeroSculpt/.env.server
             docker exec openclaw-cd97-openclaw-1 pkill -f "node complete-server" 2>/dev/null || true
+            docker exec openclaw-cd97-openclaw-1 pkill -f "serve.*5177" 2>/dev/null || true
+            docker exec openclaw-cd97-openclaw-1 pkill -f "lt --port" 2>/dev/null || true
             sleep 2
             docker exec -d openclaw-cd97-openclaw-1 bash -c "cd /data/.openclaw/workspace/HeroSculpt && node complete-server.cjs >> /tmp/herosculpt-backend.log 2>&1"
+            sleep 3
+            docker exec -d openclaw-cd97-openclaw-1 bash -c "nohup npx localtunnel --port 3001 --subdomain herosculpt > /tmp/herosculpt-tunnel.log 2>&1 &"
           command_timeout: 5m
