@@ -307,7 +307,7 @@ const dict = {
   'cart.hero_name': { en: 'My Hero', es: 'Mi Héroe' },
   'cart.total_label': { en: 'TOTAL', es: 'TOTAL' },
   'cart.checkout_error': { en: 'Error processing payment. Please try again.', es: 'Error al procesar el pago. Por favor intenta de nuevo.' },
-  'cart.save_hero': { en: 'Save Hero', es: 'Guardar Héroe' },
+  'cart.save_hero': { en: 'Save to Library', es: 'Guardar en Biblioteca' },
   'cart.add_build': { en: '+ Add Current Build', es: '+ Añadir Build Actual' },
 
   // HeaderDropdown

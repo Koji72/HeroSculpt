@@ -211,7 +211,7 @@ const AppContent: React.FC = () => {
   const [sessionInfo, setSessionInfo] = useState<{ hasSession: boolean; lastSaved?: string; source?: 'supabase' | 'localStorage' }>({ hasSession: false });
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isSavingLastPose, setIsSavingLastPose] = useState(false);
-  const [characterName, setCharacterName] = useState<string>("My Hero");
+  const [characterName, setCharacterName] = useState<string>(() => localStorage.getItem('herosculpt_hero_name') || 'My Hero');
   const [rpgCharacter, setRpgCharacter] = useState<RPGCharacterSync | null>(null);
 
   // Estados del carrito de compras
@@ -430,7 +430,7 @@ const AppContent: React.FC = () => {
           if (Object.keys(prev).length > 0) return prev;
           return latestPose.configuration;
         });
-        setCharacterName(latestPose.name);
+        setCharacterName(localStorage.getItem('herosculpt_hero_name') || 'My Hero');
       } else {
         setSavedPoses([]);
         setCurrentPoseIndex(0);
@@ -438,7 +438,7 @@ const AppContent: React.FC = () => {
           if (Object.keys(prev).length > 0) return prev;
           return DEFAULT_STRONG_BUILD;
         });
-        setCharacterName('New Hero');
+        setCharacterName(localStorage.getItem('herosculpt_hero_name') || 'My Hero');
       }
 
       return allPoses;
@@ -1838,8 +1838,8 @@ const AppContent: React.FC = () => {
             <input
               type="text"
               value={characterName}
-              onChange={e => setCharacterName(e.target.value)}
-              onBlur={e => { if (!e.target.value.trim()) setCharacterName(t('topbar.heroplaceholder', lang)); }}
+              onChange={e => { setCharacterName(e.target.value); localStorage.setItem('herosculpt_hero_name', e.target.value); }}
+              onBlur={e => { if (!e.target.value.trim()) { setCharacterName(t('topbar.heroplaceholder', lang)); localStorage.setItem('herosculpt_hero_name', t('topbar.heroplaceholder', lang)); } }}
               maxLength={28}
               placeholder="..."
               style={{
@@ -2156,7 +2156,7 @@ const AppContent: React.FC = () => {
                   overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 130,
                 }}
               >
-                {savedPoses?.[currentPoseIndex ?? 0]?.name || t('bottom.pose', lang)}
+                {(() => { const poseName = savedPoses?.[currentPoseIndex ?? 0]?.name; return (poseName && poseName !== 'Configuration Guardada' && poseName !== 'My Hero') ? poseName : (characterName || t('bottom.pose', lang)); })()}
               </span>
             )}
             <span style={{ fontSize: 10, color: 'var(--color-text-faint)', letterSpacing: 0.5 }}>
