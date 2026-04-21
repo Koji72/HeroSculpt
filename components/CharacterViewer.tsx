@@ -657,8 +657,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
                 m.transparent = false;
                 m.opacity = 1;
                 m.color.setHex(0x8a94a1);
-                m.roughness = 0.92;
-                m.metalness = 0.04;
+                m.roughness = 0.35;
+                m.metalness = 0.65;
                 return m;
               });
             } else {
