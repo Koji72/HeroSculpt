@@ -253,6 +253,9 @@ const AppContent: React.FC = () => {
   // read the true current value. useState would batch true→false in one render,
   // meaning the effect would never see the flag as true.
   const isNavigatingPosesRef = useRef(false);
+  // Stores the configuration of the current pose as it was when last navigated to / loaded.
+  // Used by handleSaveNewPose to restore the previous pose so it doesn't become a duplicate.
+  const currentPoseOriginalConfigRef = useRef<SelectedParts>({});
   // Always holds the latest selectedParts so the 800ms pose-save callback reads fresh data.
   const selectedPartsRef = useRef(selectedParts);
 
@@ -426,6 +429,7 @@ const AppContent: React.FC = () => {
         const latestPose = allPoses[lastPoseIndex];
         setSavedPoses(allPoses);
         setCurrentPoseIndex(lastPoseIndex);
+        currentPoseOriginalConfigRef.current = latestPose.configuration;
         setSelectedParts(prev => {
           if (Object.keys(prev).length > 0) return prev;
           return latestPose.configuration;
@@ -1489,6 +1493,7 @@ const AppContent: React.FC = () => {
     setCurrentPoseIndex(newIndex);
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
+    currentPoseOriginalConfigRef.current = newPose.configuration;
     // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
   };
 
@@ -1505,6 +1510,7 @@ const AppContent: React.FC = () => {
     setCurrentPoseIndex(newIndex);
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
+    currentPoseOriginalConfigRef.current = newPose.configuration;
     // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
   };
 
@@ -1522,6 +1528,7 @@ const AppContent: React.FC = () => {
     characterViewerRef.current?.resetState();
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
+    currentPoseOriginalConfigRef.current = newPose.configuration;
     // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
   };
 
@@ -1557,6 +1564,12 @@ const AppContent: React.FC = () => {
     const poseName = savedPoses.length === 0
       ? characterName
       : `${characterName} ${savedPoses.length + 1}`;
+
+    // Capture before the async call — these may be stale after await
+    const prevPoseIndex = currentPoseIndex;
+    const prevOriginalConfig = { ...currentPoseOriginalConfigRef.current };
+    const newPoseIndex = savedPoses.length;
+
     try {
       const saved = await UserConfigService.saveConfiguration({
         name: poseName,
@@ -1568,15 +1581,36 @@ const AppContent: React.FC = () => {
       const newPose = {
         id: `saved-${saved.id}`,
         name: poseName,
-        configuration: selectedParts,
+        configuration: { ...selectedParts },
         source: 'saved' as const,
         date: saved.created_at ?? new Date().toISOString(),
       };
+
+      isNavigatingPosesRef.current = true;
+
+      // Restore the previous pose to its original (pre-edit) config so the new pose
+      // doesn't become a duplicate, then append the new pose.
       setSavedPoses(prev => {
-        const next = [...prev, newPose];
-        setCurrentPoseIndex(next.length - 1);
+        const next = [...prev];
+        if (next[prevPoseIndex] && Object.keys(prevOriginalConfig).length > 0) {
+          next[prevPoseIndex] = { ...next[prevPoseIndex], configuration: prevOriginalConfig };
+        }
+        next.push(newPose);
         return next;
       });
+      setCurrentPoseIndex(newPoseIndex);
+      currentPoseOriginalConfigRef.current = { ...selectedParts };
+
+      // Restore the previous pose's DB record if auto-sync had overwritten it
+      const prevPose = savedPoses[prevPoseIndex];
+      if (prevPose && Object.keys(prevOriginalConfig).length > 0 &&
+          JSON.stringify(prevOriginalConfig) !== JSON.stringify(selectedParts)) {
+        const prevConfigId = prevPose.id.replace('saved-', '');
+        UserConfigService.updateConfiguration(prevConfigId, {
+          name: prevPose.name,
+          selected_parts: prevOriginalConfig,
+        }).catch(() => {});
+      }
     } catch { }
   };
 
