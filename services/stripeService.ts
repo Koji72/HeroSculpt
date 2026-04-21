@@ -16,7 +16,7 @@ export const getStripe = () => {
 };
 
 // Call backend to create Stripe session
-export async function createStripeCheckoutSession(cartItems: unknown[], userEmail: string) {
+export async function createStripeCheckoutSession(cartItems: unknown[], userEmail: string, userId: string) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Not authenticated — cannot create checkout session');
   const response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
@@ -25,7 +25,7 @@ export async function createStripeCheckoutSession(cartItems: unknown[], userEmai
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${session?.access_token ?? ''}`
     },
-    body: JSON.stringify({ cartItems, userEmail })
+    body: JSON.stringify({ cartItems, userEmail, userId })
   });
   if (!response.ok) throw new Error('Error creating payment session');
   const data = await response.json();

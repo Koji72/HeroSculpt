@@ -230,6 +230,17 @@ const AppContent: React.FC = () => {
     try { localStorage.setItem('herosculpt_cart', JSON.stringify(cartItems)); } catch {}
   }, [cartItems]);
 
+  // Handle Stripe redirect back after payment
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      setIsPurchaseConfirmationOpen(true);
+      setCartItems([]);
+      window.history.replaceState({}, '', window.location.pathname);
+      if (user) PurchaseHistoryService.getOwnedPartIds(user.id).then(setOwnedPartIds);
+    }
+  }, [user]);
+
   // Estado para confirmación de compra
   const [isPurchaseConfirmationOpen, setIsPurchaseConfirmationOpen] = useState(false);
   const [purchaseData, setPurchaseData] = useState<{
@@ -1303,7 +1314,7 @@ const AppContent: React.FC = () => {
     if (!PAYMENT_CONFIG.FREE_MODE.enabled) {
       if (!isAuthenticated || !user) { setIsAuthModalOpen(true); return; }
       try {
-        const sessionId = await createStripeCheckoutSession(items, user.email ?? '');
+        const sessionId = await createStripeCheckoutSession(items, user.email ?? '', user.id);
         await redirectToCheckout(sessionId);
       } catch (error) {
         if (import.meta.env.DEV) console.error('Stripe checkout error:', error);

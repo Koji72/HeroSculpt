@@ -10,10 +10,18 @@ const helmet = require('helmet');
 const Joi = require('joi');
 const winston = require('winston');
 const Stripe = require('stripe');
+const { createClient } = require('@supabase/supabase-js');
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
+
+const supabaseAdmin = process.env.SUPABASE_SERVICE_KEY
+  ? createClient('https://jvzovtxjaezvefinaown.supabase.co', process.env.SUPABASE_SERVICE_KEY)
+  : null;
+
+// Pending purchases keyed by Stripe session ID — cleared after webhook fires
+const pendingPurchases = new Map();
 
 // Importar dependencias para procesamiento 3D
 let THREE;
@@ -212,6 +220,42 @@ app.use(cors({
   maxAge: 86400
 }));
 
+// Stripe webhook — MUST be registered before express.json() to receive raw body for signature verification
+app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!webhookSecret) {
+    securityLogger.error('STRIPE_WEBHOOK_SECRET not set');
+    return res.status(503).json({ error: 'Webhook not configured' });
+  }
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  } catch (err) {
+    securityLogger.warn('Stripe webhook signature failed', { ip: req.ip, error: err.message });
+    return res.status(400).json({ error: `Webhook signature failed: ${err.message}` });
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const pending = pendingPurchases.get(session.id);
+
+    if (pending) {
+      pendingPurchases.delete(session.id);
+      const totalPrice = (session.amount_total || 0) / 100;
+      await savePurchaseToSupabase(pending.userId, pending.cartItems, totalPrice);
+      await sendPurchaseConfirmationEmail(session.customer_email, pending.cartItems, totalPrice);
+      securityLogger.info('Purchase completed', { sessionId: session.id, email: session.customer_email });
+    }
+  }
+
+  res.json({ received: true });
+});
+
 // 7. Validación de tamaño de payload
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -289,7 +333,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
     return res.status(503).json({ error: 'Payment processing not configured' });
   }
 
-  const { cartItems, userEmail } = req.body;
+  const { cartItems, userEmail, userId } = req.body;
 
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return res.status(400).json({ error: 'Invalid cart items' });
@@ -320,6 +364,13 @@ app.post('/api/create-checkout-session', async (req, res) => {
       success_url: process.env.STRIPE_SUCCESS_URL || 'https://darkslategrey-ape-448372.hostingersite.com?success=true',
       cancel_url: process.env.STRIPE_CANCEL_URL || 'https://darkslategrey-ape-448372.hostingersite.com?canceled=true',
     });
+
+    // Store pending purchase so webhook can save it after payment
+    pendingPurchases.set(session.id, { userId, cartItems, createdAt: Date.now() });
+    // Cleanup entries older than 2 hours
+    for (const [id, data] of pendingPurchases) {
+      if (Date.now() - data.createdAt > 7200000) pendingPurchases.delete(id);
+    }
 
     securityLogger.info('Stripe session created', { ip: req.ip, sessionId: session.id });
     res.json({ sessionId: session.id });
@@ -1179,6 +1230,72 @@ function generateSymbol(x, y, z, name) {
 // Función para generar un cubo simple (compatibilidad)
 function generateCube(x, y, z, name) {
   return generateDetailedCube(x, y, z, 1, 1, 1, name);
+}
+
+// Save a completed purchase to Supabase using service role key
+async function savePurchaseToSupabase(userId, cartItems, totalPrice) {
+  if (!supabaseAdmin || !userId) return;
+  try {
+    const { data: purchase, error } = await supabaseAdmin
+      .from('purchases')
+      .insert({
+        user_id: userId,
+        configuration_name: `Compra ${new Date().toLocaleDateString('es-ES')}`,
+        total_price: totalPrice,
+        items_count: cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0),
+        status: 'completed',
+        purchase_date: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error || !purchase) {
+      securityLogger.error('Supabase purchase save error', { error: error?.message });
+      return;
+    }
+
+    const purchaseItems = cartItems.map(item => ({
+      purchase_id: purchase.id,
+      item_name: item.name || 'HeroSculpt Model',
+      item_price: item.price || 0,
+      quantity: item.quantity || 1,
+      configuration_data: item.configuration || {}
+    }));
+
+    await supabaseAdmin.from('purchase_items').insert(purchaseItems);
+  } catch (err) {
+    securityLogger.error('savePurchaseToSupabase error', { error: err.message });
+  }
+}
+
+// Send purchase confirmation email via Resend
+async function sendPurchaseConfirmationEmail(toEmail, cartItems, totalPrice) {
+  if (!toEmail) return;
+  try {
+    const itemsList = cartItems.map(item =>
+      `<li style="padding:4px 0">${item.name || 'HeroSculpt Model'} — $${(item.price || 0).toFixed(2)}</li>`
+    ).join('');
+
+    await resend.emails.send({
+      from: 'HeroSculpt <noreply@herosculpt.com>',
+      to: [toEmail],
+      subject: 'HeroSculpt — Tu compra está confirmada',
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px">
+          <h2 style="color:#111">Tu héroe está listo</h2>
+          <p>Gracias por tu compra. Aquí está el resumen:</p>
+          <ul style="padding-left:20px">${itemsList}</ul>
+          <p style="font-size:18px"><strong>Total: $${totalPrice.toFixed(2)}</strong></p>
+          <a href="https://darkslategrey-ape-448372.hostingersite.com"
+             style="display:inline-block;margin-top:16px;padding:12px 24px;background:#e63946;color:#fff;text-decoration:none;border-radius:6px">
+            Descargar modelo 3D
+          </a>
+        </div>
+      `
+    });
+  } catch (err) {
+    securityLogger.error('sendPurchaseConfirmationEmail error', { error: err.message });
+  }
 }
 
 // Iniciar servidor

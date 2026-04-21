@@ -73,16 +73,18 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         env:
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         with:
           host: 72.62.16.119
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
-          envs: STRIPE_SECRET_KEY,RESEND_API_KEY
+          envs: STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,RESEND_API_KEY,SUPABASE_SERVICE_KEY
           script: |
             /usr/local/bin/deploy-herosculpt.sh
-            printf 'STRIPE_SECRET_KEY=%s\nRESEND_API_KEY=%s\n' "$STRIPE_SECRET_KEY" "$RESEND_API_KEY" > /docker/openclaw-cd97/data/.openclaw/workspace/HeroSculpt/.env.server
+            printf 'STRIPE_SECRET_KEY=%s\nSTRIPE_WEBHOOK_SECRET=%s\nRESEND_API_KEY=%s\nSUPABASE_SERVICE_KEY=%s\n' "$STRIPE_SECRET_KEY" "$STRIPE_WEBHOOK_SECRET" "$RESEND_API_KEY" "$SUPABASE_SERVICE_KEY" > /docker/openclaw-cd97/data/.openclaw/workspace/HeroSculpt/.env.server
             docker exec openclaw-cd97-openclaw-1 pkill -f "node complete-server" 2>/dev/null || true
             sleep 2
             docker exec -d openclaw-cd97-openclaw-1 bash -c "cd /data/.openclaw/workspace/HeroSculpt && node complete-server.cjs >> /tmp/herosculpt-backend.log 2>&1"
