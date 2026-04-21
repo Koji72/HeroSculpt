@@ -1,4 +1,4 @@
-export const SITE_DOMAIN = 'https://herosculpt.com'; // ← update with real domain
+export const SITE_DOMAIN = 'https://herosculpt.app';
 
 export const ARCHETYPES = [
   {
