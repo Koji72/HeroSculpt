@@ -104,6 +104,7 @@ const dict = {
   'rtab.stats': { en: 'STATS', es: 'STATS' },
   'rtab.style': { en: 'STYLE', es: 'ESTILO' },
   'rtab.skins': { en: 'SKINS', es: 'SKINS' },
+  'rtab.lights': { en: 'LIGHTS', es: 'LUCES' },
   'rtab.builds': { en: '📚 LIBRARY', es: '📚 BIBLIOTECA' },
   'rtab.library_locked': { en: 'Sign in to access your Library', es: 'Inicia sesión para acceder a tu biblioteca' },
 

@@ -16,8 +16,8 @@ interface PartCategoryToolbarProps {
   onLowerBodyToggle: () => void;
   getLowerBodyButtonRef: (ref: HTMLButtonElement | null) => void;
   isLowerBodySubmenuExpanded: boolean;
-  activeSidePanel?: 'style' | 'skins' | null;
-  onSidePanelToggle?: (panel: 'style' | 'skins') => void;
+  activeSidePanel?: 'style' | 'skins' | 'lights' | null;
+  onSidePanelToggle?: (panel: 'style' | 'skins' | 'lights') => void;
   categoryCounts?: { upper: number; belt: number; lower: number; backpack: number };
 }
 
@@ -131,9 +131,10 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
     lineHeight: 1.15,
   });
 
-  const sidePanelButtons: Array<{ key: 'style' | 'skins' }> = [
+  const sidePanelButtons: Array<{ key: 'style' | 'skins' | 'lights' }> = [
     { key: 'style' },
     { key: 'skins' },
+    { key: 'lights' },
   ];
 
   const showTooltip = (e: React.MouseEvent<HTMLButtonElement>, label: string) => {
@@ -284,13 +285,13 @@ const PartCategoryToolbar: React.FC<PartCategoryToolbarProps> = ({
           <div style={{ width: '70%', height: 1, background: 'rgba(71, 85, 105, 0.48)', margin: '10px 0 4px' }} />
           {sidePanelButtons.map(({ key }) => {
             const isActive = activeSidePanel === key;
-            const labelText = key === 'style' ? t('rtab.style', lang) : t('rtab.skins', lang);
+            const labelText = key === 'style' ? t('rtab.style', lang) : key === 'skins' ? t('rtab.skins', lang) : t('rtab.lights', lang);
             return (
               <button
                 key={key}
                 type="button"
                 onClick={() => onSidePanelToggle(key)}
-                onMouseEnter={e => { showTooltip(e, key === 'style' ? t('toolbar.style', lang) : t('toolbar.skins', lang)); setHoveredKey(key); }}
+                onMouseEnter={e => { showTooltip(e, key === 'style' ? t('toolbar.style', lang) : key === 'skins' ? t('toolbar.skins', lang) : t('toolbar.lights', lang)); setHoveredKey(key); }}
                 onMouseLeave={() => { setTooltip(null); setHoveredKey(null); }}
                 style={sidebarBtnStyle(isActive, key)}
               >

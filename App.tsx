@@ -58,6 +58,7 @@ import { STRONG_BELT_PARTS } from './src/parts/strongBeltParts';
 import { STRONG_CHEST_BELT_PARTS } from './src/parts/strongChestBeltParts';
 import { STRONG_HANDS_PARTS } from './src/parts/strongHandsParts';
 import PartsDebugPanel from './components/PartsDebugPanel';
+import LightsPanel from './components/LightsPanel';
 
 // Hacer disponible para debugging en consola
 
@@ -312,8 +313,8 @@ const AppContent: React.FC = () => {
   const [showSTLModal, setShowSTLModal] = useState(false);
 
   // Task 7: side panel state
-  const [activeSidePanel, setActiveSidePanel] = useState<'style' | 'skins' | null>(null);
-  const activePanelMode: 'parts' | 'style' | 'skins' = activeSidePanel ?? 'parts';
+  const [activeSidePanel, setActiveSidePanel] = useState<'style' | 'skins' | 'lights' | null>(null);
+  const activePanelMode: 'parts' | 'style' | 'skins' | 'lights' = activeSidePanel ?? 'parts';
 
   const [stylePanelParts, setStylePanelParts] = useState<PartEntry[]>(
     Object.keys(STYLE_PART_LABELS).map((id) => ({
@@ -888,7 +889,7 @@ const AppContent: React.FC = () => {
     handlePanelModeChange(panel);
   };
 
-  const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins') => {
+  const handlePanelModeChange = (mode: 'parts' | 'style' | 'skins' | 'lights') => {
     characterViewerRef.current?.clearPreview();
     setIsPanelOpen(true);
     if (mode === 'parts') {
@@ -2056,6 +2057,7 @@ const AppContent: React.FC = () => {
               ['parts', t('panel.parts', lang)],
               ['style', t('panel.style', lang)],
               ['skins', t('panel.skins', lang)],
+              ['lights', t('panel.lights', lang)],
             ] as const).map(([mode, label]) => (
               <button
                 key={mode}
@@ -2103,6 +2105,10 @@ const AppContent: React.FC = () => {
 
             {activePanelMode === 'skins' && (
               <SkinsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
+            )}
+
+            {activePanelMode === 'lights' && (
+              <LightsPanel apiRef={characterViewerRef} onClose={() => { setActiveSidePanel(null); setIsPanelOpen(false); }} />
             )}
 
           </div>
