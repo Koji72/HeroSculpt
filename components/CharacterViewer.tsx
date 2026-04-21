@@ -15,6 +15,7 @@ import PoseNavigation from './PoseNavigation';
 import { LightingPreset } from './materials/materials'; // Corrected import path
 import { useLang, t } from '../lib/i18n';
 import { areSelectedPartsEqual } from '../lib/utils'; // Import the new utility
+import { getMaterialOverrides, getColorOverrides } from '../lib/materialOverrides';
 
 interface CharacterViewerProps {
   selectedParts: SelectedParts;
@@ -888,6 +889,32 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
       const endTime = performance.now();
       const loadTime = Math.round(endTime - startTime);
       setIsLoading(false);
+
+      // Re-apply any stored skin/color overrides after pose change reloads parts
+      const colorOverrides = getColorOverrides();
+      const matOverrides = getMaterialOverrides();
+      modelGroup.traverse((obj) => {
+        if (!(obj instanceof THREE.Mesh) || obj.userData.isPreview) return;
+        const mesh = obj as THREE.Mesh;
+        const category = mesh.userData.category as string | undefined;
+        if (!category) return;
+        if (colorOverrides[category] !== undefined) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach(mat => {
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                mat.color.setHex(colorOverrides[category]);
+                mat.needsUpdate = true;
+              }
+            });
+          } else if (mesh.material instanceof THREE.MeshStandardMaterial) {
+            mesh.material.color.setHex(colorOverrides[category]);
+            mesh.material.needsUpdate = true;
+          }
+        } else if (matOverrides[category]) {
+          mesh.material = matOverrides[category];
+        }
+      });
+
       // ?? OPTIMIZADO: Solo log en desarrollo
     if (import.meta.env.DEV) console.log(`CharacterViewer: All models loaded in ${loadTime}ms. Cache size: ${modelCache.getCacheSize()}`);
       
