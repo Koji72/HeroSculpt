@@ -1551,6 +1551,35 @@ const AppContent: React.FC = () => {
     setSelectedParts(newPoses.length === 0 ? {} : newPoses[newIndex].configuration);
   };
 
+  const handleSaveNewPose = async () => {
+    if (!isAuthenticated || !user) { setIsAuthModalOpen(true); return; }
+    if (!selectedArchetype || Object.keys(selectedParts).length === 0) return;
+    const poseName = savedPoses.length === 0
+      ? characterName
+      : `${characterName} ${savedPoses.length + 1}`;
+    try {
+      const saved = await UserConfigService.saveConfiguration({
+        name: poseName,
+        archetype: selectedArchetype.toString(),
+        selected_parts: selectedParts,
+        total_price: 0,
+      });
+      if (!saved) return;
+      const newPose = {
+        id: `saved-${saved.id}`,
+        name: poseName,
+        configuration: selectedParts,
+        source: 'saved' as const,
+        date: saved.created_at ?? new Date().toISOString(),
+      };
+      setSavedPoses(prev => {
+        const next = [...prev, newPose];
+        setCurrentPoseIndex(next.length - 1);
+        return next;
+      });
+    } catch { }
+  };
+
   const updateSavedPoseName = async (index: number, newName: string) => {
     if (!user?.id || !savedPoses[index]) return;
 
@@ -1860,6 +1889,16 @@ const AppContent: React.FC = () => {
             />
           </div>
         </div>
+        {Object.keys(selectedParts).length > 0 && (
+          <button
+            type="button"
+            onClick={() => { handleAddToCart(selectedParts, selectedArchetype?.toString(), characterName); setIsCartOpen(true); }}
+            title={t('cart.save_hero', lang)}
+            style={{ padding: '5px 14px', background: 'var(--color-accent)', border: '1px solid rgba(216,162,58,0.7)', borderRadius: '6px', color: '#09090f', fontSize: 11, fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer', fontFamily: 'var(--font-body)', flexShrink: 0 }}
+          >
+            💾 {t('cart.save_hero', lang)}
+          </button>
+        )}
 
         {/* Right actions */}
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', gap: '8px', flexShrink: 0 }}>
@@ -2165,6 +2204,12 @@ const AppContent: React.FC = () => {
           </div>
           <button className="btn-comic btn-ghost" style={{ width: 30, height: 30, padding: 0, fontSize: 12, borderRadius: 6 }}
             onClick={handleNextPose}>▶</button>
+          <button
+            className="btn-comic btn-ghost"
+            style={{ width: 30, height: 30, padding: 0, fontSize: 16, borderRadius: 6 }}
+            title={t('pose.save_new', lang)}
+            onClick={handleSaveNewPose}
+          >+</button>
           {user && savedPoses?.[currentPoseIndex ?? 0] && (
             <button
               className="btn-comic btn-ghost"
@@ -2228,24 +2273,6 @@ const AppContent: React.FC = () => {
             {t('bottom.vtt', lang)}
           </button>
         </div>
-
-        {/* Save Hero CTA */}
-        {Object.keys(selectedParts).length > 0 && (
-          <>
-            <div style={{ width: 1, height: 28, background: 'rgba(71, 85, 105, 0.45)' }} />
-            <button
-              type="button"
-              onClick={() => {
-                handleAddToCart(selectedParts, selectedArchetype?.toString(), characterName);
-                setIsCartOpen(true);
-              }}
-              title={t('cart.save_hero', lang)}
-              style={{ padding: '5px 14px', background: 'var(--color-accent)', border: '1px solid rgba(216,162,58,0.7)', borderRadius: '6px', color: '#09090f', fontSize: 11, fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
-            >
-              💾 {t('cart.save_hero', lang)}
-            </button>
-          </>
-        )}
 
         {/* Help button */}
         <div style={{ marginLeft: 'auto', flexShrink: 0 }}>

@@ -99,6 +99,7 @@ const dict = {
   'pose.save_as_new': { en: '💾 Save', es: '💾 Guardar' },
   'pose.delete_confirm': { en: 'Delete this pose?', es: '¿Borrar esta pose?' },
   'pose.save_as_new_title': { en: 'Save as new editable pose', es: 'Guardar como nueva pose editable' },
+  'pose.save_new': { en: 'Save as new pose', es: 'Guardar como nueva pose' },
 
   // Right panel tabs
   'rtab.stats': { en: 'STATS', es: 'STATS' },
@@ -307,7 +308,7 @@ const dict = {
   'cart.hero_name': { en: 'My Hero', es: 'Mi Héroe' },
   'cart.total_label': { en: 'TOTAL', es: 'TOTAL' },
   'cart.checkout_error': { en: 'Error processing payment. Please try again.', es: 'Error al procesar el pago. Por favor intenta de nuevo.' },
-  'cart.save_hero': { en: 'Save to Library', es: 'Guardar en Biblioteca' },
+  'cart.save_hero': { en: 'Save Hero', es: 'Guardar Héroe' },
   'cart.add_build': { en: '+ Add Current Build', es: '+ Añadir Build Actual' },
 
   // HeaderDropdown
