@@ -1811,52 +1811,6 @@ const AppContent: React.FC = () => {
           />
         </div>
 
-        {/* 3-step flow indicator */}
-        {(() => {
-          const partCount = Object.values(selectedParts).filter(p => p && !p.attributes?.none).length;
-          const activeStep = partCount >= 3 ? 3 : 2;
-          const steps: Array<{ n: number; label: string }> = [
-            { n: 1, label: t('steps.archetype', lang) },
-            { n: 2, label: t('steps.build', lang) },
-            { n: 3, label: t('steps.export', lang) },
-          ];
-          return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0, padding: '0 16px' }}>
-              {steps.map((step, i) => (
-                <React.Fragment key={step.n}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <div style={{
-                      width: 20, height: 20, borderRadius: '50%',
-                      background: step.n <= activeStep ? 'var(--color-accent)' : 'rgba(71,85,105,0.5)',
-                      color: step.n <= activeStep ? '#09090f' : 'rgba(148,163,184,0.6)',
-                      fontSize: 10, fontWeight: 900,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'var(--font-body)',
-                      flexShrink: 0,
-                      boxShadow: step.n === activeStep ? '0 0 8px rgba(216,162,58,0.6)' : 'none',
-                      animation: step.n === activeStep ? 'stepPulse 2s ease-in-out infinite' : 'none',
-                    }}>
-                      {step.n < activeStep ? '✓' : step.n}
-                    </div>
-                    <span style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: 9,
-                      fontWeight: 800,
-                      letterSpacing: 1,
-                      color: step.n === activeStep ? 'var(--color-accent)' : step.n < activeStep ? 'rgba(148,163,184,0.7)' : 'rgba(71,85,105,0.6)',
-                      textTransform: 'uppercase' as const,
-                    }}>
-                      {step.label}
-                    </span>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <div style={{ width: 20, height: 1, background: 'rgba(71,85,105,0.5)', margin: '0 4px' }} />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          );
-        })()}
 
         {/* Hero name — inline editable */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, padding: '0 12px', borderLeft: '1px solid rgba(71,85,105,0.35)' }}>
@@ -1894,9 +1848,27 @@ const AppContent: React.FC = () => {
             type="button"
             onClick={() => { handleAddToCart(selectedParts, selectedArchetype?.toString(), characterName); setIsCartOpen(true); }}
             title={t('cart.save_hero', lang)}
-            style={{ padding: '5px 14px', background: 'var(--color-accent)', border: '1px solid rgba(216,162,58,0.7)', borderRadius: '6px', color: '#09090f', fontSize: 11, fontWeight: 900, letterSpacing: 0.8, cursor: 'pointer', fontFamily: 'var(--font-body)', flexShrink: 0 }}
+            style={{
+              padding: '7px 18px',
+              background: 'linear-gradient(135deg, #d8a23a 0%, #f0c060 50%, #d8a23a 100%)',
+              border: 'none',
+              borderRadius: '8px',
+              color: '#09090f',
+              fontSize: 12,
+              fontWeight: 900,
+              letterSpacing: 1.2,
+              cursor: 'pointer',
+              fontFamily: 'var(--font-body)',
+              flexShrink: 0,
+              boxShadow: '0 0 12px rgba(216,162,58,0.5), inset 0 1px 0 rgba(255,255,255,0.3)',
+              textTransform: 'uppercase' as const,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
           >
-            💾 {t('cart.save_hero', lang)}
+            <span style={{ fontSize: 14 }}>⭐</span>
+            {t('cart.save_hero', lang)}
           </button>
         )}
 
