@@ -309,8 +309,8 @@ const CharacterViewer = forwardRef<CharacterViewerRef, CharacterViewerProps>(({
     bgCanvas.width = 2; bgCanvas.height = 512;
     const bgCtx = bgCanvas.getContext('2d')!;
     const bgGrad = bgCtx.createLinearGradient(0, 0, 0, 512);
-    bgGrad.addColorStop(0, '#1e2d4a');
-    bgGrad.addColorStop(1, '#0a1020');
+    bgGrad.addColorStop(0, '#0d1520');
+    bgGrad.addColorStop(1, '#050810');
     bgCtx.fillStyle = bgGrad;
     bgCtx.fillRect(0, 0, 2, 512);
     const bgTexture = new THREE.CanvasTexture(bgCanvas);
