@@ -2156,7 +2156,7 @@ const AppContent: React.FC = () => {
                   overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 130,
                 }}
               >
-                {(() => { const poseName = savedPoses?.[currentPoseIndex ?? 0]?.name; return (poseName && poseName !== 'Configuration Guardada' && poseName !== 'My Hero') ? poseName : (characterName || t('bottom.pose', lang)); })()}
+                {(() => { const poseName = savedPoses?.[currentPoseIndex ?? 0]?.name; const isGeneric = !poseName || poseName === 'Configuration Guardada' || poseName === 'My Hero' || /^copia\s/i.test(poseName); return isGeneric ? (characterName || t('bottom.pose', lang)) : poseName; })()}
               </span>
             )}
             <span style={{ fontSize: 10, color: 'var(--color-text-faint)', letterSpacing: 0.5 }}>
