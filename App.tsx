@@ -1518,7 +1518,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
     currentPoseOriginalConfigRef.current = newPose.configuration;
-    // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
+    handleResetCamera();
   };
 
   const handleNextPose = () => {
@@ -1535,7 +1535,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
     currentPoseOriginalConfigRef.current = newPose.configuration;
-    // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
+    handleResetCamera();
   };
 
   const handleSelectPose = (index: number) => {
@@ -1553,7 +1553,7 @@ const AppContent: React.FC = () => {
     pushPartsHistory(newPose.configuration);
     setSelectedParts(newPose.configuration);
     currentPoseOriginalConfigRef.current = newPose.configuration;
-    // isNavigatingPosesRef is cleared by the useEffect on currentPoseIndex above.
+    handleResetCamera();
   };
 
   const handleRenamePose = (index: number, newName: string) => {
