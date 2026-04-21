@@ -29,8 +29,8 @@ const C = {
 };
 
 const ARCHETYPES = [
-  { id: 'STRONG',     label: 'SENTINEL', abbr: '',   color: '#ff9063', img: true },
-  { id: 'JUSTICIERO', label: 'PHANTOM',  abbr: 'PH', color: '#00e3fd', img: false },
+  { id: 'STRONG',     label: 'VANGUARD', abbr: 'VG', color: '#ff9063', img: true },
+  { id: 'JUSTICIERO', label: 'WRAITH',   abbr: 'WR', color: '#00e3fd', img: false },
   { id: 'MYSTIC',     label: 'ARCANE',   abbr: 'AR', color: '#ffe792', img: false },
 { id: 'SPEEDSTER',  label: 'BLITZ',    abbr: 'BL', color: '#a855f7', img: false },
   { id: 'TECH',       label: 'GHOST',    abbr: 'GH', color: '#26e6ff', img: false },

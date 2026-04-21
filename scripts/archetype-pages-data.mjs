@@ -3,46 +3,46 @@ export const SITE_DOMAIN = 'https://darkslategrey-ape-448372.hostingersite.com';
 export const ARCHETYPES = [
   {
     id: 'STRONG',
-    slug: 'sentinel',
-    name: 'Sentinel',
+    slug: 'vanguard',
+    name: 'Vanguard',
     icon: '💪',
     theme: ['Tank', 'Strength', 'Defense'],
     stats: { power: 95, defense: 90, speed: 60, intelligence: 70, energy: 75 },
     en: {
       title: 'The Powerhouse',
-      metaDesc: 'Design a Sentinel powerhouse hero in HeroSculpt\'s free 3D superhero creator. Super strength, invulnerability, earthquake slam — build and export your character.',
+      metaDesc: 'Design a Vanguard powerhouse hero in HeroSculpt\'s free 3D superhero creator. Super strength, invulnerability, earthquake slam — build and export your character.',
       description: 'Raw strength and unbreakable defense. The most resilient and powerful archetype on the battlefield.',
       abilities: { primary: 'Super Strength', secondary: 'Invulnerability', ultimate: 'Earthquake Slam', passive: 'Unbreakable Will' },
       examples: ['Superman', 'Hulk', 'Thor'],
       tips: [
         'Layer heavy armor plates over a broad muscular torso for maximum intimidation.',
         'Bold primary colors — red, blue, gold — read as heroic at a distance.',
-        'Skip the cape: Sentinel builds feel more grounded with a thick neck guard instead.'
+        'Skip the cape: Vanguard builds feel more grounded with a thick neck guard instead.'
       ],
     },
     es: {
       title: 'El Coloso',
-      metaDesc: 'Diseña un héroe Sentinel en HeroSculpt, el creador de superhéroes 3D gratuito. Superfuerza, invulnerabilidad y golpe sísmico. Construye y exporta tu personaje.',
+      metaDesc: 'Diseña un héroe Vanguard en HeroSculpt, el creador de superhéroes 3D gratuito. Superfuerza, invulnerabilidad y golpe sísmico. Construye y exporta tu personaje.',
       description: 'Fuerza bruta y defensa invulnerable. El tipo de personaje más resistente y poderoso del campo de batalla.',
       abilities: { primary: 'Superfuerza', secondary: 'Invulnerabilidad', ultimate: 'Golpe Sísmico', passive: 'Voluntad Inquebrantable' },
       examples: ['Superman', 'Hulk', 'Thor'],
       tips: [
         'Superpón armadura pesada sobre un torso musculoso para máxima intimidación.',
         'Los colores primarios —rojo, azul, dorado— transmiten heroísmo a distancia.',
-        'Prueba sin capa: el Sentinel se ve más sólido con un guardacuello grueso.'
+        'Prueba sin capa: el Vanguard se ve más sólido con un guardacuello grueso.'
       ],
     },
   },
   {
     id: 'JUSTICIERO',
-    slug: 'phantom',
-    name: 'Phantom',
+    slug: 'wraith',
+    name: 'Wraith',
     icon: '⚖️',
     theme: ['Guardian', 'Justice', 'Protection'],
     stats: { power: 80, defense: 85, speed: 75, intelligence: 85, energy: 70 },
     en: {
       title: 'The Guardian',
-      metaDesc: 'Create a Phantom guardian hero in HeroSculpt\'s free 3D character creator. Justice strike, protective aura, leadership — customize and export your hero.',
+      metaDesc: 'Create a Wraith guardian hero in HeroSculpt\'s free 3D character creator. Justice strike, protective aura, leadership — customize and export your hero.',
       description: 'Justice and protection for all. A born leader with protective powers and an inspiring aura.',
       abilities: { primary: 'Justice Strike', secondary: 'Protective Aura', ultimate: "Guardian's Call", passive: 'Inspiring Presence' },
       examples: ['Captain America', 'Wonder Woman', 'Black Panther'],
@@ -54,7 +54,7 @@ export const ARCHETYPES = [
     },
     es: {
       title: 'El Guardián',
-      metaDesc: 'Crea un héroe Phantom guardián en HeroSculpt, el creador 3D gratuito. Golpe de justicia, aura protectora y liderazgo. Personaliza y exporta.',
+      metaDesc: 'Crea un héroe Wraith guardián en HeroSculpt, el creador 3D gratuito. Golpe de justicia, aura protectora y liderazgo. Personaliza y exporta.',
       description: 'Justicia y protección para todos. Líder nato con poderes de protección y aura inspiradora.',
       abilities: { primary: 'Golpe de Justicia', secondary: 'Aura Protectora', ultimate: 'Llamada del Guardián', passive: 'Presencia Inspiradora' },
       examples: ['Capitán América', 'Wonder Woman', 'Pantera Negra'],

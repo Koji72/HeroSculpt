@@ -6,7 +6,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
   // Tipos de personajes originales (mantener compatibilidad)
   [ArchetypeId.STRONG]: {
     id: ArchetypeId.STRONG,
-    name: 'SENTINEL',
+    name: 'VANGUARD',
     title: 'THE POWERHOUSE',
     description: 'Raw strength and unbreakable defense',
     briefDescription: 'Super strength, flight, invulnerability',
@@ -30,7 +30,7 @@ export const ARCHETYPE_DATA: Record<ArchetypeId, ArchetypeInfo> = {
 
   [ArchetypeId.JUSTICIERO]: {
     id: ArchetypeId.JUSTICIERO,
-    name: 'PHANTOM',
+    name: 'WRAITH',
     title: 'THE GUARDIAN',
     description: 'Justice and protection for all',
     briefDescription: 'Justice, protection, leadership',
