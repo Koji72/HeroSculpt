@@ -877,6 +877,13 @@ const AppContent: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const archParam = new URLSearchParams(window.location.search).get('archetype');
+    if (archParam && Object.values(ArchetypeId).includes(archParam as ArchetypeId)) {
+      setSelectedArchetype(archParam as ArchetypeId);
+    }
+  }, []);
+
   const handleSidePanelToggle = (panel: 'style' | 'skins') => {
     handlePanelModeChange(panel);
   };
