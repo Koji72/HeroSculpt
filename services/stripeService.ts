@@ -19,17 +19,32 @@ export const getStripe = () => {
 export async function createStripeCheckoutSession(cartItems: unknown[], userEmail: string, userId: string) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Not authenticated — cannot create checkout session');
-  const response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session?.access_token ?? ''}`
-    },
-    body: JSON.stringify({ cartItems, userEmail, userId })
-  });
-  if (!response.ok) throw new Error('Error creating payment session');
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  let response: Response;
+  try {
+    response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+        'bypass-tunnel-reminder': 'true',
+      },
+      body: JSON.stringify({ cartItems, userEmail, userId }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error((body as { error?: string }).error ?? `HTTP ${response.status}`);
+  }
   const data = await response.json();
-  return data.sessionId;
+  if (!data.sessionId) throw new Error('No sessionId returned from backend');
+  return data.sessionId as string;
 }
 
 // Redirect user to Stripe checkout
