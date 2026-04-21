@@ -298,7 +298,8 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
 
         {/* Footer CTAs */}
         <div style={{ padding: '10px 12px', borderTop: '1px solid var(--color-border)' }}>
-          {configParts.length > 0 && (
+          {/* In free mode show "Add build" button; in paid mode it's not needed */}
+          {isFree && configParts.length > 0 && (
             <button
               onClick={onAddCurrentConfig}
               style={{
@@ -319,21 +320,42 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
               {checkoutError}
             </div>
           )}
+          {/* Paid mode: nothing new to buy */}
+          {!isFree && effectiveTotal === 0 && configParts.length > 0 && (
+            <div style={{
+              width: '100%', padding: '10px',
+              background: 'rgba(34,197,94,0.1)',
+              border: '1px solid rgba(34,197,94,0.3)',
+              borderRadius: 'var(--radius)',
+              fontFamily: 'var(--font-comic)', fontSize: 12, letterSpacing: 1,
+              color: '#22c55e', textAlign: 'center',
+              marginBottom: 6,
+            }}>
+              {t('cart.nothing_to_buy', lang)}
+            </div>
+          )}
           {isAuthenticated ? (
-            <button
-              onClick={handleCheckout}
-              disabled={isProcessing || (configParts.length === 0 && cartItems.length === 0)}
-              style={{
-                width: '100%', padding: '10px',
-                background: (isProcessing || (configParts.length === 0 && cartItems.length === 0)) ? 'var(--color-border)' : 'var(--color-accent)',
-                border: 'none', borderRadius: 'var(--radius)',
-                fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2,
-                color: '#111', cursor: (isProcessing || (configParts.length === 0 && cartItems.length === 0)) ? 'not-allowed' : 'pointer',
-                marginBottom: 6,
-              }}
-            >
-              {isProcessing ? t('cart.saving', lang) : t('cart.save', lang)}
-            </button>
+            /* Only show main CTA when there's something to do */
+            (isFree || effectiveTotal > 0 || cartItems.length > 0) ? (
+              <button
+                onClick={handleCheckout}
+                disabled={isProcessing || (configParts.length === 0 && cartItems.length === 0)}
+                style={{
+                  width: '100%', padding: '10px',
+                  background: (isProcessing || (configParts.length === 0 && cartItems.length === 0)) ? 'var(--color-border)' : 'var(--color-accent)',
+                  border: 'none', borderRadius: 'var(--radius)',
+                  fontFamily: 'var(--font-comic)', fontSize: 14, letterSpacing: 2,
+                  color: '#111', cursor: (isProcessing || (configParts.length === 0 && cartItems.length === 0)) ? 'not-allowed' : 'pointer',
+                  marginBottom: 6,
+                }}
+              >
+                {isProcessing
+                  ? t('cart.saving', lang)
+                  : isFree
+                    ? t('cart.save', lang)
+                    : `${t('cart.checkout_cta', lang)} — $${effectiveTotal.toFixed(2)}`}
+              </button>
+            ) : null
           ) : (
             <button
               onClick={onAuthRequired}
@@ -346,7 +368,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
                 marginBottom: 6,
               }}
             >
-              {t('cart.register_save', lang)}
+              {isFree ? t('cart.register_save', lang) : t('cart.register_buy', lang)}
             </button>
           )}
           <button
