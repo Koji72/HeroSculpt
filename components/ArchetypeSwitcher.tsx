@@ -98,6 +98,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
   const { lang } = useLang();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showMore, setShowMore] = useState(false);
+  const [moreDropdownPos, setMoreDropdownPos] = useState<{ top: number; left: number } | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const moreRef = useRef<HTMLDivElement>(null);
   const pendingRef = useRef<HTMLDivElement>(null);
@@ -110,10 +111,11 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
     const handleClick = (e: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
         setShowMore(false);
+        setMoreDropdownPos(null);
       }
     };
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowMore(false);
+      if (e.key === 'Escape') { setShowMore(false); setMoreDropdownPos(null); }
     };
     document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
@@ -154,6 +156,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
     if (pendingId) onSelect(pendingId);
     setPendingId(null);
     setShowMore(false);
+    setMoreDropdownPos(null);
   };
 
   const chipStyle = (isActive: boolean): React.CSSProperties => ({
@@ -176,7 +179,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
   });
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflow: hoveredId || pendingId ? 'visible' : 'hidden', position: 'relative' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflow: (hoveredId || pendingId) ? 'visible' : 'hidden', position: 'relative' }}>
       {pendingId && (
         <div ref={pendingRef} style={{
           position: 'absolute',
@@ -239,21 +242,24 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
         <div ref={moreRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button
             style={{ ...chipStyle(false), border: '1px dashed rgba(71, 85, 105, 0.55)', color: '#6b7280', background: 'rgba(19, 19, 31, 0.82)' }}
-            onClick={() => setShowMore((v) => !v)}
+            onClick={(e) => {
+              const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+              setMoreDropdownPos(showMore ? null : { top: rect.bottom + 6, left: rect.left });
+              setShowMore((v) => !v);
+            }}
           >
             {t('arch.more', lang)}
           </button>
-          {showMore && (
+          {showMore && moreDropdownPos && (
             <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              marginTop: 6,
+              position: 'fixed',
+              top: moreDropdownPos.top,
+              left: moreDropdownPos.left,
               background: 'rgba(12, 12, 20, 0.96)',
               border: '1px solid rgba(71, 85, 105, 0.6)',
               borderRadius: 'var(--radius)',
               padding: 6,
-              zIndex: 1000,
+              zIndex: 2000,
               minWidth: 160,
               boxShadow: '0 8px 32px rgba(0,0,0,0.8)',
             }}>
@@ -265,7 +271,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
                   onMouseLeave={() => setHoveredId(null)}
                 >
                   <button
-                    onClick={() => { handleChipClick(a.id); setShowMore(false); }}
+                    onClick={() => { handleChipClick(a.id); setShowMore(false); setMoreDropdownPos(null); }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px',
                       borderRadius: 'var(--radius)', cursor: 'pointer',
@@ -282,7 +288,7 @@ const ArchetypeSwitcher: React.FC<ArchetypeSwitcherProps> = ({
                   {hoveredId === a.id && (
                     <ArchetypeTooltip
                       archetype={a}
-                      onConfirmSelect={() => { handleChipClick(a.id); setShowMore(false); }}
+                      onConfirmSelect={() => { handleChipClick(a.id); setShowMore(false); setMoreDropdownPos(null); }}
                       isActive={a.id === activeArchetypeId}
                       lang={lang}
                     />
