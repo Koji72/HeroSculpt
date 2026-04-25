@@ -15,10 +15,9 @@ export const getStripe = () => {
   return stripePromise;
 };
 
-// Call backend to create Stripe session
 export async function createStripeCheckoutSession(cartItems: unknown[], userEmail: string, userId: string) {
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('Not authenticated — cannot create checkout session');
+  if (!session) throw new Error('Not authenticated - cannot create checkout session');
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
@@ -42,15 +41,57 @@ export async function createStripeCheckoutSession(cartItems: unknown[], userEmai
     const body = await response.json().catch(() => ({}));
     throw new Error((body as { error?: string }).error ?? `HTTP ${response.status}`);
   }
+
   const data = await response.json();
   if (!data.sessionId) throw new Error('No sessionId returned from backend');
   return data.sessionId as string;
 }
 
-// Redirect user to Stripe checkout
+export async function getStripeCheckoutSessionStatus(sessionId: string): Promise<{
+  status: string | null;
+  paymentStatus: string | null;
+}> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Not authenticated - cannot verify checkout session');
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  let response: Response;
+  try {
+    response = await fetch(
+      `${BACKEND_BASE_URL}/api/checkout-session-status?session_id=${encodeURIComponent(sessionId)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'bypass-tunnel-reminder': 'true',
+        },
+        signal: controller.signal,
+      }
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error((body as { error?: string }).error ?? `HTTP ${response.status}`);
+  }
+
+  const data = await response.json() as {
+    status?: string | null;
+    paymentStatus?: string | null;
+  };
+
+  return {
+    status: data.status ?? null,
+    paymentStatus: data.paymentStatus ?? null,
+  };
+}
+
 export async function redirectToCheckout(sessionId: string) {
   const stripe = await getStripe();
   if (!stripe) throw new Error('Stripe not initialized');
   const { error } = await stripe.redirectToCheckout({ sessionId });
   if (error) throw error;
-} 
+}
