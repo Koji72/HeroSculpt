@@ -60,7 +60,7 @@ import { STRONG_HANDS_PARTS } from './src/parts/strongHandsParts';
 import PartsDebugPanel from './components/PartsDebugPanel';
 import LightsPanel from './components/LightsPanel';
 import PAYMENT_CONFIG from './config/payment-config';
-import { createStripeCheckoutSession, redirectToCheckout } from './services/stripeService';
+import { createStripeCheckoutSession, getStripeCheckoutSessionStatus, redirectToCheckout } from './services/stripeService';
 
 // Hacer disponible para debugging en consola
 
@@ -233,12 +233,75 @@ const AppContent: React.FC = () => {
   // Handle Stripe redirect back after payment
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('success') === 'true') {
-      setIsPurchaseConfirmationOpen(true);
-      setCartItems([]);
+    const success = params.get('success');
+    const sessionId = params.get('session_id');
+    const canceled = params.get('canceled');
+
+    if (canceled === 'true') {
       window.history.replaceState({}, '', window.location.pathname);
-      if (user) PurchaseHistoryService.getOwnedPartIds(user.id).then(setOwnedPartIds);
+      return;
     }
+
+    if (success !== 'true' || !sessionId) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const session = await getStripeCheckoutSessionStatus(sessionId);
+        if (cancelled) return;
+
+        if (session.paymentStatus === 'paid') {
+          const poseName = `${characterName || 'My Hero'} ${savedPoses.length + 1}`;
+          const saved = await UserConfigService.saveConfiguration({
+            name: poseName,
+            archetype: selectedArchetype.toString(),
+            selected_parts: selectedParts,
+            total_price: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+          }).catch(() => null);
+          if (saved && !cancelled) {
+            const newPose = {
+              id: `saved-${saved.id}`,
+              name: poseName,
+              configuration: { ...selectedParts },
+              source: 'saved' as const,
+              date: saved.created_at ?? new Date().toISOString(),
+            };
+            setSavedPoses(prev => [...prev, newPose]);
+            setCurrentPoseIndex(savedPoses.length);
+            currentPoseOriginalConfigRef.current = { ...selectedParts };
+          }
+          // Refresh owned parts BEFORE showing modal so the GLB download
+          // button doesn't see stale state and reopen the cart.
+          if (user) {
+            try {
+              const ids = await PurchaseHistoryService.getOwnedPartIds(user.id);
+              if (cancelled) return;
+              setOwnedPartIds(ids);
+            } catch (_e) {
+              // Best-effort; if it fails, the user can still retry from library.
+            }
+          }
+          if (cancelled) return;
+          setPurchaseData({
+            parts: Object.values(selectedParts).filter(Boolean) as Part[],
+            modelName: characterName || ARCHETYPE_DATA[selectedArchetype ?? ArchetypeId.STRONG]?.title || 'My Hero',
+            archetypeId: selectedArchetype ?? ArchetypeId.STRONG,
+          });
+          setIsPurchaseConfirmationOpen(true);
+          setCartItems([]);
+        }
+      } catch (error) {
+        if (import.meta.env.DEV) console.error('Checkout verification failed:', error);
+      } finally {
+        if (!cancelled) {
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   // Estado para confirmación de compra
@@ -1076,7 +1139,28 @@ const AppContent: React.FC = () => {
   };
 
   // Funciones de exportación
+  const getSelectedExportParts = (): Part[] =>
+    Object.values(selectedParts).filter((part): part is Part => Boolean(part));
+
+  const hasUnownedPaidParts = () =>
+    getSelectedExportParts().some(part =>
+      part.priceUSD > 0 &&
+      part.freeForAll !== true &&
+      !ownedPartIds.has(part.id)
+    );
+
+  const blockExportIfUnpaid = () => {
+    if (getSelectedExportParts().length === 0 || hasUnownedPaidParts()) {
+      setIsCartOpen(true);
+      return true;
+    }
+    return false;
+  };
+
   const handleExportGLB = async () => {
+    if (blockExportIfUnpaid()) {
+      return { success: false, error: 'Purchase required' };
+    }
     if (characterViewerRef.current?.exportModel) {
       try {
         const result = await characterViewerRef.current.exportModel();
@@ -1090,6 +1174,9 @@ const AppContent: React.FC = () => {
   };
 
   const handleExportSTL = async () => {
+    if (blockExportIfUnpaid()) {
+      return { success: false, error: 'Purchase required' };
+    }
     if (characterViewerRef.current?.exportSTL) {
       try {
         const result = await characterViewerRef.current.exportSTL();
@@ -1103,6 +1190,9 @@ const AppContent: React.FC = () => {
 
   const handleExportSTLWithScale = async (scaleFactor: number) => {
     setShowSTLModal(false);
+    if (blockExportIfUnpaid()) {
+      return;
+    }
     if (characterViewerRef.current?.exportSTL) {
       try {
         await characterViewerRef.current.exportSTL({ scaleFactor });
@@ -1209,6 +1299,33 @@ const AppContent: React.FC = () => {
 
     pushPartsHistory(result);
     setSelectedParts(result);
+
+    if (isAuthenticated && user && selectedArchetype) {
+      const poseName = savedPoses.length === 0
+        ? characterName
+        : `${characterName} ${savedPoses.length + 1}`;
+      void UserConfigService.saveConfiguration({
+        name: poseName,
+        archetype: selectedArchetype.toString(),
+        selected_parts: result,
+        total_price: 0,
+      }).then((saved) => {
+        if (!saved) return;
+        const newPose = {
+          id: `saved-${saved.id}`,
+          name: poseName,
+          configuration: { ...result },
+          source: 'saved' as const,
+          date: saved.created_at ?? new Date().toISOString(),
+        };
+        isNavigatingPosesRef.current = true;
+        setSavedPoses(prev => [...prev, newPose]);
+        setCurrentPoseIndex(savedPoses.length);
+        currentPoseOriginalConfigRef.current = { ...result };
+      }).catch((error) => {
+        if (import.meta.env.DEV) console.error('Error saving random pose:', error);
+      });
+    }
   };
   
 

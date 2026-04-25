@@ -1,10 +1,11 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env.server') });
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env.server') });
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const cors = require('cors');
 const { Resend } = require('resend');
 const fs = require('fs');
-const path = require('path');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const Joi = require('joi');
@@ -12,12 +13,20 @@ const winston = require('winston');
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 
-const stripe = process.env.STRIPE_SECRET_KEY
+const isUsableStripeSecret = (key) =>
+  /^sk_(test|live)_/.test(key || '') &&
+  !key.includes('your_') &&
+  !key.endsWith('_here');
+
+const stripe = isUsableStripeSecret(process.env.STRIPE_SECRET_KEY)
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
-const supabaseAdmin = process.env.SUPABASE_SERVICE_KEY
-  ? createClient('https://jvzovtxjaezvefinaown.supabase.co', process.env.SUPABASE_SERVICE_KEY)
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAdmin = process.env.SUPABASE_SERVICE_KEY && supabaseUrl
+  ? createClient(supabaseUrl, process.env.SUPABASE_SERVICE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    })
   : null;
 
 // Pending purchases keyed by Stripe session ID — cleared after webhook fires
@@ -36,6 +45,68 @@ try {
 
 const app = express();
 const port = 3001;
+
+const CONFIG_ID_PATTERN = /^[A-Za-z0-9_-]{16,100}$/;
+const MAX_CHECKOUT_PARTS = 100;
+
+function loadPartCatalog() {
+  const catalogPath = path.join(__dirname, 'constants.ts');
+  const source = fs.readFileSync(catalogPath, 'utf8');
+  const entries = new Map();
+  const objectPattern = /\{\s*id:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"][\s\S]*?category:\s*PartCategory\.([A-Z_]+)[\s\S]*?gltfPath:\s*['"]([^'"]+)['"][\s\S]*?priceUSD:\s*([0-9.]+)/g;
+
+  for (const match of source.matchAll(objectPattern)) {
+    const [, id, name, category, gltfPath, price] = match;
+    entries.set(id, {
+      id,
+      name,
+      category,
+      gltfPath,
+      priceUSD: Number(price),
+    });
+  }
+
+  if (entries.size === 0) {
+    throw new Error('Part catalog could not be loaded');
+  }
+
+  return entries;
+}
+
+const PART_CATALOG = loadPartCatalog();
+
+const htmlEscape = (value) => String(value ?? '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+function withCheckoutSessionPlaceholder(url) {
+  const fallback = `${ALLOWED_ORIGINS[0] || 'http://localhost:5177'}?success=true`;
+  const target = url || fallback;
+  if (target.includes('{CHECKOUT_SESSION_ID}')) return target;
+  const separator = target.includes('?') ? '&' : '?';
+  return `${target}${separator}session_id={CHECKOUT_SESSION_ID}`;
+}
+
+async function finalizeCompletedCheckout(session) {
+  const pending = pendingPurchases.get(session.id);
+  if (!pending) {
+    securityLogger.warn('Paid Stripe session has no pending purchase state', { sessionId: session.id });
+    return false;
+  }
+
+  pendingPurchases.delete(session.id);
+  const totalPrice = (session.amount_total || 0) / 100;
+  const saved = await savePurchaseToSupabase(pending.userId, pending.cartItems, totalPrice, session.id);
+  // Skip email if Supabase reports the session was already finalized (duplicate webhook)
+  if (saved !== 'duplicate') {
+    await sendPurchaseConfirmationEmail(session.customer_email, pending.cartItems, totalPrice, session.id);
+  }
+  securityLogger.info('Purchase completed', { sessionId: session.id, email: session.customer_email });
+  return true;
+}
 
 // 🛡️ CONFIGURACIÓN DE LOGGING AVANZADO
 const securityLogger = winston.createLogger({
@@ -132,9 +203,7 @@ app.use('/api/create-checkout-session', stripeLimiter);
 // 3. Validación Joi para todos los endpoints
 const emailSchema = Joi.object({
   to: Joi.string().email().required(),
-  subject: Joi.string().min(1).max(200).required(),
-  html: Joi.string().min(1).max(10000).required(),
-  from: Joi.string().email().optional()
+  configId: Joi.string().pattern(CONFIG_ID_PATTERN).required()
 });
 
 const configurationSchema = Joi.object({
@@ -216,7 +285,7 @@ app.use(cors({
   origin: ALLOWED_ORIGINS,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'bypass-tunnel-reminder'],
   maxAge: 86400
 }));
 
@@ -242,15 +311,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const pending = pendingPurchases.get(session.id);
-
-    if (pending) {
-      pendingPurchases.delete(session.id);
-      const totalPrice = (session.amount_total || 0) / 100;
-      await savePurchaseToSupabase(pending.userId, pending.cartItems, totalPrice);
-      await sendPurchaseConfirmationEmail(session.customer_email, pending.cartItems, totalPrice);
-      securityLogger.info('Purchase completed', { sessionId: session.id, email: session.customer_email });
-    }
+    await finalizeCompletedCheckout(session);
   }
 
   res.json({ received: true });
@@ -327,46 +388,185 @@ const sanitizeConfiguration = (config) => {
   return sanitized;
 };
 
+async function requireAuthenticatedUser(req, res, next) {
+  if (!supabaseAdmin) {
+    securityLogger.error('Supabase admin client not configured');
+    return res.status(503).json({ error: 'Authentication not configured' });
+  }
+
+  const authHeader = req.get('Authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice('Bearer '.length).trim() : '';
+  if (!token) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !data?.user) {
+      securityLogger.warn('Invalid Supabase token', { ip: req.ip, error: error?.message });
+      return res.status(401).json({ error: 'Invalid authentication token' });
+    }
+    req.authUser = data.user;
+    next();
+  } catch (error) {
+    securityLogger.error('Authentication verification failed', { ip: req.ip, error: error.message });
+    return res.status(401).json({ error: 'Invalid authentication token' });
+  }
+}
+
+async function optionalAuthenticatedUser(req, res, next) {
+  const authHeader = req.get('Authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice('Bearer '.length).trim() : '';
+  if (!token || !supabaseAdmin) return next();
+
+  try {
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (!error && data?.user) req.authUser = data.user;
+  } catch (_error) {
+    // Anonymous save-config is still allowed for guest email flow.
+  }
+  next();
+}
+
+function getPartIdsFromConfiguration(configuration) {
+  if (!configuration || typeof configuration !== 'object') return [];
+  const ids = [];
+  for (const part of Object.values(configuration)) {
+    if (part && typeof part === 'object' && typeof part.id === 'string') {
+      ids.push(part.id);
+    }
+  }
+  return ids;
+}
+
+async function getOwnedPartIdsForUser(userId) {
+  const ownedIds = new Set();
+  const { data, error } = await supabaseAdmin
+    .from('purchases')
+    .select('purchase_items(configuration_data)')
+    .eq('user_id', userId)
+    .eq('status', 'completed');
+
+  if (error) {
+    securityLogger.error('Unable to load owned parts for download', { userId, error: error.message });
+    throw error;
+  }
+
+  for (const purchase of data || []) {
+    for (const item of purchase.purchase_items || []) {
+      for (const partId of getPartIdsFromConfiguration(item.configuration_data)) {
+        ownedIds.add(partId);
+      }
+    }
+  }
+
+  return ownedIds;
+}
+
+async function getUnownedPaidPartIds(userId, configuration) {
+  const ownedIds = await getOwnedPartIdsForUser(userId);
+  return getPartIdsFromConfiguration(configuration).filter((partId) => {
+    const catalogPart = PART_CATALOG.get(partId);
+    if (!catalogPart) return true;
+    return catalogPart.priceUSD > 0 && !ownedIds.has(partId);
+  });
+}
+
+function buildCheckoutFromCatalog(cartItems) {
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
+    const err = new Error('Invalid cart items');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const seen = new Set();
+  const resolvedParts = [];
+
+  for (const item of cartItems) {
+    const ids = getPartIdsFromConfiguration(item?.configuration);
+
+    for (const id of ids) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const catalogPart = PART_CATALOG.get(id);
+      if (!catalogPart) {
+        const err = new Error(`Unknown catalog part: ${id}`);
+        err.statusCode = 400;
+        throw err;
+      }
+      if (catalogPart.priceUSD > 0) resolvedParts.push(catalogPart);
+    }
+  }
+
+  if (resolvedParts.length === 0 || resolvedParts.length > MAX_CHECKOUT_PARTS) {
+    const err = new Error('Invalid paid item count');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const lineItems = resolvedParts.map((part) => ({
+    price_data: {
+      currency: 'usd',
+      product_data: {
+        name: part.name,
+        metadata: { part_id: part.id, category: part.category },
+      },
+      unit_amount: Math.round(part.priceUSD * 100),
+    },
+    quantity: 1,
+  }));
+
+  const configuration = cartItems[0]?.configuration && typeof cartItems[0].configuration === 'object'
+    ? sanitizeConfiguration(cartItems[0].configuration)
+    : {};
+
+  return {
+    lineItems,
+    cartItems: [{
+      name: 'HeroSculpt Model',
+      price: resolvedParts.reduce((sum, part) => sum + part.priceUSD, 0),
+      quantity: 1,
+      configuration,
+      parts: resolvedParts,
+    }],
+  };
+}
+
 // ✅ ENDPOINT: Stripe checkout session
-app.post('/api/create-checkout-session', async (req, res) => {
+app.post('/api/create-checkout-session', requireAuthenticatedUser, async (req, res) => {
   if (!stripe) {
     return res.status(503).json({ error: 'Payment processing not configured' });
   }
 
-  const { cartItems, userEmail, userId } = req.body;
+  const { cartItems } = req.body;
+  const user = req.authUser;
 
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return res.status(400).json({ error: 'Invalid cart items' });
   }
 
-  if (!userEmail || typeof userEmail !== 'string') {
-    return res.status(400).json({ error: 'User email required' });
+  if (!user.email) {
+    return res.status(400).json({ error: 'Authenticated user email required' });
   }
 
   try {
-    const lineItems = cartItems.map((item) => ({
-      price_data: {
-        currency: 'usd',
-        product_data: {
-          name: item.name || 'HeroSculpt Model',
-          description: item.archetype ? `Archetype: ${item.archetype}` : undefined,
-        },
-        unit_amount: Math.max(0, Math.round((item.price || 0) * 100)),
-      },
-      quantity: Math.max(1, item.quantity || 1),
-    }));
+    const checkout = buildCheckoutFromCatalog(cartItems);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: lineItems,
+      line_items: checkout.lineItems,
       mode: 'payment',
-      customer_email: userEmail,
-      success_url: process.env.STRIPE_SUCCESS_URL || `${req.headers.origin || 'https://darkslategrey-ape-448372.hostingersite.com'}?success=true`,
-      cancel_url: process.env.STRIPE_CANCEL_URL || `${req.headers.origin || 'https://darkslategrey-ape-448372.hostingersite.com'}?canceled=true`,
+      customer_email: user.email,
+      client_reference_id: user.id,
+      metadata: {
+        user_id: user.id,
+      },
+      success_url: withCheckoutSessionPlaceholder(process.env.STRIPE_SUCCESS_URL),
+      cancel_url: process.env.STRIPE_CANCEL_URL || `${ALLOWED_ORIGINS[0]}?canceled=true`,
     });
 
     // Store pending purchase so webhook can save it after payment
-    pendingPurchases.set(session.id, { userId, cartItems, createdAt: Date.now() });
+    pendingPurchases.set(session.id, { userId: user.id, cartItems: checkout.cartItems, createdAt: Date.now() });
     // Cleanup entries older than 2 hours
     for (const [id, data] of pendingPurchases) {
       if (Date.now() - data.createdAt > 7200000) pendingPurchases.delete(id);
@@ -375,8 +575,43 @@ app.post('/api/create-checkout-session', async (req, res) => {
     securityLogger.info('Stripe session created', { ip: req.ip, sessionId: session.id });
     res.json({ sessionId: session.id });
   } catch (error) {
-    securityLogger.error('Stripe checkout error', { ip: req.ip, error: error.message });
-    res.status(500).json({ error: 'Error creating payment session' });
+    securityLogger.error('Stripe checkout error', { ip: req.ip, userId: user.id, error: error.message });
+    res.status(error.statusCode || 500).json({ error: error.statusCode ? error.message : 'Error creating payment session' });
+  }
+});
+
+app.get('/api/checkout-session-status', requireAuthenticatedUser, async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payment processing not configured' });
+  }
+
+  const sessionId = req.query.session_id;
+  if (!sessionId || typeof sessionId !== 'string') {
+    return res.status(400).json({ error: 'session_id is required' });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.client_reference_id && session.client_reference_id !== req.authUser.id) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    if (session.status === 'complete' && session.payment_status === 'paid') {
+      await finalizeCompletedCheckout(session);
+    }
+
+    res.json({
+      id: session.id,
+      status: session.status ?? null,
+      paymentStatus: session.payment_status ?? null,
+    });
+  } catch (error) {
+    securityLogger.warn('Stripe session verification failed', {
+      ip: req.ip,
+      sessionId,
+      error: error.message,
+    });
+    res.status(400).json({ error: 'Unable to verify checkout session' });
   }
 });
 
@@ -390,18 +625,56 @@ app.get('/health', (req, res) => {
   });
 });
 
+function buildConfigurationEmailHtml(configId, config) {
+  const frontendUrl = ALLOWED_ORIGINS[0] || 'http://localhost:5177';
+  const backendUrl = process.env.PUBLIC_BACKEND_URL || process.env.VITE_BACKEND_URL || 'http://localhost:3001';
+  const partsList = Object.entries(config.selectedParts || {})
+    .filter(([, part]) => part && typeof part === 'object')
+    .map(([category, part]) =>
+      `<li><strong>${htmlEscape(category)}:</strong> ${htmlEscape(part.name || 'Unknown')} ($${Number(part.priceUSD || 0).toFixed(2)})</li>`
+    )
+    .join('');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu configuracion de superheroe</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #f5f7fb; color: #1f2937; padding: 24px;">
+  <div style="max-width: 640px; margin: 0 auto; background: white; border-radius: 16px; padding: 32px;">
+    <h1 style="margin-top: 0;">Tu superheroe esta listo</h1>
+    <p>Tu configuracion personalizada ha sido guardada y esta lista para descargar.</p>
+    <ul>
+      <li><strong>Nombre:</strong> ${htmlEscape(config.configName || 'HeroSculpt Custom')}</li>
+      <li><strong>Precio total:</strong> $${Number(config.totalPrice || 0).toFixed(2)} USD</li>
+      <li><strong>Fecha:</strong> ${htmlEscape(new Date(config.createdAt).toLocaleDateString())}</li>
+      <li><strong>ID:</strong> ${htmlEscape(configId)}</li>
+    </ul>
+    <h2>Partes seleccionadas</h2>
+    <ul>${partsList}</ul>
+    <p><a href="${htmlEscape(frontendUrl)}">Abrir en el customizador 3D</a></p>
+  </div>
+</body>
+</html>`;
+}
+
 // ✅ ENDPOINT: Enviar email (con validación mejorada)
 app.post('/send-email', validateRequest(emailSchema), async (req, res) => {
   try {
-    const { to, subject, html, from } = req.body;
+    const { to, configId } = req.body;
+    const config = savedConfigurations.get(configId);
+    if (!config) {
+      return res.status(404).json({ error: 'Configuracion no encontrada' });
+    }
     
     // Sanitizar datos
     const sanitizedTo = sanitizeString(to);
-    const sanitizedSubject = sanitizeString(subject);
-    const sanitizedFrom = from ? sanitizeString(from) : 'noreply@tuapp.com';
+    const expectedEmail = sanitizeString(config.email || '');
     
     // Validar email
-    if (!validateEmail(sanitizedTo)) {
+    if (!validateEmail(sanitizedTo) || sanitizedTo.toLowerCase() !== expectedEmail.toLowerCase()) {
       securityLogger.warn('Invalid email attempt', { ip: req.ip, email: sanitizedTo });
       return res.status(400).json({ error: 'Email inválido' });
     }
@@ -410,15 +683,14 @@ app.post('/send-email', validateRequest(emailSchema), async (req, res) => {
     securityLogger.info('Email send attempt', {
       ip: req.ip,
       to: sanitizedTo,
-      subject: sanitizedSubject,
-      hasHtml: !!html
+      configId
     });
     
     const data = await resend.emails.send({
-      from: sanitizedFrom,
+      from: process.env.RESEND_FROM_EMAIL || 'HeroSculpt <noreply@herosculpt.com>',
       to: [sanitizedTo],
-      subject: sanitizedSubject,
-      html: html
+      subject: `Tu superheroe "${sanitizeString(config.configName || 'HeroSculpt Custom')}" esta listo`,
+      html: buildConfigurationEmailHtml(configId, config)
     });
 
     securityLogger.info('Email sent successfully', {
@@ -447,12 +719,12 @@ app.post('/send-email', validateRequest(emailSchema), async (req, res) => {
 });
 
 // ✅ ENDPOINT: Guardar configuración
-app.post('/save-config', (req, res) => {
+app.post('/save-config', optionalAuthenticatedUser, (req, res) => {
   try {
     const { configId, selectedParts, totalPrice, configName, email } = req.body;
     
     // 🛡️ VALIDACIÓN DE ENTRADA
-    if (!configId || typeof configId !== 'string' || configId.length > 100) {
+    if (!configId || typeof configId !== 'string' || !CONFIG_ID_PATTERN.test(configId)) {
       securityLogger.warn('Invalid config ID', {
         ip: req.ip,
         configIdType: typeof configId,
@@ -512,12 +784,21 @@ app.post('/save-config', (req, res) => {
     });
     
     console.log('💾 Guardando configuración:', configId);
+
+    if (savedConfigurations.has(configId)) {
+      securityLogger.warn('Duplicate config ID save blocked', { ip: req.ip, configId });
+      return res.status(409).json({
+        success: false,
+        error: 'Configuración ya existe'
+      });
+    }
     
     savedConfigurations.set(configId, {
-      selectedParts,
+      selectedParts: sanitizeConfiguration(selectedParts),
       totalPrice,
-      configName,
-      email,
+      configName: sanitizeString(configName || 'HeroSculpt Custom'),
+      email: sanitizeString(email || ''),
+      ownerUserId: req.authUser?.id || null,
       createdAt: new Date().toISOString()
     });
 
@@ -529,7 +810,7 @@ app.post('/save-config', (req, res) => {
 });
 
 // ✅ ENDPOINT: Obtener configuración
-app.get('/config/:configId', (req, res) => {
+app.get('/config/:configId', requireAuthenticatedUser, (req, res) => {
   try {
     const { configId } = req.params;
     const config = savedConfigurations.get(configId);
@@ -538,7 +819,17 @@ app.get('/config/:configId', (req, res) => {
       return res.status(404).json({ success: false, error: 'Configuración no encontrada' });
     }
 
-    res.json({ success: true, data: config });
+    if (!config.ownerUserId || config.ownerUserId !== req.authUser.id) {
+      securityLogger.warn('Blocked config read without ownership', {
+        ip: req.ip,
+        userId: req.authUser.id,
+        configId
+      });
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
+
+    const { email: _email, ownerUserId: _ownerUserId, ...publicConfig } = config;
+    res.json({ success: true, data: publicConfig });
   } catch (error) {
     console.error('❌ Error obteniendo configuración:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -546,7 +837,7 @@ app.get('/config/:configId', (req, res) => {
 });
 
 // ✅ ENDPOINT: Descargar GLB
-app.get('/download/:configId/glb', async (req, res) => {
+app.get('/download/:configId/glb', requireAuthenticatedUser, async (req, res) => {
   try {
     const { configId } = req.params;
     
@@ -576,6 +867,17 @@ app.get('/download/:configId/glb', async (req, res) => {
     }
 
     console.log('🔨 Generando GLB con modelos reales para configuración:', configId);
+    const unownedPaidPartIds = await getUnownedPaidPartIds(req.authUser.id, config.selectedParts);
+    if (unownedPaidPartIds.length > 0) {
+      securityLogger.warn('Blocked GLB download with unpaid parts', {
+        ip: req.ip,
+        userId: req.authUser.id,
+        configId,
+        partCount: unownedPaidPartIds.length
+      });
+      return res.status(403).json({ error: 'Purchase required' });
+    }
+
     const glbContent = await generateRealModelGLB(config.selectedParts);
     
     res.setHeader('Content-Type', 'model/gltf-binary');
@@ -590,7 +892,7 @@ app.get('/download/:configId/glb', async (req, res) => {
 });
 
 // ✅ ENDPOINT: Descargar STL
-app.get('/download/:configId/stl', async (req, res) => {
+app.get('/download/:configId/stl', requireAuthenticatedUser, async (req, res) => {
   try {
     const { configId } = req.params;
     
@@ -622,6 +924,17 @@ app.get('/download/:configId/stl', async (req, res) => {
     console.log('🔍 Buscando configuración:', configId);
     console.log('🔨 Generando STL con modelos reales para configuración:', configId);
     
+    const unownedPaidPartIds = await getUnownedPaidPartIds(req.authUser.id, config.selectedParts);
+    if (unownedPaidPartIds.length > 0) {
+      securityLogger.warn('Blocked STL download with unpaid parts', {
+        ip: req.ip,
+        userId: req.authUser.id,
+        configId,
+        partCount: unownedPaidPartIds.length
+      });
+      return res.status(403).json({ error: 'Purchase required' });
+    }
+
     const stlContent = await generateSTL(config.selectedParts);
     
     res.setHeader('Content-Type', 'application/octet-stream');
@@ -1232,10 +1545,25 @@ function generateCube(x, y, z, name) {
   return generateDetailedCube(x, y, z, 1, 1, 1, name);
 }
 
-// Save a completed purchase to Supabase using service role key
-async function savePurchaseToSupabase(userId, cartItems, totalPrice) {
+// Save a completed purchase to Supabase using service role key.
+// Returns 'duplicate' if a purchase with this stripe_session_id already exists,
+// 'saved' on success, or undefined on failure. The unique index on
+// stripe_session_id makes the webhook idempotent — Stripe retries are safe.
+async function savePurchaseToSupabase(userId, cartItems, totalPrice, stripeSessionId) {
   if (!supabaseAdmin || !userId) return;
   try {
+    if (stripeSessionId) {
+      const { data: existing } = await supabaseAdmin
+        .from('purchases')
+        .select('id')
+        .eq('stripe_session_id', stripeSessionId)
+        .maybeSingle();
+      if (existing) {
+        securityLogger.info('Skipping duplicate purchase', { stripeSessionId });
+        return 'duplicate';
+      }
+    }
+
     const { data: purchase, error } = await supabaseAdmin
       .from('purchases')
       .insert({
@@ -1244,7 +1572,8 @@ async function savePurchaseToSupabase(userId, cartItems, totalPrice) {
         total_price: totalPrice,
         items_count: cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0),
         status: 'completed',
-        purchase_date: new Date().toISOString()
+        purchase_date: new Date().toISOString(),
+        stripe_session_id: stripeSessionId || null,
       })
       .select()
       .single();
@@ -1263,18 +1592,28 @@ async function savePurchaseToSupabase(userId, cartItems, totalPrice) {
     }));
 
     await supabaseAdmin.from('purchase_items').insert(purchaseItems);
+    return 'saved';
   } catch (err) {
     securityLogger.error('savePurchaseToSupabase error', { error: err.message });
   }
 }
 
 // Send purchase confirmation email via Resend
-async function sendPurchaseConfirmationEmail(toEmail, cartItems, totalPrice) {
+async function sendPurchaseConfirmationEmail(toEmail, cartItems, totalPrice, stripeSessionId) {
   if (!toEmail) return;
   try {
     const itemsList = cartItems.map(item =>
-      `<li style="padding:4px 0">${item.name || 'HeroSculpt Model'} — $${(item.price || 0).toFixed(2)}</li>`
+      `<li style="padding:4px 0">${htmlEscape(item.name || 'HeroSculpt Model')} — $${(item.price || 0).toFixed(2)}</li>`
     ).join('');
+
+    // Link back to the app's success URL — App.tsx detects ?success=true&session_id=
+    // and opens the purchase confirmation modal with the download button.
+    const appOrigin = process.env.PUBLIC_APP_URL
+      || ALLOWED_ORIGINS.find(o => o && o.startsWith('https://'))
+      || 'https://herosculpt.loca.lt';
+    const downloadUrl = stripeSessionId
+      ? `${appOrigin}?success=true&session_id=${encodeURIComponent(stripeSessionId)}`
+      : appOrigin;
 
     await resend.emails.send({
       from: 'HeroSculpt <noreply@herosculpt.com>',
@@ -1286,10 +1625,14 @@ async function sendPurchaseConfirmationEmail(toEmail, cartItems, totalPrice) {
           <p>Gracias por tu compra. Aquí está el resumen:</p>
           <ul style="padding-left:20px">${itemsList}</ul>
           <p style="font-size:18px"><strong>Total: $${totalPrice.toFixed(2)}</strong></p>
-          <a href="https://darkslategrey-ape-448372.hostingersite.com"
+          <a href="${htmlEscape(downloadUrl)}"
              style="display:inline-block;margin-top:16px;padding:12px 24px;background:#e63946;color:#fff;text-decoration:none;border-radius:6px">
             Descargar modelo 3D
           </a>
+          <p style="font-size:12px;color:#666;margin-top:24px">
+            Si el botón no funciona, abre este enlace en tu navegador:<br>
+            <span style="word-break:break-all">${htmlEscape(downloadUrl)}</span>
+          </p>
         </div>
       `
     });
@@ -1302,7 +1645,7 @@ async function sendPurchaseConfirmationEmail(toEmail, cartItems, totalPrice) {
 const DIST_PATH = path.join(__dirname, 'dist');
 if (fs.existsSync(DIST_PATH)) {
   app.use(express.static(DIST_PATH));
-  app.get('*', (_req, res) => {
+  app.get(/.*/, (_req, res) => {
     res.sendFile(path.join(DIST_PATH, 'index.html'));
   });
 }
@@ -1318,7 +1661,7 @@ app.listen(port, () => {
   console.log('• GET  /download/:configId/glb    - Descargar configuración como GLB');
   console.log('• GET  /download/:configId/stl    - Descargar configuración como STL');
   console.log('🧪 Para probar email:');
-  console.log('curl -X POST http://localhost:3001/send-email -H "Content-Type: application/json" -d \'{"to":"test@example.com","subject":"Test","html":"<p>Hello</p>"}\'');
+  console.log('curl -X POST http://localhost:3001/send-email -H "Content-Type: application/json" -d \'{"to":"test@example.com","configId":"guest_1234567890_secure"}\'');
   console.log('📥 Para probar descarga:');
   console.log('http://localhost:3001/download/test_config/glb');
   console.log('http://localhost:3001/download/test_config/stl');
